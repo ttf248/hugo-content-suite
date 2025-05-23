@@ -39,10 +39,9 @@
 
 - **Go 版本**：Go 1.21 或更高版本
 - **操作系统**：Windows、macOS、Linux
-- **依赖库**：
-  - `github.com/fatih/color` - 彩色终端输出
-  - `github.com/olekukonko/tablewriter` - 表格显示
 - **LM Studio**（可选）：用于 AI 翻译功能
+  - 支持的模型：gemma-3-12b-it 或其他兼容模型
+  - 默认地址：`http://172.19.192.1:2234`
 
 ## 🛠️ 安装与配置
 
@@ -57,14 +56,20 @@ cd hugo-slug-auto
 go mod tidy
 ```
 
-### 3. 构建项目
-```bash
-go build -o tag-scanner main.go
+### 3. 配置 LM Studio（可选）
+如果要使用 AI 翻译功能，需要配置 LM Studio：
+
+```go
+// 在 translator/llm_translator.go 中修改配置
+const (
+    LMStudioURL = "http://your-lm-studio-url:port/v1/chat/completions"
+    ModelName   = "your-model-name"
+)
 ```
 
 ### 4. 验证安装
 ```bash
-./tag-scanner
+go run main.go --help
 ```
 
 ## 🚀 快速开始
@@ -72,17 +77,17 @@ go build -o tag-scanner main.go
 ### 基础用法
 ```bash
 # 使用默认目录 (../../content/post)
-./tag-scanner
+go run main.go
 
 # 指定自定义目录
-./tag-scanner /path/to/your/hugo/content/post
+go run main.go /path/to/your/hugo/content/post
 ```
 
 ### 典型工作流程
 
 1. **扫描分析**
    ```bash
-   ./tag-scanner
+   go run main.go
    ```
    查看项目统计信息和标签分布
 
@@ -92,7 +97,6 @@ go build -o tag-scanner main.go
 
 3. **生成标签页面**
    - 选择菜单选项 `6. 生成标签页面文件`
-   - 选择处理模式（新增/更新/全部）
    - 确认后自动生成所有标签页面
 
 4. **预览文章 Slug**
@@ -101,7 +105,6 @@ go build -o tag-scanner main.go
 
 5. **生成文章 Slug**
    - 选择菜单选项 `8. 生成文章Slug`
-   - 选择处理模式（缺失/更新/全部）
    - 确认后批量处理所有文章
 
 ## 📖 详细使用说明
@@ -118,19 +121,6 @@ go build -o tag-scanner main.go
 | 6 | 生成标签页面文件 | 实际生成标签页面文件 |
 | 7 | 预览文章Slug生成 | 预览文章 slug 生成结果 |
 | 8 | 生成文章Slug | 批量生成/更新文章 slug |
-| 0 | 退出 | 退出程序 |
-
-### 处理模式说明
-
-#### 标签页面生成模式
-- **仅新增**：只生成不存在的标签页面
-- **仅更新**：只更新已存在的标签页面
-- **全部处理**：新建和更新所有标签页面
-
-#### 文章 Slug 生成模式
-- **仅新增**：只为缺少 slug 的文章添加 slug
-- **仅更新**：只更新已有但不匹配的 slug
-- **全部处理**：处理所有需要添加或更新 slug 的文章
 
 ### 输出示例
 
@@ -151,7 +141,7 @@ go build -o tag-scanner main.go
 
 #### 标签统计
 ```
-=== 标签使用统计（前20个）===
+=== 标签使用统计 ===
 ┌──────┬─────────────┬──────────┬──────────┐
 │ 排名 │   标签名    │ 使用次数 │ 频率级别 │
 ├──────┼─────────────┼──────────┼──────────┤
@@ -161,151 +151,182 @@ go build -o tag-scanner main.go
 └──────┴─────────────┴──────────┴──────────┘
 ```
 
+#### 标签页面预览
+```
+=== 标签页面生成预览 ===
+┌─────────────┬───────────┬─────────────────────┬────────┬──────┐
+│   标签名    │ 当前Slug  │       新Slug        │ 文章数 │ 状态 │
+├─────────────┼───────────┼─────────────────────┼────────┼──────┤
+│ JavaScript  │    无     │     javascript      │   15   │ 新建 │
+│  前端开发   │    无     │ frontend-development│   12   │ 新建 │
+│    React    │ react-js  │       react         │   10   │ 更新 │
+└─────────────┴───────────┴─────────────────────┴────────┴──────┘
+```
+
 ## 🏗️ 项目架构
 
 ### 目录结构
 ```
 hugo-slug-auto/
-├── main.go                    # 主程序入口和交互式菜单
+├── main.go                    # 主程序入口
 ├── go.mod                     # Go 模块配置
 ├── README.md                  # 项目文档
-├── models/                    # 数据模型定义
-│   └── article.go            # Article、TagStats、CategoryStats 结构
-├── scanner/                   # 文章扫描功能（需要实现）
-├── stats/                     # 统计计算功能（需要实现）
-├── display/                   # 显示层功能（需要实现）
-├── generator/                 # 页面生成功能（需要实现）
-└── translator/                # 翻译服务功能（需要实现）
+├── .vscode/                   # VS Code 配置
+│   ├── settings.json
+│   └── launch.json
+├── models/                    # 数据模型
+│   └── article.go
+├── scanner/                   # 文章扫描器
+│   └── parser.go
+├── stats/                     # 统计计算
+│   └── calculator.go
+├── display/                   # 显示层
+│   └── tables.go
+├── translator/                # 翻译服务
+│   └── llm_translator.go
+└── generator/                 # 页面生成器
+    ├── page_generator.go
+    └── article_slug_generator.go
 ```
 
-### 核心数据结构
-
-#### Article 模型
-```go
-type Article struct {
-    FilePath string   // 文件路径
-    Title    string   // 文章标题
-    Tags     []string // 标签列表
-    Category string   // 文章分类
-    Date     string   // 发布日期
-}
-```
-
-#### 统计模型
-```go
-type TagStats struct {
-    Name  string   // 标签名称
-    Count int      // 使用次数
-    Files []string // 使用该标签的文件列表
-}
-
-type CategoryStats struct {
-    Name  string // 分类名称
-    Count int    // 文章数量
-}
-```
-
-### 主要功能模块
+### 核心组件
 
 #### 1. 文章扫描器 (scanner)
-- 递归扫描指定目录下的 Markdown 文件
-- 解析 YAML Front Matter 提取元数据
-- 返回 Article 结构体数组
+- **功能**：递归扫描目录，解析 Markdown 文件
+- **支持格式**：YAML Front Matter
+- **提取内容**：标题、标签、分类、日期等元数据
 
 #### 2. 统计计算器 (stats)
-- `CalculateTagStats()` - 计算标签使用统计
-- `CalculateCategoryStats()` - 计算分类统计
-- `FindNoTagArticles()` - 查找无标签文章
-- `GroupTagsByFrequency()` - 按频率分组标签
+- **标签统计**：计算使用频率，生成排序列表
+- **分类统计**：分析文章分类分布
+- **文章分析**：识别无标签文章，频率分组
 
-#### 3. 显示层 (display)
-- `DisplaySummary()` - 显示统计概览
-- `DisplayTagStats()` - 显示标签统计表格
-- `DisplayCategoryStats()` - 显示分类统计
-- `DisplayNoTagArticles()` - 显示无标签文章列表
-- `DisplayTagDetails()` - 显示特定标签详情
+#### 3. 翻译服务 (translator)
+- **AI 翻译**：集成 LM Studio 进行智能翻译
+- **备用翻译**：内置常用标签映射表
+- **Slug 规范化**：生成符合 URL 标准的 slug
 
 #### 4. 页面生成器 (generator)
-- `TagPageGenerator` - 标签页面生成器
-- `ArticleSlugGenerator` - 文章 Slug 生成器
-- 支持预览和实际生成功能
+- **标签页面生成**：创建 Hugo 标签页面文件
+- **文章 Slug 生成**：为文章添加/更新 slug
+- **批量处理**：支持大量文件的批量操作
 
-#### 5. 翻译服务 (translator)
+#### 5. 显示层 (display)
+- **表格显示**：使用 tablewriter 生成美观的表格
+- **颜色输出**：使用 fatih/color 提供彩色输出
+- **交互界面**：实现用户友好的命令行界面
 
-##### LM Studio 集成
-工具集成了 LM Studio 本地大语言模型，提供智能翻译服务：
+## 🔧 配置选项
 
-- **本地运行**：无需互联网连接，保护数据隐私
-- **智能翻译**：理解上下文，生成准确的技术术语翻译
-- **自动降级**：连接失败时自动切换到备用翻译方案
-
-##### 备用翻译映射
-内置常用标签翻译映射表，确保翻译功能的可靠性：
-
+### LM Studio 配置
 ```go
+// translator/llm_translator.go
+const (
+    LMStudioURL = "http://172.19.192.1:2234/v1/chat/completions"
+    ModelName   = "gemma-3-12b-it"
+)
+```
+
+### 备用翻译映射
+```go
+// translator/llm_translator.go
 fallbackTranslations := map[string]string{
     "人工智能": "artificial-intelligence",
     "机器学习": "machine-learning",
     "深度学习": "deep-learning",
     "前端开发": "frontend-development",
     "后端开发": "backend-development",
-    "JavaScript": "javascript",
-    "Python": "python",
-    "Go": "golang",
-    // ...更多映射
+    // ... 更多映射
 }
 ```
 
-## ⚙️ 配置选项
-
-### 默认路径配置
+### 文件路径配置
 ```go
-// 默认文章目录
-contentDir := "../../content/post"
-
-// 可通过命令行参数覆盖
-// ./tag-scanner /your/custom/path
+// main.go
+contentDir := "../../content/post"  // 默认文章目录
+tagsDir := "content/tags"           // 标签页面目录
 ```
 
-### 标签频率分组阈值
-- 高频标签：≥5 篇文章
-- 中频标签：2-4 篇文章  
-- 低频标签：1 篇文章
+## 🐛 故障排除
 
-## 🔧 开发指南
+### 常见问题
 
-### 环境要求
-- Go 1.21+
-- 支持的终端（用于彩色输出）
+**1. LM Studio 连接失败**
+```
+错误：无法连接到LM Studio
+解决：检查 LM Studio 是否运行，确认 URL 和端口正确
+```
 
-### 构建和测试
+**2. 文件权限错误**
+```
+错误：写入文件失败
+解决：确保程序对目标目录有写入权限
+```
+
+**3. Front Matter 解析失败**
+```
+错误：无法解析文章元数据
+解决：检查 Markdown 文件的 YAML 格式是否正确
+```
+
+**4. 目录不存在**
+```
+错误：找不到指定目录
+解决：确认文章目录路径正确，或使用绝对路径
+```
+
+### 调试模式
+
+使用 VS Code 调试：
+1. 打开项目在 VS Code 中
+2. 按 F5 启动调试
+3. 在代码中设置断点进行调试
+
+命令行调试：
 ```bash
-# 构建
-go build -o tag-scanner main.go
-
-# 运行测试（当实现测试后）
-go test ./...
-
-# 代码格式化
-go fmt ./...
-
-# 静态检查
-go vet ./...
+go run -race main.go  # 检测竞态条件
+go run main.go 2>&1 | tee output.log  # 记录输出日志
 ```
 
-### VS Code 配置
-项目包含 VS Code 配置，支持：
-- 调试启动配置
-- Go 语言设置
-- 推荐的扩展
+## 🤝 贡献指南
+
+### 开发环境设置
+1. Fork 项目
+2. 创建功能分支
+3. 提交更改
+4. 创建 Pull Request
+
+### 代码规范
+- 遵循 Go 官方代码规范
+- 添加适当的注释和文档
+- 编写单元测试
+- 确保代码通过 `go vet` 和 `golint` 检查
+
+### 测试
+```bash
+go test ./...                    # 运行所有测试
+go test -v ./scanner            # 运行特定包的测试
+go test -cover ./...            # 生成测试覆盖率报告
+```
 
 ## 📄 许可证
 
-本项目采用 MIT 许可证。
+本项目采用 MIT 许可证 - 查看 [LICENSE](LICENSE) 文件了解详情。
 
-## 🤝 贡献
+## 🔗 相关链接
 
-欢迎提交 Issue 和 Pull Request 来改进这个项目！
+- [Hugo 官方文档](https://gohugo.io/documentation/)
+- [LM Studio](https://lmstudio.ai/)
+- [Go 官方文档](https://golang.org/doc/)
+
+## 📞 支持与反馈
+
+如果您遇到问题或有改进建议，请：
+
+1. 查看 [常见问题](#故障排除)
+2. 搜索现有的 [Issues](issues)
+3. 创建新的 Issue 描述问题
+4. 提交 Pull Request 贡献代码
 
 ---
 

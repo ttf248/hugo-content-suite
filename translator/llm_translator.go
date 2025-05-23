@@ -51,6 +51,7 @@ type LLMTranslator struct {
 	client  *http.Client
 	baseURL string
 	model   string
+	cache   *TranslationCache
 }
 
 func NewLLMTranslator() *LLMTranslator {
@@ -60,6 +61,7 @@ func NewLLMTranslator() *LLMTranslator {
 		},
 		baseURL: LMStudioURL,
 		model:   ModelName,
+		cache:   NewTranslationCache("."), // 缓存文件保存在当前目录
 	}
 }
 
@@ -126,12 +128,37 @@ func (t *LLMTranslator) TranslateToSlug(tag string) (string, error) {
 	return normalizeSlug(slug), nil
 }
 
-// BatchTranslate 批量翻译标签
+// BatchTranslate 批量翻译标签（支持缓存）
 func (t *LLMTranslator) BatchTranslate(tags []string) (map[string]string, error) {
 	result := make(map[string]string)
 
-	for i, tag := range tags {
-		fmt.Printf("正在翻译标签 (%d/%d): %s", i+1, len(tags), tag)
+	// 首先从缓存中获取已有的翻译
+	fmt.Println("🔍 检查缓存中的翻译...")
+	cachedCount := 0
+	for _, tag := range tags {
+		if translation, exists := t.cache.Get(tag); exists {
+			result[tag] = translation
+			cachedCount++
+		}
+	}
+
+	if cachedCount > 0 {
+		fmt.Printf("📋 从缓存获取 %d 个翻译\n", cachedCount)
+	}
+
+	// 获取需要新翻译的标签
+	missingTags := t.cache.GetMissingTags(tags)
+
+	if len(missingTags) == 0 {
+		fmt.Println("✅ 所有标签都已有缓存，无需重新翻译")
+		return result, nil
+	}
+
+	fmt.Printf("🔄 需要翻译 %d 个新标签\n", len(missingTags))
+
+	// 翻译新标签
+	for i, tag := range missingTags {
+		fmt.Printf("正在翻译 (%d/%d): %s", i+1, len(missingTags), tag)
 
 		slug, err := t.TranslateToSlug(tag)
 		if err != nil {
@@ -143,14 +170,39 @@ func (t *LLMTranslator) BatchTranslate(tags []string) (map[string]string, error)
 		}
 
 		result[tag] = slug
+		// 添加到缓存
+		t.cache.Set(tag, slug)
 
 		// 添加延迟避免请求过于频繁
-		if i < len(tags)-1 {
+		if i < len(missingTags)-1 {
 			time.Sleep(500 * time.Millisecond)
 		}
 	}
 
+	// 保存缓存
+	if len(missingTags) > 0 {
+		if err := t.cache.Save(); err != nil {
+			fmt.Printf("⚠️ 保存缓存失败: %v\n", err)
+		}
+	}
+
 	return result, nil
+}
+
+// GetCacheStats 获取缓存统计信息
+func (t *LLMTranslator) GetCacheStats() (int, int) {
+	return t.cache.GetStats()
+}
+
+// ClearCache 清空缓存
+func (t *LLMTranslator) ClearCache() error {
+	t.cache.Clear()
+	return t.cache.Save()
+}
+
+// GetCacheInfo 获取缓存信息
+func (t *LLMTranslator) GetCacheInfo() string {
+	return t.cache.GetCacheInfo()
 }
 
 // TestConnection 测试与LM Studio的连接

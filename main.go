@@ -11,6 +11,7 @@ import (
 	"tag-scanner/models"
 	"tag-scanner/scanner"
 	"tag-scanner/stats"
+	"tag-scanner/translator"
 
 	"github.com/fatih/color"
 )
@@ -78,9 +79,15 @@ func showInteractiveMenu(tagStats []models.TagStats, categoryStats []models.Cate
 		fmt.Println("  7. 生成文章Slug")
 		fmt.Println()
 
+		// 缓存管理模块
+		color.Magenta("💾 缓存管理")
+		fmt.Println("  8. 查看缓存状态")
+		fmt.Println("  9. 清空翻译缓存")
+		fmt.Println()
+
 		color.Red("  0. 退出程序")
 		fmt.Println()
-		fmt.Print("请选择功能 (0-7): ")
+		fmt.Print("请选择功能 (0-9): ")
 
 		input, _ := reader.ReadString('\n')
 		choice := strings.TrimSpace(input)
@@ -100,6 +107,10 @@ func showInteractiveMenu(tagStats []models.TagStats, categoryStats []models.Cate
 			previewArticleSlugs(contentDir)
 		case "7":
 			generateArticleSlugs(contentDir, reader)
+		case "8":
+			showCacheStatus()
+		case "9":
+			clearTranslationCache(reader)
 		case "0":
 			color.Green("感谢使用！再见！")
 			return
@@ -401,4 +412,39 @@ func generateArticleSlugs(contentDir string, reader *bufio.Reader) {
 	if err := slugGenerator.GenerateArticleSlugsWithMode(mode); err != nil {
 		color.Red("❌ 生成失败: %v", err)
 	}
+}
+
+func showCacheStatus() {
+	color.Cyan("=== 翻译缓存状态 ===")
+
+	translator := translator.NewLLMTranslator()
+
+	fmt.Println()
+	fmt.Println(translator.GetCacheInfo())
+	fmt.Println()
+
+	totalCount, expiredCount := translator.GetCacheStats()
+	fmt.Printf("📊 统计信息:\n")
+	fmt.Printf("   总翻译条目: %d 个\n", totalCount)
+	fmt.Printf("   过期条目: %d 个\n", expiredCount)
+	fmt.Printf("   有效条目: %d 个\n", totalCount-expiredCount)
+}
+
+func clearTranslationCache(reader *bufio.Reader) {
+	color.Yellow("⚠️  警告：此操作将清空所有翻译缓存")
+	fmt.Print("确认清空缓存？(y/n): ")
+
+	input, _ := reader.ReadString('\n')
+	if strings.TrimSpace(strings.ToLower(input)) != "y" {
+		color.Yellow("❌ 已取消清空操作")
+		return
+	}
+
+	translator := translator.NewLLMTranslator()
+	if err := translator.ClearCache(); err != nil {
+		color.Red("❌ 清空缓存失败: %v", err)
+		return
+	}
+
+	color.Green("✅ 翻译缓存已清空")
 }

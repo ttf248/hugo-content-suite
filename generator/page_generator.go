@@ -208,13 +208,33 @@ func (g *TagPageGenerator) PreviewTagPages(tagStats []models.TagStats) []TagPage
 		fmt.Println("成功")
 	}
 
-	// 预览时翻译所有标签（因为数量通常不会太多）
-	fmt.Printf("正在翻译 %d 个标签...\n", len(tagStats))
-
+	// 收集所有标签名
+	tagNames := make([]string, len(tagStats))
 	for i, stat := range tagStats {
-		fmt.Printf("  (%d/%d) %s", i+1, len(tagStats), stat.Name)
+		tagNames[i] = stat.Name
+	}
 
-		var slug string
+	// 批量翻译（利用缓存）
+	var slugMap map[string]string
+	var err error
+
+	if useAI {
+		slugMap, err = g.translator.BatchTranslate(tagNames)
+		if err != nil {
+			fmt.Printf("⚠️ 批量翻译失败: %v，使用备用方案\n", err)
+			useAI = false
+		}
+	}
+
+	if !useAI {
+		// 使用备用翻译
+		slugMap = make(map[string]string)
+		for _, tag := range tagNames {
+			slugMap[tag] = g.fallbackSlug(tag)
+		}
+	}
+
+	for _, stat := range tagStats {
 		var status string
 
 		// 检查标签目录是否已存在
@@ -224,34 +244,13 @@ func (g *TagPageGenerator) PreviewTagPages(tagStats []models.TagStats) []TagPage
 
 		if _, err := os.Stat(indexFile); err == nil {
 			status = "update"
-			// 读取现有的slug
-			existingSlug := g.extractSlugFromTagFile(indexFile)
-			if existingSlug != "" {
-				fmt.Printf(" (当前: %s)", existingSlug)
-			}
 		} else {
 			status = "create"
 		}
 
-		if useAI {
-			translatedSlug, err := g.translator.TranslateToSlug(stat.Name)
-			if err != nil {
-				fmt.Printf(" - 翻译失败，使用备用方案")
-				slug = g.fallbackSlug(stat.Name)
-			} else {
-				slug = translatedSlug
-				fmt.Printf(" -> %s", slug)
-			}
-		} else {
-			slug = g.fallbackSlug(stat.Name)
-			fmt.Printf(" -> %s (备用)", slug)
-		}
-
-		fmt.Println()
-
 		preview := TagPagePreview{
 			TagName:       stat.Name,
-			Slug:          slug,
+			Slug:          slugMap[stat.Name],
 			ArticleCount:  stat.Count,
 			DirectoryPath: fmt.Sprintf("tags/%s/", stat.Name),
 			FilePath:      fmt.Sprintf("tags/%s/_index.md", stat.Name),
