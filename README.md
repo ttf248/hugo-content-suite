@@ -231,9 +231,30 @@ type CategoryStats struct {
 - 支持预览和实际生成功能
 
 #### 5. 翻译服务 (translator)
-- LM Studio API 集成
-- 备用翻译映射表
-- Slug 规范化处理
+
+##### LM Studio 集成
+工具集成了 LM Studio 本地大语言模型，提供智能翻译服务：
+
+- **本地运行**：无需互联网连接，保护数据隐私
+- **智能翻译**：理解上下文，生成准确的技术术语翻译
+- **自动降级**：连接失败时自动切换到备用翻译方案
+
+##### 备用翻译映射
+内置常用标签翻译映射表，确保翻译功能的可靠性：
+
+```go
+fallbackTranslations := map[string]string{
+    "人工智能": "artificial-intelligence",
+    "机器学习": "machine-learning",
+    "深度学习": "deep-learning",
+    "前端开发": "frontend-development",
+    "后端开发": "backend-development",
+    "JavaScript": "javascript",
+    "Python": "python",
+    "Go": "golang",
+    // ...更多映射
+}
+```
 
 ## ⚙️ 配置选项
 
