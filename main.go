@@ -56,17 +56,67 @@ func showInteractiveMenu(tagStats []models.TagStats, categoryStats []models.Cate
 	reader := bufio.NewReader(os.Stdin)
 
 	for {
-		color.Cyan("\n=== 交互式菜单 ===")
+		color.Cyan("\n=== 博客标签管理工具 ===")
+		fmt.Println()
+
+		// 数据查看模块
+		color.Green("📊 数据查看")
+		fmt.Println("  1. 标签统计与分析")
+		fmt.Println("  2. 分类统计")
+		fmt.Println("  3. 无标签文章")
+		fmt.Println()
+
+		// 页面生成模块
+		color.Yellow("🏷️  标签页面管理")
+		fmt.Println("  4. 预览标签页面")
+		fmt.Println("  5. 生成标签页面")
+		fmt.Println()
+
+		// 文章管理模块
+		color.Blue("📝 文章Slug管理")
+		fmt.Println("  6. 预览文章Slug")
+		fmt.Println("  7. 生成文章Slug")
+		fmt.Println()
+
+		color.Red("  0. 退出程序")
+		fmt.Println()
+		fmt.Print("请选择功能 (0-7): ")
+
+		input, _ := reader.ReadString('\n')
+		choice := strings.TrimSpace(input)
+
+		switch choice {
+		case "1":
+			showTagAnalysisMenu(tagStats, reader)
+		case "2":
+			display.DisplayCategoryStats(categoryStats)
+		case "3":
+			display.DisplayNoTagArticles(noTagArticles, len(noTagArticles))
+		case "4":
+			previewTagPages(tagStats, contentDir)
+		case "5":
+			generateTagPages(tagStats, contentDir, reader)
+		case "6":
+			previewArticleSlugs(contentDir)
+		case "7":
+			generateArticleSlugs(contentDir, reader)
+		case "0":
+			color.Green("感谢使用！再见！")
+			return
+		default:
+			color.Red("⚠️  无效选择，请重新输入")
+		}
+	}
+}
+
+func showTagAnalysisMenu(tagStats []models.TagStats, reader *bufio.Reader) {
+	for {
+		color.Cyan("\n=== 标签统计与分析 ===")
 		fmt.Println("1. 查看所有标签")
 		fmt.Println("2. 查看特定标签详情")
-		fmt.Println("3. 查看所有无标签文章")
-		fmt.Println("4. 查看标签频率分组")
-		fmt.Println("5. 预览标签页面生成")
-		fmt.Println("6. 生成标签页面文件")
-		fmt.Println("7. 预览文章Slug生成")
-		fmt.Println("8. 生成文章Slug")
-		fmt.Println("0. 退出")
-		fmt.Print("请选择操作 (0-8): ")
+		fmt.Println("3. 按频率分组查看")
+		fmt.Println("4. 返回主菜单")
+		fmt.Print("请选择 (1-4): ")
 
 		input, _ := reader.ReadString('\n')
 		choice := strings.TrimSpace(input)
@@ -78,24 +128,17 @@ func showInteractiveMenu(tagStats []models.TagStats, categoryStats []models.Cate
 			fmt.Print("请输入标签名: ")
 			tagName, _ := reader.ReadString('\n')
 			tagName = strings.TrimSpace(tagName)
-			display.DisplayTagDetails(tagStats, tagName)
+			if tagName != "" {
+				display.DisplayTagDetails(tagStats, tagName)
+			} else {
+				color.Red("标签名不能为空")
+			}
 		case "3":
-			display.DisplayNoTagArticles(noTagArticles, len(noTagArticles))
-		case "4":
 			showTagFrequencyGroups(tagStats)
-		case "5":
-			previewTagPages(tagStats, contentDir)
-		case "6":
-			generateTagPages(tagStats, contentDir, reader)
-		case "7":
-			previewArticleSlugs(contentDir)
-		case "8":
-			generateArticleSlugs(contentDir, reader)
-		case "0":
-			fmt.Println("再见！")
+		case "4":
 			return
 		default:
-			fmt.Println("无效选择，请重新输入")
+			color.Red("⚠️  无效选择，请重新输入")
 		}
 	}
 }
@@ -145,11 +188,12 @@ func previewTagPages(tagStats []models.TagStats, contentDir string) {
 
 func generateTagPages(tagStats []models.TagStats, contentDir string, reader *bufio.Reader) {
 	if len(tagStats) == 0 {
-		fmt.Println("没有找到任何标签，无法生成页面")
+		color.Yellow("⚠️  没有找到任何标签，无法生成页面")
 		return
 	}
 
 	// 先预览以获取统计信息
+	color.Cyan("正在分析标签页面状态...")
 	pageGenerator := generator.NewTagPageGenerator(contentDir)
 	previews := pageGenerator.PreviewTagPages(tagStats)
 
@@ -163,29 +207,34 @@ func generateTagPages(tagStats []models.TagStats, contentDir string, reader *buf
 		}
 	}
 
-	fmt.Printf("\n统计信息:\n")
-	fmt.Printf("- 需要新建: %d 个标签页面\n", createCount)
-	fmt.Printf("- 需要更新: %d 个标签页面\n", updateCount)
-	fmt.Printf("- 总计: %d 个标签页面\n", len(previews))
+	fmt.Printf("\n📊 统计信息:\n")
+	fmt.Printf("   🆕 需要新建: %d 个标签页面\n", createCount)
+	fmt.Printf("   🔄 需要更新: %d 个标签页面\n", updateCount)
+	fmt.Printf("   📦 总计: %d 个标签页面\n", len(previews))
 
 	if createCount == 0 && updateCount == 0 {
-		fmt.Println("没有需要处理的标签页面")
+		color.Green("✅ 所有标签页面都是最新的")
 		return
 	}
 
 	// 选择处理模式
-	fmt.Println("\n请选择处理模式:")
+	fmt.Println("\n🔧 请选择处理模式:")
+	options := []string{}
 	if createCount > 0 {
-		fmt.Printf("1. 仅新增 (%d 个)\n", createCount)
+		options = append(options, fmt.Sprintf("1. 仅新增 (%d 个)", createCount))
 	}
 	if updateCount > 0 {
-		fmt.Printf("2. 仅更新 (%d 个)\n", updateCount)
+		options = append(options, fmt.Sprintf("2. 仅更新 (%d 个)", updateCount))
 	}
 	if createCount > 0 && updateCount > 0 {
-		fmt.Printf("3. 全部处理 (%d 个)\n", createCount+updateCount)
+		options = append(options, fmt.Sprintf("3. 全部处理 (%d 个)", createCount+updateCount))
 	}
-	fmt.Println("0. 取消")
-	fmt.Print("请选择 (0-3): ")
+
+	for _, option := range options {
+		fmt.Printf("   %s\n", option)
+	}
+	fmt.Println("   0. 取消操作")
+	fmt.Print("请选择: ")
 
 	input, _ := reader.ReadString('\n')
 	choice := strings.TrimSpace(input)
@@ -194,43 +243,43 @@ func generateTagPages(tagStats []models.TagStats, contentDir string, reader *buf
 	switch choice {
 	case "1":
 		if createCount == 0 {
-			fmt.Println("没有需要新增的标签页面")
+			color.Yellow("⚠️  没有需要新增的标签页面")
 			return
 		}
 		mode = "create"
-		fmt.Printf("将新增 %d 个标签页面\n", createCount)
+		color.Blue("🆕 将新增 %d 个标签页面", createCount)
 	case "2":
 		if updateCount == 0 {
-			fmt.Println("没有需要更新的标签页面")
+			color.Yellow("⚠️  没有需要更新的标签页面")
 			return
 		}
 		mode = "update"
-		fmt.Printf("将更新 %d 个标签页面\n", updateCount)
+		color.Blue("🔄 将更新 %d 个标签页面", updateCount)
 	case "3":
 		if createCount == 0 && updateCount == 0 {
-			fmt.Println("没有需要处理的标签页面")
+			color.Yellow("⚠️  没有需要处理的标签页面")
 			return
 		}
 		mode = "all"
-		fmt.Printf("将处理 %d 个标签页面\n", createCount+updateCount)
+		color.Blue("📦 将处理 %d 个标签页面", createCount+updateCount)
 	case "0":
-		fmt.Println("已取消操作")
+		color.Yellow("❌ 已取消操作")
 		return
 	default:
-		fmt.Println("无效选择")
+		color.Red("⚠️  无效选择")
 		return
 	}
 
-	fmt.Print("确认执行？(y/n): ")
+	fmt.Print("\n确认执行？(y/n): ")
 	input, _ = reader.ReadString('\n')
 	if strings.TrimSpace(strings.ToLower(input)) != "y" {
-		fmt.Println("已取消生成")
+		color.Yellow("❌ 已取消生成")
 		return
 	}
 
-	fmt.Println("正在生成标签页面...")
+	color.Cyan("🚀 正在生成标签页面...")
 	if err := pageGenerator.GenerateTagPagesWithMode(tagStats, mode); err != nil {
-		fmt.Printf("生成失败: %v\n", err)
+		color.Red("❌ 生成失败: %v", err)
 	}
 }
 
@@ -253,17 +302,17 @@ func previewArticleSlugs(contentDir string) {
 }
 
 func generateArticleSlugs(contentDir string, reader *bufio.Reader) {
-	fmt.Println("正在扫描文章...")
+	color.Cyan("🔍 正在扫描文章...")
 
 	slugGenerator := generator.NewArticleSlugGenerator(contentDir)
 	previews, err := slugGenerator.PreviewArticleSlugs()
 	if err != nil {
-		fmt.Printf("扫描失败: %v\n", err)
+		color.Red("❌ 扫描失败: %v", err)
 		return
 	}
 
 	if len(previews) == 0 {
-		fmt.Println("没有找到需要处理的文章")
+		color.Green("✅ 没有找到需要处理的文章")
 		return
 	}
 
@@ -278,29 +327,34 @@ func generateArticleSlugs(contentDir string, reader *bufio.Reader) {
 		}
 	}
 
-	fmt.Printf("\n统计信息:\n")
-	fmt.Printf("- 缺少slug: %d 篇文章\n", missingCount)
-	fmt.Printf("- 需要更新: %d 篇文章\n", updateCount)
-	fmt.Printf("- 总计: %d 篇文章\n", len(previews))
+	fmt.Printf("\n📊 统计信息:\n")
+	fmt.Printf("   🆕 缺少slug: %d 篇文章\n", missingCount)
+	fmt.Printf("   🔄 需要更新: %d 篇文章\n", updateCount)
+	fmt.Printf("   📦 总计: %d 篇文章\n", len(previews))
 
 	if missingCount == 0 && updateCount == 0 {
-		fmt.Println("所有文章的slug都是最新的")
+		color.Green("✅ 所有文章的slug都是最新的")
 		return
 	}
 
 	// 选择处理模式
-	fmt.Println("\n请选择处理模式:")
+	fmt.Println("\n🔧 请选择处理模式:")
+	options := []string{}
 	if missingCount > 0 {
-		fmt.Printf("1. 仅新增 (%d 篇)\n", missingCount)
+		options = append(options, fmt.Sprintf("1. 仅新增 (%d 篇)", missingCount))
 	}
 	if updateCount > 0 {
-		fmt.Printf("2. 仅更新 (%d 篇)\n", updateCount)
+		options = append(options, fmt.Sprintf("2. 仅更新 (%d 篇)", updateCount))
 	}
 	if missingCount > 0 && updateCount > 0 {
-		fmt.Printf("3. 全部处理 (%d 篇)\n", missingCount+updateCount)
+		options = append(options, fmt.Sprintf("3. 全部处理 (%d 篇)", missingCount+updateCount))
 	}
-	fmt.Println("0. 取消")
-	fmt.Print("请选择 (0-3): ")
+
+	for _, option := range options {
+		fmt.Printf("   %s\n", option)
+	}
+	fmt.Println("   0. 取消操作")
+	fmt.Print("请选择: ")
 
 	input, _ := reader.ReadString('\n')
 	choice := strings.TrimSpace(input)
@@ -309,42 +363,42 @@ func generateArticleSlugs(contentDir string, reader *bufio.Reader) {
 	switch choice {
 	case "1":
 		if missingCount == 0 {
-			fmt.Println("没有缺少slug的文章")
+			color.Yellow("⚠️  没有缺少slug的文章")
 			return
 		}
 		mode = "missing"
-		fmt.Printf("将为 %d 篇文章新增slug\n", missingCount)
+		color.Blue("🆕 将为 %d 篇文章新增slug", missingCount)
 	case "2":
 		if updateCount == 0 {
-			fmt.Println("没有需要更新slug的文章")
+			color.Yellow("⚠️  没有需要更新slug的文章")
 			return
 		}
 		mode = "update"
-		fmt.Printf("将为 %d 篇文章更新slug\n", updateCount)
+		color.Blue("🔄 将为 %d 篇文章更新slug", updateCount)
 	case "3":
 		if missingCount == 0 && updateCount == 0 {
-			fmt.Println("没有需要处理的文章")
+			color.Yellow("⚠️  没有需要处理的文章")
 			return
 		}
 		mode = "all"
-		fmt.Printf("将为 %d 篇文章处理slug\n", missingCount+updateCount)
+		color.Blue("📦 将为 %d 篇文章处理slug", missingCount+updateCount)
 	case "0":
-		fmt.Println("已取消操作")
+		color.Yellow("❌ 已取消操作")
 		return
 	default:
-		fmt.Println("无效选择")
+		color.Red("⚠️  无效选择")
 		return
 	}
 
-	fmt.Print("确认执行？(y/n): ")
+	fmt.Print("\n确认执行？(y/n): ")
 	input, _ = reader.ReadString('\n')
 	if strings.TrimSpace(strings.ToLower(input)) != "y" {
-		fmt.Println("已取消生成")
+		color.Yellow("❌ 已取消生成")
 		return
 	}
 
-	fmt.Println("正在生成文章slug...")
+	color.Cyan("🚀 正在生成文章slug...")
 	if err := slugGenerator.GenerateArticleSlugsWithMode(mode); err != nil {
-		fmt.Printf("生成失败: %v\n", err)
+		color.Red("❌ 生成失败: %v", err)
 	}
 }
