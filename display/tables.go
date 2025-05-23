@@ -21,6 +21,23 @@ var (
 	lowColor    = color.New(color.FgBlue)
 )
 
+// BulkTranslationPreview 批量翻译预览信息
+type BulkTranslationPreview struct {
+	TotalTags           int
+	TotalArticles       int
+	CachedCount         int
+	MissingTranslations []string
+	TagsToTranslate     []TranslationItem
+	ArticlesToTranslate []TranslationItem
+}
+
+// TranslationItem 翻译项目信息
+type TranslationItem struct {
+	Type     string // "标签" 或 "文章"
+	Original string
+	Count    int
+}
+
 func DisplaySummary(articlesCount int, tagStats []models.TagStats, categoryStats []models.CategoryStats) {
 	titleColor.Println("=== 博客文章统计概览 ===")
 
@@ -353,6 +370,89 @@ func DisplayArticleSlugPreview(previews []generator.ArticleSlugPreview, limit in
 	fmt.Printf("- 需要更新slug: %d 篇\n", updateCount)
 	fmt.Printf("- 总计处理: %d 篇\n", len(previews))
 	fmt.Println()
+}
+
+// DisplayBulkTranslationPreview 显示批量翻译预览
+func DisplayBulkTranslationPreview(preview *BulkTranslationPreview, limit int) {
+	headerColor.Println("=== 全量翻译缓存预览 ===")
+
+	// 显示总体统计
+	fmt.Printf("\n📊 总体统计:\n")
+	fmt.Printf("   🏷️  标签数量: %d 个\n", preview.TotalTags)
+	fmt.Printf("   📝 文章数量: %d 篇\n", preview.TotalArticles)
+	fmt.Printf("   ✅ 已缓存: %d 个\n", preview.CachedCount)
+	fmt.Printf("   🔄 需翻译: %d 个\n", len(preview.MissingTranslations))
+
+	if len(preview.MissingTranslations) == 0 {
+		color.Green("✅ 所有内容都已有翻译缓存")
+		return
+	}
+
+	// 显示需要翻译的标签
+	if len(preview.TagsToTranslate) > 0 {
+		fmt.Printf("\n🏷️  需要翻译的标签 (显示前%d个):\n", min(limit/2, len(preview.TagsToTranslate)))
+
+		table := tablewriter.NewWriter(os.Stdout)
+		table.SetHeader([]string{"标签名", "使用次数", "状态"})
+		table.SetBorder(true)
+		table.SetRowLine(true)
+
+		displayCount := min(limit/2, len(preview.TagsToTranslate))
+		for i := 0; i < displayCount; i++ {
+			item := preview.TagsToTranslate[i]
+			table.Append([]string{
+				item.Original,
+				strconv.Itoa(item.Count),
+				highColor.Sprint("待翻译"),
+			})
+		}
+		table.Render()
+
+		if len(preview.TagsToTranslate) > displayCount {
+			fmt.Printf("... 还有 %d 个标签未显示\n", len(preview.TagsToTranslate)-displayCount)
+		}
+	}
+
+	// 显示需要翻译的文章
+	if len(preview.ArticlesToTranslate) > 0 {
+		fmt.Printf("\n📝 需要翻译的文章标题 (显示前%d个):\n", min(limit/2, len(preview.ArticlesToTranslate)))
+
+		table := tablewriter.NewWriter(os.Stdout)
+		table.SetHeader([]string{"文章标题", "状态"})
+		table.SetBorder(true)
+		table.SetRowLine(true)
+
+		displayCount := min(limit/2, len(preview.ArticlesToTranslate))
+		for i := 0; i < displayCount; i++ {
+			item := preview.ArticlesToTranslate[i]
+
+			// 截断过长的标题
+			title := item.Original
+			if len(title) > 50 {
+				title = title[:47] + "..."
+			}
+
+			table.Append([]string{
+				title,
+				highColor.Sprint("待翻译"),
+			})
+		}
+		table.Render()
+
+		if len(preview.ArticlesToTranslate) > displayCount {
+			fmt.Printf("... 还有 %d 篇文章未显示\n", len(preview.ArticlesToTranslate)-displayCount)
+		}
+	}
+
+	fmt.Printf("\n💡 提示: 生成全量缓存后，后续的预览和生成操作将显著加快\n")
+	fmt.Println()
+}
+
+func min(a, b int) int {
+	if a < b {
+		return a
+	}
+	return b
 }
 
 func generateSlugPreview(tag string) string {

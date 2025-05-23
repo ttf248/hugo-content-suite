@@ -211,6 +211,36 @@ func (t *LLMTranslator) TestConnection() error {
 	return err
 }
 
+// GetCachedTranslation 检查指定文本是否已有缓存
+func (t *LLMTranslator) GetCachedTranslation(text string) (string, bool) {
+	return t.cache.Get(text)
+}
+
+// GetAllCachedItems 获取所有缓存项
+func (t *LLMTranslator) GetAllCachedItems() map[string]string {
+	result := make(map[string]string)
+	for key, entry := range t.cache.Translations {
+		result[key] = entry.Translation
+	}
+	return result
+}
+
+// PrepareBulkTranslation 准备批量翻译，返回需要翻译的项目
+func (t *LLMTranslator) PrepareBulkTranslation(texts []string) ([]string, int) {
+	var missing []string
+	cached := 0
+
+	for _, text := range texts {
+		if _, exists := t.cache.Get(text); exists {
+			cached++
+		} else {
+			missing = append(missing, text)
+		}
+	}
+
+	return missing, cached
+}
+
 // isEnglishOnly 检查字符串是否只包含英文字符
 func isEnglishOnly(s string) bool {
 	for _, r := range s {
