@@ -134,10 +134,10 @@ func (t *LLMTranslator) TranslateToSlug(tag string) (string, error) {
 
 	slug := strings.TrimSpace(response.Choices[0].Message.Content)
 	normalizedSlug := normalizeSlug(slug)
-	
+
 	// 缓存翻译结果
 	t.cache.Set(tag, normalizedSlug)
-	
+
 	return normalizedSlug, nil
 }
 

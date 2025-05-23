@@ -42,7 +42,7 @@ func (g *ArticleSlugGenerator) PreviewArticleSlugs() ([]ArticleSlugPreview, erro
 	}
 
 	var previews []ArticleSlugPreview
-	
+
 	// 收集需要预览的文章标题
 	var previewTitles []string
 	maxSample := 5 // 预览时只翻译前5个作为示例
@@ -52,7 +52,7 @@ func (g *ArticleSlugGenerator) PreviewArticleSlugs() ([]ArticleSlugPreview, erro
 		if article.Title == "" {
 			continue
 		}
-		
+
 		if sampleCount < maxSample {
 			previewTitles = append(previewTitles, article.Title)
 			sampleCount++
