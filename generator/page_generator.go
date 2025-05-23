@@ -146,6 +146,7 @@ func (g *TagPageGenerator) GenerateTagPagesWithMode(tagStats []models.TagStats, 
 	updatedCount := 0
 	errorCount := 0
 
+	// 注意：此时slug已经在PreviewTagPages中通过BatchTranslate获得并缓存了
 	for i, preview := range targetPreviews {
 		fmt.Printf("处理标签 (%d/%d): %s\n", i+1, len(targetPreviews), preview.TagName)
 

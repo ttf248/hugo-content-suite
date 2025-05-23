@@ -67,9 +67,17 @@ func NewLLMTranslator() *LLMTranslator {
 
 // TranslateToSlug 将中文标签翻译为英文slug
 func (t *LLMTranslator) TranslateToSlug(tag string) (string, error) {
+	// 先检查缓存
+	if cached, exists := t.cache.Get(tag); exists {
+		return cached, nil
+	}
+
 	// 如果已经是英文，直接处理
 	if isEnglishOnly(tag) {
-		return normalizeSlug(tag), nil
+		slug := normalizeSlug(tag)
+		// 缓存结果
+		t.cache.Set(tag, slug)
+		return slug, nil
 	}
 
 	// 构建提示词
@@ -125,7 +133,12 @@ func (t *LLMTranslator) TranslateToSlug(tag string) (string, error) {
 	}
 
 	slug := strings.TrimSpace(response.Choices[0].Message.Content)
-	return normalizeSlug(slug), nil
+	normalizedSlug := normalizeSlug(slug)
+	
+	// 缓存翻译结果
+	t.cache.Set(tag, normalizedSlug)
+	
+	return normalizedSlug, nil
 }
 
 // BatchTranslate 批量翻译标签（支持缓存）
@@ -157,6 +170,7 @@ func (t *LLMTranslator) BatchTranslate(tags []string) (map[string]string, error)
 	fmt.Printf("🔄 需要翻译 %d 个新标签\n", len(missingTags))
 
 	// 翻译新标签
+	newTranslationsAdded := 0
 	for i, tag := range missingTags {
 		fmt.Printf("正在翻译 (%d/%d): %s", i+1, len(missingTags), tag)
 
@@ -172,6 +186,14 @@ func (t *LLMTranslator) BatchTranslate(tags []string) (map[string]string, error)
 		result[tag] = slug
 		// 添加到缓存
 		t.cache.Set(tag, slug)
+		newTranslationsAdded++
+
+		// 每5个翻译保存一次缓存，避免丢失数据
+		if newTranslationsAdded%5 == 0 {
+			if err := t.cache.Save(); err != nil {
+				fmt.Printf("⚠️ 中间保存缓存失败: %v\n", err)
+			}
+		}
 
 		// 添加延迟避免请求过于频繁
 		if i < len(missingTags)-1 {
@@ -179,10 +201,12 @@ func (t *LLMTranslator) BatchTranslate(tags []string) (map[string]string, error)
 		}
 	}
 
-	// 保存缓存
-	if len(missingTags) > 0 {
+	// 最终保存缓存
+	if newTranslationsAdded > 0 {
 		if err := t.cache.Save(); err != nil {
 			fmt.Printf("⚠️ 保存缓存失败: %v\n", err)
+		} else {
+			fmt.Printf("💾 已保存 %d 个新翻译到缓存\n", newTranslationsAdded)
 		}
 	}
 
