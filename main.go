@@ -149,18 +149,87 @@ func generateTagPages(tagStats []models.TagStats, contentDir string, reader *buf
 		return
 	}
 
-	fmt.Printf("将为 %d 个标签生成页面文件\n", len(tagStats))
-	fmt.Print("确认生成？(y/n): ")
+	// 先预览以获取统计信息
+	pageGenerator := generator.NewTagPageGenerator(contentDir)
+	previews := pageGenerator.PreviewTagPages(tagStats)
+
+	createCount := 0
+	updateCount := 0
+	for _, preview := range previews {
+		if preview.Status == "create" {
+			createCount++
+		} else if preview.Status == "update" {
+			updateCount++
+		}
+	}
+
+	fmt.Printf("\n统计信息:\n")
+	fmt.Printf("- 需要新建: %d 个标签页面\n", createCount)
+	fmt.Printf("- 需要更新: %d 个标签页面\n", updateCount)
+	fmt.Printf("- 总计: %d 个标签页面\n", len(previews))
+
+	if createCount == 0 && updateCount == 0 {
+		fmt.Println("没有需要处理的标签页面")
+		return
+	}
+
+	// 选择处理模式
+	fmt.Println("\n请选择处理模式:")
+	if createCount > 0 {
+		fmt.Printf("1. 仅新增 (%d 个)\n", createCount)
+	}
+	if updateCount > 0 {
+		fmt.Printf("2. 仅更新 (%d 个)\n", updateCount)
+	}
+	if createCount > 0 && updateCount > 0 {
+		fmt.Printf("3. 全部处理 (%d 个)\n", createCount+updateCount)
+	}
+	fmt.Println("0. 取消")
+	fmt.Print("请选择 (0-3): ")
 
 	input, _ := reader.ReadString('\n')
+	choice := strings.TrimSpace(input)
+
+	var mode string
+	switch choice {
+	case "1":
+		if createCount == 0 {
+			fmt.Println("没有需要新增的标签页面")
+			return
+		}
+		mode = "create"
+		fmt.Printf("将新增 %d 个标签页面\n", createCount)
+	case "2":
+		if updateCount == 0 {
+			fmt.Println("没有需要更新的标签页面")
+			return
+		}
+		mode = "update"
+		fmt.Printf("将更新 %d 个标签页面\n", updateCount)
+	case "3":
+		if createCount == 0 && updateCount == 0 {
+			fmt.Println("没有需要处理的标签页面")
+			return
+		}
+		mode = "all"
+		fmt.Printf("将处理 %d 个标签页面\n", createCount+updateCount)
+	case "0":
+		fmt.Println("已取消操作")
+		return
+	default:
+		fmt.Println("无效选择")
+		return
+	}
+
+	fmt.Print("确认执行？(y/n): ")
+	input, _ = reader.ReadString('\n')
 	if strings.TrimSpace(strings.ToLower(input)) != "y" {
 		fmt.Println("已取消生成")
 		return
 	}
 
 	fmt.Println("正在生成标签页面...")
-	pageGenerator := generator.NewTagPageGenerator(contentDir)
-	if err := pageGenerator.GenerateTagPages(tagStats); err != nil {
+	if err := pageGenerator.GenerateTagPagesWithMode(tagStats, mode); err != nil {
 		fmt.Printf("生成失败: %v\n", err)
 	}
 }
@@ -198,17 +267,84 @@ func generateArticleSlugs(contentDir string, reader *bufio.Reader) {
 		return
 	}
 
-	fmt.Printf("将为 %d 篇文章生成/更新 slug\n", len(previews))
-	fmt.Print("确认生成？(y/n): ")
+	// 统计信息
+	missingCount := 0
+	updateCount := 0
+	for _, preview := range previews {
+		if preview.Status == "missing" {
+			missingCount++
+		} else if preview.Status == "update" {
+			updateCount++
+		}
+	}
+
+	fmt.Printf("\n统计信息:\n")
+	fmt.Printf("- 缺少slug: %d 篇文章\n", missingCount)
+	fmt.Printf("- 需要更新: %d 篇文章\n", updateCount)
+	fmt.Printf("- 总计: %d 篇文章\n", len(previews))
+
+	if missingCount == 0 && updateCount == 0 {
+		fmt.Println("所有文章的slug都是最新的")
+		return
+	}
+
+	// 选择处理模式
+	fmt.Println("\n请选择处理模式:")
+	if missingCount > 0 {
+		fmt.Printf("1. 仅新增 (%d 篇)\n", missingCount)
+	}
+	if updateCount > 0 {
+		fmt.Printf("2. 仅更新 (%d 篇)\n", updateCount)
+	}
+	if missingCount > 0 && updateCount > 0 {
+		fmt.Printf("3. 全部处理 (%d 篇)\n", missingCount+updateCount)
+	}
+	fmt.Println("0. 取消")
+	fmt.Print("请选择 (0-3): ")
 
 	input, _ := reader.ReadString('\n')
+	choice := strings.TrimSpace(input)
+
+	var mode string
+	switch choice {
+	case "1":
+		if missingCount == 0 {
+			fmt.Println("没有缺少slug的文章")
+			return
+		}
+		mode = "missing"
+		fmt.Printf("将为 %d 篇文章新增slug\n", missingCount)
+	case "2":
+		if updateCount == 0 {
+			fmt.Println("没有需要更新slug的文章")
+			return
+		}
+		mode = "update"
+		fmt.Printf("将为 %d 篇文章更新slug\n", updateCount)
+	case "3":
+		if missingCount == 0 && updateCount == 0 {
+			fmt.Println("没有需要处理的文章")
+			return
+		}
+		mode = "all"
+		fmt.Printf("将为 %d 篇文章处理slug\n", missingCount+updateCount)
+	case "0":
+		fmt.Println("已取消操作")
+		return
+	default:
+		fmt.Println("无效选择")
+		return
+	}
+
+	fmt.Print("确认执行？(y/n): ")
+	input, _ = reader.ReadString('\n')
 	if strings.TrimSpace(strings.ToLower(input)) != "y" {
 		fmt.Println("已取消生成")
 		return
 	}
 
 	fmt.Println("正在生成文章slug...")
-	if err := slugGenerator.GenerateArticleSlugs(); err != nil {
+	if err := slugGenerator.GenerateArticleSlugsWithMode(mode); err != nil {
 		fmt.Printf("生成失败: %v\n", err)
 	}
 }

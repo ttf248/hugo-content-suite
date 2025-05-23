@@ -109,6 +109,89 @@ description: 包含 %d 篇关于 %s 的文章
 	return nil
 }
 
+// GenerateTagPagesWithMode 根据模式生成标签页面文件
+func (g *TagPageGenerator) GenerateTagPagesWithMode(tagStats []models.TagStats, mode string) error {
+	// 首先获取预览信息以确定状态
+	previews := g.PreviewTagPages(tagStats)
+
+	// 根据模式过滤需要处理的标签
+	var targetPreviews []TagPagePreview
+	for _, preview := range previews {
+		switch mode {
+		case "create":
+			if preview.Status == "create" {
+				targetPreviews = append(targetPreviews, preview)
+			}
+		case "update":
+			if preview.Status == "update" {
+				targetPreviews = append(targetPreviews, preview)
+			}
+		case "all":
+			targetPreviews = append(targetPreviews, preview)
+		}
+	}
+
+	if len(targetPreviews) == 0 {
+		fmt.Println("根据选择的模式，没有需要处理的标签")
+		return nil
+	}
+
+	// 确定tags目录路径
+	tagsDir := filepath.Join(g.contentDir, "..", "tags")
+	if err := os.MkdirAll(tagsDir, 0755); err != nil {
+		return fmt.Errorf("创建tags目录失败: %v", err)
+	}
+
+	createdCount := 0
+	updatedCount := 0
+	errorCount := 0
+
+	for i, preview := range targetPreviews {
+		fmt.Printf("处理标签 (%d/%d): %s\n", i+1, len(targetPreviews), preview.TagName)
+
+		tagDir := filepath.Join(tagsDir, preview.TagName)
+		indexFile := filepath.Join(tagDir, "_index.md")
+
+		// 确保标签目录存在
+		if err := os.MkdirAll(tagDir, 0755); err != nil {
+			fmt.Printf("  创建目录失败: %v\n", err)
+			errorCount++
+			continue
+		}
+
+		// 生成文件内容
+		content := fmt.Sprintf(`---
+title: %s
+slug: "%s"
+description: 包含 %d 篇关于 %s 的文章
+---
+`, preview.TagName, preview.Slug, preview.ArticleCount, preview.TagName)
+
+		// 写入文件
+		if err := os.WriteFile(indexFile, []byte(content), 0644); err != nil {
+			fmt.Printf("  写入文件失败: %v\n", err)
+			errorCount++
+			continue
+		}
+
+		if preview.Status == "create" {
+			fmt.Printf("  ✓ 新建: %s\n", preview.Slug)
+			createdCount++
+		} else {
+			fmt.Printf("  ✓ 更新: %s\n", preview.Slug)
+			updatedCount++
+		}
+	}
+
+	fmt.Printf("\n标签页面生成完成！\n")
+	fmt.Printf("- 新建: %d 个\n", createdCount)
+	fmt.Printf("- 更新: %d 个\n", updatedCount)
+	fmt.Printf("- 失败: %d 个\n", errorCount)
+	fmt.Printf("- 总计: %d 个\n", createdCount+updatedCount)
+
+	return nil
+}
+
 // PreviewTagPages 预览即将生成的标签页面
 func (g *TagPageGenerator) PreviewTagPages(tagStats []models.TagStats) []TagPagePreview {
 	var previews []TagPagePreview
