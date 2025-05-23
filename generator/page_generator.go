@@ -85,9 +85,8 @@ func (g *TagPageGenerator) GenerateTagPages(tagStats []models.TagStats) error {
 		content := fmt.Sprintf(`---
 title: %s
 slug: "%s"
-description: 包含 %d 篇关于 %s 的文章
 ---
-`, stat.Name, slug, stat.Count, stat.Name)
+`, stat.Name, slug)
 
 		// 写入文件
 		if err := os.WriteFile(indexFile, []byte(content), 0644); err != nil {
@@ -164,9 +163,8 @@ func (g *TagPageGenerator) GenerateTagPagesWithMode(tagStats []models.TagStats, 
 		content := fmt.Sprintf(`---
 title: %s
 slug: "%s"
-description: 包含 %d 篇关于 %s 的文章
 ---
-`, preview.TagName, preview.Slug, preview.ArticleCount, preview.TagName)
+`, preview.TagName, preview.Slug)
 
 		// 写入文件
 		if err := os.WriteFile(indexFile, []byte(content), 0644); err != nil {
