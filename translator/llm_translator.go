@@ -277,7 +277,8 @@ func (t *LLMTranslator) TranslateParagraph(paragraph string) (string, error) {
 2. 保持原文的段落结构和格式
 3. 如果包含技术术语，请使用准确的英文术语
 4. 如果包含Markdown格式，请保留格式标记
-5. 直接返回翻译结果，不要添加额外说明`, paragraph)
+5. 直接返回翻译结果，不要添加额外说明
+6. 如果原文已经是英文，请保持不变`, paragraph)
 
 	request := LMStudioRequest{
 		Model: t.model,
@@ -328,34 +329,67 @@ func (t *LLMTranslator) TranslateParagraph(paragraph string) (string, error) {
 func (t *LLMTranslator) shouldSkipTranslation(text string) bool {
 	trimmed := strings.TrimSpace(text)
 
+	// 空内容跳过
+	if trimmed == "" {
+		return true
+	}
+
 	// 检查是否为代码块
-	if strings.HasPrefix(trimmed, "```") || strings.HasPrefix(trimmed, "    ") {
+	if strings.HasPrefix(trimmed, "```") || strings.HasSuffix(trimmed, "```") {
 		return true
 	}
 
-	// 检查是否为引用块
+	// 检查是否为缩进代码块
+	if strings.HasPrefix(trimmed, "    ") {
+		return true
+	}
+
+	// 检查是否为引用块（但如果包含中文仍需翻译）
 	if strings.HasPrefix(trimmed, ">") {
-		return true
-	}
-
-	// 检查是否为链接或图片
-	if strings.Contains(trimmed, "](") || strings.HasPrefix(trimmed, "![") {
-		return true
-	}
-
-	// 检查是否主要是英文内容
-	chineseCount := 0
-	for _, r := range trimmed {
-		if r >= 0x4e00 && r <= 0x9fff {
-			chineseCount++
+		// 检查引用内容是否包含中文
+		if !t.containsChinese(trimmed) {
+			return true
 		}
 	}
 
-	// 如果中文字符少于总字符的30%，跳过翻译
-	if float64(chineseCount)/float64(len([]rune(trimmed))) < 0.3 {
+	// 检查是否为纯链接行（不包含中文描述）
+	if strings.Contains(trimmed, "](") && strings.Contains(trimmed, "[") {
+		// 如果链接中包含中文描述，仍需翻译
+		if !t.containsChinese(trimmed) {
+			return true
+		}
+	}
+
+	// 检查是否为图片（但如果alt文本包含中文仍需翻译）
+	if strings.HasPrefix(trimmed, "![") {
+		if !t.containsChinese(trimmed) {
+			return true
+		}
+	}
+
+	// 检查是否为HTML标签
+	if strings.HasPrefix(trimmed, "<") && strings.HasSuffix(trimmed, ">") {
+		if !t.containsChinese(trimmed) {
+			return true
+		}
+	}
+
+	// 如果没有中文字符，跳过翻译
+	if !t.containsChinese(trimmed) {
 		return true
 	}
 
+	// 只要包含中文就翻译，不再检查中文字符比例
+	return false
+}
+
+// containsChinese 检查文本是否包含中文
+func (t *LLMTranslator) containsChinese(text string) bool {
+	for _, r := range text {
+		if r >= 0x4e00 && r <= 0x9fff {
+			return true
+		}
+	}
 	return false
 }
 

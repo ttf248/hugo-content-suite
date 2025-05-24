@@ -1,9 +1,14 @@
 package generator
 
 import (
+	"bytes"
+	"encoding/json"
 	"fmt"
+	"io"
+	"net/http"
 	"os"
 	"path/filepath"
+	"regexp"
 	"strings"
 	"tag-scanner/scanner"
 	"tag-scanner/translator"
@@ -233,13 +238,32 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 			title := strings.TrimSpace(strings.TrimPrefix(trimmedLine, "title:"))
 			title = strings.Trim(title, "\"'")
 
-			if title != "" {
-				translatedTitle, err := a.translator.TranslateToArticleSlug(title)
+			if title != "" && a.containsChinese(title) {
+				translatedTitle, err := a.translator.TranslateParagraph(title)
 				if err != nil {
 					fmt.Printf("⚠️ 标题翻译失败，保持原文: %v\n", err)
 					translatedLines = append(translatedLines, line)
 				} else {
 					translatedLines = append(translatedLines, fmt.Sprintf("title: \"%s\"", translatedTitle))
+				}
+			} else {
+				translatedLines = append(translatedLines, line)
+			}
+			continue
+		}
+
+		// 翻译描述字段
+		if strings.HasPrefix(trimmedLine, "description:") {
+			description := strings.TrimSpace(strings.TrimPrefix(trimmedLine, "description:"))
+			description = strings.Trim(description, "\"'")
+
+			if description != "" && a.containsChinese(description) {
+				translatedDescription, err := a.translator.TranslateParagraph(description)
+				if err != nil {
+					fmt.Printf("⚠️ 描述翻译失败，保持原文: %v\n", err)
+					translatedLines = append(translatedLines, line)
+				} else {
+					translatedLines = append(translatedLines, fmt.Sprintf("description: \"%s\"", translatedDescription))
 				}
 			} else {
 				translatedLines = append(translatedLines, line)
@@ -270,38 +294,215 @@ func (a *ArticleTranslator) translateArticleBody(body string) (string, error) {
 			continue
 		}
 
-		fmt.Printf("  翻译段落 (%d/%d)...\n", i+1, len(paragraphs))
+		fmt.Printf("  翻译段落 (%d/%d): %s...\n", i+1, len(paragraphs), a.truncateText(paragraph, 50))
 
-		// 翻译当前段落
+		// 检查段落是否包含中文
+		if !a.containsChinese(paragraph) {
+			fmt.Printf("    跳过：无中文内容\n")
+			translatedParagraphs = append(translatedParagraphs, paragraph)
+			continue
+		}
+
+		// 对于包含中文的内容，强制翻译
 		translatedParagraph, err := a.translator.TranslateParagraph(paragraph)
 		if err != nil {
 			fmt.Printf("⚠️ 段落翻译失败，保持原文: %v\n", err)
 			translatedParagraphs = append(translatedParagraphs, paragraph)
 		} else {
-			translatedParagraphs = append(translatedParagraphs, translatedParagraph)
+			// 验证翻译结果是否还包含中文
+			if a.containsChinese(translatedParagraph) {
+				fmt.Printf("    ⚠️ 翻译结果仍包含中文，尝试重新翻译...\n")
+				// 尝试重新翻译
+				retryTranslated, retryErr := a.retryTranslation(paragraph)
+				if retryErr == nil && !a.containsChinese(retryTranslated) {
+					translatedParagraphs = append(translatedParagraphs, retryTranslated)
+					fmt.Printf("    ✓ 重新翻译成功\n")
+				} else {
+					fmt.Printf("    ⚠️ 重新翻译失败，使用首次结果\n")
+					translatedParagraphs = append(translatedParagraphs, translatedParagraph)
+				}
+			} else {
+				fmt.Printf("    ✓ 翻译完成\n")
+				translatedParagraphs = append(translatedParagraphs, translatedParagraph)
+			}
 		}
 
 		// 添加延迟避免API频率限制
-		time.Sleep(time.Millisecond * 500)
+		time.Sleep(time.Millisecond * 800)
 	}
 
 	return strings.Join(translatedParagraphs, "\n\n"), nil
 }
 
-// splitIntoParagraphs 将文本分割成段落
-func (a *ArticleTranslator) splitIntoParagraphs(text string) []string {
-	// 按双换行符分割段落
-	paragraphs := strings.Split(text, "\n\n")
+// retryTranslation 重新翻译段落，使用更强的提示词
+func (a *ArticleTranslator) retryTranslation(paragraph string) (string, error) {
+	prompt := fmt.Sprintf(`请将以下中文内容完全翻译成英文，绝对不要保留任何中文字符：
 
-	var result []string
-	for _, paragraph := range paragraphs {
-		trimmed := strings.TrimSpace(paragraph)
-		if trimmed != "" {
-			result = append(result, trimmed)
+%s
+
+严格要求：
+1. 必须将所有中文字符翻译为英文
+2. 保持Markdown格式标记
+3. 翻译要自然流畅
+4. 技术术语使用准确的英文表达
+5. 绝对不能在结果中保留任何中文字符
+6. 直接返回翻译结果，不要添加任何解释`, paragraph)
+
+	// 直接使用 translator 的 TranslateParagraph 方法，但需要临时修改提示词
+	// 创建一个临时的翻译器实例来处理重试翻译
+	request := translator.LMStudioRequest{
+		Model: "gemma-3-12b-it", // 直接使用模型名称
+		Messages: []translator.Message{
+			{
+				Role:    "user",
+				Content: prompt,
+			},
+		},
+		Stream: false,
+	}
+
+	jsonData, err := json.Marshal(request)
+	if err != nil {
+		return "", fmt.Errorf("序列化请求失败: %v", err)
+	}
+
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Post("http://172.19.192.1:2234/v1/chat/completions", "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return "", fmt.Errorf("发送请求失败: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("LM Studio返回错误状态: %d", resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("读取响应失败: %v", err)
+	}
+
+	var response translator.LMStudioResponse
+	if err := json.Unmarshal(body, &response); err != nil {
+		return "", fmt.Errorf("解析响应失败: %v", err)
+	}
+
+	if len(response.Choices) == 0 {
+		return "", fmt.Errorf("没有获取到翻译结果")
+	}
+
+	result := strings.TrimSpace(response.Choices[0].Message.Content)
+	return result, nil
+}
+
+// splitIntoParagraphs 将文本分割成段落，更细致的处理
+func (a *ArticleTranslator) splitIntoParagraphs(text string) []string {
+	// 先按双换行符分割
+	preliminaryParagraphs := strings.Split(text, "\n\n")
+
+	var finalParagraphs []string
+
+	for _, p := range preliminaryParagraphs {
+		trimmed := strings.TrimSpace(p)
+		if trimmed == "" {
+			continue
+		}
+
+		// 进一步处理包含代码块的段落
+		if strings.Contains(trimmed, "```") {
+			// 代码块保持原样，但检查注释是否包含中文
+			finalParagraphs = append(finalParagraphs, trimmed)
+		} else {
+			// 对于普通段落，按行进一步分割，确保每个有意义的部分都能被翻译
+			lines := strings.Split(trimmed, "\n")
+			var currentParagraph []string
+
+			for _, line := range lines {
+				line = strings.TrimSpace(line)
+				if line == "" {
+					if len(currentParagraph) > 0 {
+						finalParagraphs = append(finalParagraphs, strings.Join(currentParagraph, "\n"))
+						currentParagraph = nil
+					}
+				} else {
+					// 检查是否为特殊格式行，但如果包含中文也要翻译
+					if a.isSpecialFormatLine(line) && a.containsChinese(line) {
+						// 特殊格式但包含中文，单独翻译
+						if len(currentParagraph) > 0 {
+							finalParagraphs = append(finalParagraphs, strings.Join(currentParagraph, "\n"))
+							currentParagraph = nil
+						}
+						finalParagraphs = append(finalParagraphs, line)
+					} else if a.isSpecialFormatLine(line) {
+						// 特殊格式且无中文，单独保留
+						if len(currentParagraph) > 0 {
+							finalParagraphs = append(finalParagraphs, strings.Join(currentParagraph, "\n"))
+							currentParagraph = nil
+						}
+						finalParagraphs = append(finalParagraphs, line)
+					} else {
+						currentParagraph = append(currentParagraph, line)
+					}
+				}
+			}
+
+			if len(currentParagraph) > 0 {
+				finalParagraphs = append(finalParagraphs, strings.Join(currentParagraph, "\n"))
+			}
 		}
 	}
 
-	return result
+	return finalParagraphs
+}
+
+// isSpecialFormatLine 判断是否为特殊格式行
+func (a *ArticleTranslator) isSpecialFormatLine(line string) bool {
+	trimmed := strings.TrimSpace(line)
+
+	// 标题
+	if strings.HasPrefix(trimmed, "#") {
+		return true
+	}
+
+	// 无序列表
+	if strings.HasPrefix(trimmed, "- ") || strings.HasPrefix(trimmed, "* ") || strings.HasPrefix(trimmed, "+ ") {
+		return true
+	}
+
+	// 有序列表
+	if matched, _ := regexp.MatchString(`^\d+\. `, trimmed); matched {
+		return true
+	}
+
+	// 引用
+	if strings.HasPrefix(trimmed, ">") {
+		return true
+	}
+
+	// 水平线
+	if trimmed == "---" || trimmed == "***" || trimmed == "___" {
+		return true
+	}
+
+	return false
+}
+
+// containsChinese 检查文本是否包含中文
+func (a *ArticleTranslator) containsChinese(text string) bool {
+	for _, r := range text {
+		if r >= 0x4e00 && r <= 0x9fff {
+			return true
+		}
+	}
+	return false
+}
+
+// truncateText 截断文本用于显示
+func (a *ArticleTranslator) truncateText(text string, maxLen int) string {
+	if len(text) <= maxLen {
+		return text
+	}
+	return text[:maxLen] + "..."
 }
 
 // combineTranslatedContent 合并翻译后的内容
