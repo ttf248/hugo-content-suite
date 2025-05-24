@@ -101,7 +101,7 @@ func (m *InteractiveMenu) displayMainMenu() {
 	fmt.Println("  9. 查看缓存状态")
 	fmt.Println(" 10. 预览全量翻译缓存")
 	fmt.Println(" 11. 生成全量翻译缓存")
-	fmt.Println(" 12. 清空翻译缓存")
+	fmt.Println(" 12. 清空翻译缓存 (支持分类)")
 	fmt.Println()
 
 	// 系统工具模块

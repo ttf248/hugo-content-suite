@@ -4,140 +4,211 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
-	"path/filepath"
 	"time"
 )
 
-const CacheFileName = "tag_translations_cache.json"
+type CacheType string
 
-type TranslationCache struct {
-	Version      string                `json:"version"`
-	LastUpdated  time.Time             `json:"last_updated"`
-	Translations map[string]CacheEntry `json:"translations"`
-	filePath     string
-}
+const (
+	TagCache     CacheType = "tag"
+	ArticleCache CacheType = "article"
+)
 
 type CacheEntry struct {
 	Translation string    `json:"translation"`
-	CreatedAt   time.Time `json:"created_at"`
-	UpdatedAt   time.Time `json:"updated_at"`
+	Timestamp   time.Time `json:"timestamp"`
+	Type        CacheType `json:"type"`
 }
 
-// NewTranslationCache 创建新的翻译缓存
-func NewTranslationCache(cacheDir string) *TranslationCache {
-	if cacheDir == "" {
-		cacheDir = "."
-	}
-
-	filePath := filepath.Join(cacheDir, CacheFileName)
-
-	cache := &TranslationCache{
-		Version:      "1.0",
-		LastUpdated:  time.Now(),
-		Translations: make(map[string]CacheEntry),
-		filePath:     filePath,
-	}
-
-	// 尝试加载现有缓存
-	cache.Load()
-
-	return cache
+type TranslationCache struct {
+	tagCacheFile     string
+	articleCacheFile string
+	tagCache         map[string]CacheEntry
+	articleCache     map[string]CacheEntry
+	expireDuration   time.Duration
 }
 
-// Load 从文件加载缓存
+func NewTranslationCache() *TranslationCache {
+	return &TranslationCache{
+		tagCacheFile:     "tag_translations_cache.json",
+		articleCacheFile: "article_translations_cache.json",
+		tagCache:         make(map[string]CacheEntry),
+		articleCache:     make(map[string]CacheEntry),
+		expireDuration:   24 * time.Hour * 30, // 30天过期
+	}
+}
+
 func (c *TranslationCache) Load() error {
-	if _, err := os.Stat(c.filePath); os.IsNotExist(err) {
-		fmt.Println("📄 缓存文件不存在，将创建新的缓存")
-		return nil
+	// 加载标签缓存
+	if err := c.loadCacheFile(c.tagCacheFile, &c.tagCache); err != nil {
+		fmt.Printf("⚠️ 加载标签缓存失败: %v\n", err)
+		c.tagCache = make(map[string]CacheEntry)
 	}
 
-	data, err := os.ReadFile(c.filePath)
-	if err != nil {
-		return fmt.Errorf("读取缓存文件失败: %v", err)
+	// 加载文章缓存
+	if err := c.loadCacheFile(c.articleCacheFile, &c.articleCache); err != nil {
+		fmt.Printf("⚠️ 加载文章缓存失败: %v\n", err)
+		c.articleCache = make(map[string]CacheEntry)
 	}
 
-	if err := json.Unmarshal(data, c); err != nil {
-		return fmt.Errorf("解析缓存文件失败: %v", err)
-	}
-
-	fmt.Printf("📄 已加载缓存文件，包含 %d 个翻译记录\n", len(c.Translations))
+	fmt.Printf("📄 已加载缓存文件 - 标签: %d 个, 文章: %d 个\n",
+		len(c.tagCache), len(c.articleCache))
 	return nil
 }
 
-// Save 保存缓存到文件
+func (c *TranslationCache) loadCacheFile(filename string, cache *map[string]CacheEntry) error {
+	if _, err := os.Stat(filename); os.IsNotExist(err) {
+		return nil // 文件不存在，不是错误
+	}
+
+	data, err := os.ReadFile(filename)
+	if err != nil {
+		return err
+	}
+
+	if len(data) == 0 {
+		return nil // 空文件
+	}
+
+	return json.Unmarshal(data, cache)
+}
+
 func (c *TranslationCache) Save() error {
-	c.LastUpdated = time.Now()
-
-	data, err := json.MarshalIndent(c, "", "  ")
-	if err != nil {
-		return fmt.Errorf("序列化缓存失败: %v", err)
+	// 保存标签缓存
+	if err := c.saveCacheFile(c.tagCacheFile, c.tagCache); err != nil {
+		return fmt.Errorf("保存标签缓存失败: %v", err)
 	}
 
-	if err := os.WriteFile(c.filePath, data, 0644); err != nil {
-		return fmt.Errorf("写入缓存文件失败: %v", err)
+	// 保存文章缓存
+	if err := c.saveCacheFile(c.articleCacheFile, c.articleCache); err != nil {
+		return fmt.Errorf("保存文章缓存失败: %v", err)
 	}
 
-	fmt.Printf("💾 已保存缓存文件，包含 %d 个翻译记录\n", len(c.Translations))
+	fmt.Printf("💾 已保存缓存文件 - 标签: %d 个, 文章: %d 个\n",
+		len(c.tagCache), len(c.articleCache))
 	return nil
 }
 
-// Get 获取缓存的翻译
-func (c *TranslationCache) Get(tag string) (string, bool) {
-	entry, exists := c.Translations[tag]
+func (c *TranslationCache) saveCacheFile(filename string, cache map[string]CacheEntry) error {
+	data, err := json.MarshalIndent(cache, "", "  ")
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(filename, data, 0644)
+}
+
+func (c *TranslationCache) Get(text string, cacheType CacheType) (string, bool) {
+	var cache map[string]CacheEntry
+	switch cacheType {
+	case TagCache:
+		cache = c.tagCache
+	case ArticleCache:
+		cache = c.articleCache
+	default:
+		return "", false
+	}
+
+	entry, exists := cache[text]
 	if !exists {
 		return "", false
 	}
+
+	// 检查是否过期
+	if time.Since(entry.Timestamp) > c.expireDuration {
+		delete(cache, text)
+		return "", false
+	}
+
 	return entry.Translation, true
 }
 
-// Set 设置缓存的翻译
-func (c *TranslationCache) Set(tag, translation string) {
-	now := time.Now()
+func (c *TranslationCache) Set(text, translation string, cacheType CacheType) {
+	entry := CacheEntry{
+		Translation: translation,
+		Timestamp:   time.Now(),
+		Type:        cacheType,
+	}
 
-	if entry, exists := c.Translations[tag]; exists {
-		// 更新现有条目
-		entry.Translation = translation
-		entry.UpdatedAt = now
-		c.Translations[tag] = entry
-	} else {
-		// 创建新条目
-		c.Translations[tag] = CacheEntry{
-			Translation: translation,
-			CreatedAt:   now,
-			UpdatedAt:   now,
-		}
+	switch cacheType {
+	case TagCache:
+		c.tagCache[text] = entry
+	case ArticleCache:
+		c.articleCache[text] = entry
 	}
 }
 
-// GetMissingTags 获取需要翻译的标签（缓存中不存在的）
-func (c *TranslationCache) GetMissingTags(tags []string) []string {
+func (c *TranslationCache) GetMissingTexts(texts []string, cacheType CacheType) []string {
 	var missing []string
-
-	for _, tag := range tags {
-		if _, exists := c.Translations[tag]; !exists {
-			missing = append(missing, tag)
+	for _, text := range texts {
+		if _, exists := c.Get(text, cacheType); !exists {
+			missing = append(missing, text)
 		}
 	}
-
 	return missing
 }
 
-// GetStats 获取缓存统计信息
-func (c *TranslationCache) GetStats() (int, int) {
-	return len(c.Translations), 0 // 总数，过期数（暂时未实现过期机制）
+func (c *TranslationCache) GetStats(cacheType CacheType) (total int, expired int) {
+	var cache map[string]CacheEntry
+	switch cacheType {
+	case TagCache:
+		cache = c.tagCache
+	case ArticleCache:
+		cache = c.articleCache
+	default:
+		return 0, 0
+	}
+
+	total = len(cache)
+	for _, entry := range cache {
+		if time.Since(entry.Timestamp) > c.expireDuration {
+			expired++
+		}
+	}
+	return
 }
 
-// Clear 清空缓存
-func (c *TranslationCache) Clear() {
-	c.Translations = make(map[string]CacheEntry)
-	c.LastUpdated = time.Now()
+func (c *TranslationCache) Clear(cacheType CacheType) error {
+	switch cacheType {
+	case TagCache:
+		c.tagCache = make(map[string]CacheEntry)
+		return c.saveCacheFile(c.tagCacheFile, c.tagCache)
+	case ArticleCache:
+		c.articleCache = make(map[string]CacheEntry)
+		return c.saveCacheFile(c.articleCacheFile, c.articleCache)
+	default:
+		return fmt.Errorf("未知的缓存类型: %v", cacheType)
+	}
 }
 
-// GetCacheInfo 获取缓存文件信息
-func (c *TranslationCache) GetCacheInfo() string {
-	info := fmt.Sprintf("缓存文件: %s\n", c.filePath)
-	info += fmt.Sprintf("版本: %s\n", c.Version)
-	info += fmt.Sprintf("最后更新: %s\n", c.LastUpdated.Format("2006-01-02 15:04:05"))
-	info += fmt.Sprintf("翻译条目: %d 个", len(c.Translations))
-	return info
+func (c *TranslationCache) ClearAll() error {
+	c.tagCache = make(map[string]CacheEntry)
+	c.articleCache = make(map[string]CacheEntry)
+
+	if err := c.saveCacheFile(c.tagCacheFile, c.tagCache); err != nil {
+		return err
+	}
+	if err := c.saveCacheFile(c.articleCacheFile, c.articleCache); err != nil {
+		return err
+	}
+	return nil
+}
+
+func (c *TranslationCache) GetInfo() string {
+	tagTotal, tagExpired := c.GetStats(TagCache)
+	articleTotal, articleExpired := c.GetStats(ArticleCache)
+
+	return fmt.Sprintf(`📊 缓存状态信息:
+🏷️  标签缓存:
+   📁 文件: %s
+   📄 总条目: %d 个
+   ⏰ 过期条目: %d 个
+   ✅ 有效条目: %d 个
+
+📝 文章缓存:
+   📁 文件: %s
+   📄 总条目: %d 个
+   ⏰ 过期条目: %d 个
+   ✅ 有效条目: %d 个`,
+		c.tagCacheFile, tagTotal, tagExpired, tagTotal-tagExpired,
+		c.articleCacheFile, articleTotal, articleExpired, articleTotal-articleExpired)
 }

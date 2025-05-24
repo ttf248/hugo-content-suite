@@ -3,6 +3,7 @@ package operations
 import (
 	"bufio"
 	"fmt"
+	"strings"
 	"tag-scanner/display"
 	"tag-scanner/models"
 	"tag-scanner/scanner"
@@ -28,19 +29,47 @@ func (p *Processor) ShowCacheStatus() {
 }
 
 func (p *Processor) ClearTranslationCache(reader *bufio.Reader) {
-	color.Yellow("⚠️  警告：此操作将清空所有翻译缓存")
-	if !p.confirmExecution(reader, "确认清空缓存？(y/n): ") {
-		color.Yellow("❌ 已取消清空操作")
-		return
-	}
+	color.Cyan("=== 清空翻译缓存 ===")
+	fmt.Println("请选择要清空的缓存类型：")
+	fmt.Println("1. 清空标签缓存")
+	fmt.Println("2. 清空文章缓存")
+	fmt.Println("3. 清空所有缓存")
+	fmt.Println("0. 取消操作")
+
+	choice := p.getChoice(reader, "请选择 (0-3): ")
 
 	translatorInstance := translator.NewLLMTranslator()
-	if err := translatorInstance.ClearCache(); err != nil {
-		color.Red("❌ 清空缓存失败: %v", err)
-		return
-	}
 
-	color.Green("✅ 翻译缓存已清空")
+	switch choice {
+	case "1":
+		if p.confirmExecution(reader, "⚠️ 确认清空标签缓存？(y/n): ") {
+			if err := translatorInstance.ClearTagCache(); err != nil {
+				color.Red("❌ 清空标签缓存失败: %v", err)
+			} else {
+				color.Green("✅ 标签缓存已清空")
+			}
+		}
+	case "2":
+		if p.confirmExecution(reader, "⚠️ 确认清空文章缓存？(y/n): ") {
+			if err := translatorInstance.ClearArticleCache(); err != nil {
+				color.Red("❌ 清空文章缓存失败: %v", err)
+			} else {
+				color.Green("✅ 文章缓存已清空")
+			}
+		}
+	case "3":
+		if p.confirmExecution(reader, "⚠️ 确认清空所有缓存？(y/n): ") {
+			if err := translatorInstance.ClearCache(); err != nil {
+				color.Red("❌ 清空缓存失败: %v", err)
+			} else {
+				color.Green("✅ 所有缓存已清空")
+			}
+		}
+	case "0":
+		color.Yellow("❌ 已取消操作")
+	default:
+		color.Red("⚠️ 无效选择")
+	}
 }
 
 func (p *Processor) PreviewBulkTranslationCache(tagStats []models.TagStats) {
@@ -79,10 +108,29 @@ func (p *Processor) GenerateBulkTranslationCache(tagStats []models.TagStats, rea
 	color.Cyan("🚀 正在生成全量翻译缓存...")
 	translatorInstance := translator.NewLLMTranslator()
 
-	_, err = translatorInstance.BatchTranslate(cachePreview.MissingTranslations)
-	if err != nil {
-		color.Red("❌ 批量翻译失败: %v", err)
-		return
+	// 分别批量翻译标签和文章
+	if len(cachePreview.TagsToTranslate) > 0 {
+		tagNames := make([]string, len(cachePreview.TagsToTranslate))
+		for i, item := range cachePreview.TagsToTranslate {
+			tagNames[i] = item.Original
+		}
+		_, err = translatorInstance.BatchTranslateTags(tagNames)
+		if err != nil {
+			color.Red("❌ 标签批量翻译失败: %v", err)
+			return
+		}
+	}
+
+	if len(cachePreview.ArticlesToTranslate) > 0 {
+		articleTitles := make([]string, len(cachePreview.ArticlesToTranslate))
+		for i, item := range cachePreview.ArticlesToTranslate {
+			articleTitles[i] = item.Original
+		}
+		_, err = translatorInstance.BatchTranslateArticles(articleTitles)
+		if err != nil {
+			color.Red("❌ 文章批量翻译失败: %v", err)
+			return
+		}
 	}
 
 	color.Green("✅ 全量翻译缓存生成完成！")
@@ -118,47 +166,51 @@ func (p *Processor) collectTranslationTargets(tagStats []models.TagStats) (*disp
 		}
 	}
 
-	// 合并所有需要翻译的文本
-	allTexts := append(tagNames, articleTitles...)
+	// 分别检查标签和文章的缓存状态
+	missingTags := translatorInstance.GetMissingTags(tagNames)
+	missingArticles := translatorInstance.GetMissingArticles(articleTitles)
 
-	// 检查缓存状态
-	missingTexts, cachedCount := translatorInstance.PrepareBulkTranslation(allTexts)
+	// 合并所有缺失的文本
+	allMissingTexts := append(missingTags, missingArticles...)
+	cachedCount := len(tagNames) + len(articleTitles) - len(allMissingTexts)
 
 	// 分离标签和文章的缺失项
 	var tagsToTranslate []display.TranslationItem
 	var articlesToTranslate []display.TranslationItem
 
-	for _, text := range missingTexts {
-		// 检查是否为标签
-		isTag := false
+	for _, tag := range missingTags {
 		for _, stat := range tagStats {
-			if stat.Name == text {
+			if stat.Name == tag {
 				tagsToTranslate = append(tagsToTranslate, display.TranslationItem{
 					Type:     "标签",
-					Original: text,
+					Original: tag,
 					Count:    stat.Count,
 				})
-				isTag = true
 				break
 			}
 		}
+	}
 
-		// 如果不是标签，则为文章标题
-		if !isTag {
-			articlesToTranslate = append(articlesToTranslate, display.TranslationItem{
-				Type:     "文章",
-				Original: text,
-				Count:    1,
-			})
-		}
+	for _, title := range missingArticles {
+		articlesToTranslate = append(articlesToTranslate, display.TranslationItem{
+			Type:     "文章",
+			Original: title,
+			Count:    1,
+		})
 	}
 
 	return &display.BulkTranslationPreview{
 		TotalTags:           len(tagStats),
 		TotalArticles:       len(articleTitles),
 		CachedCount:         cachedCount,
-		MissingTranslations: missingTexts,
+		MissingTranslations: allMissingTexts,
 		TagsToTranslate:     tagsToTranslate,
 		ArticlesToTranslate: articlesToTranslate,
 	}, nil
+}
+
+func (p *Processor) getChoice(reader *bufio.Reader, prompt string) string {
+	fmt.Print(prompt)
+	input, _ := reader.ReadString('\n')
+	return strings.TrimSpace(input)
 }

@@ -213,12 +213,12 @@ func (g *TagPageGenerator) PreviewTagPages(tagStats []models.TagStats) []TagPage
 		tagNames[i] = stat.Name
 	}
 
-	// 批量翻译（利用缓存）
+	// 批量翻译标签（利用缓存）
 	var slugMap map[string]string
 	var err error
 
 	if useAI {
-		slugMap, err = g.translator.BatchTranslate(tagNames)
+		slugMap, err = g.translator.BatchTranslateTags(tagNames)
 		if err != nil {
 			fmt.Printf("⚠️ 批量翻译失败: %v，使用备用方案\n", err)
 			useAI = false

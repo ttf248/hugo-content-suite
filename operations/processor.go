@@ -146,11 +146,34 @@ func (p *Processor) processTranslationCache(cachePreview *display.BulkTranslatio
 	fmt.Printf("需要翻译 %d 个内容...\n", len(cachePreview.MissingTranslations))
 
 	translatorInstance := translator.NewLLMTranslator()
-	_, err := translatorInstance.BatchTranslate(cachePreview.MissingTranslations)
-	if err != nil {
-		color.Red("❌ 翻译缓存生成失败: %v", err)
-		return false
+
+	// 分别处理标签和文章翻译
+	if len(cachePreview.TagsToTranslate) > 0 {
+		fmt.Printf("  🏷️ 翻译 %d 个标签...\n", len(cachePreview.TagsToTranslate))
+		tagNames := make([]string, len(cachePreview.TagsToTranslate))
+		for i, item := range cachePreview.TagsToTranslate {
+			tagNames[i] = item.Original
+		}
+		_, err := translatorInstance.BatchTranslateTags(tagNames)
+		if err != nil {
+			color.Red("❌ 标签翻译失败: %v", err)
+			return false
+		}
 	}
+
+	if len(cachePreview.ArticlesToTranslate) > 0 {
+		fmt.Printf("  📝 翻译 %d 个文章标题...\n", len(cachePreview.ArticlesToTranslate))
+		articleTitles := make([]string, len(cachePreview.ArticlesToTranslate))
+		for i, item := range cachePreview.ArticlesToTranslate {
+			articleTitles[i] = item.Original
+		}
+		_, err := translatorInstance.BatchTranslateArticles(articleTitles)
+		if err != nil {
+			color.Red("❌ 文章翻译失败: %v", err)
+			return false
+		}
+	}
+
 	color.Green("✅ 翻译缓存生成完成")
 	return true
 }

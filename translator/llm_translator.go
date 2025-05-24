@@ -48,36 +48,72 @@ type Usage struct {
 	TotalTokens      int `json:"total_tokens"`
 }
 
+// CacheType、TagCache和ArticleCache已在cache.go中定义
+
 type LLMTranslator struct {
-	client  *http.Client
 	baseURL string
 	model   string
+	timeout time.Duration
 	cache   *TranslationCache
 }
 
 func NewLLMTranslator() *LLMTranslator {
-	return &LLMTranslator{
-		client: &http.Client{
-			Timeout: 30 * time.Second,
-		},
-		baseURL: LMStudioURL,
-		model:   ModelName,
-		cache:   NewTranslationCache("."), // 缓存文件保存在当前目录
+	translator := &LLMTranslator{
+		baseURL: "http://172.19.192.1:2234/v1/chat/completions",
+		model:   "gemma-3-12b-it",
+		timeout: 30 * time.Second,
+		cache:   NewTranslationCache(),
 	}
+
+	translator.cache.Load()
+	return translator
+}
+
+// TestConnection 测试与LM Studio的连接
+func (t *LLMTranslator) TestConnection() error {
+	request := LMStudioRequest{
+		Model: t.model,
+		Messages: []Message{
+			{
+				Role:    "user",
+				Content: "test",
+			},
+		},
+		Stream: false,
+	}
+
+	jsonData, err := json.Marshal(request)
+	if err != nil {
+		return fmt.Errorf("序列化测试请求失败: %v", err)
+	}
+
+	client := &http.Client{Timeout: 5 * time.Second} // 短超时用于测试
+	resp, err := client.Post(t.baseURL, "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return fmt.Errorf("连接失败: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return fmt.Errorf("服务器返回错误状态: %d", resp.StatusCode)
+	}
+
+	return nil
 }
 
 // TranslateToSlug 将中文标签翻译为英文slug
-func (t *LLMTranslator) TranslateToSlug(tag string) (string, error) {
-	// 先检查缓存
-	if cached, exists := t.cache.Get(tag); exists {
+func (t *LLMTranslator) TranslateToSlug(text string) (string, error) {
+	// 先检查标签缓存
+	if cached, exists := t.cache.Get(text, TagCache); exists {
+		utils.RecordCacheHit()
 		return cached, nil
 	}
+	utils.RecordCacheMiss()
 
 	// 如果已经是英文，直接处理
-	if isEnglishOnly(tag) {
-		slug := normalizeSlug(tag)
-		// 缓存结果
-		t.cache.Set(tag, slug)
+	if isEnglishOnly(text) {
+		slug := normalizeSlug(text)
+		t.cache.Set(text, slug, TagCache)
 		return slug, nil
 	}
 
@@ -91,7 +127,7 @@ func (t *LLMTranslator) TranslateToSlug(tag string) (string, error) {
 
 中文标签: %s
 
-英文slug:`, tag)
+英文slug:`, text)
 
 	request := LMStudioRequest{
 		Model: t.model,
@@ -109,7 +145,8 @@ func (t *LLMTranslator) TranslateToSlug(tag string) (string, error) {
 		return "", fmt.Errorf("序列化请求失败: %v", err)
 	}
 
-	resp, err := t.client.Post(t.baseURL, "application/json", bytes.NewBuffer(jsonData))
+	client := &http.Client{Timeout: t.timeout}
+	resp, err := client.Post(t.baseURL, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return "", fmt.Errorf("发送请求失败: %v", err)
 	}
@@ -136,23 +173,115 @@ func (t *LLMTranslator) TranslateToSlug(tag string) (string, error) {
 	slug := strings.TrimSpace(response.Choices[0].Message.Content)
 	normalizedSlug := normalizeSlug(slug)
 
-	// 缓存翻译结果
-	t.cache.Set(tag, normalizedSlug)
+	// 缓存翻译结果到标签缓存
+	t.cache.Set(text, normalizedSlug, TagCache)
 
 	return normalizedSlug, nil
 }
 
-// BatchTranslate 批量翻译标签（支持缓存）
-func (t *LLMTranslator) BatchTranslate(tags []string) (map[string]string, error) {
+// TranslateToArticleSlug 将文章标题翻译为英文slug
+func (t *LLMTranslator) TranslateToArticleSlug(title string) (string, error) {
+	// 先检查文章缓存
+	if cached, exists := t.cache.Get(title, ArticleCache); exists {
+		utils.RecordCacheHit()
+		return cached, nil
+	}
+	utils.RecordCacheMiss()
+
+	// 如果已经是英文，直接处理
+	if isEnglishOnly(title) {
+		slug := normalizeSlug(title)
+		t.cache.Set(title, slug, ArticleCache)
+		return slug, nil
+	}
+
+	// 构建翻译请求
+	prompt := fmt.Sprintf(`请将以下中文文章标题翻译为简洁的英文slug，要求：
+1. 使用小写字母
+2. 单词间用连字符(-)连接
+3. 去除特殊字符
+4. 保持语义准确
+5. 适合作为URL路径
+
+标题：%s
+
+请只返回翻译后的slug，不要其他内容。`, title)
+
+	request := LMStudioRequest{
+		Model: t.model,
+		Messages: []Message{
+			{
+				Role:    "user",
+				Content: prompt,
+			},
+		},
+		Stream: false,
+	}
+
+	jsonData, err := json.Marshal(request)
+	if err != nil {
+		return "", fmt.Errorf("序列化请求失败: %v", err)
+	}
+
+	client := &http.Client{Timeout: t.timeout}
+	resp, err := client.Post(t.baseURL, "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return "", fmt.Errorf("发送请求失败: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("LM Studio返回错误状态: %d", resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("读取响应失败: %v", err)
+	}
+
+	var response LMStudioResponse
+	if err := json.Unmarshal(body, &response); err != nil {
+		return "", fmt.Errorf("解析响应失败: %v", err)
+	}
+
+	if len(response.Choices) == 0 {
+		return "", fmt.Errorf("没有获取到翻译结果")
+	}
+
+	slug := strings.TrimSpace(response.Choices[0].Message.Content)
+	normalizedSlug := normalizeSlug(slug)
+
+	// 缓存翻译结果到文章缓存
+	t.cache.Set(title, normalizedSlug, ArticleCache)
+
+	return normalizedSlug, nil
+}
+
+// BatchTranslateTags 批量翻译标签
+func (t *LLMTranslator) BatchTranslateTags(tags []string) (map[string]string, error) {
+	return t.batchTranslate(tags, TagCache, "标签")
+}
+
+// BatchTranslateArticles 批量翻译文章标题
+func (t *LLMTranslator) BatchTranslateArticles(titles []string) (map[string]string, error) {
+	return t.batchTranslate(titles, ArticleCache, "文章标题")
+}
+
+// BatchTranslate 兼容旧接口，自动判断类型
+func (t *LLMTranslator) BatchTranslate(texts []string) (map[string]string, error) {
+	// 默认当作标签处理，保持向后兼容
+	return t.BatchTranslateTags(texts)
+}
+
+func (t *LLMTranslator) batchTranslate(texts []string, cacheType CacheType, typeName string) (map[string]string, error) {
 	startTime := time.Now()
 	result := make(map[string]string)
 
-	// 首先从缓存中获取已有的翻译
-	fmt.Println("🔍 检查缓存中的翻译...")
+	fmt.Printf("🔍 检查%s缓存...\n", typeName)
 	cachedCount := 0
-	for _, tag := range tags {
-		if translation, exists := t.cache.Get(tag); exists {
-			result[tag] = translation
+	for _, text := range texts {
+		if translation, exists := t.cache.Get(text, cacheType); exists {
+			result[text] = translation
 			cachedCount++
 			utils.RecordCacheHit()
 		} else {
@@ -161,37 +290,44 @@ func (t *LLMTranslator) BatchTranslate(tags []string) (map[string]string, error)
 	}
 
 	if cachedCount > 0 {
-		fmt.Printf("📋 从缓存获取 %d 个翻译\n", cachedCount)
+		fmt.Printf("📋 从缓存获取 %d 个%s翻译\n", cachedCount, typeName)
 	}
 
-	// 获取需要新翻译的标签
-	missingTags := t.cache.GetMissingTags(tags)
+	// 获取需要新翻译的文本
+	missingTexts := t.cache.GetMissingTexts(texts, cacheType)
 
-	if len(missingTags) == 0 {
-		fmt.Println("✅ 所有标签都已有缓存，无需重新翻译")
+	if len(missingTexts) == 0 {
+		fmt.Printf("✅ 所有%s都已有缓存，无需重新翻译\n", typeName)
 		return result, nil
 	}
 
-	fmt.Printf("🔄 需要翻译 %d 个新标签\n", len(missingTags))
+	fmt.Printf("🔄 需要翻译 %d 个新%s\n", len(missingTexts), typeName)
 
 	// 创建进度条
-	progressBar := utils.NewProgressBar(len(missingTags))
+	progressBar := utils.NewProgressBar(len(missingTexts))
 
-	// 翻译新标签
+	// 翻译新文本
 	newTranslationsAdded := 0
-	for i, tag := range missingTags {
+	for i, text := range missingTexts {
 		translationStart := time.Now()
 
-		slug, err := t.TranslateToSlug(tag)
+		var slug string
+		var err error
+
+		if cacheType == TagCache {
+			slug, err = t.TranslateToSlug(text)
+		} else {
+			slug, err = t.TranslateToArticleSlug(text)
+		}
+
 		if err != nil {
 			utils.RecordError()
-			slug = fallbackSlug(tag)
+			slug = fallbackSlug(text)
 		}
 
 		utils.RecordTranslation(time.Since(translationStart))
 
-		result[tag] = slug
-		t.cache.Set(tag, slug)
+		result[text] = slug
 		newTranslationsAdded++
 
 		// 更新进度条
@@ -207,7 +343,7 @@ func (t *LLMTranslator) BatchTranslate(tags []string) (map[string]string, error)
 		}
 
 		// 添加延迟
-		if i < len(missingTags)-1 {
+		if i < len(missingTexts)-1 {
 			time.Sleep(500 * time.Millisecond)
 		}
 	}
@@ -225,56 +361,63 @@ func (t *LLMTranslator) BatchTranslate(tags []string) (map[string]string, error)
 	return result, nil
 }
 
-// GetCacheStats 获取缓存统计信息
-func (t *LLMTranslator) GetCacheStats() (int, int) {
-	return t.cache.GetStats()
+// GetMissingTags 获取缺失的标签翻译
+func (t *LLMTranslator) GetMissingTags(tags []string) []string {
+	return t.cache.GetMissingTexts(tags, TagCache)
 }
 
-// ClearCache 清空缓存
-func (t *LLMTranslator) ClearCache() error {
-	t.cache.Clear()
-	return t.cache.Save()
+// GetMissingArticles 获取缺失的文章翻译
+func (t *LLMTranslator) GetMissingArticles(articles []string) []string {
+	return t.cache.GetMissingTexts(articles, ArticleCache)
 }
 
-// GetCacheInfo 获取缓存信息
-func (t *LLMTranslator) GetCacheInfo() string {
-	return t.cache.GetCacheInfo()
-}
+// PrepareBulkTranslation 准备批量翻译，返回缺失的文本和缓存计数
+func (t *LLMTranslator) PrepareBulkTranslation(allTexts []string) ([]string, int) {
+	// 分离标签和文章（简单启发式判断）
+	var tags []string
+	var articles []string
 
-// TestConnection 测试与LM Studio的连接
-func (t *LLMTranslator) TestConnection() error {
-	_, err := t.TranslateToSlug("测试")
-	return err
-}
-
-// GetCachedTranslation 检查指定文本是否已有缓存
-func (t *LLMTranslator) GetCachedTranslation(text string) (string, bool) {
-	return t.cache.Get(text)
-}
-
-// GetAllCachedItems 获取所有缓存项
-func (t *LLMTranslator) GetAllCachedItems() map[string]string {
-	result := make(map[string]string)
-	for key, entry := range t.cache.Translations {
-		result[key] = entry.Translation
-	}
-	return result
-}
-
-// PrepareBulkTranslation 准备批量翻译，返回需要翻译的项目
-func (t *LLMTranslator) PrepareBulkTranslation(texts []string) ([]string, int) {
-	var missing []string
-	cached := 0
-
-	for _, text := range texts {
-		if _, exists := t.cache.Get(text); exists {
-			cached++
+	for _, text := range allTexts {
+		// 简单判断：长度较短且不包含特殊字符的可能是标签
+		if len(text) <= 20 && !strings.Contains(text, "：") && !strings.Contains(text, ":") {
+			tags = append(tags, text)
 		} else {
-			missing = append(missing, text)
+			articles = append(articles, text)
 		}
 	}
 
-	return missing, cached
+	// 检查标签缓存
+	missingTags := t.GetMissingTags(tags)
+	// 检查文章缓存
+	missingArticles := t.GetMissingArticles(articles)
+
+	// 合并缺失的文本
+	allMissing := append(missingTags, missingArticles...)
+	cachedCount := len(allTexts) - len(allMissing)
+
+	return allMissing, cachedCount
+}
+
+func (t *LLMTranslator) GetCacheInfo() string {
+	return t.cache.GetInfo()
+}
+
+func (t *LLMTranslator) GetCacheStats() (int, int) {
+	tagTotal, tagExpired := t.cache.GetStats(TagCache)
+	articleTotal, articleExpired := t.cache.GetStats(ArticleCache)
+	return tagTotal + articleTotal, tagExpired + articleExpired
+}
+
+func (t *LLMTranslator) ClearCache() error {
+	return t.cache.ClearAll()
+}
+
+func (t *LLMTranslator) ClearTagCache() error {
+	return t.cache.Clear(TagCache)
+}
+
+func (t *LLMTranslator) ClearArticleCache() error {
+	return t.cache.Clear(ArticleCache)
 }
 
 // isEnglishOnly 检查字符串是否只包含英文字符

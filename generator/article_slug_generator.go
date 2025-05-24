@@ -59,10 +59,10 @@ func (g *ArticleSlugGenerator) PreviewArticleSlugs() ([]ArticleSlugPreview, erro
 		}
 	}
 
-	// 批量翻译预览标题
+	// 批量翻译预览标题（使用文章专用接口）
 	var translationMap map[string]string
 	if len(previewTitles) > 0 {
-		translationMap, err = g.translator.BatchTranslate(previewTitles)
+		translationMap, err = g.translator.BatchTranslateArticles(previewTitles)
 		if err != nil {
 			fmt.Printf("⚠️ 批量翻译失败: %v\n", err)
 			translationMap = make(map[string]string)
@@ -231,9 +231,9 @@ func (g *ArticleSlugGenerator) GenerateArticleSlugsWithMode(mode string) error {
 		titlesToTranslate = append(titlesToTranslate, article.Title)
 	}
 
-	// 批量翻译所有标题
+	// 批量翻译所有标题（使用文章专用接口）
 	fmt.Printf("正在批量翻译 %d 个文章标题...\n", len(titlesToTranslate))
-	translationMap, err := g.translator.BatchTranslate(titlesToTranslate)
+	translationMap, err := g.translator.BatchTranslateArticles(titlesToTranslate)
 	if err != nil {
 		fmt.Printf("⚠️ 批量翻译失败: %v，将逐个翻译\n", err)
 		translationMap = make(map[string]string)
@@ -253,8 +253,8 @@ func (g *ArticleSlugGenerator) GenerateArticleSlugsWithMode(mode string) error {
 		if slug, exists := translationMap[article.Title]; exists {
 			newSlug = slug
 		} else {
-			// 如果批量翻译失败，尝试单独翻译
-			slug, err := g.translator.TranslateToSlug(article.Title)
+			// 如果批量翻译失败，尝试单独翻译（使用文章专用接口）
+			slug, err := g.translator.TranslateToArticleSlug(article.Title)
 			if err != nil {
 				fmt.Printf("  翻译失败，使用备用方案: %v\n", err)
 				newSlug = translator.FallbackSlug(article.Title)

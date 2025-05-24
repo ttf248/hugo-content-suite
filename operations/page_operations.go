@@ -3,7 +3,6 @@ package operations
 import (
 	"bufio"
 	"fmt"
-	"strings"
 	"tag-scanner/display"
 	"tag-scanner/generator"
 	"tag-scanner/models"
@@ -132,8 +131,4 @@ func (p *Processor) selectPageMode(createCount, updateCount int, reader *bufio.R
 	}
 }
 
-func (p *Processor) getChoice(reader *bufio.Reader, prompt string) string {
-	fmt.Print(prompt)
-	input, _ := reader.ReadString('\n')
-	return strings.TrimSpace(input)
-}
+// getChoice方法已移动到cache_operations.go文件中，避免重复定义
