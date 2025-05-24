@@ -1,5 +1,7 @@
 # Hugo 标签自动化管理工具
 
+[English](README_EN.md) | 中文
+
 > 🚀 一款专为Hugo博客设计的智能标签管理工具，支持AI翻译、本地缓存和友好的交互界面
 
 ## ✨ 核心特色
@@ -82,10 +84,19 @@ hugo-slug-auto/
 
 ## 📚 文档链接
 
+### 中文文档
 - [安装配置指南](docs/installation.md)
 - [功能使用说明](docs/usage.md)
 - [API接口文档](docs/api.md)
 - [故障排除](docs/troubleshooting.md)
+- [贡献指南](docs/contributing.md)
+
+### English Documentation
+- [Installation Guide](docs/installation_en.md)
+- [Usage Guide](docs/usage_en.md)
+- [API Documentation](docs/api_en.md)
+- [Troubleshooting](docs/troubleshooting_en.md)
+- [Contributing Guide](docs/contributing_en.md)
 
 ## 🤝 贡献指南
 
