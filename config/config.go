@@ -13,6 +13,7 @@ type Config struct {
 	Paths       PathsConfig       `json:"paths"`
 	Translation TranslationConfig `json:"translation"`
 	Logging     LoggingConfig     `json:"logging"`
+	Language    LanguageConfig    `json:"language"`
 }
 
 type LMStudioConfig struct {
@@ -51,6 +52,11 @@ type LoggingConfig struct {
 	File  string `json:"file"`
 }
 
+type LanguageConfig struct {
+	TargetLanguage string            `json:"target_language"`
+	LanguageNames  map[string]string `json:"language_names"`
+}
+
 var defaultConfig = Config{
 	LMStudio: LMStudioConfig{
 		URL:     "http://172.19.192.1:2234/v1/chat/completions",
@@ -87,6 +93,14 @@ var defaultConfig = Config{
 	Logging: LoggingConfig{
 		Level: "DEBUG",
 		File:  "tag-scanner.log",
+	},
+	Language: LanguageConfig{
+		TargetLanguage: "en",
+		LanguageNames: map[string]string{
+			"en": "English",
+			"ja": "Japanese",
+			"ko": "Korean",
+		},
 	},
 }
 

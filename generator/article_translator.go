@@ -57,6 +57,9 @@ func (a *ArticleTranslator) PreviewArticleTranslations() ([]ArticleTranslationPr
 		return nil, fmt.Errorf("扫描文章失败: %v", err)
 	}
 
+	cfg := config.GetGlobalConfig()
+	targetLang := cfg.Language.TargetLanguage
+
 	var previews []ArticleTranslationPreview
 
 	for _, article := range articles {
@@ -64,20 +67,27 @@ func (a *ArticleTranslator) PreviewArticleTranslations() ([]ArticleTranslationPr
 			continue
 		}
 
-		// 构建英文文件路径
+		// 根据目标语言构建文件路径
 		dir := filepath.Dir(article.FilePath)
 		baseName := filepath.Base(article.FilePath)
 
-		var englishFile string
+		var targetFile string
 		if strings.HasSuffix(baseName, ".md") {
-			englishFile = filepath.Join(dir, "index.en.md")
+			switch targetLang {
+			case "ja":
+				targetFile = filepath.Join(dir, "index.ja.md")
+			case "ko":
+				targetFile = filepath.Join(dir, "index.ko.md")
+			default: // "en" 或其他
+				targetFile = filepath.Join(dir, "index.en.md")
+			}
 		} else {
 			continue
 		}
 
-		// 检查英文文件是否存在
+		// 检查目标文件是否存在
 		status := "missing"
-		if _, err := os.Stat(englishFile); err == nil {
+		if _, err := os.Stat(targetFile); err == nil {
 			status = "exists"
 		}
 
@@ -87,7 +97,7 @@ func (a *ArticleTranslator) PreviewArticleTranslations() ([]ArticleTranslationPr
 
 		preview := ArticleTranslationPreview{
 			OriginalFile:   article.FilePath,
-			EnglishFile:    englishFile,
+			EnglishFile:    targetFile, // 重命名为TargetFile更合适，但保持兼容性
 			Title:          article.Title,
 			WordCount:      wordCount,
 			ParagraphCount: paragraphCount,
@@ -103,6 +113,12 @@ func (a *ArticleTranslator) PreviewArticleTranslations() ([]ArticleTranslationPr
 
 // TranslateArticles 翻译文章
 func (a *ArticleTranslator) TranslateArticles(mode string) error {
+	cfg := config.GetGlobalConfig()
+	targetLangName := cfg.Language.LanguageNames[cfg.Language.TargetLanguage]
+	if targetLangName == "" {
+		targetLangName = "English"
+	}
+
 	previews, err := a.PreviewArticleTranslations()
 	if err != nil {
 		return fmt.Errorf("获取翻译预览失败: %v", err)
@@ -126,16 +142,16 @@ func (a *ArticleTranslator) TranslateArticles(mode string) error {
 	}
 
 	if len(targetPreviews) == 0 {
-		fmt.Println("根据选择的模式，没有需要翻译的文章")
+		fmt.Printf("根据选择的模式，没有需要翻译为%s的文章\n", targetLangName)
 		return nil
 	}
 
 	// 测试连接
-	fmt.Println("正在测试与LM Studio的连接...")
+	fmt.Printf("正在测试与LM Studio的连接...\n")
 	if err := a.translator.TestConnection(); err != nil {
 		return fmt.Errorf("无法连接到LM Studio: %v", err)
 	}
-	fmt.Println("LM Studio连接成功！")
+	fmt.Printf("LM Studio连接成功！准备翻译为%s\n", targetLangName)
 
 	successCount := 0
 	errorCount := 0
@@ -143,6 +159,7 @@ func (a *ArticleTranslator) TranslateArticles(mode string) error {
 	for i, preview := range targetPreviews {
 		fmt.Printf("\n处理文章 (%d/%d): %s\n", i+1, len(targetPreviews), preview.Title)
 		fmt.Printf("预计需要时间: %s\n", preview.EstimatedTime)
+		fmt.Printf("目标语言: %s\n", targetLangName)
 
 		if err := a.translateSingleArticle(preview); err != nil {
 			fmt.Printf("❌ 翻译失败: %v\n", err)
@@ -154,6 +171,7 @@ func (a *ArticleTranslator) TranslateArticles(mode string) error {
 	}
 
 	fmt.Printf("\n文章翻译完成！\n")
+	fmt.Printf("- 目标语言: %s\n", targetLangName)
 	fmt.Printf("- 成功翻译: %d 篇\n", successCount)
 	fmt.Printf("- 翻译失败: %d 篇\n", errorCount)
 	fmt.Printf("- 总计处理: %d 篇\n", len(targetPreviews))
@@ -461,17 +479,36 @@ func (a *ArticleTranslator) extractFieldValue(line, prefix string) string {
 func (a *ArticleTranslator) translateFieldContent(content string) (string, error) {
 	cfg := config.GetGlobalConfig()
 
-	// 优化的prompt，更加精确和简洁
-	prompt := fmt.Sprintf(`Please translate this Chinese text to English. Return ONLY the English translation, no explanations or additional text:
+	// 从配置读取目标语言
+	targetLang := cfg.Language.TargetLanguage
+	targetLangName := cfg.Language.LanguageNames[targetLang]
+	if targetLangName == "" {
+		targetLangName = "English" // 默认值
+	}
+
+	// 根据目标语言调整提示词
+	var prompt string
+	switch targetLang {
+	case "ja":
+		prompt = fmt.Sprintf(`Please translate this Chinese text to Japanese. Return ONLY the Japanese translation, no explanations or additional text:
 
 %s`, content)
+	case "ko":
+		prompt = fmt.Sprintf(`Please translate this Chinese text to Korean. Return ONLY the Korean translation, no explanations or additional text:
+
+%s`, content)
+	default: // "en" 或其他
+		prompt = fmt.Sprintf(`Please translate this Chinese text to English. Return ONLY the English translation, no explanations or additional text:
+
+%s`, content)
+	}
 
 	request := translator.LMStudioRequest{
 		Model: cfg.LMStudio.Model,
 		Messages: []translator.Message{
 			{
 				Role:    "system",
-				Content: "You are a professional translator. You translate Chinese to English accurately and concisely. You only return the translation without any additional text, explanations, or formatting.",
+				Content: fmt.Sprintf("You are a professional translator. You translate Chinese to %s accurately and concisely. You only return the translation without any additional text, explanations, or formatting.", targetLangName),
 			},
 			{
 				Role:    "user",
@@ -482,7 +519,7 @@ func (a *ArticleTranslator) translateFieldContent(content string) (string, error
 	}
 
 	// 记录详细请求信息到日志
-	utils.Debug("LLM翻译请求 - Model: %s", request.Model)
+	utils.Debug("LLM翻译请求 - Model: %s, Target: %s", request.Model, targetLangName)
 	utils.Debug("LLM翻译请求 - 原文: %s", content)
 	utils.Debug("LLM翻译请求 - Prompt: %s", prompt)
 
@@ -537,7 +574,7 @@ func (a *ArticleTranslator) translateFieldContent(content string) (string, error
 	result = a.cleanTranslationResult(result)
 
 	// 记录翻译完成信息到日志
-	utils.Info("字段翻译完成 - 原文: %s, 译文: %s, 耗时: %v", content, result, requestDuration)
+	utils.Info("字段翻译完成 (%s) - 原文: %s, 译文: %s, 耗时: %v", targetLangName, content, result, requestDuration)
 
 	return result, nil
 }
@@ -855,16 +892,36 @@ func (a *ArticleTranslator) translatePlainTextSimple(text string, lineNum int) (
 	cleanText := strings.TrimSpace(text)
 	cleanText = regexp.MustCompile(`\s+`).ReplaceAllString(cleanText, " ")
 
-	prompt := fmt.Sprintf(`Translate this Chinese text to English. Return ONLY the English translation:
+	// 从配置读取目标语言
+	targetLang := cfg.Language.TargetLanguage
+	targetLangName := cfg.Language.LanguageNames[targetLang]
+	if targetLangName == "" {
+		targetLangName = "English" // 默认值
+	}
+
+	// 根据目标语言调整提示词
+	var prompt string
+	switch targetLang {
+	case "ja":
+		prompt = fmt.Sprintf(`Translate this Chinese text to Japanese. Return ONLY the Japanese translation:
 
 %s`, cleanText)
+	case "ko":
+		prompt = fmt.Sprintf(`Translate this Chinese text to Korean. Return ONLY the Korean translation:
+
+%s`, cleanText)
+	default: // "en" 或其他
+		prompt = fmt.Sprintf(`Translate this Chinese text to English. Return ONLY the English translation:
+
+%s`, cleanText)
+	}
 
 	request := translator.LMStudioRequest{
 		Model: cfg.LMStudio.Model,
 		Messages: []translator.Message{
 			{
 				Role:    "system",
-				Content: "You are a professional translator. Translate Chinese to English accurately. Return only the translation without explanations or formatting.",
+				Content: fmt.Sprintf("You are a professional translator. Translate Chinese to %s accurately. Return only the translation without explanations or formatting.", targetLangName),
 			},
 			{
 				Role:    "user",
@@ -875,8 +932,8 @@ func (a *ArticleTranslator) translatePlainTextSimple(text string, lineNum int) (
 	}
 
 	// 记录详细的翻译请求信息
-	utils.Info("行翻译请求 %d", lineNum)
-	utils.Debug("行翻译请求 %d - Model: %s", lineNum, request.Model)
+	utils.Info("行翻译请求 %d (%s)", lineNum, targetLangName)
+	utils.Debug("行翻译请求 %d - Model: %s, Target: %s", lineNum, request.Model, targetLangName)
 	utils.Debug("行翻译请求 %d - 原文: %s", lineNum, cleanText)
 	utils.Debug("行翻译请求 %d - Prompt: %s", lineNum, prompt)
 
@@ -931,8 +988,8 @@ func (a *ArticleTranslator) translatePlainTextSimple(text string, lineNum int) (
 	result = a.cleanTranslationResult(result)
 
 	// 记录翻译完成信息
-	utils.Info("行翻译完成 %d - 原文长度: %d, 译文长度: %d, 耗时: %v",
-		lineNum, len(cleanText), len(result), requestDuration)
+	utils.Info("行翻译完成 %d (%s) - 原文长度: %d, 译文长度: %d, 耗时: %v",
+		lineNum, targetLangName, len(cleanText), len(result), requestDuration)
 	utils.Debug("行翻译结果 %d: %s", lineNum, result)
 
 	return result, nil
