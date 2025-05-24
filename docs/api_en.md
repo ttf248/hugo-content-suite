@@ -1,6 +1,6 @@
 # API Documentation
 
-[中文](api.md) | English
+English | [中文](api.md)
 
 ## Core Module Interfaces
 
@@ -27,6 +27,19 @@ if err != nil {
     log.Fatal(err)
 }
 ```
+
+### Config Module
+
+#### LoadConfig
+Load configuration file.
+
+```go
+func LoadConfig() (*Config, error)
+```
+
+**Returns:**
+- `*Config`: Configuration object
+- `error`: Error information
 
 ### Translator Module
 
@@ -56,32 +69,18 @@ Translate Chinese tags to English slugs.
 func (t *LLMTranslator) TranslateToSlug(tag string) (string, error)
 ```
 
-**Parameters:**
-- `tag`: Chinese tag to translate
-
-**Returns:**
-- `string`: Translated English slug
-- `error`: Error information
-
-#### BatchTranslate
-Batch translate tags (with caching support).
+#### BatchTranslateTags
+Batch translate tags.
 
 ```go
-func (t *LLMTranslator) BatchTranslate(tags []string) (map[string]string, error)
+func (t *LLMTranslator) BatchTranslateTags(tags []string) (map[string]string, error)
 ```
 
-**Parameters:**
-- `tags`: List of tags to translate
-
-**Returns:**
-- `map[string]string`: Mapping from tags to slugs
-- `error`: Error information
-
-#### TestConnection
-Test connection to LM Studio.
+#### BatchTranslateArticles
+Batch translate article titles.
 
 ```go
-func (t *LLMTranslator) TestConnection() error
+func (t *LLMTranslator) BatchTranslateArticles(titles []string) (map[string]string, error)
 ```
 
 ### Generator Module
@@ -97,26 +96,16 @@ type TagPageGenerator struct {
 }
 ```
 
-#### NewTagPageGenerator
-Create tag page generator.
+#### GenerateTagPagesWithMode
+Generate tag pages based on mode.
 
 ```go
-func NewTagPageGenerator(contentDir string) *TagPageGenerator
+func (g *TagPageGenerator) GenerateTagPagesWithMode(tagStats []models.TagStats, mode string) error
 ```
 
-#### GenerateTagPages
-Generate all tag pages.
-
-```go
-func (g *TagPageGenerator) GenerateTagPages(tagStats []models.TagStats) error
-```
-
-#### PreviewTagPages
-Preview tag page generation.
-
-```go
-func (g *TagPageGenerator) PreviewTagPages(tagStats []models.TagStats) []TagPagePreview
-```
+**Parameters:**
+- `tagStats`: List of tag statistics
+- `mode`: Processing mode ("create", "update", "all")
 
 #### ArticleSlugGenerator
 Article slug generator.
@@ -126,6 +115,198 @@ type ArticleSlugGenerator struct {
     contentDir string
     translator *translator.LLMTranslator
 }
+```
+
+#### GenerateArticleSlugsWithMode
+Generate article slugs based on mode.
+
+```go
+func (g *ArticleSlugGenerator) GenerateArticleSlugsWithMode(mode string) error
+```
+
+#### ArticleTranslator
+Article translator.
+
+```go
+type ArticleTranslator struct {
+    contentDir string
+    translator *translator.LLMTranslator
+}
+```
+
+#### TranslateArticles
+Translate articles.
+
+```go
+func (t *ArticleTranslator) TranslateArticles(mode string) error
+```
+
+#### PreviewArticleTranslations
+Preview article translations.
+
+```go
+func (t *ArticleTranslator) PreviewArticleTranslations() ([]ArticleTranslationPreview, error)
+```
+
+### Operations Module
+
+#### Processor
+Business processor.
+
+```go
+type Processor struct {
+    contentDir string
+}
+```
+
+#### NewProcessor
+Create processor instance.
+
+```go
+func NewProcessor(contentDir string) *Processor
+```
+
+#### QuickProcessAll
+One-click process all functionality.
+
+```go
+func (p *Processor) QuickProcessAll(tagStats []models.TagStats, reader *bufio.Reader)
+```
+
+#### PreviewTagPages
+Preview tag pages.
+
+```go
+func (p *Processor) PreviewTagPages(tagStats []models.TagStats)
+```
+
+#### GenerateTagPages
+Generate tag pages.
+
+```go
+func (p *Processor) GenerateTagPages(tagStats []models.TagStats, reader *bufio.Reader)
+```
+
+#### PreviewArticleSlugs
+Preview article slugs.
+
+```go
+func (p *Processor) PreviewArticleSlugs()
+```
+
+#### GenerateArticleSlugs
+Generate article slugs.
+
+```go
+func (p *Processor) GenerateArticleSlugs(reader *bufio.Reader)
+```
+
+#### PreviewArticleTranslations
+Preview article translations.
+
+```go
+func (p *Processor) PreviewArticleTranslations()
+```
+
+#### TranslateArticles
+Translate articles.
+
+```go
+func (p *Processor) TranslateArticles(reader *bufio.Reader)
+```
+
+#### ShowCacheStatus
+Show cache status.
+
+```go
+func (p *Processor) ShowCacheStatus()
+```
+
+#### ShowBulkTranslationPreview
+Show bulk translation preview.
+
+```go
+func (p *Processor) ShowBulkTranslationPreview(tagStats []models.TagStats)
+```
+
+#### GenerateBulkTranslationCache
+Generate bulk translation cache.
+
+```go
+func (p *Processor) GenerateBulkTranslationCache(tagStats []models.TagStats, reader *bufio.Reader)
+```
+
+#### ClearTranslationCache
+Clear translation cache.
+
+```go
+func (p *Processor) ClearTranslationCache(reader *bufio.Reader)
+```
+
+### Menu Module
+
+#### InteractiveMenu
+Interactive menu.
+
+```go
+type InteractiveMenu struct {
+    reader    *bufio.Reader
+    processor *operations.Processor
+}
+```
+
+#### NewInteractiveMenu
+Create interactive menu.
+
+```go
+func NewInteractiveMenu(reader *bufio.Reader, contentDir string) *InteractiveMenu
+```
+
+#### Show
+Display main menu.
+
+```go
+func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []models.CategoryStats, noTagArticles []models.Article)
+```
+
+### Utils Module
+
+#### Performance Monitoring Functions
+
+```go
+// Record translation operation
+func RecordTranslation(duration time.Duration)
+
+// Record cache hit
+func RecordCacheHit()
+
+// Record cache miss
+func RecordCacheMiss()
+
+// Record file operation
+func RecordFileOperation()
+
+// Record error
+func RecordError()
+
+// Get global statistics
+func GetGlobalStats() PerformanceStats
+
+// Reset global statistics
+func ResetGlobalStats()
+```
+
+#### Logging Functions
+
+```go
+// Logging
+func Info(format string, args ...interface{})
+func Debug(format string, args ...interface{})
+func Warn(format string, args ...interface{})
+func Error(format string, args ...interface{})
+
+// Initialize logger
+func InitLogger(filename string, level LogLevel) error
 ```
 
 ### Stats Module
@@ -149,6 +330,13 @@ Find articles without tags.
 
 ```go
 func FindNoTagArticles(articles []models.Article) []models.Article
+```
+
+#### GroupTagsByFrequency
+Group tags by frequency.
+
+```go
+func GroupTagsByFrequency(tagStats []models.TagStats) ([]models.TagStats, []models.TagStats, []models.TagStats)
 ```
 
 ## Data Models
@@ -187,109 +375,109 @@ type CategoryStats struct {
 }
 ```
 
-## LM Studio API
+### PerformanceStats
+Performance statistics model.
 
-### Request Format
-
-#### Chat Completions
-```json
-{
-  "model": "gemma-3-12b-it",
-  "messages": [
-    {
-      "role": "user",
-      "content": "Translation request content"
-    }
-  ],
-  "stream": false
+```go
+type PerformanceStats struct {
+    TranslationCount int           // Translation count
+    TranslationTime  time.Duration // Total translation time
+    CacheHits        int           // Cache hit count
+    CacheMisses      int           // Cache miss count
+    FileOperations   int           // File operation count
+    Errors           int           // Error count
 }
 ```
 
-#### Response Format
-```json
-{
-  "id": "chatcmpl-xxx",
-  "object": "chat.completion",
-  "created": 1234567890,
-  "model": "gemma-3-12b-it",
-  "choices": [
-    {
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "Translation result"
-      }
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 50,
-    "completion_tokens": 10,
-    "total_tokens": 60
-  }
+### Config
+Configuration model.
+
+```go
+type Config struct {
+    LMStudio struct {
+        URL        string        `yaml:"url"`
+        Model      string        `yaml:"model"`
+        Timeout    time.Duration `yaml:"timeout"`
+        MaxRetries int           `yaml:"max_retries"`
+    } `yaml:"lm_studio"`
+    
+    Cache struct {
+        Directory string `yaml:"directory"`
+        FileName  string `yaml:"file_name"`
+        AutoSave  bool   `yaml:"auto_save"`
+    } `yaml:"cache"`
+    
+    Logging struct {
+        Level         string `yaml:"level"`
+        FilePath      string `yaml:"file_path"`
+        MaxSize       string `yaml:"max_size"`
+        MaxBackups    int    `yaml:"max_backups"`
+        MaxAge        int    `yaml:"max_age"`
+        ConsoleOutput bool   `yaml:"console_output"`
+    } `yaml:"logging"`
+    
+    Paths struct {
+        DefaultContentDir string `yaml:"default_content_dir"`
+    } `yaml:"paths"`
 }
 ```
 
-## Cache Interface
+## Preview Models
 
-### TranslationCache
-Translation cache management.
+### TagPagePreview
+Tag page preview.
 
 ```go
-type TranslationCache struct {
-    Version      string                `json:"version"`
-    LastUpdated  time.Time             `json:"last_updated"`
-    Translations map[string]CacheEntry `json:"translations"`
-    filePath     string
+type TagPagePreview struct {
+    TagName     string
+    Slug        string
+    Status      string // "create", "update", "skip"
+    Description string
 }
 ```
 
-#### Main Methods
+### ArticleSlugPreview
+Article slug preview.
 
 ```go
-// Create cache
-func NewTranslationCache(cacheDir string) *TranslationCache
-
-// Get translation
-func (c *TranslationCache) Get(tag string) (string, bool)
-
-// Set translation
-func (c *TranslationCache) Set(tag, translation string)
-
-// Save cache
-func (c *TranslationCache) Save() error
-
-// Load cache
-func (c *TranslationCache) Load() error
+type ArticleSlugPreview struct {
+    FilePath string
+    Title    string
+    Slug     string
+    Status   string // "missing", "exists"
+}
 ```
 
-## Error Handling
-
-### Common Error Types
+### ArticleTranslationPreview
+Article translation preview.
 
 ```go
-// Network connection error
-fmt.Errorf("failed to send request: %v", err)
-
-// File read/write error
-fmt.Errorf("failed to read file: %v", err)
-
-// JSON parsing error
-fmt.Errorf("failed to parse response: %v", err)
-
-// LM Studio error
-fmt.Errorf("LM Studio returned error status: %d", resp.StatusCode)
+type ArticleTranslationPreview struct {
+    SourceFile string
+    TargetFile string
+    Title      string
+    Status     string // "missing", "exists"
+}
 ```
 
-### Error Handling Strategy
+### BulkTranslationPreview
+Bulk translation preview.
 
-1. **Network Errors**: Automatic retry mechanism
-2. **Translation Failures**: Fallback to predefined mappings
-3. **File Errors**: Detailed error prompts
-4. **Cache Errors**: Continue execution with warnings
+```go
+type BulkTranslationPreview struct {
+    TagsToTranslate     []TranslationItem
+    ArticlesToTranslate []TranslationItem
+    MissingTranslations []TranslationItem
+}
 
-## Configuration Parameters
+type TranslationItem struct {
+    Original    string
+    Translation string
+    Type        string // "tag", "article"
+}
+```
 
-### Constant Configuration
+## Common Constants
 
 ```go
 const (
@@ -297,19 +485,14 @@ const (
     ModelName       = "gemma-3-12b-it"
     CacheFileName   = "tag_translations_cache.json"
 )
-```
 
-### Adjustable Parameters
-
-```go
-// HTTP timeout setting
-Timeout: 30 * time.Second
-
-// Request interval
-time.Sleep(500 * time.Millisecond)
-
-// Table display limit
-defaultLimit := 20
+// Log levels
+const (
+    DEBUG LogLevel = iota
+    INFO
+    WARN
+    ERROR
+)
 ```
 
 ## Extension Development
@@ -337,3 +520,13 @@ func (g *CustomGenerator) Generate(data interface{}) error {
     // Implement generation logic
 }
 ```
+
+### Adding New Menu Features
+
+```go
+func (m *InteractiveMenu) customFunction() {
+    // Implement custom functionality
+}
+```
+
+Add new options and corresponding processing logic in the `Show` method.

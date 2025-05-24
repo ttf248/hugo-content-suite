@@ -44,6 +44,12 @@ English | [中文](README.md)
 - Hot reload configuration updates
 - Configuration validation and default value handling
 
+### 🚀 One-Click Processing
+- Full workflow automation
+- Intelligent status analysis and preview
+- Batch cache generation
+- Article translation support
+
 ## 🚀 Quick Start
 
 ### Requirements
@@ -64,12 +70,14 @@ go run main.go [content-directory-path]
 ```
 
 ### Basic Usage
-1. **Tag Analysis**: View blog tag usage statistics
-2. **Generate Tag Pages**: Create dedicated pages for each tag
-3. **Article Slug Management**: Generate SEO-friendly URLs for article titles
-4. **Cache Management**: View and manage translation cache
-5. **Performance Monitoring**: View processing performance and system resource usage
-6. **Log Analysis**: View detailed operation logs and error records
+1. **One-Click Process All**: Automatically execute cache→tag pages→article slugs→article translation
+2. **Tag Analysis**: View blog tag usage statistics
+3. **Generate Tag Pages**: Create dedicated pages for each tag
+4. **Article Slug Management**: Generate SEO-friendly URLs for article titles
+5. **Article Translation**: Translate Chinese articles to English
+6. **Cache Management**: View and manage translation cache
+7. **Performance Monitoring**: View processing performance and system resource usage
+8. **Log Analysis**: View detailed operation logs and error records
 
 ## 📁 Project Architecture
 
@@ -83,8 +91,9 @@ hugo-slug-auto/
 ├── translator/          # AI translation module
 ├── generator/           # Content generators
 ├── display/             # User interface
-├── logger/              # Logging system
-├── performance/         # Performance monitoring
+├── menu/                # Interactive menu system
+├── operations/          # Business operation modules
+├── utils/               # Utility functions and performance monitoring
 ├── config.yaml          # Main configuration file
 ├── logs/                # Log files directory
 └── docs/               # Detailed documentation
@@ -92,15 +101,33 @@ hugo-slug-auto/
 
 ## 🎮 Main Features
 
-### Tag Management
-- 📊 Tag statistics analysis
-- 🏷️ Automatic tag page generation
-- 🔄 Batch translation processing
+### 🚀 Quick Processing
+- 📦 One-Click Process All (cache→tag pages→article slugs→article translation)
 
-### Article Management
-- 📝 Automatic slug generation
-- 🔍 Article content analysis
-- 📋 Batch processing support
+### 📊 Data Viewing
+- 🔍 Tag statistics and analysis
+- 📊 Category statistics
+- 📝 Articles without tags detection
+
+### 🏷️ Tag Page Management
+- 👀 Preview tag pages
+- 🏷️ Generate tag pages
+
+### 📝 Article Management
+- 👀 Preview article slugs
+- 📝 Generate article slugs
+- 👀 Preview article translations
+- 🌐 Translate articles to English
+
+### 💾 Cache Management
+- 📊 View cache status
+- 👀 Preview bulk translation cache
+- 🚀 Generate bulk translation cache
+- 🗑️ Clear translation cache (with categorization support)
+
+### 🔧 System Tools
+- 📈 View performance statistics
+- 🔄 Reset performance statistics
 
 ### Smart Features
 - 🤖 AI-driven translation
@@ -145,6 +172,10 @@ performance:
   enable_monitoring: true
   metrics_interval: 10s
   memory_threshold: 500MB
+
+# Path Configuration
+paths:
+  default_content_dir: "../../content/post"
 ```
 
 ### Environment Variable Override
@@ -188,10 +219,11 @@ grep "2024-01-01" logs/app.log
 - Network request latency
 
 ### Performance Reports
-- Total processing time
-- Average response time
-- Cache hit rate
-- Error rate statistics
+- Translation count statistics
+- Cache hit rate analysis
+- Average translation time
+- File operation count
+- Error count statistics
 
 ## 📚 Documentation Links
 

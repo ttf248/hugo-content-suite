@@ -1,5 +1,7 @@
 # API 接口文档
 
+[English](api_en.md) | 中文
+
 ## 核心模块接口
 
 ### Scanner 模块
@@ -25,6 +27,19 @@ if err != nil {
     log.Fatal(err)
 }
 ```
+
+### Config 模块
+
+#### LoadConfig
+加载配置文件。
+
+```go
+func LoadConfig() (*Config, error)
+```
+
+**返回:**
+- `*Config`: 配置对象
+- `error`: 错误信息
 
 ### Translator 模块
 
@@ -54,32 +69,18 @@ func NewLLMTranslator() *LLMTranslator
 func (t *LLMTranslator) TranslateToSlug(tag string) (string, error)
 ```
 
-**参数:**
-- `tag`: 要翻译的中文标签
-
-**返回:**
-- `string`: 翻译后的英文slug
-- `error`: 错误信息
-
-#### BatchTranslate
-批量翻译标签（支持缓存）。
+#### BatchTranslateTags
+批量翻译标签。
 
 ```go
-func (t *LLMTranslator) BatchTranslate(tags []string) (map[string]string, error)
+func (t *LLMTranslator) BatchTranslateTags(tags []string) (map[string]string, error)
 ```
 
-**参数:**
-- `tags`: 要翻译的标签列表
-
-**返回:**
-- `map[string]string`: 标签到slug的映射
-- `error`: 错误信息
-
-#### TestConnection
-测试与LM Studio的连接。
+#### BatchTranslateArticles
+批量翻译文章标题。
 
 ```go
-func (t *LLMTranslator) TestConnection() error
+func (t *LLMTranslator) BatchTranslateArticles(titles []string) (map[string]string, error)
 ```
 
 ### Generator 模块
@@ -95,26 +96,16 @@ type TagPageGenerator struct {
 }
 ```
 
-#### NewTagPageGenerator
-创建标签页面生成器。
+#### GenerateTagPagesWithMode
+根据模式生成标签页面。
 
 ```go
-func NewTagPageGenerator(contentDir string) *TagPageGenerator
+func (g *TagPageGenerator) GenerateTagPagesWithMode(tagStats []models.TagStats, mode string) error
 ```
 
-#### GenerateTagPages
-生成所有标签页面。
-
-```go
-func (g *TagPageGenerator) GenerateTagPages(tagStats []models.TagStats) error
-```
-
-#### PreviewTagPages
-预览标签页面生成。
-
-```go
-func (g *TagPageGenerator) PreviewTagPages(tagStats []models.TagStats) []TagPagePreview
-```
+**参数:**
+- `tagStats`: 标签统计列表
+- `mode`: 处理模式 ("create", "update", "all")
 
 #### ArticleSlugGenerator
 文章slug生成器。
@@ -124,6 +115,198 @@ type ArticleSlugGenerator struct {
     contentDir string
     translator *translator.LLMTranslator
 }
+```
+
+#### GenerateArticleSlugsWithMode
+根据模式生成文章Slug。
+
+```go
+func (g *ArticleSlugGenerator) GenerateArticleSlugsWithMode(mode string) error
+```
+
+#### ArticleTranslator
+文章翻译器。
+
+```go
+type ArticleTranslator struct {
+    contentDir string
+    translator *translator.LLMTranslator
+}
+```
+
+#### TranslateArticles
+翻译文章。
+
+```go
+func (t *ArticleTranslator) TranslateArticles(mode string) error
+```
+
+#### PreviewArticleTranslations
+预览文章翻译。
+
+```go
+func (t *ArticleTranslator) PreviewArticleTranslations() ([]ArticleTranslationPreview, error)
+```
+
+### Operations 模块
+
+#### Processor
+业务处理器。
+
+```go
+type Processor struct {
+    contentDir string
+}
+```
+
+#### NewProcessor
+创建处理器实例。
+
+```go
+func NewProcessor(contentDir string) *Processor
+```
+
+#### QuickProcessAll
+一键处理全部功能。
+
+```go
+func (p *Processor) QuickProcessAll(tagStats []models.TagStats, reader *bufio.Reader)
+```
+
+#### PreviewTagPages
+预览标签页面。
+
+```go
+func (p *Processor) PreviewTagPages(tagStats []models.TagStats)
+```
+
+#### GenerateTagPages
+生成标签页面。
+
+```go
+func (p *Processor) GenerateTagPages(tagStats []models.TagStats, reader *bufio.Reader)
+```
+
+#### PreviewArticleSlugs
+预览文章Slug。
+
+```go
+func (p *Processor) PreviewArticleSlugs()
+```
+
+#### GenerateArticleSlugs
+生成文章Slug。
+
+```go
+func (p *Processor) GenerateArticleSlugs(reader *bufio.Reader)
+```
+
+#### PreviewArticleTranslations
+预览文章翻译。
+
+```go
+func (p *Processor) PreviewArticleTranslations()
+```
+
+#### TranslateArticles
+翻译文章。
+
+```go
+func (p *Processor) TranslateArticles(reader *bufio.Reader)
+```
+
+#### ShowCacheStatus
+显示缓存状态。
+
+```go
+func (p *Processor) ShowCacheStatus()
+```
+
+#### ShowBulkTranslationPreview
+显示批量翻译预览。
+
+```go
+func (p *Processor) ShowBulkTranslationPreview(tagStats []models.TagStats)
+```
+
+#### GenerateBulkTranslationCache
+生成批量翻译缓存。
+
+```go
+func (p *Processor) GenerateBulkTranslationCache(tagStats []models.TagStats, reader *bufio.Reader)
+```
+
+#### ClearTranslationCache
+清空翻译缓存。
+
+```go
+func (p *Processor) ClearTranslationCache(reader *bufio.Reader)
+```
+
+### Menu 模块
+
+#### InteractiveMenu
+交互菜单。
+
+```go
+type InteractiveMenu struct {
+    reader    *bufio.Reader
+    processor *operations.Processor
+}
+```
+
+#### NewInteractiveMenu
+创建交互菜单。
+
+```go
+func NewInteractiveMenu(reader *bufio.Reader, contentDir string) *InteractiveMenu
+```
+
+#### Show
+显示主菜单。
+
+```go
+func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []models.CategoryStats, noTagArticles []models.Article)
+```
+
+### Utils 模块
+
+#### 性能监控函数
+
+```go
+// 记录翻译操作
+func RecordTranslation(duration time.Duration)
+
+// 记录缓存命中
+func RecordCacheHit()
+
+// 记录缓存失效
+func RecordCacheMiss()
+
+// 记录文件操作
+func RecordFileOperation()
+
+// 记录错误
+func RecordError()
+
+// 获取全局统计
+func GetGlobalStats() PerformanceStats
+
+// 重置全局统计
+func ResetGlobalStats()
+```
+
+#### 日志函数
+
+```go
+// 日志记录
+func Info(format string, args ...interface{})
+func Debug(format string, args ...interface{})
+func Warn(format string, args ...interface{})
+func Error(format string, args ...interface{})
+
+// 初始化日志
+func InitLogger(filename string, level LogLevel) error
 ```
 
 ### Stats 模块
@@ -147,6 +330,13 @@ func CalculateCategoryStats(articles []models.Article) []models.CategoryStats
 
 ```go
 func FindNoTagArticles(articles []models.Article) []models.Article
+```
+
+#### GroupTagsByFrequency
+按频率分组标签。
+
+```go
+func GroupTagsByFrequency(tagStats []models.TagStats) ([]models.TagStats, []models.TagStats, []models.TagStats)
 ```
 
 ## 数据模型
@@ -185,109 +375,109 @@ type CategoryStats struct {
 }
 ```
 
-## LM Studio API
+### PerformanceStats
+性能统计模型。
 
-### 请求格式
-
-#### Chat Completions
-```json
-{
-  "model": "gemma-3-12b-it",
-  "messages": [
-    {
-      "role": "user",
-      "content": "翻译请求内容"
-    }
-  ],
-  "stream": false
+```go
+type PerformanceStats struct {
+    TranslationCount int           // 翻译次数
+    TranslationTime  time.Duration // 总翻译时间
+    CacheHits        int           // 缓存命中次数
+    CacheMisses      int           // 缓存失效次数
+    FileOperations   int           // 文件操作次数
+    Errors           int           // 错误次数
 }
 ```
 
-#### 响应格式
-```json
-{
-  "id": "chatcmpl-xxx",
-  "object": "chat.completion",
-  "created": 1234567890,
-  "model": "gemma-3-12b-it",
-  "choices": [
-    {
-      "index": 0,
-      "message": {
-        "role": "assistant",
-        "content": "翻译结果"
-      }
-    }
-  ],
-  "usage": {
-    "prompt_tokens": 50,
-    "completion_tokens": 10,
-    "total_tokens": 60
-  }
+### Config
+配置模型。
+
+```go
+type Config struct {
+    LMStudio struct {
+        URL        string        `yaml:"url"`
+        Model      string        `yaml:"model"`
+        Timeout    time.Duration `yaml:"timeout"`
+        MaxRetries int           `yaml:"max_retries"`
+    } `yaml:"lm_studio"`
+    
+    Cache struct {
+        Directory string `yaml:"directory"`
+        FileName  string `yaml:"file_name"`
+        AutoSave  bool   `yaml:"auto_save"`
+    } `yaml:"cache"`
+    
+    Logging struct {
+        Level         string `yaml:"level"`
+        FilePath      string `yaml:"file_path"`
+        MaxSize       string `yaml:"max_size"`
+        MaxBackups    int    `yaml:"max_backups"`
+        MaxAge        int    `yaml:"max_age"`
+        ConsoleOutput bool   `yaml:"console_output"`
+    } `yaml:"logging"`
+    
+    Paths struct {
+        DefaultContentDir string `yaml:"default_content_dir"`
+    } `yaml:"paths"`
 }
 ```
 
-## 缓存接口
+## 预览模型
 
-### TranslationCache
-翻译缓存管理。
+### TagPagePreview
+标签页面预览。
 
 ```go
-type TranslationCache struct {
-    Version      string                `json:"version"`
-    LastUpdated  time.Time             `json:"last_updated"`
-    Translations map[string]CacheEntry `json:"translations"`
-    filePath     string
+type TagPagePreview struct {
+    TagName     string
+    Slug        string
+    Status      string // "create", "update", "skip"
+    Description string
 }
 ```
 
-#### 主要方法
+### ArticleSlugPreview
+文章Slug预览。
 
 ```go
-// 创建缓存
-func NewTranslationCache(cacheDir string) *TranslationCache
-
-// 获取翻译
-func (c *TranslationCache) Get(tag string) (string, bool)
-
-// 设置翻译
-func (c *TranslationCache) Set(tag, translation string)
-
-// 保存缓存
-func (c *TranslationCache) Save() error
-
-// 加载缓存
-func (c *TranslationCache) Load() error
+type ArticleSlugPreview struct {
+    FilePath string
+    Title    string
+    Slug     string
+    Status   string // "missing", "exists"
+}
 ```
 
-## 错误处理
-
-### 常见错误类型
+### ArticleTranslationPreview
+文章翻译预览。
 
 ```go
-// 网络连接错误
-fmt.Errorf("发送请求失败: %v", err)
-
-// 文件读写错误
-fmt.Errorf("读取文件失败: %v", err)
-
-// JSON解析错误
-fmt.Errorf("解析响应失败: %v", err)
-
-// LM Studio错误
-fmt.Errorf("LM Studio返回错误状态: %d", resp.StatusCode)
+type ArticleTranslationPreview struct {
+    SourceFile string
+    TargetFile string
+    Title      string
+    Status     string // "missing", "exists"
+}
 ```
 
-### 错误处理策略
+### BulkTranslationPreview
+批量翻译预览。
 
-1. **网络错误**: 自动重试机制
-2. **翻译失败**: 回退到预定义映射
-3. **文件错误**: 详细错误提示
-4. **缓存错误**: 继续执行但给出警告
+```go
+type BulkTranslationPreview struct {
+    TagsToTranslate     []TranslationItem
+    ArticlesToTranslate []TranslationItem
+    MissingTranslations []TranslationItem
+}
 
-## 配置参数
+type TranslationItem struct {
+    Original    string
+    Translation string
+    Type        string // "tag", "article"
+}
+```
 
-### 常量配置
+## 常用常量
 
 ```go
 const (
@@ -295,19 +485,14 @@ const (
     ModelName       = "gemma-3-12b-it"
     CacheFileName   = "tag_translations_cache.json"
 )
-```
 
-### 可调参数
-
-```go
-// HTTP超时设置
-Timeout: 30 * time.Second
-
-// 请求间隔
-time.Sleep(500 * time.Millisecond)
-
-// 表格显示限制
-defaultLimit := 20
+// 日志级别
+const (
+    DEBUG LogLevel = iota
+    INFO
+    WARN
+    ERROR
+)
 ```
 
 ## 扩展开发
@@ -335,3 +520,13 @@ func (g *CustomGenerator) Generate(data interface{}) error {
     // 实现生成逻辑
 }
 ```
+
+### 添加新的菜单功能
+
+```go
+func (m *InteractiveMenu) customFunction() {
+    // 实现自定义功能
+}
+```
+
+在 `Show` 方法中添加新的选项和对应的处理逻辑。
