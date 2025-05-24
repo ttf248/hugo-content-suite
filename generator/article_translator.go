@@ -11,6 +11,7 @@ import (
 	"regexp"
 	"strings"
 	"tag-scanner/config"
+	"tag-scanner/models"
 	"tag-scanner/scanner"
 	"tag-scanner/translator"
 	"tag-scanner/utils"
@@ -58,7 +59,7 @@ func (a *ArticleTranslator) PreviewArticleTranslations() ([]ArticleTranslationPr
 	}
 
 	cfg := config.GetGlobalConfig()
-	targetLang := cfg.Language.TargetLanguage
+	targetLanguages := cfg.Language.TargetLanguages
 
 	var previews []ArticleTranslationPreview
 
@@ -67,82 +68,74 @@ func (a *ArticleTranslator) PreviewArticleTranslations() ([]ArticleTranslationPr
 			continue
 		}
 
-		// 根据目标语言构建文件路径
-		dir := filepath.Dir(article.FilePath)
-		baseName := filepath.Base(article.FilePath)
+		// 为每种目标语言生成预览
+		for _, targetLang := range targetLanguages {
+			// 根据目标语言构建文件路径
+			dir := filepath.Dir(article.FilePath)
+			baseName := filepath.Base(article.FilePath)
 
-		var targetFile string
-		if strings.HasSuffix(baseName, ".md") {
-			switch targetLang {
-			case "ja":
-				targetFile = filepath.Join(dir, "index.ja.md")
-			case "ko":
-				targetFile = filepath.Join(dir, "index.ko.md")
-			default: // "en" 或其他
-				targetFile = filepath.Join(dir, "index.en.md")
+			var targetFile string
+			if strings.HasSuffix(baseName, ".md") {
+				switch targetLang {
+				case "ja":
+					targetFile = filepath.Join(dir, "index.ja.md")
+				case "ko":
+					targetFile = filepath.Join(dir, "index.ko.md")
+				default: // "en" 或其他
+					targetFile = filepath.Join(dir, "index.en.md")
+				}
+			} else {
+				continue
 			}
-		} else {
-			continue
+
+			// 检查目标文件是否存在
+			status := "missing"
+			if _, err := os.Stat(targetFile); err == nil {
+				status = "exists"
+			}
+
+			// 分析文章内容
+			wordCount, paragraphCount := a.analyzeArticleContent(article.FilePath)
+			estimatedTime := a.estimateTranslationTime(paragraphCount)
+
+			preview := ArticleTranslationPreview{
+				OriginalFile:   article.FilePath,
+				EnglishFile:    targetFile,
+				Title:          fmt.Sprintf("%s (%s)", article.Title, cfg.Language.LanguageNames[targetLang]),
+				WordCount:      wordCount,
+				ParagraphCount: paragraphCount,
+				Status:         status,
+				EstimatedTime:  estimatedTime,
+			}
+
+			previews = append(previews, preview)
 		}
-
-		// 检查目标文件是否存在
-		status := "missing"
-		if _, err := os.Stat(targetFile); err == nil {
-			status = "exists"
-		}
-
-		// 分析文章内容
-		wordCount, paragraphCount := a.analyzeArticleContent(article.FilePath)
-		estimatedTime := a.estimateTranslationTime(paragraphCount)
-
-		preview := ArticleTranslationPreview{
-			OriginalFile:   article.FilePath,
-			EnglishFile:    targetFile, // 重命名为TargetFile更合适，但保持兼容性
-			Title:          article.Title,
-			WordCount:      wordCount,
-			ParagraphCount: paragraphCount,
-			Status:         status,
-			EstimatedTime:  estimatedTime,
-		}
-
-		previews = append(previews, preview)
 	}
 
 	return previews, nil
 }
 
-// TranslateArticles 翻译文章
+// TranslateArticles 翻译文章到多种语言
 func (a *ArticleTranslator) TranslateArticles(mode string) error {
 	cfg := config.GetGlobalConfig()
-	targetLangName := cfg.Language.LanguageNames[cfg.Language.TargetLanguage]
-	if targetLangName == "" {
-		targetLangName = "English"
-	}
+	targetLanguages := cfg.Language.TargetLanguages
 
-	previews, err := a.PreviewArticleTranslations()
+	// 获取所有文章
+	articles, err := scanner.ScanArticles(a.contentDir)
 	if err != nil {
-		return fmt.Errorf("获取翻译预览失败: %v", err)
+		return fmt.Errorf("扫描文章失败: %v", err)
 	}
 
-	// 根据模式过滤文章
-	var targetPreviews []ArticleTranslationPreview
-	for _, preview := range previews {
-		switch mode {
-		case "missing":
-			if preview.Status == "missing" {
-				targetPreviews = append(targetPreviews, preview)
-			}
-		case "all":
-			targetPreviews = append(targetPreviews, preview)
-		case "update":
-			if preview.Status == "exists" {
-				targetPreviews = append(targetPreviews, preview)
-			}
+	var targetArticles []models.Article
+	for _, article := range articles {
+		if article.Title == "" {
+			continue
 		}
+		targetArticles = append(targetArticles, article)
 	}
 
-	if len(targetPreviews) == 0 {
-		fmt.Printf("根据选择的模式，没有需要翻译为%s的文章\n", targetLangName)
+	if len(targetArticles) == 0 {
+		fmt.Printf("没有需要翻译的文章\n")
 		return nil
 	}
 
@@ -151,37 +144,90 @@ func (a *ArticleTranslator) TranslateArticles(mode string) error {
 	if err := a.translator.TestConnection(); err != nil {
 		return fmt.Errorf("无法连接到LM Studio: %v", err)
 	}
-	fmt.Printf("LM Studio连接成功！准备翻译为%s\n", targetLangName)
+	fmt.Printf("LM Studio连接成功！\n")
 
-	successCount := 0
-	errorCount := 0
+	totalSuccessCount := 0
+	totalErrorCount := 0
 
-	for i, preview := range targetPreviews {
-		fmt.Printf("\n处理文章 (%d/%d): %s\n", i+1, len(targetPreviews), preview.Title)
-		fmt.Printf("预计需要时间: %s\n", preview.EstimatedTime)
-		fmt.Printf("目标语言: %s\n", targetLangName)
-
-		if err := a.translateSingleArticle(preview); err != nil {
-			fmt.Printf("❌ 翻译失败: %v\n", err)
-			errorCount++
-		} else {
-			fmt.Printf("✅ 翻译完成: %s\n", preview.EnglishFile)
-			successCount++
+	// 按语言顺序翻译
+	for langIndex, targetLang := range targetLanguages {
+		targetLangName := cfg.Language.LanguageNames[targetLang]
+		if targetLangName == "" {
+			targetLangName = targetLang
 		}
+
+		fmt.Printf("\n🌐 开始翻译为 %s (%d/%d)\n", targetLangName, langIndex+1, len(targetLanguages))
+		utils.Info("开始翻译为 %s (%d/%d)", targetLangName, langIndex+1, len(targetLanguages))
+
+		successCount := 0
+		errorCount := 0
+
+		for i, article := range targetArticles {
+			// 构建目标文件路径
+			dir := filepath.Dir(article.FilePath)
+			var targetFile string
+			switch targetLang {
+			case "ja":
+				targetFile = filepath.Join(dir, "index.ja.md")
+			case "ko":
+				targetFile = filepath.Join(dir, "index.ko.md")
+			default: // "en" 或其他
+				targetFile = filepath.Join(dir, "index.en.md")
+			}
+
+			// 检查是否需要翻译
+			shouldTranslate := false
+			if _, err := os.Stat(targetFile); os.IsNotExist(err) {
+				if mode == "missing" || mode == "all" {
+					shouldTranslate = true
+				}
+			} else {
+				if mode == "update" || mode == "all" {
+					shouldTranslate = true
+				}
+			}
+
+			if !shouldTranslate {
+				continue
+			}
+
+			fmt.Printf("\n处理文章 (%d/%d): %s\n", i+1, len(targetArticles), article.Title)
+			fmt.Printf("目标语言: %s\n", targetLangName)
+			fmt.Printf("目标文件: %s\n", targetFile)
+
+			preview := ArticleTranslationPreview{
+				OriginalFile: article.FilePath,
+				EnglishFile:  targetFile,
+				Title:        article.Title,
+			}
+
+			if err := a.translateSingleArticleToLanguage(preview, targetLang); err != nil {
+				fmt.Printf("❌ 翻译失败: %v\n", err)
+				errorCount++
+				totalErrorCount++
+			} else {
+				fmt.Printf("✅ 翻译完成: %s\n", targetFile)
+				successCount++
+				totalSuccessCount++
+			}
+		}
+
+		fmt.Printf("\n%s 翻译完成:\n", targetLangName)
+		fmt.Printf("- 成功翻译: %d 篇\n", successCount)
+		fmt.Printf("- 翻译失败: %d 篇\n", errorCount)
 	}
 
-	fmt.Printf("\n文章翻译完成！\n")
-	fmt.Printf("- 目标语言: %s\n", targetLangName)
-	fmt.Printf("- 成功翻译: %d 篇\n", successCount)
-	fmt.Printf("- 翻译失败: %d 篇\n", errorCount)
-	fmt.Printf("- 总计处理: %d 篇\n", len(targetPreviews))
+	fmt.Printf("\n🎉 多语言翻译全部完成！\n")
+	fmt.Printf("- 目标语言: %v\n", targetLanguages)
+	fmt.Printf("- 总成功翻译: %d 篇\n", totalSuccessCount)
+	fmt.Printf("- 总翻译失败: %d 篇\n", totalErrorCount)
 
 	return nil
 }
 
-// translateSingleArticle 翻译单篇文章
-func (a *ArticleTranslator) translateSingleArticle(preview ArticleTranslationPreview) error {
-	utils.Info("开始翻译文章: %s", preview.OriginalFile)
+// translateSingleArticleToLanguage 翻译单篇文章到指定语言
+func (a *ArticleTranslator) translateSingleArticleToLanguage(preview ArticleTranslationPreview, targetLang string) error {
+	utils.Info("开始翻译文章到 %s: %s", targetLang, preview.OriginalFile)
 	utils.Info("目标文件: %s", preview.EnglishFile)
 
 	// 读取原文件
@@ -191,21 +237,18 @@ func (a *ArticleTranslator) translateSingleArticle(preview ArticleTranslationPre
 		return fmt.Errorf("读取原文件失败: %v", err)
 	}
 
-	utils.Info("原文件读取成功，内容长度: %d 字符", len(content))
-
 	// 解析文章结构
 	frontMatter, bodyContent := a.parseArticleContent(string(content))
-	utils.Info("文章结构解析完成 - 前置数据长度: %d, 正文长度: %d", len(frontMatter), len(bodyContent))
 
 	// 翻译前置数据
-	translatedFrontMatter, err := a.translateFrontMatter(frontMatter)
+	translatedFrontMatter, err := a.translateFrontMatterToLanguage(frontMatter, targetLang)
 	if err != nil {
 		utils.Error("翻译前置数据失败: %v", err)
 		return fmt.Errorf("翻译前置数据失败: %v", err)
 	}
 
-	// 分段翻译正文
-	translatedBody, err := a.translateArticleBody(bodyContent)
+	// 翻译正文
+	translatedBody, err := a.translateArticleBodyToLanguage(bodyContent, targetLang)
 	if err != nil {
 		utils.Error("翻译正文失败: %v", err)
 		return fmt.Errorf("翻译正文失败: %v", err)
@@ -213,7 +256,6 @@ func (a *ArticleTranslator) translateSingleArticle(preview ArticleTranslationPre
 
 	// 合成最终内容
 	finalContent := a.combineTranslatedContent(translatedFrontMatter, translatedBody)
-	utils.Info("翻译内容合成完成，最终长度: %d 字符", len(finalContent))
 
 	// 确保目录存在
 	if err := os.MkdirAll(filepath.Dir(preview.EnglishFile), 0755); err != nil {
@@ -221,84 +263,134 @@ func (a *ArticleTranslator) translateSingleArticle(preview ArticleTranslationPre
 		return fmt.Errorf("创建目录失败: %v", err)
 	}
 
-	// 写入英文文件
+	// 写入目标文件
 	if err := os.WriteFile(preview.EnglishFile, []byte(finalContent), 0644); err != nil {
-		utils.Error("写入英文文件失败: %s, 错误: %v", preview.EnglishFile, err)
-		return fmt.Errorf("写入英文文件失败: %v", err)
+		utils.Error("写入目标文件失败: %s, 错误: %v", preview.EnglishFile, err)
+		return fmt.Errorf("写入目标文件失败: %v", err)
 	}
 
-	utils.Info("文章翻译完成: %s", preview.EnglishFile)
+	utils.Info("文章翻译完成 (%s): %s", targetLang, preview.EnglishFile)
 	return nil
 }
 
-// parseArticleContent 解析文章内容，分离前置数据和正文
-func (a *ArticleTranslator) parseArticleContent(content string) (string, string) {
-	lines := strings.Split(content, "\n")
-
-	if len(lines) < 3 || strings.TrimSpace(lines[0]) != "---" {
-		return "", content // 没有前置数据
+// translateFieldContentToLanguage 翻译字段内容到指定语言
+func (a *ArticleTranslator) translateFieldContentToLanguage(content, targetLang string) (string, error) {
+	cfg := config.GetGlobalConfig()
+	targetLangName := cfg.Language.LanguageNames[targetLang]
+	if targetLangName == "" {
+		targetLangName = targetLang
 	}
 
-	frontMatterEnd := -1
-	for i := 1; i < len(lines); i++ {
-		if strings.TrimSpace(lines[i]) == "---" {
-			frontMatterEnd = i
-			break
-		}
+	// 根据目标语言调整提示词
+	var prompt string
+	switch targetLang {
+	case "ja":
+		prompt = fmt.Sprintf(`Please translate this Chinese text to Japanese. Return ONLY the Japanese translation, no explanations or additional text:
+
+%s`, content)
+	case "ko":
+		prompt = fmt.Sprintf(`Please translate this Chinese text to Korean. Return ONLY the Korean translation, no explanations or additional text:
+
+%s`, content)
+	default: // "en" 或其他
+		prompt = fmt.Sprintf(`Please translate this Chinese text to English. Return ONLY the English translation, no explanations or additional text:
+
+%s`, content)
 	}
 
-	if frontMatterEnd == -1 {
-		return "", content // 没有找到前置数据结束标记
+	request := translator.LMStudioRequest{
+		Model: cfg.LMStudio.Model,
+		Messages: []translator.Message{
+			{
+				Role:    "system",
+				Content: fmt.Sprintf("You are a professional translator. You translate Chinese to %s accurately and concisely. You only return the translation without any additional text, explanations, or formatting.", targetLangName),
+			},
+			{
+				Role:    "user",
+				Content: prompt,
+			},
+		},
+		Stream: false,
 	}
 
-	frontMatter := strings.Join(lines[0:frontMatterEnd+1], "\n")
-	body := strings.Join(lines[frontMatterEnd+1:], "\n")
+	jsonData, err := json.Marshal(request)
+	if err != nil {
+		return "", fmt.Errorf("序列化请求失败: %v", err)
+	}
 
-	return frontMatter, body
+	client := &http.Client{Timeout: time.Duration(cfg.LMStudio.Timeout) * time.Second}
+	resp, err := client.Post(cfg.LMStudio.URL, "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return "", fmt.Errorf("发送请求失败: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("LM Studio返回错误状态: %d", resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("读取响应失败: %v", err)
+	}
+
+	var response translator.LMStudioResponse
+	if err := json.Unmarshal(body, &response); err != nil {
+		return "", fmt.Errorf("解析响应失败: %v", err)
+	}
+
+	if len(response.Choices) == 0 {
+		return "", fmt.Errorf("没有获取到翻译结果")
+	}
+
+	result := strings.TrimSpace(response.Choices[0].Message.Content)
+	result = a.cleanTranslationResult(result)
+
+	utils.Info("字段翻译完成 (%s) - 原文: %s, 译文: %s", targetLangName, content, result)
+
+	return result, nil
 }
 
-// translateFrontMatter 翻译前置数据
-func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, error) {
+// translateFrontMatterToLanguage 翻译前置数据到指定语言
+func (a *ArticleTranslator) translateFrontMatterToLanguage(frontMatter, targetLang string) (string, error) {
 	if frontMatter == "" {
-		utils.Info("无前置数据需要翻译")
 		return "", nil
 	}
 
-	fmt.Printf("翻译前置数据...\n")
-	utils.Info("开始翻译前置数据，原始长度: %d", len(frontMatter))
+	cfg := config.GetGlobalConfig()
+	targetLangName := cfg.Language.LanguageNames[targetLang]
+	if targetLangName == "" {
+		targetLangName = targetLang
+	}
+
+	fmt.Printf("翻译前置数据到 %s...\n", targetLangName)
 
 	lines := strings.Split(frontMatter, "\n")
 	var translatedLines []string
 
-	for lineNum, line := range lines {
+	for _, line := range lines {
 		trimmedLine := strings.TrimSpace(line)
-		utils.Debug("处理前置数据第%d行: %s", lineNum+1, line)
 
 		if trimmedLine == "---" {
 			translatedLines = append(translatedLines, line)
-			utils.Debug("保留分隔符: %s", line)
 			continue
 		}
 
-		// 翻译标题
+		// 翻译标题字段
 		if strings.HasPrefix(trimmedLine, "title:") {
 			title := a.extractFieldValue(trimmedLine, "title:")
-			utils.Info("发现标题字段: %s", title)
 			if title != "" && a.containsChinese(title) {
 				fmt.Printf("  title: %s -> ", title)
-				translatedTitle, err := a.translateFieldContent(title)
+				translatedTitle, err := a.translateFieldContentToLanguage(title, targetLang)
 				if err != nil {
 					fmt.Printf("翻译失败\n")
-					utils.Warn("标题翻译失败: %s, 错误: %v", title, err)
 					translatedLines = append(translatedLines, line)
 				} else {
-					// 移除所有引号
 					translatedTitle = a.removeQuotes(translatedTitle)
 					fmt.Printf("%s\n", translatedTitle)
 					translatedLines = append(translatedLines, fmt.Sprintf("title: \"%s\"", translatedTitle))
 				}
 			} else {
-				utils.Info("标题无需翻译: %s", title)
 				translatedLines = append(translatedLines, line)
 			}
 			continue
@@ -307,22 +399,18 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 		// 翻译描述字段
 		if strings.HasPrefix(trimmedLine, "description:") {
 			description := a.extractFieldValue(trimmedLine, "description:")
-			utils.Info("发现描述字段: %s", description)
 			if description != "" && a.containsChinese(description) {
 				fmt.Printf("  description: %s -> ", description)
-				translatedDescription, err := a.translateFieldContent(description)
+				translatedDescription, err := a.translateFieldContentToLanguage(description, targetLang)
 				if err != nil {
 					fmt.Printf("翻译失败\n")
-					utils.Warn("描述翻译失败: %s, 错误: %v", description, err)
 					translatedLines = append(translatedLines, line)
 				} else {
-					// 移除所有引号
 					translatedDescription = a.removeQuotes(translatedDescription)
 					fmt.Printf("%s\n", translatedDescription)
 					translatedLines = append(translatedLines, fmt.Sprintf("description: \"%s\"", translatedDescription))
 				}
 			} else {
-				utils.Info("描述无需翻译: %s", description)
 				translatedLines = append(translatedLines, line)
 			}
 			continue
@@ -331,22 +419,18 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 		// 翻译副标题
 		if strings.HasPrefix(trimmedLine, "subtitle:") {
 			subtitle := a.extractFieldValue(trimmedLine, "subtitle:")
-			utils.Info("发现副标题字段: %s", subtitle)
 			if subtitle != "" && a.containsChinese(subtitle) {
 				fmt.Printf("  subtitle: %s -> ", subtitle)
-				translatedSubtitle, err := a.translateFieldContent(subtitle)
+				translatedSubtitle, err := a.translateFieldContentToLanguage(subtitle, targetLang)
 				if err != nil {
 					fmt.Printf("翻译失败\n")
-					utils.Warn("副标题翻译失败: %s, 错误: %v", subtitle, err)
 					translatedLines = append(translatedLines, line)
 				} else {
-					// 移除所有引号
 					translatedSubtitle = a.removeQuotes(translatedSubtitle)
 					fmt.Printf("%s\n", translatedSubtitle)
 					translatedLines = append(translatedLines, fmt.Sprintf("subtitle: \"%s\"", translatedSubtitle))
 				}
 			} else {
-				utils.Info("副标题无需翻译: %s", subtitle)
 				translatedLines = append(translatedLines, line)
 			}
 			continue
@@ -355,22 +439,18 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 		// 翻译摘要
 		if strings.HasPrefix(trimmedLine, "summary:") {
 			summary := a.extractFieldValue(trimmedLine, "summary:")
-			utils.Info("发现摘要字段: %s", summary)
 			if summary != "" && a.containsChinese(summary) {
 				fmt.Printf("  summary: %s -> ", summary)
-				translatedSummary, err := a.translateFieldContent(summary)
+				translatedSummary, err := a.translateFieldContentToLanguage(summary, targetLang)
 				if err != nil {
 					fmt.Printf("翻译失败\n")
-					utils.Warn("摘要翻译失败: %s, 错误: %v", summary, err)
 					translatedLines = append(translatedLines, line)
 				} else {
-					// 移除所有引号
 					translatedSummary = a.removeQuotes(translatedSummary)
 					fmt.Printf("%s\n", translatedSummary)
 					translatedLines = append(translatedLines, fmt.Sprintf("summary: \"%s\"", translatedSummary))
 				}
 			} else {
-				utils.Info("摘要无需翻译: %s", summary)
 				translatedLines = append(translatedLines, line)
 			}
 			continue
@@ -379,23 +459,19 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 		// 翻译slug字段
 		if strings.HasPrefix(trimmedLine, "slug:") {
 			slug := a.extractFieldValue(trimmedLine, "slug:")
-			utils.Info("发现slug字段: %s", slug)
 			if slug != "" && a.containsChinese(slug) {
 				fmt.Printf("  slug: %s -> ", slug)
-				translatedSlug, err := a.translateFieldContent(slug)
+				translatedSlug, err := a.translateFieldContentToLanguage(slug, targetLang)
 				if err != nil {
 					fmt.Printf("翻译失败\n")
-					utils.Warn("slug翻译失败: %s, 错误: %v", slug, err)
 					translatedLines = append(translatedLines, line)
 				} else {
-					// 移除所有引号并格式化为slug
 					translatedSlug = a.removeQuotes(translatedSlug)
 					translatedSlug = a.formatSlugField(translatedSlug)
 					fmt.Printf("%s\n", translatedSlug)
 					translatedLines = append(translatedLines, fmt.Sprintf("slug: \"%s\"", translatedSlug))
 				}
 			} else {
-				utils.Info("slug无需翻译: %s", slug)
 				translatedLines = append(translatedLines, line)
 			}
 			continue
@@ -404,12 +480,10 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 		// 翻译标签数组
 		if strings.HasPrefix(trimmedLine, "tags:") {
 			tags := a.extractArrayField(trimmedLine, "tags:")
-			utils.Info("发现标签字段: %v", tags)
 			if len(tags) > 0 {
-				translatedTags := a.translateArrayField(tags, "tags")
+				translatedTags := a.translateArrayFieldToLanguage(tags, "tags", targetLang)
 				translatedLines = append(translatedLines, fmt.Sprintf("tags: %s", a.formatArrayField(translatedTags)))
 			} else {
-				utils.Info("标签数组为空")
 				translatedLines = append(translatedLines, line)
 			}
 			continue
@@ -418,12 +492,10 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 		// 翻译分类数组
 		if strings.HasPrefix(trimmedLine, "categories:") {
 			categories := a.extractArrayField(trimmedLine, "categories:")
-			utils.Info("发现分类字段: %v", categories)
 			if len(categories) > 0 {
-				translatedCategories := a.translateArrayField(categories, "categories")
+				translatedCategories := a.translateArrayFieldToLanguage(categories, "categories", targetLang)
 				translatedLines = append(translatedLines, fmt.Sprintf("categories: %s", a.formatArrayField(translatedCategories)))
 			} else {
-				utils.Info("分类数组为空")
 				translatedLines = append(translatedLines, line)
 			}
 			continue
@@ -432,24 +504,221 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 		// 翻译作者数组
 		if strings.HasPrefix(trimmedLine, "authors:") {
 			authors := a.extractArrayField(trimmedLine, "authors:")
-			utils.Info("发现作者字段: %v", authors)
 			if len(authors) > 0 {
-				translatedAuthors := a.translateArrayField(authors, "authors")
+				translatedAuthors := a.translateArrayFieldToLanguage(authors, "authors", targetLang)
 				translatedLines = append(translatedLines, fmt.Sprintf("authors: %s", a.formatArrayField(translatedAuthors)))
 			} else {
-				utils.Info("作者数组为空")
 				translatedLines = append(translatedLines, line)
 			}
 			continue
 		}
 
 		// 其他字段保持不变
-		utils.Debug("保留其他字段: %s", line)
 		translatedLines = append(translatedLines, line)
 	}
 
-	result := strings.Join(translatedLines, "\n")
-	utils.Info("前置数据翻译完成，结果长度: %d", len(result))
+	return strings.Join(translatedLines, "\n"), nil
+}
+
+// translateArticleBodyToLanguage 翻译正文到指定语言
+func (a *ArticleTranslator) translateArticleBodyToLanguage(body, targetLang string) (string, error) {
+	if strings.TrimSpace(body) == "" {
+		return body, nil
+	}
+
+	cfg := config.GetGlobalConfig()
+	targetLangName := cfg.Language.LanguageNames[targetLang]
+	if targetLangName == "" {
+		targetLangName = targetLang
+	}
+
+	fmt.Printf("\n翻译正文到 %s (%d 字符)...\n", targetLangName, len(body))
+
+	return a.translateContentByLinesToLanguage(body, targetLang)
+}
+
+// translateContentByLinesToLanguage 按行翻译内容到指定语言
+func (a *ArticleTranslator) translateContentByLinesToLanguage(content, targetLang string) (string, error) {
+	cfg := config.GetGlobalConfig()
+	lines := strings.Split(content, "\n")
+	var result []string
+
+	inCodeBlock := false
+	translationCount := 0
+
+	for _, line := range lines {
+		// 检测代码块
+		if strings.HasPrefix(strings.TrimSpace(line), "```") {
+			inCodeBlock = !inCodeBlock
+			result = append(result, line)
+			continue
+		}
+
+		// 代码块内容直接保留
+		if inCodeBlock {
+			result = append(result, line)
+			continue
+		}
+
+		// 空行直接保留
+		if strings.TrimSpace(line) == "" {
+			result = append(result, line)
+			continue
+		}
+
+		// 检查是否包含中文
+		if !a.containsChinese(line) {
+			result = append(result, line)
+			continue
+		}
+
+		// 需要翻译的行
+		translationCount++
+		fmt.Printf("  [%d] ", translationCount)
+
+		translatedLine, err := a.translateSingleLineToLanguage(line, translationCount, targetLang)
+		if err != nil {
+			fmt.Printf("翻译失败\n")
+			result = append(result, line) // 翻译失败保持原文
+		} else {
+			fmt.Printf("完成\n")
+			result = append(result, translatedLine)
+		}
+
+		// 添加延迟避免API频率限制
+		if cfg.Translation.DelayBetweenMs > 0 {
+			time.Sleep(time.Duration(cfg.Translation.DelayBetweenMs) * time.Millisecond)
+		}
+	}
+
+	return strings.Join(result, "\n"), nil
+}
+
+// translateSingleLineToLanguage 翻译单行内容到指定语言
+func (a *ArticleTranslator) translateSingleLineToLanguage(line string, lineNum int, targetLang string) (string, error) {
+	trimmedLine := strings.TrimSpace(line)
+
+	// 提取Markdown格式前缀
+	var prefix, content, suffix string
+
+	// 处理标题
+	if strings.HasPrefix(trimmedLine, "#") {
+		match := regexp.MustCompile(`^(#+\s*)`).FindString(trimmedLine)
+		if match != "" {
+			prefix = match
+			content = strings.TrimSpace(strings.TrimPrefix(trimmedLine, match))
+		}
+	} else if strings.HasPrefix(trimmedLine, "- ") || strings.HasPrefix(trimmedLine, "* ") {
+		// 处理无序列表
+		if strings.HasPrefix(trimmedLine, "- ") {
+			prefix = "- "
+			content = strings.TrimSpace(strings.TrimPrefix(trimmedLine, "- "))
+		} else {
+			prefix = "* "
+			content = strings.TrimSpace(strings.TrimPrefix(trimmedLine, "* "))
+		}
+	} else {
+		// 普通段落
+		content = trimmedLine
+	}
+
+	// 如果没有可翻译的内容，直接返回
+	if strings.TrimSpace(content) == "" || !a.containsChinese(content) {
+		return line, nil
+	}
+
+	// 翻译纯文本内容到指定语言
+	translatedContent, err := a.translatePlainTextToLanguage(content, lineNum, targetLang)
+	if err != nil {
+		return "", err
+	}
+
+	// 重新组合
+	leadingSpaces := ""
+	if len(line) > len(strings.TrimLeft(line, " \t")) {
+		leadingSpaces = line[:len(line)-len(strings.TrimLeft(line, " \t"))]
+	}
+
+	return leadingSpaces + prefix + translatedContent + suffix, nil
+}
+
+// translatePlainTextToLanguage 翻译纯文本内容到指定语言
+func (a *ArticleTranslator) translatePlainTextToLanguage(text string, lineNum int, targetLang string) (string, error) {
+	cfg := config.GetGlobalConfig()
+	targetLangName := cfg.Language.LanguageNames[targetLang]
+	if targetLangName == "" {
+		targetLangName = targetLang
+	}
+
+	// 清理文本
+	cleanText := strings.TrimSpace(text)
+	cleanText = regexp.MustCompile(`\s+`).ReplaceAllString(cleanText, " ")
+
+	// 根据目标语言调整提示词
+	var prompt string
+	switch targetLang {
+	case "ja":
+		prompt = fmt.Sprintf(`Translate this Chinese text to Japanese. Return ONLY the Japanese translation:
+
+%s`, cleanText)
+	case "ko":
+		prompt = fmt.Sprintf(`Translate this Chinese text to Korean. Return ONLY the Korean translation:
+
+%s`, cleanText)
+	default: // "en" 或其他
+		prompt = fmt.Sprintf(`Translate this Chinese text to English. Return ONLY the English translation:
+
+%s`, cleanText)
+	}
+
+	request := translator.LMStudioRequest{
+		Model: cfg.LMStudio.Model,
+		Messages: []translator.Message{
+			{
+				Role:    "system",
+				Content: fmt.Sprintf("You are a professional translator. Translate Chinese to %s accurately. Return only the translation without explanations or formatting.", targetLangName),
+			},
+			{
+				Role:    "user",
+				Content: prompt,
+			},
+		},
+		Stream: false,
+	}
+
+	jsonData, err := json.Marshal(request)
+	if err != nil {
+		return "", fmt.Errorf("序列化请求失败: %v", err)
+	}
+
+	client := &http.Client{Timeout: time.Duration(cfg.LMStudio.Timeout) * time.Second}
+	resp, err := client.Post(cfg.LMStudio.URL, "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return "", fmt.Errorf("发送请求失败: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("LM Studio返回错误状态: %d", resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("读取响应失败: %v", err)
+	}
+
+	var response translator.LMStudioResponse
+	if err := json.Unmarshal(body, &response); err != nil {
+		return "", fmt.Errorf("解析响应失败: %v", err)
+	}
+
+	if len(response.Choices) == 0 {
+		return "", fmt.Errorf("没有获取到翻译结果")
+	}
+
+	result := strings.TrimSpace(response.Choices[0].Message.Content)
+	result = a.cleanTranslationResult(result)
+
 	return result, nil
 }
 
@@ -509,108 +778,89 @@ func (a *ArticleTranslator) extractFieldValue(line, prefix string) string {
 	return value
 }
 
-// translateFieldContent 翻译字段内容，使用优化的提示词
-func (a *ArticleTranslator) translateFieldContent(content string) (string, error) {
-	cfg := config.GetGlobalConfig()
+// extractArrayField 提取数组字段
+func (a *ArticleTranslator) extractArrayField(line, prefix string) []string {
+	value := strings.TrimSpace(strings.TrimPrefix(line, prefix))
 
-	// 从配置读取目标语言
-	targetLang := cfg.Language.TargetLanguage
+	// 移除方括号
+	value = strings.Trim(value, "[]")
+
+	if value == "" {
+		return []string{}
+	}
+
+	// 分割数组元素
+	parts := strings.Split(value, ",")
+	var result []string
+
+	for _, part := range parts {
+		part = strings.TrimSpace(part)
+		part = strings.Trim(part, "\"'")
+		if part != "" {
+			result = append(result, part)
+		}
+	}
+
+	return result
+}
+
+// translateArrayFieldToLanguage 翻译数组字段到指定语言
+func (a *ArticleTranslator) translateArrayFieldToLanguage(items []string, fieldType, targetLang string) []string {
+	var translated []string
+
+	cfg := config.GetGlobalConfig()
 	targetLangName := cfg.Language.LanguageNames[targetLang]
 	if targetLangName == "" {
-		targetLangName = "English" // 默认值
+		targetLangName = targetLang
 	}
 
-	// 根据目标语言调整提示词
-	var prompt string
-	switch targetLang {
-	case "ja":
-		prompt = fmt.Sprintf(`Please translate this Chinese text to Japanese. Return ONLY the Japanese translation, no explanations or additional text:
+	fmt.Printf("  %s: ", fieldType)
+	utils.Info("开始翻译%s数组到%s: %v", fieldType, targetLangName, items)
 
-%s`, content)
-	case "ko":
-		prompt = fmt.Sprintf(`Please translate this Chinese text to Korean. Return ONLY the Korean translation, no explanations or additional text:
+	for i, item := range items {
+		utils.Debug("处理数组项目 [%d/%d]: %s", i+1, len(items), item)
 
-%s`, content)
-	default: // "en" 或其他
-		prompt = fmt.Sprintf(`Please translate this Chinese text to English. Return ONLY the English translation, no explanations or additional text:
+		if a.containsChinese(item) {
+			fmt.Printf("%s -> ", item)
+			utils.Info("翻译数组项目 [%d/%d]: %s", i+1, len(items), item)
 
-%s`, content)
+			translatedItem, err := a.translateFieldContentToLanguage(item, targetLang)
+			if err != nil {
+				fmt.Printf("失败 ")
+				utils.Warn("数组项目翻译失败 [%d/%d] - %s: %s, 错误: %v", i+1, len(items), fieldType, item, err)
+				translated = append(translated, item)
+			} else {
+				// 移除译文中的引号
+				translatedItem = a.removeQuotes(translatedItem)
+				fmt.Printf("%s ", translatedItem)
+				utils.Info("数组项目翻译成功 [%d/%d] - %s: %s -> %s", i+1, len(items), fieldType, item, translatedItem)
+				translated = append(translated, translatedItem)
+			}
+		} else {
+			utils.Debug("跳过数组项目 [%d/%d] - 无中文: %s", i+1, len(items), item)
+			translated = append(translated, item)
+		}
 	}
 
-	request := translator.LMStudioRequest{
-		Model: cfg.LMStudio.Model,
-		Messages: []translator.Message{
-			{
-				Role:    "system",
-				Content: fmt.Sprintf("You are a professional translator. You translate Chinese to %s accurately and concisely. You only return the translation without any additional text, explanations, or formatting.", targetLangName),
-			},
-			{
-				Role:    "user",
-				Content: prompt,
-			},
-		},
-		Stream: false,
+	fmt.Printf("\n")
+	utils.Info("%s数组翻译完成: %v -> %v", fieldType, items, translated)
+	return translated
+}
+
+// formatArrayField 格式化数组字段，避免多余引号
+func (a *ArticleTranslator) formatArrayField(items []string) string {
+	if len(items) == 0 {
+		return "[]"
 	}
 
-	// 记录详细请求信息到日志
-	utils.Debug("LLM翻译请求 - Model: %s, Target: %s", request.Model, targetLangName)
-	utils.Debug("LLM翻译请求 - 原文: %s", content)
-	utils.Debug("LLM翻译请求 - Prompt: %s", prompt)
-
-	jsonData, err := json.Marshal(request)
-	if err != nil {
-		utils.Error("LLM请求序列化失败: %v", err)
-		return "", fmt.Errorf("序列化请求失败: %v", err)
+	var quotedItems []string
+	for _, item := range items {
+		// 清理可能存在的多余引号，并确保不包含引号
+		cleanItem := a.removeQuotes(item)
+		quotedItems = append(quotedItems, fmt.Sprintf("\"%s\"", cleanItem))
 	}
 
-	utils.Debug("LLM请求JSON: %s", string(jsonData))
-
-	startTime := time.Now()
-	client := &http.Client{Timeout: time.Duration(cfg.LMStudio.Timeout) * time.Second}
-	resp, err := client.Post(cfg.LMStudio.URL, "application/json", bytes.NewBuffer(jsonData))
-	requestDuration := time.Since(startTime)
-
-	if err != nil {
-		utils.Error("LLM请求网络错误: %v, 耗时: %v", err, requestDuration)
-		return "", fmt.Errorf("发送请求失败: %v", err)
-	}
-	defer resp.Body.Close()
-
-	utils.Debug("LLM响应状态: %d, 耗时: %v", resp.StatusCode, requestDuration)
-
-	if resp.StatusCode != http.StatusOK {
-		utils.Error("LLM响应错误状态码: %d", resp.StatusCode)
-		return "", fmt.Errorf("LM Studio返回错误状态: %d", resp.StatusCode)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		utils.Error("LLM响应读取失败: %v", err)
-		return "", fmt.Errorf("读取响应失败: %v", err)
-	}
-
-	utils.Debug("LLM响应原始数据: %s", string(body))
-
-	var response translator.LMStudioResponse
-	if err := json.Unmarshal(body, &response); err != nil {
-		utils.Error("LLM响应解析失败: %v", err)
-		return "", fmt.Errorf("解析响应失败: %v", err)
-	}
-
-	if len(response.Choices) == 0 {
-		utils.Error("LLM响应无翻译结果")
-		return "", fmt.Errorf("没有获取到翻译结果")
-	}
-
-	result := strings.TrimSpace(response.Choices[0].Message.Content)
-
-	// 增强的结果清理，移除常见的多余内容
-	result = a.cleanTranslationResult(result)
-
-	// 记录翻译完成信息到日志
-	utils.Info("字段翻译完成 (%s) - 原文: %s, 译文: %s, 耗时: %v", targetLangName, content, result, requestDuration)
-
-	return result, nil
+	return fmt.Sprintf("[%s]", strings.Join(quotedItems, ", "))
 }
 
 // cleanTranslationResult 清理翻译结果，移除多余的提示词或格式
@@ -624,18 +874,28 @@ func (a *ArticleTranslator) cleanTranslationResult(result string) string {
 	unwantedPrefixes := []string{
 		"Translation:",
 		"English:",
+		"Japanese:",
+		"Korean:",
 		"The translation is:",
 		"Here is the translation:",
 		"The English translation is:",
+		"The Japanese translation is:",
+		"The Korean translation is:",
 		"Translated:",
 		"Answer:",
 		"Result:",
 		"Output:",
 		"English translation:",
+		"Japanese translation:",
+		"Korean translation:",
 		"翻译:",
 		"英文:",
+		"日文:",
+		"韩文:",
 		"Translation: ",
 		"English: ",
+		"Japanese: ",
+		"Korean: ",
 	}
 
 	for _, prefix := range unwantedPrefixes {
@@ -691,344 +951,30 @@ func (a *ArticleTranslator) cleanTranslationResult(result string) string {
 	return result
 }
 
-// extractArrayField 提取数组字段
-func (a *ArticleTranslator) extractArrayField(line, prefix string) []string {
-	value := strings.TrimSpace(strings.TrimPrefix(line, prefix))
-
-	// 移除方括号
-	value = strings.Trim(value, "[]")
-
-	if value == "" {
-		return []string{}
-	}
-
-	// 分割数组元素
-	parts := strings.Split(value, ",")
-	var result []string
-
-	for _, part := range parts {
-		part = strings.TrimSpace(part)
-		part = strings.Trim(part, "\"'")
-		if part != "" {
-			result = append(result, part)
-		}
-	}
-
-	return result
-}
-
-// translateArrayField 翻译数组字段
-func (a *ArticleTranslator) translateArrayField(items []string, fieldType string) []string {
-	var translated []string
-
-	fmt.Printf("  %s: ", fieldType)
-	utils.Info("开始翻译%s数组: %v", fieldType, items)
-
-	for i, item := range items {
-		utils.Debug("处理数组项目 [%d/%d]: %s", i+1, len(items), item)
-
-		if a.containsChinese(item) {
-			fmt.Printf("%s -> ", item)
-			utils.Info("翻译数组项目 [%d/%d]: %s", i+1, len(items), item)
-
-			translatedItem, err := a.translateFieldContent(item)
-			if err != nil {
-				fmt.Printf("失败 ")
-				utils.Warn("数组项目翻译失败 [%d/%d] - %s: %s, 错误: %v", i+1, len(items), fieldType, item, err)
-				translated = append(translated, item)
-			} else {
-				// 移除译文中的引号
-				translatedItem = a.removeQuotes(translatedItem)
-				fmt.Printf("%s ", translatedItem)
-				utils.Info("数组项目翻译成功 [%d/%d] - %s: %s -> %s", i+1, len(items), fieldType, item, translatedItem)
-				translated = append(translated, translatedItem)
-			}
-		} else {
-			utils.Debug("跳过数组项目 [%d/%d] - 无中文: %s", i+1, len(items), item)
-			translated = append(translated, item)
-		}
-	}
-
-	fmt.Printf("\n")
-	utils.Info("%s数组翻译完成: %v -> %v", fieldType, items, translated)
-	return translated
-}
-
-// formatArrayField 格式化数组字段，避免多余引号
-func (a *ArticleTranslator) formatArrayField(items []string) string {
-	if len(items) == 0 {
-		return "[]"
-	}
-
-	var quotedItems []string
-	for _, item := range items {
-		// 清理可能存在的多余引号，并确保不包含引号
-		cleanItem := a.removeQuotes(item)
-		quotedItems = append(quotedItems, fmt.Sprintf("\"%s\"", cleanItem))
-	}
-
-	return fmt.Sprintf("[%s]", strings.Join(quotedItems, ", "))
-}
-
-// translateArticleBody 分段翻译正文，使用优化的Markdown解析器
-func (a *ArticleTranslator) translateArticleBody(body string) (string, error) {
-
-	if strings.TrimSpace(body) == "" {
-		utils.Info("正文为空，跳过翻译")
-		return body, nil
-	}
-
-	fmt.Printf("\n翻译正文 (%d 字符)...\n", len(body))
-	utils.Info("开始翻译正文内容，原文长度: %d 字符", len(body))
-
-	// 使用更简单有效的方式分段处理，避免Markdown解析器的复杂性
-	translatedContent, err := a.translateContentByLines(body)
-	if err != nil {
-		utils.Error("正文翻译失败: %v", err)
-		return "", fmt.Errorf("正文翻译失败: %v", err)
-	}
-
-	fmt.Printf("正文翻译完成 (%d 字符)\n", len(translatedContent))
-	utils.Info("正文翻译完成 - 原文长度: %d, 译文长度: %d", len(body), len(translatedContent))
-
-	return translatedContent, nil
-}
-
-// translateContentByLines 按行翻译内容，保持格式完整
-func (a *ArticleTranslator) translateContentByLines(content string) (string, error) {
-	cfg := config.GetGlobalConfig()
+// parseArticleContent 解析文章内容，分离前置数据和正文
+func (a *ArticleTranslator) parseArticleContent(content string) (string, string) {
 	lines := strings.Split(content, "\n")
-	var result []string
 
-	inCodeBlock := false
-	translationCount := 0
+	if len(lines) < 3 || strings.TrimSpace(lines[0]) != "---" {
+		return "", content // 没有前置数据
+	}
 
-	for i, line := range lines {
-		utils.Debug("处理第%d行: %s", i+1, a.truncateText(line, 100))
-
-		// 检测代码块
-		if strings.HasPrefix(strings.TrimSpace(line), "```") {
-			inCodeBlock = !inCodeBlock
-			result = append(result, line)
-			utils.Debug("代码块状态切换，当前状态: %v", inCodeBlock)
-			continue
-		}
-
-		// 代码块内容直接保留
-		if inCodeBlock {
-			result = append(result, line)
-			utils.Debug("代码块内容，直接保留")
-			continue
-		}
-
-		// 空行直接保留
-		if strings.TrimSpace(line) == "" {
-			result = append(result, line)
-			continue
-		}
-
-		// 检查是否包含中文
-		if !a.containsChinese(line) {
-			result = append(result, line)
-			utils.Debug("无中文内容，直接保留")
-			continue
-		}
-
-		// 需要翻译的行
-		translationCount++
-		fmt.Printf("  [%d] ", translationCount)
-
-		translatedLine, err := a.translateSingleLine(line, translationCount)
-		if err != nil {
-			fmt.Printf("翻译失败\n")
-			utils.Error("行翻译失败 %d: %v", translationCount, err)
-			result = append(result, line) // 翻译失败保持原文
-		} else {
-			fmt.Printf("完成\n")
-			utils.Info("行翻译成功 %d", translationCount)
-			utils.Debug("翻译结果: %s -> %s", line, translatedLine)
-			result = append(result, translatedLine)
-		}
-
-		// 添加延迟避免API频率限制
-		if cfg.Translation.DelayBetweenMs > 0 {
-			utils.Debug("等待 %dms 避免API频率限制", cfg.Translation.DelayBetweenMs)
-			time.Sleep(time.Duration(cfg.Translation.DelayBetweenMs) * time.Millisecond)
+	frontMatterEnd := -1
+	for i := 1; i < len(lines); i++ {
+		if strings.TrimSpace(lines[i]) == "---" {
+			frontMatterEnd = i
+			break
 		}
 	}
 
-	return strings.Join(result, "\n"), nil
-}
-
-// translateSingleLine 翻译单行内容，保持Markdown格式
-func (a *ArticleTranslator) translateSingleLine(line string, lineNum int) (string, error) {
-
-	trimmedLine := strings.TrimSpace(line)
-
-	// 提取Markdown格式前缀
-	var prefix, content, suffix string
-
-	// 处理标题
-	if strings.HasPrefix(trimmedLine, "#") {
-		match := regexp.MustCompile(`^(#+\s*)`).FindString(trimmedLine)
-		if match != "" {
-			prefix = match
-			content = strings.TrimSpace(strings.TrimPrefix(trimmedLine, match))
-		}
-	} else if strings.HasPrefix(trimmedLine, "- ") || strings.HasPrefix(trimmedLine, "* ") {
-		// 处理无序列表
-		if strings.HasPrefix(trimmedLine, "- ") {
-			prefix = "- "
-			content = strings.TrimSpace(strings.TrimPrefix(trimmedLine, "- "))
-		} else {
-			prefix = "* "
-			content = strings.TrimSpace(strings.TrimPrefix(trimmedLine, "* "))
-		}
-	} else if regexp.MustCompile(`^\d+\.\s`).MatchString(trimmedLine) {
-		// 处理有序列表
-		match := regexp.MustCompile(`^(\d+\.\s*)`).FindString(trimmedLine)
-		if match != "" {
-			prefix = match
-			content = strings.TrimSpace(strings.TrimPrefix(trimmedLine, match))
-		}
-	} else if strings.HasPrefix(trimmedLine, "> ") {
-		// 处理引用
-		prefix = "> "
-		content = strings.TrimSpace(strings.TrimPrefix(trimmedLine, "> "))
-	} else {
-		// 普通段落
-		content = trimmedLine
+	if frontMatterEnd == -1 {
+		return "", content // 没有找到前置数据结束标记
 	}
 
-	// 如果没有可翻译的内容，直接返回
-	if strings.TrimSpace(content) == "" || !a.containsChinese(content) {
-		return line, nil
-	}
+	frontMatter := strings.Join(lines[0:frontMatterEnd+1], "\n")
+	body := strings.Join(lines[frontMatterEnd+1:], "\n")
 
-	// 翻译纯文本内容
-	translatedContent, err := a.translatePlainTextSimple(content, lineNum)
-	if err != nil {
-		return "", err
-	}
-
-	// 重新组合
-	leadingSpaces := ""
-	if len(line) > len(strings.TrimLeft(line, " \t")) {
-		leadingSpaces = line[:len(line)-len(strings.TrimLeft(line, " \t"))]
-	}
-
-	return leadingSpaces + prefix + translatedContent + suffix, nil
-}
-
-// translatePlainTextSimple 翻译纯文本内容（简化版）
-func (a *ArticleTranslator) translatePlainTextSimple(text string, lineNum int) (string, error) {
-	cfg := config.GetGlobalConfig()
-
-	// 清理文本
-	cleanText := strings.TrimSpace(text)
-	cleanText = regexp.MustCompile(`\s+`).ReplaceAllString(cleanText, " ")
-
-	// 从配置读取目标语言
-	targetLang := cfg.Language.TargetLanguage
-	targetLangName := cfg.Language.LanguageNames[targetLang]
-	if targetLangName == "" {
-		targetLangName = "English" // 默认值
-	}
-
-	// 根据目标语言调整提示词
-	var prompt string
-	switch targetLang {
-	case "ja":
-		prompt = fmt.Sprintf(`Translate this Chinese text to Japanese. Return ONLY the Japanese translation:
-
-%s`, cleanText)
-	case "ko":
-		prompt = fmt.Sprintf(`Translate this Chinese text to Korean. Return ONLY the Korean translation:
-
-%s`, cleanText)
-	default: // "en" 或其他
-		prompt = fmt.Sprintf(`Translate this Chinese text to English. Return ONLY the English translation:
-
-%s`, cleanText)
-	}
-
-	request := translator.LMStudioRequest{
-		Model: cfg.LMStudio.Model,
-		Messages: []translator.Message{
-			{
-				Role:    "system",
-				Content: fmt.Sprintf("You are a professional translator. Translate Chinese to %s accurately. Return only the translation without explanations or formatting.", targetLangName),
-			},
-			{
-				Role:    "user",
-				Content: prompt,
-			},
-		},
-		Stream: false,
-	}
-
-	// 记录详细的翻译请求信息
-	utils.Info("行翻译请求 %d (%s)", lineNum, targetLangName)
-	utils.Debug("行翻译请求 %d - Model: %s, Target: %s", lineNum, request.Model, targetLangName)
-	utils.Debug("行翻译请求 %d - 原文: %s", lineNum, cleanText)
-	utils.Debug("行翻译请求 %d - Prompt: %s", lineNum, prompt)
-
-	jsonData, err := json.Marshal(request)
-	if err != nil {
-		utils.Error("行翻译请求 %d 序列化失败: %v", lineNum, err)
-		return "", fmt.Errorf("序列化请求失败: %v", err)
-	}
-
-	utils.Debug("行翻译请求 %d JSON: %s", lineNum, string(jsonData))
-
-	startTime := time.Now()
-	client := &http.Client{Timeout: time.Duration(cfg.LMStudio.Timeout) * time.Second}
-	resp, err := client.Post(cfg.LMStudio.URL, "application/json", bytes.NewBuffer(jsonData))
-	requestDuration := time.Since(startTime)
-
-	if err != nil {
-		utils.Error("行翻译请求 %d 网络错误: %v, 耗时: %v", lineNum, err, requestDuration)
-		return "", fmt.Errorf("发送请求失败: %v", err)
-	}
-	defer resp.Body.Close()
-
-	utils.Info("行翻译响应 %d - 状态码: %d, 耗时: %v", lineNum, resp.StatusCode, requestDuration)
-
-	if resp.StatusCode != http.StatusOK {
-		utils.Error("行翻译响应 %d 错误状态码: %d", lineNum, resp.StatusCode)
-		return "", fmt.Errorf("LM Studio返回错误状态: %d", resp.StatusCode)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		utils.Error("行翻译响应 %d 读取失败: %v", lineNum, err)
-		return "", fmt.Errorf("读取响应失败: %v", err)
-	}
-
-	utils.Debug("行翻译响应 %d 原始数据: %s", lineNum, string(body))
-
-	var response translator.LMStudioResponse
-	if err := json.Unmarshal(body, &response); err != nil {
-		utils.Error("行翻译响应 %d 解析失败: %v", lineNum, err)
-		return "", fmt.Errorf("解析响应失败: %v", err)
-	}
-
-	if len(response.Choices) == 0 {
-		utils.Error("行翻译响应 %d 无结果", lineNum)
-		return "", fmt.Errorf("没有获取到翻译结果")
-	}
-
-	result := strings.TrimSpace(response.Choices[0].Message.Content)
-
-	// 清理翻译结果
-	result = a.cleanTranslationResult(result)
-
-	// 记录翻译完成信息
-	utils.Info("行翻译完成 %d (%s) - 原文长度: %d, 译文长度: %d, 耗时: %v",
-		lineNum, targetLangName, len(cleanText), len(result), requestDuration)
-	utils.Debug("行翻译结果 %d: %s", lineNum, result)
-
-	return result, nil
+	return frontMatter, body
 }
 
 // combineTranslatedContent 合并翻译后的内容

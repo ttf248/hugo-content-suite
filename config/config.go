@@ -53,8 +53,8 @@ type LoggingConfig struct {
 }
 
 type LanguageConfig struct {
-	TargetLanguage string            `json:"target_language"`
-	LanguageNames  map[string]string `json:"language_names"`
+	TargetLanguages []string          `json:"target_languages"`
+	LanguageNames   map[string]string `json:"language_names"`
 }
 
 var defaultConfig = Config{
@@ -95,7 +95,7 @@ var defaultConfig = Config{
 		File:  "tag-scanner.log",
 	},
 	Language: LanguageConfig{
-		TargetLanguage: "en",
+		TargetLanguages: []string{"en"},
 		LanguageNames: map[string]string{
 			"en": "English",
 			"ja": "Japanese",

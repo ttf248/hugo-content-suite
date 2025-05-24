@@ -9,8 +9,11 @@ import (
 	"tag-scanner/models"
 )
 
-func ScanArticles(dir string) ([]models.Article, error) {
-	var articles []models.Article
+// Article 类型别名，方便引用
+type Article = models.Article
+
+func ScanArticles(dir string) ([]Article, error) {
+	var articles []Article
 
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -36,7 +39,7 @@ func ScanArticles(dir string) ([]models.Article, error) {
 	return articles, err
 }
 
-func parseMarkdownFile(filePath string) (*models.Article, error) {
+func parseMarkdownFile(filePath string) (*Article, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
@@ -68,7 +71,7 @@ func parseMarkdownFile(filePath string) (*models.Article, error) {
 		return nil, err
 	}
 
-	article := &models.Article{
+	article := &Article{
 		FilePath: filePath,
 	}
 
