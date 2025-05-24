@@ -8,15 +8,12 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"tag-scanner/config"
 	"tag-scanner/utils"
 	"time"
 )
 
-const (
-	LMStudioURL = "http://172.19.192.1:2234/v1/chat/completions"
-	ModelName   = "gemma-3-12b-it"
-)
-
+// LM Studio API 相关类型定义
 type LMStudioRequest struct {
 	Model    string    `json:"model"`
 	Messages []Message `json:"messages"`
@@ -58,10 +55,11 @@ type LLMTranslator struct {
 }
 
 func NewLLMTranslator() *LLMTranslator {
+	cfg := config.GetGlobalConfig()
 	translator := &LLMTranslator{
-		baseURL: "http://172.19.192.1:2234/v1/chat/completions",
-		model:   "gemma-3-12b-it",
-		timeout: 30 * time.Second,
+		baseURL: cfg.LMStudio.URL,
+		model:   cfg.LMStudio.Model,
+		timeout: time.Duration(cfg.LMStudio.Timeout) * time.Second,
 		cache:   NewTranslationCache(),
 	}
 
@@ -410,6 +408,7 @@ func (t *LLMTranslator) BatchTranslate(texts []string) (map[string]string, error
 }
 
 func (t *LLMTranslator) batchTranslate(texts []string, cacheType CacheType, typeName string) (map[string]string, error) {
+	cfg := config.GetGlobalConfig()
 	startTime := time.Now()
 	result := make(map[string]string)
 
@@ -469,8 +468,8 @@ func (t *LLMTranslator) batchTranslate(texts []string, cacheType CacheType, type
 		// 更新进度条
 		progressBar.Update(i + 1)
 
-		// 每5个翻译保存一次缓存
-		if newTranslationsAdded%5 == 0 {
+		// 每N个翻译保存一次缓存
+		if newTranslationsAdded%cfg.Cache.AutoSaveCount == 0 {
 			if err := t.cache.Save(); err != nil {
 				utils.Error("中间保存缓存失败: %v", err)
 			} else {
@@ -480,7 +479,7 @@ func (t *LLMTranslator) batchTranslate(texts []string, cacheType CacheType, type
 
 		// 添加延迟
 		if i < len(missingTexts)-1 {
-			time.Sleep(500 * time.Millisecond)
+			time.Sleep(time.Duration(cfg.Cache.DelayMs) * time.Millisecond)
 		}
 	}
 

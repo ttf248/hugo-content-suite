@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"tag-scanner/config"
 	"time"
 )
 
@@ -29,12 +30,13 @@ type TranslationCache struct {
 }
 
 func NewTranslationCache() *TranslationCache {
+	cfg := config.GetGlobalConfig()
 	return &TranslationCache{
-		tagCacheFile:     "tag_translations_cache.json",
-		articleCacheFile: "article_translations_cache.json",
+		tagCacheFile:     cfg.Cache.TagFileName,
+		articleCacheFile: cfg.Cache.ArticleFileName,
 		tagCache:         make(map[string]CacheEntry),
 		articleCache:     make(map[string]CacheEntry),
-		expireDuration:   24 * time.Hour * 30, // 30天过期
+		expireDuration:   time.Duration(cfg.Cache.ExpireDays) * 24 * time.Hour,
 	}
 }
 

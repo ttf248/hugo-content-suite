@@ -7,10 +7,11 @@ import (
 )
 
 type Config struct {
-	LMStudio LMStudioConfig `json:"lm_studio"`
-	Cache    CacheConfig    `json:"cache"`
-	Display  DisplayConfig  `json:"display"`
-	Paths    PathsConfig    `json:"paths"`
+	LMStudio    LMStudioConfig    `json:"lm_studio"`
+	Cache       CacheConfig       `json:"cache"`
+	Display     DisplayConfig     `json:"display"`
+	Paths       PathsConfig       `json:"paths"`
+	Translation TranslationConfig `json:"translation"`
 }
 
 type LMStudioConfig struct {
@@ -20,9 +21,11 @@ type LMStudioConfig struct {
 }
 
 type CacheConfig struct {
-	FileName      string `json:"file_name"`
-	AutoSaveCount int    `json:"auto_save_count"`
-	DelayMs       int    `json:"delay_ms"`
+	TagFileName     string `json:"tag_file_name"`
+	ArticleFileName string `json:"article_file_name"`
+	AutoSaveCount   int    `json:"auto_save_count"`
+	DelayMs         int    `json:"delay_ms"`
+	ExpireDays      int    `json:"expire_days"`
 }
 
 type DisplayConfig struct {
@@ -35,6 +38,13 @@ type PathsConfig struct {
 	TagsDir           string `json:"tags_dir"`
 }
 
+type TranslationConfig struct {
+	RetryAttempts   int      `json:"retry_attempts"`
+	DelayBetweenMs  int      `json:"delay_between_ms"`
+	ValidateResult  bool     `json:"validate_result"`
+	CleanupPatterns []string `json:"cleanup_patterns"`
+}
+
 var defaultConfig = Config{
 	LMStudio: LMStudioConfig{
 		URL:     "http://172.19.192.1:2234/v1/chat/completions",
@@ -42,9 +52,11 @@ var defaultConfig = Config{
 		Timeout: 30,
 	},
 	Cache: CacheConfig{
-		FileName:      "tag_translations_cache.json",
-		AutoSaveCount: 5,
-		DelayMs:       500,
+		TagFileName:     "tag_translations_cache.json",
+		ArticleFileName: "article_translations_cache.json",
+		AutoSaveCount:   5,
+		DelayMs:         500,
+		ExpireDays:      30,
 	},
 	Display: DisplayConfig{
 		DefaultLimit: 20,
@@ -53,6 +65,18 @@ var defaultConfig = Config{
 	Paths: PathsConfig{
 		DefaultContentDir: "../../content/post",
 		TagsDir:           "../tags",
+	},
+	Translation: TranslationConfig{
+		RetryAttempts:  2,
+		DelayBetweenMs: 800,
+		ValidateResult: true,
+		CleanupPatterns: []string{
+			"Translation:",
+			"Translated:",
+			"English:",
+			"Result:",
+			"Output:",
+		},
 	},
 }
 
@@ -89,4 +113,20 @@ func createDefaultConfig(configPath string) (*Config, error) {
 
 	fmt.Println("✅ 已创建默认配置文件: config.json")
 	return &defaultConfig, nil
+}
+
+// GetGlobalConfig 获取全局配置实例
+var globalConfig *Config
+
+func GetGlobalConfig() *Config {
+	if globalConfig == nil {
+		config, err := LoadConfig()
+		if err != nil {
+			fmt.Printf("⚠️ 加载配置失败，使用默认配置: %v\n", err)
+			globalConfig = &defaultConfig
+		} else {
+			globalConfig = config
+		}
+	}
+	return globalConfig
 }

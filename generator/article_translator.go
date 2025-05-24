@@ -10,6 +10,7 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+	"tag-scanner/config"
 	"tag-scanner/scanner"
 	"tag-scanner/translator"
 	"time"
@@ -342,12 +343,14 @@ func (a *ArticleTranslator) extractFieldValue(line, prefix string) string {
 
 // translateFieldContent 翻译字段内容，使用简化的提示词
 func (a *ArticleTranslator) translateFieldContent(content string) (string, error) {
+	cfg := config.GetGlobalConfig()
+
 	prompt := fmt.Sprintf(`Translate the following Chinese text to English. Keep it concise and natural:
 
 %s`, content)
 
 	request := translator.LMStudioRequest{
-		Model: "gemma-3-12b-it",
+		Model: cfg.LMStudio.Model,
 		Messages: []translator.Message{
 			{
 				Role:    "user",
@@ -362,8 +365,8 @@ func (a *ArticleTranslator) translateFieldContent(content string) (string, error
 		return "", fmt.Errorf("序列化请求失败: %v", err)
 	}
 
-	client := &http.Client{Timeout: 30 * time.Second}
-	resp, err := client.Post("http://172.19.192.1:2234/v1/chat/completions", "application/json", bytes.NewBuffer(jsonData))
+	client := &http.Client{Timeout: time.Duration(cfg.LMStudio.Timeout) * time.Second}
+	resp, err := client.Post(cfg.LMStudio.URL, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return "", fmt.Errorf("发送请求失败: %v", err)
 	}
@@ -397,16 +400,10 @@ func (a *ArticleTranslator) translateFieldContent(content string) (string, error
 
 // cleanTranslationResult 清理翻译结果，移除多余的提示词或格式
 func (a *ArticleTranslator) cleanTranslationResult(result string) string {
-	// 移除常见的提示词残留
-	patterns := []string{
-		"Translation:",
-		"Translated:",
-		"English:",
-		"Result:",
-		"Output:",
-	}
+	cfg := config.GetGlobalConfig()
 
-	for _, pattern := range patterns {
+	// 使用配置中的清理模式
+	for _, pattern := range cfg.Translation.CleanupPatterns {
 		if strings.HasPrefix(result, pattern) {
 			result = strings.TrimSpace(strings.TrimPrefix(result, pattern))
 		}
@@ -485,6 +482,8 @@ func (a *ArticleTranslator) formatArrayField(items []string) string {
 
 // translateArticleBody 分段翻译正文
 func (a *ArticleTranslator) translateArticleBody(body string) (string, error) {
+	cfg := config.GetGlobalConfig()
+
 	if strings.TrimSpace(body) == "" {
 		return body, nil
 	}
@@ -515,7 +514,7 @@ func (a *ArticleTranslator) translateArticleBody(body string) (string, error) {
 			translatedParagraphs = append(translatedParagraphs, paragraph)
 		} else {
 			// 验证翻译结果是否还包含中文
-			if a.containsChinese(translatedParagraph) {
+			if cfg.Translation.ValidateResult && a.containsChinese(translatedParagraph) {
 				fmt.Printf("    ⚠️ 翻译结果仍包含中文，尝试重新翻译...\n")
 				// 尝试重新翻译
 				retryTranslated, retryErr := a.retryTranslation(paragraph)
@@ -533,7 +532,7 @@ func (a *ArticleTranslator) translateArticleBody(body string) (string, error) {
 		}
 
 		// 添加延迟避免API频率限制
-		time.Sleep(time.Millisecond * 800)
+		time.Sleep(time.Duration(cfg.Translation.DelayBetweenMs) * time.Millisecond)
 	}
 
 	return strings.Join(translatedParagraphs, "\n\n"), nil
@@ -541,6 +540,8 @@ func (a *ArticleTranslator) translateArticleBody(body string) (string, error) {
 
 // retryTranslation 重新翻译段落，使用更强的提示词
 func (a *ArticleTranslator) retryTranslation(paragraph string) (string, error) {
+	cfg := config.GetGlobalConfig()
+
 	prompt := fmt.Sprintf(`请将以下中文内容完全翻译成英文，绝对不要保留任何中文字符：
 
 %s
@@ -553,10 +554,8 @@ func (a *ArticleTranslator) retryTranslation(paragraph string) (string, error) {
 5. 绝对不能在结果中保留任何中文字符
 6. 直接返回翻译结果，不要添加任何解释`, paragraph)
 
-	// 直接使用 translator 的 TranslateParagraph 方法，但需要临时修改提示词
-	// 创建一个临时的翻译器实例来处理重试翻译
 	request := translator.LMStudioRequest{
-		Model: "gemma-3-12b-it", // 直接使用模型名称
+		Model: cfg.LMStudio.Model,
 		Messages: []translator.Message{
 			{
 				Role:    "user",
@@ -571,8 +570,8 @@ func (a *ArticleTranslator) retryTranslation(paragraph string) (string, error) {
 		return "", fmt.Errorf("序列化请求失败: %v", err)
 	}
 
-	client := &http.Client{Timeout: 30 * time.Second}
-	resp, err := client.Post("http://172.19.192.1:2234/v1/chat/completions", "application/json", bytes.NewBuffer(jsonData))
+	client := &http.Client{Timeout: time.Duration(cfg.LMStudio.Timeout) * time.Second}
+	resp, err := client.Post(cfg.LMStudio.URL, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return "", fmt.Errorf("发送请求失败: %v", err)
 	}
