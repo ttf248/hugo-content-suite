@@ -28,7 +28,7 @@ func NewInteractiveMenu(reader *bufio.Reader, contentDir string) *InteractiveMen
 func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []models.CategoryStats, noTagArticles []models.Article) {
 	for {
 		m.displayMainMenu()
-		choice := m.getChoice("请选择功能 (0-14): ")
+		choice := m.getChoice("请选择功能 (0-16): ")
 
 		switch choice {
 		case "1":
@@ -48,16 +48,20 @@ func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []model
 		case "8":
 			m.processor.GenerateArticleSlugs(m.reader)
 		case "9":
-			m.processor.ShowCacheStatus()
+			m.processor.PreviewArticleTranslations()
 		case "10":
-			m.processor.PreviewBulkTranslationCache(tagStats)
+			m.processor.TranslateArticles(m.reader)
 		case "11":
-			m.processor.GenerateBulkTranslationCache(tagStats, m.reader)
+			m.processor.ShowCacheStatus()
 		case "12":
-			m.processor.ClearTranslationCache(m.reader)
+			m.processor.PreviewBulkTranslationCache(tagStats)
 		case "13":
-			m.showPerformanceStats()
+			m.processor.GenerateBulkTranslationCache(tagStats, m.reader)
 		case "14":
+			m.processor.ClearTranslationCache(m.reader)
+		case "15":
+			m.showPerformanceStats()
+		case "16":
 			m.resetPerformanceStats()
 		case "0":
 			color.Green("感谢使用！再见！")
@@ -91,23 +95,25 @@ func (m *InteractiveMenu) displayMainMenu() {
 	fmt.Println()
 
 	// 文章管理模块
-	color.Blue("📝 文章Slug管理")
+	color.Blue("📝 文章管理")
 	fmt.Println("  7. 预览文章Slug")
 	fmt.Println("  8. 生成文章Slug")
+	fmt.Println("  9. 预览文章翻译")
+	fmt.Println(" 10. 翻译文章为英文")
 	fmt.Println()
 
 	// 缓存管理模块
 	color.Magenta("💾 缓存管理")
-	fmt.Println("  9. 查看缓存状态")
-	fmt.Println(" 10. 预览全量翻译缓存")
-	fmt.Println(" 11. 生成全量翻译缓存")
-	fmt.Println(" 12. 清空翻译缓存 (支持分类)")
+	fmt.Println(" 11. 查看缓存状态")
+	fmt.Println(" 12. 预览全量翻译缓存")
+	fmt.Println(" 13. 生成全量翻译缓存")
+	fmt.Println(" 14. 清空翻译缓存 (支持分类)")
 	fmt.Println()
 
 	// 系统工具模块
 	color.Cyan("🔧 系统工具")
-	fmt.Println(" 13. 查看性能统计")
-	fmt.Println(" 14. 重置性能统计")
+	fmt.Println(" 15. 查看性能统计")
+	fmt.Println(" 16. 重置性能统计")
 	fmt.Println()
 
 	color.Red("  0. 退出程序")

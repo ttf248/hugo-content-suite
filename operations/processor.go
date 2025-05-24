@@ -227,5 +227,3 @@ func (p *Processor) confirmExecution(reader *bufio.Reader, prompt string) bool {
 	input, _ := reader.ReadString('\n')
 	return strings.TrimSpace(strings.ToLower(input)) == "y"
 }
-
-// collectTranslationTargets方法已移动到cache_operations.go文件中

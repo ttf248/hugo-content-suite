@@ -257,6 +257,108 @@ func (t *LLMTranslator) TranslateToArticleSlug(title string) (string, error) {
 	return normalizedSlug, nil
 }
 
+// TranslateParagraph 翻译段落内容
+func (t *LLMTranslator) TranslateParagraph(paragraph string) (string, error) {
+	if strings.TrimSpace(paragraph) == "" {
+		return paragraph, nil
+	}
+
+	// 检查是否为代码块或特殊格式，如果是则不翻译
+	if t.shouldSkipTranslation(paragraph) {
+		return paragraph, nil
+	}
+
+	prompt := fmt.Sprintf(`请将以下中文段落翻译成自然流畅的英文，保持原文的格式和结构：
+
+%s
+
+要求：
+1. 翻译要自然流畅，符合英文表达习惯
+2. 保持原文的段落结构和格式
+3. 如果包含技术术语，请使用准确的英文术语
+4. 如果包含Markdown格式，请保留格式标记
+5. 直接返回翻译结果，不要添加额外说明`, paragraph)
+
+	request := LMStudioRequest{
+		Model: t.model,
+		Messages: []Message{
+			{
+				Role:    "user",
+				Content: prompt,
+			},
+		},
+		Stream: false,
+	}
+
+	jsonData, err := json.Marshal(request)
+	if err != nil {
+		return "", fmt.Errorf("序列化请求失败: %v", err)
+	}
+
+	client := &http.Client{Timeout: t.timeout}
+	resp, err := client.Post(t.baseURL, "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return "", fmt.Errorf("发送请求失败: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("LM Studio返回错误状态: %d", resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("读取响应失败: %v", err)
+	}
+
+	var response LMStudioResponse
+	if err := json.Unmarshal(body, &response); err != nil {
+		return "", fmt.Errorf("解析响应失败: %v", err)
+	}
+
+	if len(response.Choices) == 0 {
+		return "", fmt.Errorf("没有获取到翻译结果")
+	}
+
+	result := strings.TrimSpace(response.Choices[0].Message.Content)
+	return result, nil
+}
+
+// shouldSkipTranslation 判断是否应该跳过翻译
+func (t *LLMTranslator) shouldSkipTranslation(text string) bool {
+	trimmed := strings.TrimSpace(text)
+
+	// 检查是否为代码块
+	if strings.HasPrefix(trimmed, "```") || strings.HasPrefix(trimmed, "    ") {
+		return true
+	}
+
+	// 检查是否为引用块
+	if strings.HasPrefix(trimmed, ">") {
+		return true
+	}
+
+	// 检查是否为链接或图片
+	if strings.Contains(trimmed, "](") || strings.HasPrefix(trimmed, "![") {
+		return true
+	}
+
+	// 检查是否主要是英文内容
+	chineseCount := 0
+	for _, r := range trimmed {
+		if r >= 0x4e00 && r <= 0x9fff {
+			chineseCount++
+		}
+	}
+
+	// 如果中文字符少于总字符的30%，跳过翻译
+	if float64(chineseCount)/float64(len([]rune(trimmed))) < 0.3 {
+		return true
+	}
+
+	return false
+}
+
 // BatchTranslateTags 批量翻译标签
 func (t *LLMTranslator) BatchTranslateTags(tags []string) (map[string]string, error) {
 	return t.batchTranslate(tags, TagCache, "标签")
