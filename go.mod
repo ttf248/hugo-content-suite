@@ -1,10 +1,13 @@
 module tag-scanner
 
-go 1.21
+go 1.22
+
+toolchain go1.23.4
 
 require (
 	github.com/fatih/color v1.16.0
 	github.com/olekukonko/tablewriter v0.0.5
+	github.com/yuin/goldmark v1.7.12
 )
 
 require (

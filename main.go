@@ -21,7 +21,7 @@ func main() {
 	}
 
 	// 初始化日志
-	if err := utils.InitLogger("tag-scanner.log", utils.INFO); err != nil {
+	if err := utils.InitLogger("tag-scanner.log", utils.DEBUG); err != nil {
 		log.Printf("日志初始化失败: %v", err)
 	}
 
