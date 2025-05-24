@@ -350,6 +350,44 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 			continue
 		}
 
+		// 翻译slug字段
+		if strings.HasPrefix(trimmedLine, "slug:") {
+			slug := a.extractFieldValue(trimmedLine, "slug:")
+			utils.Info("发现slug字段: %s", slug)
+			if slug != "" && a.containsChinese(slug) {
+				fmt.Printf("  slug: %s -> ", slug)
+				translatedSlug, err := a.translateFieldContent(slug)
+				if err != nil {
+					fmt.Printf("翻译失败\n")
+					utils.Warn("slug翻译失败: %s, 错误: %v", slug, err)
+					translatedLines = append(translatedLines, line)
+				} else {
+					// slug字段需要转换为URL友好格式
+					translatedSlug = a.formatSlugField(translatedSlug)
+					fmt.Printf("%s\n", translatedSlug)
+					translatedLines = append(translatedLines, fmt.Sprintf("slug: \"%s\"", translatedSlug))
+				}
+			} else {
+				utils.Info("slug无需翻译: %s", slug)
+				translatedLines = append(translatedLines, line)
+			}
+			continue
+		}
+
+		// 翻译标签数组
+		if strings.HasPrefix(trimmedLine, "tags:") {
+			tags := a.extractArrayField(trimmedLine, "tags:")
+			utils.Info("发现标签字段: %v", tags)
+			if len(tags) > 0 {
+				translatedTags := a.translateArrayField(tags, "tags")
+				translatedLines = append(translatedLines, fmt.Sprintf("tags: %s", a.formatArrayField(translatedTags)))
+			} else {
+				utils.Info("标签数组为空")
+				translatedLines = append(translatedLines, line)
+			}
+			continue
+		}
+
 		// 翻译分类数组
 		if strings.HasPrefix(trimmedLine, "categories:") {
 			categories := a.extractArrayField(trimmedLine, "categories:")
@@ -386,6 +424,30 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 	result := strings.Join(translatedLines, "\n")
 	utils.Info("前置数据翻译完成，结果长度: %d", len(result))
 	return result, nil
+}
+
+// formatSlugField 格式化slug字段，转换为URL友好格式
+func (a *ArticleTranslator) formatSlugField(slug string) string {
+	// 转换为小写
+	slug = strings.ToLower(slug)
+
+	// 替换空格为连字符
+	slug = strings.ReplaceAll(slug, " ", "-")
+
+	// 移除特殊字符，只保留字母、数字和连字符
+	reg := regexp.MustCompile(`[^a-z0-9\-]`)
+	slug = reg.ReplaceAllString(slug, "")
+
+	// 移除连续的连字符
+	for strings.Contains(slug, "--") {
+		slug = strings.ReplaceAll(slug, "--", "-")
+	}
+
+	// 移除首尾的连字符
+	slug = strings.Trim(slug, "-")
+
+	utils.Debug("格式化slug: %s", slug)
+	return slug
 }
 
 // extractFieldValue 提取字段值
