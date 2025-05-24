@@ -20,13 +20,26 @@ func main() {
 		log.Fatal("配置加载失败:", err)
 	}
 
-	// 初始化日志
-	if err := utils.InitLogger("tag-scanner.log", utils.DEBUG); err != nil {
+	// 从配置读取日志等级并初始化日志
+	logLevel := utils.INFO // 默认等级
+	switch cfg.Logging.Level {
+	case "DEBUG":
+		logLevel = utils.DEBUG
+	case "INFO":
+		logLevel = utils.INFO
+	case "WARN":
+		logLevel = utils.WARN
+	case "ERROR":
+		logLevel = utils.ERROR
+	}
+
+	if err := utils.InitLogger(cfg.Logging.File, logLevel); err != nil {
 		log.Printf("日志初始化失败: %v", err)
 	}
 
-	utils.Info("程序启动")
+	utils.Info("程序启动，日志等级: %s", cfg.Logging.Level)
 	defer utils.Info("程序退出")
+	defer utils.Close() // 确保程序退出时关闭日志文件
 
 	contentDir := cfg.Paths.DefaultContentDir
 	if len(os.Args) > 1 {

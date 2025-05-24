@@ -12,6 +12,7 @@ type Config struct {
 	Display     DisplayConfig     `json:"display"`
 	Paths       PathsConfig       `json:"paths"`
 	Translation TranslationConfig `json:"translation"`
+	Logging     LoggingConfig     `json:"logging"`
 }
 
 type LMStudioConfig struct {
@@ -45,6 +46,11 @@ type TranslationConfig struct {
 	CleanupPatterns []string `json:"cleanup_patterns"`
 }
 
+type LoggingConfig struct {
+	Level string `json:"level"`
+	File  string `json:"file"`
+}
+
 var defaultConfig = Config{
 	LMStudio: LMStudioConfig{
 		URL:     "http://172.19.192.1:2234/v1/chat/completions",
@@ -68,7 +74,7 @@ var defaultConfig = Config{
 	},
 	Translation: TranslationConfig{
 		RetryAttempts:  2,
-		DelayBetweenMs: 800,
+		DelayBetweenMs: 0,
 		ValidateResult: true,
 		CleanupPatterns: []string{
 			"Translation:",
@@ -77,6 +83,10 @@ var defaultConfig = Config{
 			"Result:",
 			"Output:",
 		},
+	},
+	Logging: LoggingConfig{
+		Level: "DEBUG",
+		File:  "tag-scanner.log",
 	},
 }
 
