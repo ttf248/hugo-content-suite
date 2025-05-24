@@ -292,6 +292,8 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 					utils.Warn("标题翻译失败: %s, 错误: %v", title, err)
 					translatedLines = append(translatedLines, line)
 				} else {
+					// 移除所有引号
+					translatedTitle = a.removeQuotes(translatedTitle)
 					fmt.Printf("%s\n", translatedTitle)
 					translatedLines = append(translatedLines, fmt.Sprintf("title: \"%s\"", translatedTitle))
 				}
@@ -314,6 +316,8 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 					utils.Warn("描述翻译失败: %s, 错误: %v", description, err)
 					translatedLines = append(translatedLines, line)
 				} else {
+					// 移除所有引号
+					translatedDescription = a.removeQuotes(translatedDescription)
 					fmt.Printf("%s\n", translatedDescription)
 					translatedLines = append(translatedLines, fmt.Sprintf("description: \"%s\"", translatedDescription))
 				}
@@ -336,6 +340,8 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 					utils.Warn("副标题翻译失败: %s, 错误: %v", subtitle, err)
 					translatedLines = append(translatedLines, line)
 				} else {
+					// 移除所有引号
+					translatedSubtitle = a.removeQuotes(translatedSubtitle)
 					fmt.Printf("%s\n", translatedSubtitle)
 					translatedLines = append(translatedLines, fmt.Sprintf("subtitle: \"%s\"", translatedSubtitle))
 				}
@@ -358,6 +364,8 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 					utils.Warn("摘要翻译失败: %s, 错误: %v", summary, err)
 					translatedLines = append(translatedLines, line)
 				} else {
+					// 移除所有引号
+					translatedSummary = a.removeQuotes(translatedSummary)
 					fmt.Printf("%s\n", translatedSummary)
 					translatedLines = append(translatedLines, fmt.Sprintf("summary: \"%s\"", translatedSummary))
 				}
@@ -380,7 +388,8 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 					utils.Warn("slug翻译失败: %s, 错误: %v", slug, err)
 					translatedLines = append(translatedLines, line)
 				} else {
-					// slug字段需要转换为URL友好格式
+					// 移除所有引号并格式化为slug
+					translatedSlug = a.removeQuotes(translatedSlug)
 					translatedSlug = a.formatSlugField(translatedSlug)
 					fmt.Printf("%s\n", translatedSlug)
 					translatedLines = append(translatedLines, fmt.Sprintf("slug: \"%s\"", translatedSlug))
@@ -442,6 +451,31 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 	result := strings.Join(translatedLines, "\n")
 	utils.Info("前置数据翻译完成，结果长度: %d", len(result))
 	return result, nil
+}
+
+// removeQuotes 移除译文中的所有引号
+func (a *ArticleTranslator) removeQuotes(text string) string {
+	// 移除双引号
+	text = strings.ReplaceAll(text, "\"", "")
+	// 移除单引号
+	text = strings.ReplaceAll(text, "'", "")
+	// 移除中文引号
+	text = strings.ReplaceAll(text, "“", "")
+	text = strings.ReplaceAll(text, "”", "")
+	text = strings.ReplaceAll(text, "‘", "")
+	text = strings.ReplaceAll(text, "’", "")
+	// 移除其他类型的引号
+	text = strings.ReplaceAll(text, "„", "")
+	text = strings.ReplaceAll(text, "‚", "")
+	text = strings.ReplaceAll(text, "‹", "")
+	text = strings.ReplaceAll(text, "›", "")
+	text = strings.ReplaceAll(text, "«", "")
+	text = strings.ReplaceAll(text, "»", "")
+
+	// 清理空格
+	text = strings.TrimSpace(text)
+
+	return text
 }
 
 // formatSlugField 格式化slug字段，转换为URL友好格式
@@ -703,6 +737,8 @@ func (a *ArticleTranslator) translateArrayField(items []string, fieldType string
 				utils.Warn("数组项目翻译失败 [%d/%d] - %s: %s, 错误: %v", i+1, len(items), fieldType, item, err)
 				translated = append(translated, item)
 			} else {
+				// 移除译文中的引号
+				translatedItem = a.removeQuotes(translatedItem)
 				fmt.Printf("%s ", translatedItem)
 				utils.Info("数组项目翻译成功 [%d/%d] - %s: %s -> %s", i+1, len(items), fieldType, item, translatedItem)
 				translated = append(translated, translatedItem)
@@ -726,8 +762,8 @@ func (a *ArticleTranslator) formatArrayField(items []string) string {
 
 	var quotedItems []string
 	for _, item := range items {
-		// 清理可能存在的多余引号
-		cleanItem := strings.Trim(item, "\"'")
+		// 清理可能存在的多余引号，并确保不包含引号
+		cleanItem := a.removeQuotes(item)
 		quotedItems = append(quotedItems, fmt.Sprintf("\"%s\"", cleanItem))
 	}
 
