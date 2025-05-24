@@ -24,36 +24,81 @@ func NewProcessor(contentDir string) *Processor {
 }
 
 func (p *Processor) QuickProcessAll(tagStats []models.TagStats, reader *bufio.Reader) {
-	color.Cyan("=== 🚀 一键快速处理 ===")
-	fmt.Println()
-	color.Yellow("此操作将按顺序执行以下步骤：")
-	fmt.Println("1. 📦 生成全量翻译缓存")
-	fmt.Println("2. 🏷️  生成新增标签页面")
-	fmt.Println("3. 📝 生成缺失文章Slug")
+	color.Cyan("=== 一键处理全部 ===")
+	fmt.Println("这将自动执行以下操作：")
+	fmt.Println("1. 生成全量翻译缓存")
+	fmt.Println("2. 生成新增标签页面")
+	fmt.Println("3. 生成缺失文章Slug")
+	fmt.Println("4. 翻译新增文章为英文")
 	fmt.Println()
 
-	// 显示预览统计
-	fmt.Println("🔍 正在分析当前状态...")
+	// 预览批量翻译缓存
+	cachePreview := p.PreviewBulkTranslationCache(tagStats)
 
-	// 分析当前状态
-	cachePreview, createTagCount, missingSlugCount, err := p.analyzeCurrentState(tagStats)
-	if err != nil {
-		color.Red("❌ 分析失败: %v", err)
-		return
+	// 预览标签页面
+	tagGenerator := generator.NewTagPageGenerator(p.contentDir)
+	tagPreviews := tagGenerator.PreviewTagPages(tagStats)
+	createTagCount := 0
+	for _, preview := range tagPreviews {
+		if preview.Status == "create" {
+			createTagCount++
+		}
 	}
 
-	// 显示统计信息
-	totalOperations := len(cachePreview.MissingTranslations) + createTagCount + missingSlugCount
-	p.displayProcessStats(cachePreview, createTagCount, missingSlugCount, totalOperations)
+	// 预览文章Slug
+	slugGenerator := generator.NewArticleSlugGenerator(p.contentDir)
+	slugPreviews, err := slugGenerator.PreviewArticleSlugs()
+	missingSlugCount := 0
+	if err == nil {
+		for _, preview := range slugPreviews {
+			if preview.Status == "missing" {
+				missingSlugCount++
+			}
+		}
+	}
 
-	if totalOperations == 0 {
+	// 预览文章翻译
+	articleTranslator := generator.NewArticleTranslator(p.contentDir)
+	translationPreviews, err := articleTranslator.PreviewArticleTranslations()
+	missingTranslationCount := 0
+	if err == nil {
+		for _, preview := range translationPreviews {
+			if preview.Status == "missing" {
+				missingTranslationCount++
+			}
+		}
+	}
+
+	// 显示总体预览
+	fmt.Printf("📊 总体预览:\n")
+	fmt.Printf("   🔄 需要翻译: %d 个项目\n", len(cachePreview.MissingTranslations))
+	fmt.Printf("   🏷️  需要创建标签页面: %d 个\n", createTagCount)
+	fmt.Printf("   📝 需要添加文章Slug: %d 个\n", missingSlugCount)
+	fmt.Printf("   🌐 需要翻译文章: %d 篇\n", missingTranslationCount)
+
+	totalTasks := 0
+	if len(cachePreview.MissingTranslations) > 0 {
+		totalTasks++
+	}
+	if createTagCount > 0 {
+		totalTasks++
+	}
+	if missingSlugCount > 0 {
+		totalTasks++
+	}
+	if missingTranslationCount > 0 {
+		totalTasks++
+	}
+
+	if totalTasks == 0 {
 		color.Green("✅ 所有内容都已是最新状态，无需处理")
 		return
 	}
 
-	// 确认执行
-	if !p.confirmExecution(reader, "确认开始一键处理？(y/n): ") {
-		color.Yellow("❌ 已取消一键处理")
+	fmt.Printf("\n需要执行 %d 个步骤\n", totalTasks)
+
+	if !p.confirmExecution(reader, "\n⚠️ 确认开始一键处理？(y/n): ") {
+		color.Yellow("⏹️ 操作已取消")
 		return
 	}
 
@@ -110,13 +155,30 @@ func (p *Processor) executeProcessFlow(cachePreview *display.BulkTranslationPrev
 	color.Cyan("🚀 开始一键处理流程...")
 	utils.Info("开始一键处理流程")
 
+	// 获取文章翻译预览信息
+	articleTranslator := generator.NewArticleTranslator(p.contentDir)
+	translationPreviews, err := articleTranslator.PreviewArticleTranslations()
+	if err != nil {
+		color.Red("❌ 获取文章翻译预览失败: %v", err)
+		utils.Error("获取文章翻译预览失败: %v", err)
+		return
+	}
+
+	// 统计需要翻译的文章数量
+	missingTranslationCount := 0
+	for _, preview := range translationPreviews {
+		if preview.Status == "missing" {
+			missingTranslationCount++
+		}
+	}
+
 	// 步骤1: 生成全量翻译缓存
 	if len(cachePreview.MissingTranslations) > 0 {
 		if !p.processTranslationCache(cachePreview) {
 			return
 		}
 	} else {
-		color.Green("\n✅ 步骤1/3: 翻译缓存已是最新")
+		color.Green("\n✅ 步骤1/4: 翻译缓存已是最新")
 	}
 
 	// 步骤2: 生成新增标签页面
@@ -125,7 +187,7 @@ func (p *Processor) executeProcessFlow(cachePreview *display.BulkTranslationPrev
 			return
 		}
 	} else {
-		color.Green("\n✅ 步骤2/3: 标签页面已是最新")
+		color.Green("\n✅ 步骤2/4: 标签页面已是最新")
 	}
 
 	// 步骤3: 生成缺失文章Slug
@@ -134,7 +196,16 @@ func (p *Processor) executeProcessFlow(cachePreview *display.BulkTranslationPrev
 			return
 		}
 	} else {
-		color.Green("\n✅ 步骤3/3: 文章Slug已是最新")
+		color.Green("\n✅ 步骤3/4: 文章Slug已是最新")
+	}
+
+	// 步骤4: 翻译新增文章为英文
+	if missingTranslationCount > 0 {
+		if !p.processArticleTranslations(missingTranslationCount) {
+			return
+		}
+	} else {
+		color.Green("\n✅ 步骤4/4: 文章翻译已是最新")
 	}
 
 	// 显示最终统计
@@ -142,7 +213,7 @@ func (p *Processor) executeProcessFlow(cachePreview *display.BulkTranslationPrev
 }
 
 func (p *Processor) processTranslationCache(cachePreview *display.BulkTranslationPreview) bool {
-	color.Blue("\n📦 步骤1/3: 生成全量翻译缓存")
+	color.Blue("\n📦 步骤1/4: 生成全量翻译缓存")
 	fmt.Printf("需要翻译 %d 个内容...\n", len(cachePreview.MissingTranslations))
 
 	translatorInstance := translator.NewLLMTranslator()
@@ -179,7 +250,7 @@ func (p *Processor) processTranslationCache(cachePreview *display.BulkTranslatio
 }
 
 func (p *Processor) processTagPages(tagStats []models.TagStats, createTagCount int) bool {
-	color.Blue("\n🏷️  步骤2/3: 生成新增标签页面")
+	color.Blue("\n🏷️  步骤2/4: 生成新增标签页面")
 	fmt.Printf("需要创建 %d 个标签页面...\n", createTagCount)
 
 	pageGenerator := generator.NewTagPageGenerator(p.contentDir)
@@ -193,7 +264,7 @@ func (p *Processor) processTagPages(tagStats []models.TagStats, createTagCount i
 }
 
 func (p *Processor) processArticleSlugs(missingSlugCount int) bool {
-	color.Blue("\n📝 步骤3/3: 生成缺失文章Slug")
+	color.Blue("\n📝 步骤3/4: 生成缺失文章Slug")
 	fmt.Printf("需要添加 %d 个文章Slug...\n", missingSlugCount)
 
 	slugGenerator := generator.NewArticleSlugGenerator(p.contentDir)
@@ -206,20 +277,44 @@ func (p *Processor) processArticleSlugs(missingSlugCount int) bool {
 	return true
 }
 
-func (p *Processor) displayFinalStats() {
-	fmt.Println()
-	color.Green("🎉 一键处理完成！")
+func (p *Processor) processArticleTranslations(missingCount int) bool {
+	color.Yellow("\n🔄 步骤4/4: 翻译新增文章为英文")
+	fmt.Printf("需要翻译 %d 篇文章\n", missingCount)
 
-	// 显示性能统计
-	perfStats := utils.GetGlobalStats()
-	if perfStats.TranslationCount > 0 || perfStats.FileOperations > 0 {
+	utils.Info("开始处理文章翻译，缺失数量: %d", missingCount)
+
+	articleTranslator := generator.NewArticleTranslator(p.contentDir)
+
+	fmt.Print("正在翻译文章...")
+	if err := articleTranslator.TranslateArticles("missing"); err != nil {
 		fmt.Println()
-		color.Cyan("📊 本次处理统计:")
-		fmt.Println(perfStats.String())
+		color.Red("❌ 文章翻译失败: %v", err)
+		utils.Error("文章翻译失败: %v", err)
+		return false
 	}
 
-	utils.Info("一键处理流程完成")
-	fmt.Println()
+	color.Green("✅ 步骤4/4: 文章翻译完成")
+	utils.Info("文章翻译处理完成")
+	return true
+}
+
+func (p *Processor) displayFinalStats() {
+	color.Green("\n🎉 一键处理流程完成！")
+
+	fmt.Println("\n📊 处理结果总结:")
+	fmt.Println("✅ 翻译缓存已更新")
+	fmt.Println("✅ 标签页面已生成")
+	fmt.Println("✅ 文章Slug已完善")
+	fmt.Println("✅ 文章翻译已完成")
+
+	fmt.Println("\n💡 提示:")
+	fmt.Println("   - 所有缓存已更新，后续操作将更加快速")
+	fmt.Println("   - 标签页面已生成到 content/tags/ 目录")
+	fmt.Println("   - 文章Slug已添加到各文章的front matter")
+	fmt.Println("   - 英文版本文章已生成到对应目录")
+	fmt.Println("   - 可以使用其他菜单选项进行具体查看和管理")
+
+	utils.Info("一键处理流程全部完成")
 }
 
 func (p *Processor) confirmExecution(reader *bufio.Reader, prompt string) bool {

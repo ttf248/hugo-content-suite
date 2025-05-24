@@ -72,15 +72,29 @@ func (p *Processor) ClearTranslationCache(reader *bufio.Reader) {
 	}
 }
 
-func (p *Processor) PreviewBulkTranslationCache(tagStats []models.TagStats) {
-	color.Cyan("=== 全量翻译缓存预览 ===")
-
+func (p *Processor) PreviewBulkTranslationCache(tagStats []models.TagStats) *display.BulkTranslationPreview {
 	cachePreview, err := p.collectTranslationTargets(tagStats)
 	if err != nil {
 		color.Red("❌ 收集翻译目标失败: %v", err)
-		return
+		// 返回空的预览结构而不是nil，避免程序崩溃
+		return &display.BulkTranslationPreview{
+			TotalTags:           0,
+			TotalArticles:       0,
+			CachedCount:         0,
+			MissingTranslations: []string{},
+			TagsToTranslate:     []display.TranslationItem{},
+			ArticlesToTranslate: []display.TranslationItem{},
+		}
 	}
 
+	return cachePreview
+}
+
+// ShowBulkTranslationPreview 显示批量翻译缓存预览（新增方法用于显示）
+func (p *Processor) ShowBulkTranslationPreview(tagStats []models.TagStats) {
+	color.Cyan("=== 全量翻译缓存预览 ===")
+
+	cachePreview := p.PreviewBulkTranslationCache(tagStats)
 	display.DisplayBulkTranslationPreview(cachePreview, 20)
 }
 

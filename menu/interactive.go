@@ -54,7 +54,7 @@ func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []model
 		case "11":
 			m.processor.ShowCacheStatus()
 		case "12":
-			m.processor.PreviewBulkTranslationCache(tagStats)
+			m.processor.ShowBulkTranslationPreview(tagStats)
 		case "13":
 			m.processor.GenerateBulkTranslationCache(tagStats, m.reader)
 		case "14":
@@ -78,7 +78,7 @@ func (m *InteractiveMenu) displayMainMenu() {
 
 	// 快速处理模块
 	color.Red("🚀 快速处理")
-	fmt.Println("  1. 一键处理全部 (缓存→标签页面→文章Slug)")
+	fmt.Println("  1. 一键处理全部 (缓存→标签页面→文章Slug→文章翻译)")
 	fmt.Println()
 
 	// 数据查看模块
