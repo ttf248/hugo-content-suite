@@ -15,10 +15,6 @@ import (
 	"tag-scanner/translator"
 	"tag-scanner/utils"
 	"time"
-
-	"github.com/yuin/goldmark"
-	"github.com/yuin/goldmark/ast"
-	"github.com/yuin/goldmark/text"
 )
 
 // ArticleTranslator 文章翻译器
@@ -522,14 +518,24 @@ func (a *ArticleTranslator) cleanTranslationResult(result string) string {
 		}
 	}
 
-	// 移除多层引号
-	for strings.HasPrefix(result, "\"") && strings.HasSuffix(result, "\"") {
-		result = strings.Trim(result, "\"")
-		result = strings.TrimSpace(result)
+	// 移除多层引号（更严格的处理）
+	for strings.HasPrefix(result, "\"") && strings.HasSuffix(result, "\"") && len(result) > 2 {
+		inner := result[1 : len(result)-1]
+		if !strings.Contains(inner, "\"") || strings.Count(inner, "\"")%2 == 0 {
+			result = inner
+			result = strings.TrimSpace(result)
+		} else {
+			break
+		}
 	}
-	for strings.HasPrefix(result, "'") && strings.HasSuffix(result, "'") {
-		result = strings.Trim(result, "'")
-		result = strings.TrimSpace(result)
+	for strings.HasPrefix(result, "'") && strings.HasSuffix(result, "'") && len(result) > 2 {
+		inner := result[1 : len(result)-1]
+		if !strings.Contains(inner, "'") || strings.Count(inner, "'")%2 == 0 {
+			result = inner
+			result = strings.TrimSpace(result)
+		} else {
+			break
+		}
 	}
 
 	// 移除句号结尾（对于标题、描述等字段不需要句号）
@@ -613,7 +619,7 @@ func (a *ArticleTranslator) translateArrayField(items []string, fieldType string
 	return translated
 }
 
-// formatArrayField 格式化数组字段
+// formatArrayField 格式化数组字段，避免多余引号
 func (a *ArticleTranslator) formatArrayField(items []string) string {
 	if len(items) == 0 {
 		return "[]"
@@ -621,15 +627,16 @@ func (a *ArticleTranslator) formatArrayField(items []string) string {
 
 	var quotedItems []string
 	for _, item := range items {
-		quotedItems = append(quotedItems, fmt.Sprintf("\"%s\"", item))
+		// 清理可能存在的多余引号
+		cleanItem := strings.Trim(item, "\"'")
+		quotedItems = append(quotedItems, fmt.Sprintf("\"%s\"", cleanItem))
 	}
 
 	return fmt.Sprintf("[%s]", strings.Join(quotedItems, ", "))
 }
 
-// translateArticleBody 分段翻译正文，使用Markdown解析器
+// translateArticleBody 分段翻译正文，使用优化的Markdown解析器
 func (a *ArticleTranslator) translateArticleBody(body string) (string, error) {
-	cfg := config.GetGlobalConfig()
 
 	if strings.TrimSpace(body) == "" {
 		utils.Info("正文为空，跳过翻译")
@@ -639,162 +646,150 @@ func (a *ArticleTranslator) translateArticleBody(body string) (string, error) {
 	fmt.Printf("\n翻译正文 (%d 字符)...\n", len(body))
 	utils.Info("开始翻译正文内容，原文长度: %d 字符", len(body))
 
-	// 使用Markdown解析器提取需要翻译的文本
-	translationNodes, err := a.extractTranslatableNodes(body)
+	// 使用更简单有效的方式分段处理，避免Markdown解析器的复杂性
+	translatedContent, err := a.translateContentByLines(body)
 	if err != nil {
-		utils.Error("Markdown解析失败: %v", err)
-		return "", fmt.Errorf("Markdown解析失败: %v", err)
+		utils.Error("正文翻译失败: %v", err)
+		return "", fmt.Errorf("正文翻译失败: %v", err)
 	}
 
-	utils.Info("Markdown解析完成，找到 %d 个需要翻译的节点", len(translationNodes))
+	fmt.Printf("正文翻译完成 (%d 字符)\n", len(translatedContent))
+	utils.Info("正文翻译完成 - 原文长度: %d, 译文长度: %d", len(body), len(translatedContent))
 
-	// 翻译所有需要翻译的节点
-	translatedNodes := make(map[int]string)
+	return translatedContent, nil
+}
+
+// translateContentByLines 按行翻译内容，保持格式完整
+func (a *ArticleTranslator) translateContentByLines(content string) (string, error) {
+	cfg := config.GetGlobalConfig()
+	lines := strings.Split(content, "\n")
+	var result []string
+
+	inCodeBlock := false
 	translationCount := 0
 
-	for i, node := range translationNodes {
-		if !a.containsChinese(node.Content) {
-			utils.Debug("节点 %d 无中文内容，跳过: %s", i+1, a.truncateText(node.Content, 50))
+	for i, line := range lines {
+		utils.Debug("处理第%d行: %s", i+1, a.truncateText(line, 100))
+
+		// 检测代码块
+		if strings.HasPrefix(strings.TrimSpace(line), "```") {
+			inCodeBlock = !inCodeBlock
+			result = append(result, line)
+			utils.Debug("代码块状态切换，当前状态: %v", inCodeBlock)
 			continue
 		}
 
-		translationCount++
-		fmt.Printf("  [%d/%d] 翻译 %s...", translationCount, len(translationNodes), node.Type)
-		utils.Info("翻译节点 %d/%d - 类型: %s, 内容: %s", translationCount, len(translationNodes), node.Type, node.Content)
+		// 代码块内容直接保留
+		if inCodeBlock {
+			result = append(result, line)
+			utils.Debug("代码块内容，直接保留")
+			continue
+		}
 
-		// 翻译纯文本内容
-		translatedText, err := a.translatePlainText(node.Content, translationCount, len(translationNodes))
+		// 空行直接保留
+		if strings.TrimSpace(line) == "" {
+			result = append(result, line)
+			continue
+		}
+
+		// 检查是否包含中文
+		if !a.containsChinese(line) {
+			result = append(result, line)
+			utils.Debug("无中文内容，直接保留")
+			continue
+		}
+
+		// 需要翻译的行
+		translationCount++
+		fmt.Printf("  [%d] ", translationCount)
+
+		translatedLine, err := a.translateSingleLine(line, translationCount)
 		if err != nil {
-			fmt.Printf("失败\n")
-			utils.Error("节点翻译失败 %d/%d: %v", translationCount, len(translationNodes), err)
-			// 翻译失败时保持原文
-			translatedNodes[node.Position] = node.Content
+			fmt.Printf("翻译失败\n")
+			utils.Error("行翻译失败 %d: %v", translationCount, err)
+			result = append(result, line) // 翻译失败保持原文
 		} else {
 			fmt.Printf("完成\n")
-			utils.Info("节点翻译成功 %d/%d", translationCount, len(translationNodes))
-			utils.Debug("翻译结果: %s -> %s", node.Content, translatedText)
-			translatedNodes[node.Position] = translatedText
+			utils.Info("行翻译成功 %d", translationCount)
+			utils.Debug("翻译结果: %s -> %s", line, translatedLine)
+			result = append(result, translatedLine)
 		}
 
 		// 添加延迟避免API频率限制
-		if translationCount < len(translationNodes) && cfg.Translation.DelayBetweenMs > 0 {
+		if cfg.Translation.DelayBetweenMs > 0 {
 			utils.Debug("等待 %dms 避免API频率限制", cfg.Translation.DelayBetweenMs)
 			time.Sleep(time.Duration(cfg.Translation.DelayBetweenMs) * time.Millisecond)
 		}
 	}
 
-	// 重新组装Markdown内容
-	result := a.reassembleMarkdown(body, translationNodes, translatedNodes)
-
-	fmt.Printf("正文翻译完成 (%d 字符)\n", len(result))
-	utils.Info("正文翻译完成 - 原文长度: %d, 译文长度: %d, 翻译节点: %d", len(body), len(result), translationCount)
-
-	return result, nil
+	return strings.Join(result, "\n"), nil
 }
 
-// extractTranslatableNodes 提取可翻译的Markdown节点
-func (a *ArticleTranslator) extractTranslatableNodes(content string) ([]MarkdownNode, error) {
-	var nodes []MarkdownNode
+// translateSingleLine 翻译单行内容，保持Markdown格式
+func (a *ArticleTranslator) translateSingleLine(line string, lineNum int) (string, error) {
 
-	md := goldmark.New()
-	doc := md.Parser().Parse(text.NewReader([]byte(content)))
+	trimmedLine := strings.TrimSpace(line)
 
-	source := []byte(content)
-	position := 0
+	// 提取Markdown格式前缀
+	var prefix, content, suffix string
 
-	err := ast.Walk(doc, func(n ast.Node, entering bool) (ast.WalkStatus, error) {
-		if !entering {
-			return ast.WalkContinue, nil
+	// 处理标题
+	if strings.HasPrefix(trimmedLine, "#") {
+		match := regexp.MustCompile(`^(#+\s*)`).FindString(trimmedLine)
+		if match != "" {
+			prefix = match
+			content = strings.TrimSpace(strings.TrimPrefix(trimmedLine, match))
 		}
-
-		switch node := n.(type) {
-		case *ast.Text:
-			text := string(node.Segment.Value(source))
-			if strings.TrimSpace(text) != "" {
-				nodes = append(nodes, MarkdownNode{
-					Type:     "text",
-					Content:  text,
-					Position: position,
-				})
-				position++
-			}
-
-		case *ast.Heading:
-			// 提取标题文本
-			var headingText strings.Builder
-			for child := node.FirstChild(); child != nil; child = child.NextSibling() {
-				if textNode, ok := child.(*ast.Text); ok {
-					headingText.WriteString(string(textNode.Segment.Value(source)))
-				}
-			}
-			if headingText.Len() > 0 {
-				nodes = append(nodes, MarkdownNode{
-					Type:     "heading",
-					Content:  headingText.String(),
-					Position: position,
-					Level:    node.Level,
-				})
-				position++
-			}
-
-		case *ast.ListItem:
-			// 提取列表项文本
-			var itemText strings.Builder
-			for child := node.FirstChild(); child != nil; child = child.NextSibling() {
-				if para, ok := child.(*ast.Paragraph); ok {
-					for grandChild := para.FirstChild(); grandChild != nil; grandChild = grandChild.NextSibling() {
-						if textNode, ok := grandChild.(*ast.Text); ok {
-							itemText.WriteString(string(textNode.Segment.Value(source)))
-						}
-					}
-				}
-			}
-			if itemText.Len() > 0 {
-				nodes = append(nodes, MarkdownNode{
-					Type:     "listitem",
-					Content:  itemText.String(),
-					Position: position,
-				})
-				position++
-			}
-
-		case *ast.Blockquote:
-			// 提取引用文本
-			var quoteText strings.Builder
-			for child := node.FirstChild(); child != nil; child = child.NextSibling() {
-				if para, ok := child.(*ast.Paragraph); ok {
-					for grandChild := para.FirstChild(); grandChild != nil; grandChild = grandChild.NextSibling() {
-						if textNode, ok := grandChild.(*ast.Text); ok {
-							quoteText.WriteString(string(textNode.Segment.Value(source)))
-						}
-					}
-				}
-			}
-			if quoteText.Len() > 0 {
-				nodes = append(nodes, MarkdownNode{
-					Type:     "blockquote",
-					Content:  quoteText.String(),
-					Position: position,
-				})
-				position++
-			}
+	} else if strings.HasPrefix(trimmedLine, "- ") || strings.HasPrefix(trimmedLine, "* ") {
+		// 处理无序列表
+		if strings.HasPrefix(trimmedLine, "- ") {
+			prefix = "- "
+			content = strings.TrimSpace(strings.TrimPrefix(trimmedLine, "- "))
+		} else {
+			prefix = "* "
+			content = strings.TrimSpace(strings.TrimPrefix(trimmedLine, "* "))
 		}
-
-		return ast.WalkContinue, nil
-	})
-
-	if err != nil {
-		return nil, err
+	} else if regexp.MustCompile(`^\d+\.\s`).MatchString(trimmedLine) {
+		// 处理有序列表
+		match := regexp.MustCompile(`^(\d+\.\s*)`).FindString(trimmedLine)
+		if match != "" {
+			prefix = match
+			content = strings.TrimSpace(strings.TrimPrefix(trimmedLine, match))
+		}
+	} else if strings.HasPrefix(trimmedLine, "> ") {
+		// 处理引用
+		prefix = "> "
+		content = strings.TrimSpace(strings.TrimPrefix(trimmedLine, "> "))
+	} else {
+		// 普通段落
+		content = trimmedLine
 	}
 
-	return nodes, nil
+	// 如果没有可翻译的内容，直接返回
+	if strings.TrimSpace(content) == "" || !a.containsChinese(content) {
+		return line, nil
+	}
+
+	// 翻译纯文本内容
+	translatedContent, err := a.translatePlainTextSimple(content, lineNum)
+	if err != nil {
+		return "", err
+	}
+
+	// 重新组合
+	leadingSpaces := ""
+	if len(line) > len(strings.TrimLeft(line, " \t")) {
+		leadingSpaces = line[:len(line)-len(strings.TrimLeft(line, " \t"))]
+	}
+
+	return leadingSpaces + prefix + translatedContent + suffix, nil
 }
 
-// translatePlainText 翻译纯文本内容
-func (a *ArticleTranslator) translatePlainText(text string, nodeNum, totalNodes int) (string, error) {
+// translatePlainTextSimple 翻译纯文本内容（简化版）
+func (a *ArticleTranslator) translatePlainTextSimple(text string, lineNum int) (string, error) {
 	cfg := config.GetGlobalConfig()
 
-	// 清理文本，移除多余的空白字符
+	// 清理文本
 	cleanText := strings.TrimSpace(text)
 	cleanText = regexp.MustCompile(`\s+`).ReplaceAllString(cleanText, " ")
 
@@ -818,18 +813,18 @@ func (a *ArticleTranslator) translatePlainText(text string, nodeNum, totalNodes 
 	}
 
 	// 记录详细的翻译请求信息
-	utils.Info("文本翻译请求 %d/%d", nodeNum, totalNodes)
-	utils.Debug("文本翻译请求 %d/%d - Model: %s", nodeNum, totalNodes, request.Model)
-	utils.Debug("文本翻译请求 %d/%d - 原文: %s", nodeNum, totalNodes, cleanText)
-	utils.Debug("文本翻译请求 %d/%d - Prompt: %s", nodeNum, totalNodes, prompt)
+	utils.Info("行翻译请求 %d", lineNum)
+	utils.Debug("行翻译请求 %d - Model: %s", lineNum, request.Model)
+	utils.Debug("行翻译请求 %d - 原文: %s", lineNum, cleanText)
+	utils.Debug("行翻译请求 %d - Prompt: %s", lineNum, prompt)
 
 	jsonData, err := json.Marshal(request)
 	if err != nil {
-		utils.Error("文本翻译请求 %d/%d 序列化失败: %v", nodeNum, totalNodes, err)
+		utils.Error("行翻译请求 %d 序列化失败: %v", lineNum, err)
 		return "", fmt.Errorf("序列化请求失败: %v", err)
 	}
 
-	utils.Debug("文本翻译请求 %d/%d JSON: %s", nodeNum, totalNodes, string(jsonData))
+	utils.Debug("行翻译请求 %d JSON: %s", lineNum, string(jsonData))
 
 	startTime := time.Now()
 	client := &http.Client{Timeout: time.Duration(cfg.LMStudio.Timeout) * time.Second}
@@ -837,34 +832,34 @@ func (a *ArticleTranslator) translatePlainText(text string, nodeNum, totalNodes 
 	requestDuration := time.Since(startTime)
 
 	if err != nil {
-		utils.Error("文本翻译请求 %d/%d 网络错误: %v, 耗时: %v", nodeNum, totalNodes, err, requestDuration)
+		utils.Error("行翻译请求 %d 网络错误: %v, 耗时: %v", lineNum, err, requestDuration)
 		return "", fmt.Errorf("发送请求失败: %v", err)
 	}
 	defer resp.Body.Close()
 
-	utils.Info("文本翻译响应 %d/%d - 状态码: %d, 耗时: %v", nodeNum, totalNodes, resp.StatusCode, requestDuration)
+	utils.Info("行翻译响应 %d - 状态码: %d, 耗时: %v", lineNum, resp.StatusCode, requestDuration)
 
 	if resp.StatusCode != http.StatusOK {
-		utils.Error("文本翻译响应 %d/%d 错误状态码: %d", nodeNum, totalNodes, resp.StatusCode)
+		utils.Error("行翻译响应 %d 错误状态码: %d", lineNum, resp.StatusCode)
 		return "", fmt.Errorf("LM Studio返回错误状态: %d", resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		utils.Error("文本翻译响应 %d/%d 读取失败: %v", nodeNum, totalNodes, err)
+		utils.Error("行翻译响应 %d 读取失败: %v", lineNum, err)
 		return "", fmt.Errorf("读取响应失败: %v", err)
 	}
 
-	utils.Debug("文本翻译响应 %d/%d 原始数据: %s", nodeNum, totalNodes, string(body))
+	utils.Debug("行翻译响应 %d 原始数据: %s", lineNum, string(body))
 
 	var response translator.LMStudioResponse
 	if err := json.Unmarshal(body, &response); err != nil {
-		utils.Error("文本翻译响应 %d/%d 解析失败: %v", nodeNum, totalNodes, err)
+		utils.Error("行翻译响应 %d 解析失败: %v", lineNum, err)
 		return "", fmt.Errorf("解析响应失败: %v", err)
 	}
 
 	if len(response.Choices) == 0 {
-		utils.Error("文本翻译响应 %d/%d 无结果", nodeNum, totalNodes)
+		utils.Error("行翻译响应 %d 无结果", lineNum)
 		return "", fmt.Errorf("没有获取到翻译结果")
 	}
 
@@ -874,124 +869,11 @@ func (a *ArticleTranslator) translatePlainText(text string, nodeNum, totalNodes 
 	result = a.cleanTranslationResult(result)
 
 	// 记录翻译完成信息
-	utils.Info("文本翻译完成 %d/%d - 原文长度: %d, 译文长度: %d, 耗时: %v",
-		nodeNum, totalNodes, len(cleanText), len(result), requestDuration)
-	utils.Debug("文本翻译结果 %d/%d: %s", nodeNum, totalNodes, result)
+	utils.Info("行翻译完成 %d - 原文长度: %d, 译文长度: %d, 耗时: %v",
+		lineNum, len(cleanText), len(result), requestDuration)
+	utils.Debug("行翻译结果 %d: %s", lineNum, result)
 
 	return result, nil
-}
-
-// reassembleMarkdown 重新组装Markdown内容
-func (a *ArticleTranslator) reassembleMarkdown(originalContent string, nodes []MarkdownNode, translations map[int]string) string {
-	lines := strings.Split(originalContent, "\n")
-	var result []string
-
-	nodeIndex := 0
-
-	for _, line := range lines {
-		trimmedLine := strings.TrimSpace(line)
-
-		// 跳过空行
-		if trimmedLine == "" {
-			result = append(result, line)
-			continue
-		}
-
-		// 检查是否为代码块
-		if strings.HasPrefix(trimmedLine, "```") {
-			result = append(result, line)
-			continue
-		}
-
-		// 处理标题
-		if strings.HasPrefix(trimmedLine, "#") {
-			if nodeIndex < len(nodes) && nodes[nodeIndex].Type == "heading" {
-				if translation, exists := translations[nodes[nodeIndex].Position]; exists {
-					// 保持原始的标题格式，只替换文本内容
-					level := strings.Repeat("#", nodes[nodeIndex].Level)
-					result = append(result, fmt.Sprintf("%s %s", level, translation))
-				} else {
-					result = append(result, line)
-				}
-				nodeIndex++
-			} else {
-				result = append(result, line)
-			}
-			continue
-		}
-
-		// 处理列表项
-		if strings.HasPrefix(trimmedLine, "- ") || strings.HasPrefix(trimmedLine, "* ") ||
-			regexp.MustCompile(`^\d+\. `).MatchString(trimmedLine) {
-			if nodeIndex < len(nodes) && nodes[nodeIndex].Type == "listitem" {
-				if translation, exists := translations[nodes[nodeIndex].Position]; exists {
-					// 保持原始的列表格式，只替换文本内容
-					prefix := ""
-					if strings.HasPrefix(trimmedLine, "- ") {
-						prefix = "- "
-					} else if strings.HasPrefix(trimmedLine, "* ") {
-						prefix = "* "
-					} else if match := regexp.MustCompile(`^(\d+\. )`).FindString(trimmedLine); match != "" {
-						prefix = match
-					}
-					result = append(result, prefix+translation)
-				} else {
-					result = append(result, line)
-				}
-				nodeIndex++
-			} else {
-				result = append(result, line)
-			}
-			continue
-		}
-
-		// 处理引用
-		if strings.HasPrefix(trimmedLine, ">") {
-			if nodeIndex < len(nodes) && nodes[nodeIndex].Type == "blockquote" {
-				if translation, exists := translations[nodes[nodeIndex].Position]; exists {
-					result = append(result, "> "+translation)
-				} else {
-					result = append(result, line)
-				}
-				nodeIndex++
-			} else {
-				result = append(result, line)
-			}
-			continue
-		}
-
-		// 处理普通文本段落
-		if nodeIndex < len(nodes) && nodes[nodeIndex].Type == "text" {
-			if translation, exists := translations[nodes[nodeIndex].Position]; exists {
-				result = append(result, translation)
-			} else {
-				result = append(result, line)
-			}
-			nodeIndex++
-		} else {
-			result = append(result, line)
-		}
-	}
-
-	return strings.Join(result, "\n")
-}
-
-// containsChinese 检查文本是否包含中文
-func (a *ArticleTranslator) containsChinese(text string) bool {
-	for _, r := range text {
-		if r >= 0x4e00 && r <= 0x9fff {
-			return true
-		}
-	}
-	return false
-}
-
-// truncateText 截断文本用于显示
-func (a *ArticleTranslator) truncateText(text string, maxLen int) string {
-	if len(text) <= maxLen {
-		return text
-	}
-	return text[:maxLen] + "..."
 }
 
 // combineTranslatedContent 合并翻译后的内容
@@ -1129,4 +1011,22 @@ func (a *ArticleTranslator) isSpecialFormatLine(line string) bool {
 	}
 
 	return false
+}
+
+// containsChinese 检查文本是否包含中文
+func (a *ArticleTranslator) containsChinese(text string) bool {
+	for _, r := range text {
+		if r >= 0x4e00 && r <= 0x9fff {
+			return true
+		}
+	}
+	return false
+}
+
+// truncateText 截断文本用于显示
+func (a *ArticleTranslator) truncateText(text string, maxLen int) string {
+	if len(text) <= maxLen {
+		return text
+	}
+	return text[:maxLen] + "..."
 }
