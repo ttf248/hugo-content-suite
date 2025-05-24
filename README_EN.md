@@ -26,6 +26,24 @@ English | [中文](README.md)
 - Category statistics and visualization
 - Detection of articles without tags
 
+### 📝 Comprehensive Logging System
+- Multi-level logging (DEBUG, INFO, WARN, ERROR)
+- Automatic log file rotation and archiving
+- Detailed operation records and error tracking
+- Support for both console and file output
+
+### ⚡ Performance Monitoring
+- Real-time processing speed statistics
+- Memory usage monitoring
+- API call count and response time statistics
+- Cache hit rate analysis
+
+### ⚙️ Flexible Configuration Management
+- YAML format configuration files
+- Environment variable override support
+- Hot reload configuration updates
+- Configuration validation and default value handling
+
 ## 🚀 Quick Start
 
 ### Requirements
@@ -50,18 +68,25 @@ go run main.go [content-directory-path]
 2. **Generate Tag Pages**: Create dedicated pages for each tag
 3. **Article Slug Management**: Generate SEO-friendly URLs for article titles
 4. **Cache Management**: View and manage translation cache
+5. **Performance Monitoring**: View processing performance and system resource usage
+6. **Log Analysis**: View detailed operation logs and error records
 
 ## 📁 Project Architecture
 
 ```
 hugo-slug-auto/
 ├── main.go              # Main program entry
+├── config/              # Configuration management
 ├── models/              # Data models
 ├── scanner/             # Article scanning and parsing
 ├── stats/               # Statistical analysis
 ├── translator/          # AI translation module
 ├── generator/           # Content generators
 ├── display/             # User interface
+├── logger/              # Logging system
+├── performance/         # Performance monitoring
+├── config.yaml          # Main configuration file
+├── logs/                # Log files directory
 └── docs/               # Detailed documentation
 ```
 
@@ -82,11 +107,100 @@ hugo-slug-auto/
 - 💾 Intelligent caching mechanism
 - 🎯 Precise content recognition
 
+### System Monitoring
+- 📈 Real-time performance statistics
+- 📋 Detailed logging
+- ⚙️ Flexible configuration management
+- 🔍 Operation audit tracking
+
+## ⚙️ Configuration
+
+### Configuration File (config.yaml)
+```yaml
+# LM Studio Configuration
+lm_studio:
+  url: "http://localhost:2234/v1/chat/completions"
+  model: "gemma-3-12b-it"
+  timeout: 30s
+  max_retries: 3
+
+# Cache Configuration
+cache:
+  directory: "./cache"
+  file_name: "tag_translations_cache.json"
+  auto_save: true
+  max_entries: 10000
+
+# Logging Configuration
+logging:
+  level: "INFO"
+  file_path: "./logs/app.log"
+  max_size: 100MB
+  max_backups: 5
+  max_age: 30
+  console_output: true
+
+# Performance Monitoring
+performance:
+  enable_monitoring: true
+  metrics_interval: 10s
+  memory_threshold: 500MB
+```
+
+### Environment Variable Override
+```bash
+export LM_STUDIO_URL="http://192.168.1.100:2234/v1/chat/completions"
+export LOG_LEVEL="DEBUG"
+export CACHE_DIR="./custom_cache"
+```
+
+## 📝 Logging Features
+
+### Log Levels
+- **DEBUG**: Detailed debugging information
+- **INFO**: General information logging
+- **WARN**: Warning messages
+- **ERROR**: Error messages
+
+### Log File Management
+- Automatic log file rotation by size
+- Retain specified number of historical logs
+- Automatic cleanup of expired logs by time
+
+### Log Viewing
+```bash
+# View real-time logs
+tail -f logs/app.log
+
+# View error logs
+grep "ERROR" logs/app.log
+
+# View logs for specific time
+grep "2024-01-01" logs/app.log
+```
+
+## 📈 Performance Monitoring
+
+### Real-time Statistics
+- Processing speed (articles/second)
+- Memory usage
+- CPU usage
+- Network request latency
+
+### Performance Reports
+- Total processing time
+- Average response time
+- Cache hit rate
+- Error rate statistics
+
 ## 📚 Documentation Links
 
 ### 中文文档
 - [安装配置指南](docs/installation.md)
 - [功能使用说明](docs/usage.md)
+- [配置文件说明](docs/configuration.md)
+- [日志系统指南](docs/logging.md)
+- [性能监控指南](docs/performance.md)
 - [API接口文档](docs/api.md)
 - [故障排除](docs/troubleshooting.md)
 - [贡献指南](docs/contributing.md)
@@ -94,6 +208,9 @@ hugo-slug-auto/
 ### English Documentation
 - [Installation Guide](docs/installation_en.md)
 - [Usage Guide](docs/usage_en.md)
+- [Configuration Guide](docs/configuration_en.md)
+- [Logging Guide](docs/logging_en.md)
+- [Performance Guide](docs/performance_en.md)
 - [API Documentation](docs/api_en.md)
 - [Troubleshooting](docs/troubleshooting_en.md)
 - [Contributing Guide](docs/contributing_en.md)
