@@ -8,6 +8,7 @@ import (
 	"net/http"
 	"regexp"
 	"strings"
+	"tag-scanner/utils"
 	"time"
 )
 
@@ -143,6 +144,7 @@ func (t *LLMTranslator) TranslateToSlug(tag string) (string, error) {
 
 // BatchTranslate 批量翻译标签（支持缓存）
 func (t *LLMTranslator) BatchTranslate(tags []string) (map[string]string, error) {
+	startTime := time.Now()
 	result := make(map[string]string)
 
 	// 首先从缓存中获取已有的翻译
@@ -152,6 +154,9 @@ func (t *LLMTranslator) BatchTranslate(tags []string) (map[string]string, error)
 		if translation, exists := t.cache.Get(tag); exists {
 			result[tag] = translation
 			cachedCount++
+			utils.RecordCacheHit()
+		} else {
+			utils.RecordCacheMiss()
 		}
 	}
 
@@ -169,33 +174,39 @@ func (t *LLMTranslator) BatchTranslate(tags []string) (map[string]string, error)
 
 	fmt.Printf("🔄 需要翻译 %d 个新标签\n", len(missingTags))
 
+	// 创建进度条
+	progressBar := utils.NewProgressBar(len(missingTags))
+
 	// 翻译新标签
 	newTranslationsAdded := 0
 	for i, tag := range missingTags {
-		fmt.Printf("正在翻译 (%d/%d): %s", i+1, len(missingTags), tag)
+		translationStart := time.Now()
 
 		slug, err := t.TranslateToSlug(tag)
 		if err != nil {
-			fmt.Printf(" - 失败: %v\n", err)
-			// 使用fallback方法
+			utils.RecordError()
 			slug = fallbackSlug(tag)
-		} else {
-			fmt.Printf(" -> %s\n", slug)
 		}
 
+		utils.RecordTranslation(time.Since(translationStart))
+
 		result[tag] = slug
-		// 添加到缓存
 		t.cache.Set(tag, slug)
 		newTranslationsAdded++
 
-		// 每5个翻译保存一次缓存，避免丢失数据
+		// 更新进度条
+		progressBar.Update(i + 1)
+
+		// 每5个翻译保存一次缓存
 		if newTranslationsAdded%5 == 0 {
 			if err := t.cache.Save(); err != nil {
-				fmt.Printf("⚠️ 中间保存缓存失败: %v\n", err)
+				utils.Error("中间保存缓存失败: %v", err)
+			} else {
+				utils.RecordFileOperation()
 			}
 		}
 
-		// 添加延迟避免请求过于频繁
+		// 添加延迟
 		if i < len(missingTags)-1 {
 			time.Sleep(500 * time.Millisecond)
 		}
@@ -204,9 +215,10 @@ func (t *LLMTranslator) BatchTranslate(tags []string) (map[string]string, error)
 	// 最终保存缓存
 	if newTranslationsAdded > 0 {
 		if err := t.cache.Save(); err != nil {
-			fmt.Printf("⚠️ 保存缓存失败: %v\n", err)
+			utils.Error("保存缓存失败: %v", err)
 		} else {
-			fmt.Printf("💾 已保存 %d 个新翻译到缓存\n", newTranslationsAdded)
+			utils.RecordFileOperation()
+			utils.Info("批量翻译完成，耗时: %v", time.Since(startTime))
 		}
 	}
 

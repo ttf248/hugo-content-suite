@@ -6,18 +6,34 @@ import (
 	"log"
 	"os"
 	"strings"
+	"tag-scanner/config"
 	"tag-scanner/display"
 	"tag-scanner/generator"
 	"tag-scanner/models"
 	"tag-scanner/scanner"
 	"tag-scanner/stats"
 	"tag-scanner/translator"
+	"tag-scanner/utils"
 
 	"github.com/fatih/color"
 )
 
 func main() {
-	contentDir := "../../content/post"
+	// 加载配置
+	cfg, err := config.LoadConfig()
+	if err != nil {
+		log.Fatal("配置加载失败:", err)
+	}
+
+	// 初始化日志
+	if err := utils.InitLogger("tag-scanner.log", utils.INFO); err != nil {
+		log.Printf("日志初始化失败: %v", err)
+	}
+
+	utils.Info("程序启动")
+	defer utils.Info("程序退出")
+
+	contentDir := cfg.Paths.DefaultContentDir
 	if len(os.Args) > 1 {
 		contentDir = os.Args[1]
 	}
@@ -51,6 +67,15 @@ func main() {
 
 	// 交互式菜单
 	showInteractiveMenu(tagStats, categoryStats, noTagArticles, contentDir)
+
+	// 显示性能统计
+	defer func() {
+		stats := utils.GetGlobalStats()
+		if stats.TranslationCount > 0 || stats.FileOperations > 0 {
+			fmt.Println()
+			fmt.Println(stats.String())
+		}
+	}()
 }
 
 func showInteractiveMenu(tagStats []models.TagStats, categoryStats []models.CategoryStats, noTagArticles []models.Article, contentDir string) {
@@ -87,9 +112,15 @@ func showInteractiveMenu(tagStats []models.TagStats, categoryStats []models.Cate
 		fmt.Println(" 11. 清空翻译缓存")
 		fmt.Println()
 
+		// 系统工具模块
+		color.Cyan("🔧 系统工具")
+		fmt.Println(" 12. 查看性能统计")
+		fmt.Println(" 13. 重置性能统计")
+		fmt.Println()
+
 		color.Red("  0. 退出程序")
 		fmt.Println()
-		fmt.Print("请选择功能 (0-11): ")
+		fmt.Print("请选择功能 (0-13): ")
 
 		input, _ := reader.ReadString('\n')
 		choice := strings.TrimSpace(input)
@@ -117,6 +148,10 @@ func showInteractiveMenu(tagStats []models.TagStats, categoryStats []models.Cate
 			generateBulkTranslationCache(tagStats, contentDir, reader)
 		case "11":
 			clearTranslationCache(reader)
+		case "12":
+			showPerformanceStats()
+		case "13":
+			resetPerformanceStats(reader)
 		case "0":
 			color.Green("感谢使用！再见！")
 			return
@@ -579,4 +614,26 @@ func collectTranslationTargets(tagStats []models.TagStats, contentDir string) (*
 		TagsToTranslate:     tagsToTranslate,
 		ArticlesToTranslate: articlesToTranslate,
 	}, nil
+}
+
+func showPerformanceStats() {
+	color.Cyan("=== 系统性能统计 ===")
+	stats := utils.GetGlobalStats()
+	fmt.Println()
+	fmt.Println(stats.String())
+	fmt.Println()
+}
+
+func resetPerformanceStats(reader *bufio.Reader) {
+	color.Yellow("⚠️  警告：此操作将重置所有性能统计数据")
+	fmt.Print("确认重置？(y/n): ")
+
+	input, _ := reader.ReadString('\n')
+	if strings.TrimSpace(strings.ToLower(input)) != "y" {
+		color.Yellow("❌ 已取消重置")
+		return
+	}
+
+	utils.ResetGlobalStats()
+	color.Green("✅ 性能统计已重置")
 }

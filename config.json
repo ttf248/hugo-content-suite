@@ -1,0 +1,20 @@
+{
+  "lm_studio": {
+    "url": "http://172.19.192.1:2234/v1/chat/completions",
+    "model": "gemma-3-12b-it",
+    "timeout_seconds": 30
+  },
+  "cache": {
+    "file_name": "tag_translations_cache.json",
+    "auto_save_count": 5,
+    "delay_ms": 500
+  },
+  "display": {
+    "default_limit": 20,
+    "colors": true
+  },
+  "paths": {
+    "default_content_dir": "../../content/post",
+    "tags_dir": "../tags"
+  }
+}
