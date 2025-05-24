@@ -235,11 +235,9 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 
 		// 翻译标题
 		if strings.HasPrefix(trimmedLine, "title:") {
-			title := strings.TrimSpace(strings.TrimPrefix(trimmedLine, "title:"))
-			title = strings.Trim(title, "\"'")
-
+			title := a.extractFieldValue(trimmedLine, "title:")
 			if title != "" && a.containsChinese(title) {
-				translatedTitle, err := a.translator.TranslateParagraph(title)
+				translatedTitle, err := a.translateFieldContent(title)
 				if err != nil {
 					fmt.Printf("⚠️ 标题翻译失败，保持原文: %v\n", err)
 					translatedLines = append(translatedLines, line)
@@ -254,11 +252,9 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 
 		// 翻译描述字段
 		if strings.HasPrefix(trimmedLine, "description:") {
-			description := strings.TrimSpace(strings.TrimPrefix(trimmedLine, "description:"))
-			description = strings.Trim(description, "\"'")
-
+			description := a.extractFieldValue(trimmedLine, "description:")
 			if description != "" && a.containsChinese(description) {
-				translatedDescription, err := a.translator.TranslateParagraph(description)
+				translatedDescription, err := a.translateFieldContent(description)
 				if err != nil {
 					fmt.Printf("⚠️ 描述翻译失败，保持原文: %v\n", err)
 					translatedLines = append(translatedLines, line)
@@ -271,11 +267,220 @@ func (a *ArticleTranslator) translateFrontMatter(frontMatter string) (string, er
 			continue
 		}
 
+		// 翻译副标题
+		if strings.HasPrefix(trimmedLine, "subtitle:") {
+			subtitle := a.extractFieldValue(trimmedLine, "subtitle:")
+			if subtitle != "" && a.containsChinese(subtitle) {
+				translatedSubtitle, err := a.translateFieldContent(subtitle)
+				if err != nil {
+					fmt.Printf("⚠️ 副标题翻译失败，保持原文: %v\n", err)
+					translatedLines = append(translatedLines, line)
+				} else {
+					translatedLines = append(translatedLines, fmt.Sprintf("subtitle: \"%s\"", translatedSubtitle))
+				}
+			} else {
+				translatedLines = append(translatedLines, line)
+			}
+			continue
+		}
+
+		// 翻译摘要
+		if strings.HasPrefix(trimmedLine, "summary:") {
+			summary := a.extractFieldValue(trimmedLine, "summary:")
+			if summary != "" && a.containsChinese(summary) {
+				translatedSummary, err := a.translateFieldContent(summary)
+				if err != nil {
+					fmt.Printf("⚠️ 摘要翻译失败，保持原文: %v\n", err)
+					translatedLines = append(translatedLines, line)
+				} else {
+					translatedLines = append(translatedLines, fmt.Sprintf("summary: \"%s\"", translatedSummary))
+				}
+			} else {
+				translatedLines = append(translatedLines, line)
+			}
+			continue
+		}
+
+		// 翻译分类数组
+		if strings.HasPrefix(trimmedLine, "categories:") {
+			categories := a.extractArrayField(trimmedLine, "categories:")
+			if len(categories) > 0 {
+				translatedCategories := a.translateArrayField(categories, "分类")
+				translatedLines = append(translatedLines, fmt.Sprintf("categories: %s", a.formatArrayField(translatedCategories)))
+			} else {
+				translatedLines = append(translatedLines, line)
+			}
+			continue
+		}
+
+		// 翻译作者数组
+		if strings.HasPrefix(trimmedLine, "authors:") {
+			authors := a.extractArrayField(trimmedLine, "authors:")
+			if len(authors) > 0 {
+				// 作者名通常不翻译，但如果是中文描述可以翻译
+				translatedAuthors := a.translateArrayField(authors, "作者")
+				translatedLines = append(translatedLines, fmt.Sprintf("authors: %s", a.formatArrayField(translatedAuthors)))
+			} else {
+				translatedLines = append(translatedLines, line)
+			}
+			continue
+		}
+
 		// 其他字段保持不变
 		translatedLines = append(translatedLines, line)
 	}
 
 	return strings.Join(translatedLines, "\n"), nil
+}
+
+// extractFieldValue 提取字段值
+func (a *ArticleTranslator) extractFieldValue(line, prefix string) string {
+	value := strings.TrimSpace(strings.TrimPrefix(line, prefix))
+	value = strings.Trim(value, "\"'")
+	return value
+}
+
+// translateFieldContent 翻译字段内容，使用简化的提示词
+func (a *ArticleTranslator) translateFieldContent(content string) (string, error) {
+	prompt := fmt.Sprintf(`Translate the following Chinese text to English. Keep it concise and natural:
+
+%s`, content)
+
+	request := translator.LMStudioRequest{
+		Model: "gemma-3-12b-it",
+		Messages: []translator.Message{
+			{
+				Role:    "user",
+				Content: prompt,
+			},
+		},
+		Stream: false,
+	}
+
+	jsonData, err := json.Marshal(request)
+	if err != nil {
+		return "", fmt.Errorf("序列化请求失败: %v", err)
+	}
+
+	client := &http.Client{Timeout: 30 * time.Second}
+	resp, err := client.Post("http://172.19.192.1:2234/v1/chat/completions", "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return "", fmt.Errorf("发送请求失败: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return "", fmt.Errorf("LM Studio返回错误状态: %d", resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", fmt.Errorf("读取响应失败: %v", err)
+	}
+
+	var response translator.LMStudioResponse
+	if err := json.Unmarshal(body, &response); err != nil {
+		return "", fmt.Errorf("解析响应失败: %v", err)
+	}
+
+	if len(response.Choices) == 0 {
+		return "", fmt.Errorf("没有获取到翻译结果")
+	}
+
+	result := strings.TrimSpace(response.Choices[0].Message.Content)
+
+	// 清理可能的额外内容
+	result = a.cleanTranslationResult(result)
+
+	return result, nil
+}
+
+// cleanTranslationResult 清理翻译结果，移除多余的提示词或格式
+func (a *ArticleTranslator) cleanTranslationResult(result string) string {
+	// 移除常见的提示词残留
+	patterns := []string{
+		"Translation:",
+		"Translated:",
+		"English:",
+		"Result:",
+		"Output:",
+	}
+
+	for _, pattern := range patterns {
+		if strings.HasPrefix(result, pattern) {
+			result = strings.TrimSpace(strings.TrimPrefix(result, pattern))
+		}
+	}
+
+	// 移除引号
+	result = strings.Trim(result, "\"'")
+
+	// 移除多余的换行符
+	result = strings.ReplaceAll(result, "\n", " ")
+	result = strings.TrimSpace(result)
+
+	return result
+}
+
+// extractArrayField 提取数组字段
+func (a *ArticleTranslator) extractArrayField(line, prefix string) []string {
+	value := strings.TrimSpace(strings.TrimPrefix(line, prefix))
+
+	// 移除方括号
+	value = strings.Trim(value, "[]")
+
+	if value == "" {
+		return []string{}
+	}
+
+	// 分割数组元素
+	parts := strings.Split(value, ",")
+	var result []string
+
+	for _, part := range parts {
+		part = strings.TrimSpace(part)
+		part = strings.Trim(part, "\"'")
+		if part != "" {
+			result = append(result, part)
+		}
+	}
+
+	return result
+}
+
+// translateArrayField 翻译数组字段
+func (a *ArticleTranslator) translateArrayField(items []string, fieldType string) []string {
+	var translated []string
+
+	for _, item := range items {
+		if a.containsChinese(item) {
+			translatedItem, err := a.translateFieldContent(item)
+			if err != nil {
+				fmt.Printf("⚠️ %s翻译失败，保持原文: %s\n", fieldType, item)
+				translated = append(translated, item)
+			} else {
+				translated = append(translated, translatedItem)
+			}
+		} else {
+			translated = append(translated, item)
+		}
+	}
+
+	return translated
+}
+
+// formatArrayField 格式化数组字段
+func (a *ArticleTranslator) formatArrayField(items []string) string {
+	if len(items) == 0 {
+		return "[]"
+	}
+
+	var quotedItems []string
+	for _, item := range items {
+		quotedItems = append(quotedItems, fmt.Sprintf("\"%s\"", item))
+	}
+
+	return fmt.Sprintf("[%s]", strings.Join(quotedItems, ", "))
 }
 
 // translateArticleBody 分段翻译正文
