@@ -69,11 +69,4 @@ func main() {
 	reader := bufio.NewReader(os.Stdin)
 	interactiveMenu := menu.NewInteractiveMenu(reader, contentDir)
 	interactiveMenu.Show(tagStats, categoryStats, noTagArticles)
-
-	// 显示性能统计
-	perfStats := utils.GetGlobalStats()
-	if perfStats.TranslationCount > 0 || perfStats.FileOperations > 0 {
-		fmt.Println()
-		fmt.Println(perfStats.String())
-	}
 }

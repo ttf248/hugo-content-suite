@@ -263,38 +263,13 @@ func NewInteractiveMenu(reader *bufio.Reader, contentDir string) *InteractiveMen
 ```
 
 #### Show
-显示精简主菜单 (9个核心功能)。
+显示精简主菜单 (7个核心功能)。
 
 ```go
 func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []models.CategoryStats, noTagArticles []models.Article)
 ```
 
 ### Utils 模块
-
-#### 性能监控函数
-
-```go
-// 记录翻译操作
-func RecordTranslation(duration time.Duration)
-
-// 记录缓存命中
-func RecordCacheHit()
-
-// 记录缓存失效
-func RecordCacheMiss()
-
-// 记录文件操作
-func RecordFileOperation()
-
-// 记录错误
-func RecordError()
-
-// 获取全局统计
-func GetGlobalStats() PerformanceStats
-
-// 重置全局统计
-func ResetGlobalStats()
-```
 
 #### 日志函数
 

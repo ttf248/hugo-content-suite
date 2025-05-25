@@ -53,32 +53,12 @@ go run main.go [content-directory-path]
 4. **Translate Articles**: Translate Chinese articles to English
 5. **Cache Management**: Manage translation cache efficiently
 
-## 📁 Project Architecture
-
-```
-hugo-content-suite/
-├── main.go              # Main program entry
-├── config/              # Configuration management
-├── models/              # Data models
-├── scanner/             # Article scanning and parsing
-├── stats/               # Statistical analysis
-├── translator/          # AI translation module
-├── generator/           # Content generators
-├── display/             # User interface
-├── menu/                # Interactive menu system
-├── operations/          # Business operation modules
-├── utils/               # Utility functions and performance monitoring
-├── config.yaml          # Main configuration file
-├── logs/                # Log files directory
-└── docs/               # Detailed documentation
-```
-
 ## 🎮 Main Features
 
 ### 🚀 Quick Processing
 - 📦 One-Click Process All (automatic workflow)
 
-### 🏷️ Content Management
+### 📝 Content Management
 - 🏷️ Generate tag pages
 - 📝 Generate article slugs
 - 🌐 Translate articles to English
@@ -87,10 +67,6 @@ hugo-content-suite/
 - 📊 View cache status
 - 🚀 Generate bulk translation cache
 - 🗑️ Clear translation cache
-
-### 🔧 System Tools
-- 📈 View performance statistics
-- 🔄 Reset performance statistics
 
 ### Smart Features
 - 🤖 AI-driven translation
@@ -124,12 +100,6 @@ logging:
   max_age: 30
   console_output: true
 
-# Performance Monitoring
-performance:
-  enable_monitoring: true
-  metrics_interval: 10s
-  memory_threshold: 500MB
-
 # Path Configuration
 paths:
   default_content_dir: "../../content/post"
@@ -151,7 +121,7 @@ paths:
 
 ## 🤝 Contributing
 
-Issues and Pull Requests are welcome! Please see the [Contributing Guide](docs/contributing_en.md) for details.
+Issues and Pull Requests are welcome!
 
 ## 📄 License
 

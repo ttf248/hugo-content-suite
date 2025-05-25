@@ -79,22 +79,6 @@ Clear translation cache with support for selective clearing:
 - Option to clear tag cache or article cache
 - Or clear all cache
 
-### 🔧 System Tools
-
-#### 8. View Performance Statistics
-Display performance monitoring information:
-```
-📊 Performance Statistics:
-🔄 Translation Count: 156
-⚡ Cache Hit Rate: 87.5% (140/160)
-⏱️ Average Translation Time: 1.2s
-📁 File Operations: 89
-❌ Error Count: 2
-```
-
-#### 9. Reset Performance Statistics
-Clear all performance statistics and restart counting.
-
 ## AI Translation Features
 
 ### Translation Principles
@@ -117,7 +101,7 @@ Predefined translation mappings when AI translation fails:
 ### Usage Recommendations
 1. **First Use**: Use "One-Click Process All" for complete setup
 2. **Regular Maintenance**: Use individual functions for specific updates
-3. **Performance**: Monitor cache hit rates and processing times
+3. **Cache Management**: Monitor cache status and clear when needed
 
 ## Related Documentation
 

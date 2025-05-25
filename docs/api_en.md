@@ -263,38 +263,13 @@ func NewInteractiveMenu(reader *bufio.Reader, contentDir string) *InteractiveMen
 ```
 
 #### Show
-Display streamlined main menu (9 core features).
+Display streamlined main menu (7 core features).
 
 ```go
 func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []models.CategoryStats, noTagArticles []models.Article)
 ```
 
 ### Utils Module
-
-#### Performance Monitoring Functions
-
-```go
-// Record translation operation
-func RecordTranslation(duration time.Duration)
-
-// Record cache hit
-func RecordCacheHit()
-
-// Record cache miss
-func RecordCacheMiss()
-
-// Record file operation
-func RecordFileOperation()
-
-// Record error
-func RecordError()
-
-// Get global statistics
-func GetGlobalStats() PerformanceStats
-
-// Reset global statistics
-func ResetGlobalStats()
-```
 
 #### Logging Functions
 

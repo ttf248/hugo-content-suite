@@ -7,7 +7,6 @@ import (
 	"hugo-content-suite/models"
 	"hugo-content-suite/operations"
 	"hugo-content-suite/stats"
-	"hugo-content-suite/utils"
 	"strings"
 
 	"github.com/fatih/color"
@@ -28,7 +27,7 @@ func NewInteractiveMenu(reader *bufio.Reader, contentDir string) *InteractiveMen
 func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []models.CategoryStats, noTagArticles []models.Article) {
 	for {
 		m.displayMainMenu()
-		choice := m.getChoice("请选择功能 (0-9): ")
+		choice := m.getChoice("请选择功能 (0-7): ")
 
 		switch choice {
 		case "1":
@@ -45,10 +44,6 @@ func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []model
 			m.processor.GenerateBulkTranslationCache(tagStats, m.reader)
 		case "7":
 			m.processor.ClearTranslationCache(m.reader)
-		case "8":
-			m.showPerformanceStats()
-		case "9":
-			m.resetPerformanceStats()
 		case "0":
 			color.Green("感谢使用！再见！")
 			return
@@ -79,12 +74,6 @@ func (m *InteractiveMenu) displayMainMenu() {
 	fmt.Println("  5. 查看缓存状态")
 	fmt.Println("  6. 生成全量翻译缓存")
 	fmt.Println("  7. 清空翻译缓存")
-	fmt.Println()
-
-	// 系统工具模块
-	color.Cyan("🔧 系统工具")
-	fmt.Println("  8. 查看性能统计")
-	fmt.Println("  9. 重置性能统计")
 	fmt.Println()
 
 	color.Red("  0. 退出程序")
@@ -149,27 +138,6 @@ func (m *InteractiveMenu) showTagFrequencyGroups(tagStats []models.TagStats) {
 	} else {
 		fmt.Println("没有低频标签")
 	}
-}
-
-func (m *InteractiveMenu) showPerformanceStats() {
-	color.Cyan("=== 系统性能统计 ===")
-	perfStats := utils.GetGlobalStats()
-	fmt.Println()
-	fmt.Println(perfStats.String())
-	fmt.Println()
-}
-
-func (m *InteractiveMenu) resetPerformanceStats() {
-	color.Yellow("⚠️  警告：此操作将重置所有性能统计数据")
-	confirm := m.getChoice("确认重置？(y/n): ")
-
-	if strings.TrimSpace(strings.ToLower(confirm)) != "y" {
-		color.Yellow("❌ 已取消重置")
-		return
-	}
-
-	utils.ResetGlobalStats()
-	color.Green("✅ 性能统计已重置")
 }
 
 func (m *InteractiveMenu) getChoice(prompt string) string {
