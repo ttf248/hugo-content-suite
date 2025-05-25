@@ -1,11 +1,11 @@
 # 贡献指南
 
-欢迎为 Hugo 标签自动化管理工具做出贡献！
+欢迎为 Hugo 博客管理工具做出贡献！
 
 ## 如何贡献
 
 ### 🐛 报告Bug
-1. 在 [GitHub Issues](https://github.com/ttf248/hugo-slug-auto/issues) 中搜索是否已有相同问题
+1. 在 [GitHub Issues](https://github.com/ttf248/hugo-content-suite/issues) 中搜索是否已有相同问题
 2. 如果没有，创建新的Issue并提供：
    - 详细的问题描述
    - 复现步骤
@@ -24,11 +24,11 @@
 ```bash
 # 1. Fork 项目到你的GitHub账户
 # 2. 克隆你的Fork
-git clone https://github.com/your-username/hugo-slug-auto.git
-cd hugo-slug-auto
+git clone https://github.com/your-username/hugo-content-suite.git
+cd hugo-content-suite
 
 # 3. 添加上游仓库
-git remote add upstream https://github.com/ttf248/hugo-slug-auto.git
+git remote add upstream https://github.com/ttf248/hugo-content-suite.git
 
 # 4. 安装依赖
 go mod tidy

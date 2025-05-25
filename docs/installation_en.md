@@ -17,8 +17,8 @@
 
 ### 1. Clone the Project
 ```bash
-git clone https://github.com/ttf248/hugo-slug-auto.git
-cd hugo-slug-auto
+git clone https://github.com/ttf248/hugo-content-suite.git
+cd hugo-content-suite
 ```
 
 ### 2. Install Dependencies

@@ -1,4 +1,4 @@
-module tag-scanner
+module hugo-content-suite
 
 go 1.22
 

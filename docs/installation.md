@@ -15,8 +15,8 @@
 
 ### 1. 克隆项目
 ```bash
-git clone https://github.com/ttf248/hugo-slug-auto.git
-cd hugo-slug-auto
+git clone https://github.com/ttf248/hugo-content-suite.git
+cd hugo-content-suite
 ```
 
 ### 2. 安装依赖

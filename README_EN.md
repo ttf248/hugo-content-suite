@@ -1,8 +1,8 @@
-# Hugo Tag Auto Management Tool
+# Hugo Blog Manager
 
 English | [中文](README.md)
 
-> 🚀 An intelligent tag management tool designed for Hugo blogs, featuring AI translation, local caching, and user-friendly interactive interface
+> 🚀 An intelligent blog management tool designed for Hugo blogs, featuring AI translation, local caching, and user-friendly interactive interface
 
 ## ✨ Key Features
 
@@ -59,8 +59,8 @@ English | [中文](README.md)
 ### Installation & Running
 ```bash
 # Clone the project
-git clone https://github.com/ttf248/hugo-slug-auto.git
-cd hugo-slug-auto
+git clone https://github.com/ttf248/hugo-content-suite.git
+cd hugo-content-suite
 
 # Install dependencies
 go mod tidy
@@ -82,7 +82,7 @@ go run main.go [content-directory-path]
 ## 📁 Project Architecture
 
 ```
-hugo-slug-auto/
+hugo-content-suite/
 ├── main.go              # Main program entry
 ├── config/              # Configuration management
 ├── models/              # Data models

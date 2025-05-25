@@ -1,8 +1,8 @@
-# Hugo 标签自动化管理工具
+# Hugo 博客管理工具
 
 [English](README_EN.md) | 中文
 
-> 🚀 一款专为Hugo博客设计的智能标签管理工具，支持AI翻译、本地缓存和友好的交互界面
+> 🚀 一款专为Hugo博客设计的智能管理工具，支持AI翻译、本地缓存和友好的交互界面
 
 ## ✨ 核心特色
 
@@ -59,8 +59,8 @@
 ### 安装运行
 ```bash
 # 克隆项目
-git clone https://github.com/ttf248/hugo-slug-auto.git
-cd hugo-slug-auto
+git clone https://github.com/ttf248/hugo-content-suite.git
+cd hugo-content-suite
 
 # 安装依赖
 go mod tidy
@@ -82,7 +82,7 @@ go run main.go [content目录路径]
 ## 📁 项目架构
 
 ```
-hugo-slug-auto/
+hugo-content-suite/
 ├── main.go              # 主程序入口
 ├── config/              # 配置管理
 ├── models/              # 数据模型

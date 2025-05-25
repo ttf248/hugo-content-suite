@@ -3,14 +3,14 @@ package main
 import (
 	"bufio"
 	"fmt"
+	"hugo-content-suite/config"
+	"hugo-content-suite/display"
+	"hugo-content-suite/menu"
+	"hugo-content-suite/scanner"
+	"hugo-content-suite/stats"
+	"hugo-content-suite/utils"
 	"log"
 	"os"
-	"tag-scanner/config"
-	"tag-scanner/display"
-	"tag-scanner/menu"
-	"tag-scanner/scanner"
-	"tag-scanner/stats"
-	"tag-scanner/utils"
 )
 
 func main() {

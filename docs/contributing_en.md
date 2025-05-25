@@ -2,12 +2,12 @@
 
 [中文](contributing.md) | English
 
-Welcome to contribute to the Hugo Tag Auto Management Tool!
+Welcome to contribute to the Hugo Blog Manager!
 
 ## How to Contribute
 
 ### 🐛 Report Bugs
-1. Search [GitHub Issues](https://github.com/ttf248/hugo-slug-auto/issues) for existing similar issues
+1. Search [GitHub Issues](https://github.com/ttf248/hugo-content-suite/issues) for existing similar issues
 2. If none exists, create a new Issue with:
    - Detailed problem description
    - Steps to reproduce
@@ -26,11 +26,11 @@ Welcome to contribute to the Hugo Tag Auto Management Tool!
 ```bash
 # 1. Fork the project to your GitHub account
 # 2. Clone your fork
-git clone https://github.com/your-username/hugo-slug-auto.git
-cd hugo-slug-auto
+git clone https://github.com/your-username/hugo-content-suite.git
+cd hugo-content-suite
 
 # 3. Add upstream repository
-git remote add upstream https://github.com/ttf248/hugo-slug-auto.git
+git remote add upstream https://github.com/ttf248/hugo-content-suite.git
 
 # 4. Install dependencies
 go mod tidy
