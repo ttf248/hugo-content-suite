@@ -152,18 +152,12 @@ grep "translation" logs/app.log
 ### 中文文档
 - [安装配置指南](docs/installation.md)
 - [功能使用说明](docs/usage.md)
-- [配置文件说明](docs/configuration.md)
-- [日志系统指南](docs/logging.md)
-- [API接口文档](docs/api.md)
-- [故障排除](docs/troubleshooting.md)
+
 
 ### English Documentation
 - [Installation Guide](docs/installation_en.md)
 - [Usage Guide](docs/usage_en.md)
-- [Configuration Guide](docs/configuration_en.md)
-- [Logging Guide](docs/logging_en.md)
-- [API Documentation](docs/api_en.md)
-- [Troubleshooting](docs/troubleshooting_en.md)
+
 
 ## 🤝 贡献指南
 
