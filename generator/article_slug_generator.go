@@ -6,6 +6,7 @@ import (
 	"hugo-content-suite/models"
 	"hugo-content-suite/scanner"
 	"hugo-content-suite/translator"
+	"hugo-content-suite/utils"
 	"os"
 	"regexp"
 	"strings"
@@ -73,16 +74,30 @@ func (g *ArticleSlugGenerator) PreviewArticleSlugs() ([]ArticleSlugPreview, erro
 
 // GenerateArticleSlugs 生成文章slug
 func (g *ArticleSlugGenerator) GenerateArticleSlugs() error {
+	utils.LogOperation("开始生成文章Slug", map[string]interface{}{
+		"content_dir": g.contentDir,
+	})
+
 	articles, err := scanner.ScanArticles(g.contentDir)
 	if err != nil {
+		utils.ErrorWithFields("扫描文章失败", map[string]interface{}{
+			"content_dir": g.contentDir,
+			"error":       err.Error(),
+		})
 		return fmt.Errorf("扫描文章失败: %v", err)
 	}
 
 	// 测试LM Studio连接
 	fmt.Println("正在测试与LM Studio的连接...")
 	if err := g.translator.TestConnection(); err != nil {
+		utils.WarnWithFields("LM Studio连接失败", map[string]interface{}{
+			"error": err.Error(),
+		})
 		fmt.Printf("警告：无法连接到LM Studio (%v)，将使用备用翻译方案\n", err)
 	} else {
+		utils.InfoWithFields("LM Studio连接成功", map[string]interface{}{
+			"status": "connected",
+		})
 		fmt.Println("LM Studio连接成功！")
 	}
 
@@ -96,11 +111,22 @@ func (g *ArticleSlugGenerator) GenerateArticleSlugs() error {
 			continue
 		}
 
+		utils.DebugWithFields("处理文章", map[string]interface{}{
+			"article_index": i + 1,
+			"total_count":   len(articles),
+			"title":         article.Title,
+			"file_path":     article.FilePath,
+		})
+
 		fmt.Printf("处理文章 (%d/%d): %s\n", i+1, len(articles), article.Title)
 
 		// 生成新的slug
 		newSlug, err := g.translator.TranslateToSlug(article.Title)
 		if err != nil {
+			utils.WarnWithFields("翻译失败，使用备用方案", map[string]interface{}{
+				"title": article.Title,
+				"error": err.Error(),
+			})
 			fmt.Printf("  翻译失败，使用备用方案: %v\n", err)
 			newSlug = translator.FallbackSlug(article.Title)
 		}
@@ -110,19 +136,39 @@ func (g *ArticleSlugGenerator) GenerateArticleSlugs() error {
 		if currentSlug == "" {
 			// 添加slug
 			if err := g.addSlugToFile(article.FilePath, newSlug); err != nil {
+				utils.ErrorWithFields("添加slug失败", map[string]interface{}{
+					"file_path": article.FilePath,
+					"new_slug":  newSlug,
+					"error":     err.Error(),
+				})
 				fmt.Printf("  添加slug失败: %v\n", err)
 				errorCount++
 				continue
 			}
+			utils.InfoWithFields("添加slug成功", map[string]interface{}{
+				"file_path": article.FilePath,
+				"slug":      newSlug,
+			})
 			fmt.Printf("  ✓ 添加slug: %s\n", newSlug)
 			createdCount++
 		} else if currentSlug != newSlug {
 			// 更新slug
 			if err := g.updateSlugInFile(article.FilePath, currentSlug, newSlug); err != nil {
+				utils.ErrorWithFields("更新slug失败", map[string]interface{}{
+					"file_path": article.FilePath,
+					"old_slug":  currentSlug,
+					"new_slug":  newSlug,
+					"error":     err.Error(),
+				})
 				fmt.Printf("  更新slug失败: %v\n", err)
 				errorCount++
 				continue
 			}
+			utils.InfoWithFields("更新slug成功", map[string]interface{}{
+				"file_path": article.FilePath,
+				"old_slug":  currentSlug,
+				"new_slug":  newSlug,
+			})
 			fmt.Printf("  ✓ 更新slug: %s -> %s\n", currentSlug, newSlug)
 			updatedCount++
 		} else {
@@ -131,6 +177,13 @@ func (g *ArticleSlugGenerator) GenerateArticleSlugs() error {
 
 		processedCount++
 	}
+
+	utils.LogOperation("文章Slug生成完成", map[string]interface{}{
+		"processed_count": processedCount,
+		"created_count":   createdCount,
+		"updated_count":   updatedCount,
+		"error_count":     errorCount,
+	})
 
 	fmt.Printf("\n文章slug生成完成！\n")
 	fmt.Printf("- 处理文章: %d 篇\n", processedCount)

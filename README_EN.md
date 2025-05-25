@@ -2,12 +2,13 @@
 
 English | [中文](README.md)
 
-> 🚀 An intelligent blog management tool designed for Hugo blogs, featuring AI translation, local caching, and streamlined workflow
+> 🚀 An intelligent blog management tool designed for Hugo blogs, featuring AI multilingual translation, local caching, and streamlined workflow
 
 ## ✨ Key Features
 
-### 🤖 AI-Powered Translation
+### 🤖 AI-Powered Multilingual Translation
 - Local AI model translation based on LM Studio
+- Support for multiple languages (English, Japanese, Korean, etc.)
 - Automatic conversion of Chinese tags to SEO-friendly English slugs
 - Batch translation support for improved efficiency
 
@@ -17,14 +18,21 @@ English | [中文](README.md)
 - Cache management and cleanup functionality
 
 ### 🎯 User-Friendly Interface
-- Streamlined command-line menu system
+- Streamlined command-line menu system (7 core features)
 - Colorful output for clear readability
 - One-click processing for efficiency
+
+### 📝 Advanced Logging System
+- Structured logging with multiple levels (DEBUG, INFO, WARN, ERROR)
+- Automatic log file rotation and archiving
+- Detailed source code location information for troubleshooting
+- Support for both console and file output
+- Integrated with high-performance logrus library
 
 ### 🚀 One-Click Processing
 - Full workflow automation
 - Intelligent status analysis
-- Batch cache generation and content processing
+- Batch cache generation and multilingual content processing
 - Complete blog management solution
 
 ## 🚀 Quick Start
@@ -50,18 +58,18 @@ go run main.go [content-directory-path]
 1. **One-Click Process All**: Complete blog processing workflow
 2. **Generate Tag Pages**: Create dedicated pages for each tag
 3. **Generate Article Slugs**: Add SEO-friendly URLs for articles
-4. **Translate Articles**: Translate Chinese articles to English
+4. **Translate Articles**: Translate Chinese articles to multiple languages
 5. **Cache Management**: Manage translation cache efficiently
 
 ## 🎮 Main Features
 
 ### 🚀 Quick Processing
-- 📦 One-Click Process All (automatic workflow)
+- 📦 One-Click Process All (automatic multilingual workflow)
 
 ### 📝 Content Management
 - 🏷️ Generate tag pages
 - 📝 Generate article slugs
-- 🌐 Translate articles to English
+- 🌐 Translate articles to multiple languages
 
 ### 💾 Cache Management
 - 📊 View cache status
@@ -69,40 +77,54 @@ go run main.go [content-directory-path]
 - 🗑️ Clear translation cache
 
 ### Smart Features
-- 🤖 AI-driven translation
+- 🤖 AI-driven multilingual translation
 - 💾 Intelligent caching mechanism
 - 🎯 Precise content recognition
+- 📋 Structured logging with source tracking
 
 ## ⚙️ Configuration
 
-### Configuration File (config.yaml)
-```yaml
-# LM Studio Configuration
-lm_studio:
-  url: "http://localhost:2234/v1/chat/completions"
-  model: "gemma-3-12b-it"
-  timeout: 30s
-  max_retries: 3
+### Configuration File (config.json)
+```json
+{
+  "lm_studio": {
+    "url": "http://localhost:2234/v1/chat/completions",
+    "model": "gemma-3-12b-it",
+    "timeout_seconds": 30
+  },
+  "language": {
+    "target_languages": ["en", "ja", "ko"],
+    "language_names": {
+      "en": "English",
+      "ja": "Japanese",
+      "ko": "Korean"
+    }
+  },
+  "logging": {
+    "level": "INFO",
+    "file": "./logs/app.log"
+  }
+}
+```
 
-# Cache Configuration
-cache:
-  directory: "./cache"
-  file_name: "tag_translations_cache.json"
-  auto_save: true
-  max_entries: 10000
+## 📝 Logging Features
 
-# Logging Configuration
-logging:
-  level: "INFO"
-  file_path: "./logs/app.log"
-  max_size: 100MB
-  max_backups: 5
-  max_age: 30
-  console_output: true
+### Structured Logging
+- Detailed source code location (filename:line:function)
+- Operation tracking and performance statistics
+- Specialized logging for translation and cache operations
+- Automatic log rotation and compression
 
-# Path Configuration
-paths:
-  default_content_dir: "../../content/post"
+### Log Viewing
+```bash
+# View real-time logs
+tail -f logs/app.log
+
+# View error logs
+grep "ERROR" logs/app.log
+
+# View translation operations
+grep "translation" logs/app.log
 ```
 
 ## 📚 Documentation Links

@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"hugo-content-suite/config"
+	"hugo-content-suite/utils"
 	"os"
 	"time"
 )
@@ -43,15 +44,26 @@ func NewTranslationCache() *TranslationCache {
 func (c *TranslationCache) Load() error {
 	// 加载标签缓存
 	if err := c.loadCacheFile(c.tagCacheFile, &c.tagCache); err != nil {
-		fmt.Printf("⚠️ 加载标签缓存失败: %v\n", err)
+		utils.WarnWithFields("加载标签缓存失败", map[string]interface{}{
+			"file":  c.tagCacheFile,
+			"error": err.Error(),
+		})
 		c.tagCache = make(map[string]CacheEntry)
 	}
 
 	// 加载文章缓存
 	if err := c.loadCacheFile(c.articleCacheFile, &c.articleCache); err != nil {
-		fmt.Printf("⚠️ 加载文章缓存失败: %v\n", err)
+		utils.WarnWithFields("加载文章缓存失败", map[string]interface{}{
+			"file":  c.articleCacheFile,
+			"error": err.Error(),
+		})
 		c.articleCache = make(map[string]CacheEntry)
 	}
+
+	utils.InfoWithFields("缓存加载完成", map[string]interface{}{
+		"tag_count":     len(c.tagCache),
+		"article_count": len(c.articleCache),
+	})
 
 	fmt.Printf("📄 已加载缓存文件 - 标签: %d 个, 文章: %d 个\n",
 		len(c.tagCache), len(c.articleCache))

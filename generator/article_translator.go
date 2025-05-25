@@ -120,9 +120,19 @@ func (a *ArticleTranslator) TranslateArticles(mode string) error {
 	cfg := config.GetGlobalConfig()
 	targetLanguages := cfg.Language.TargetLanguages
 
+	utils.LogOperation("开始多语言翻译", map[string]interface{}{
+		"mode":             mode,
+		"target_languages": targetLanguages,
+		"content_dir":      a.contentDir,
+	})
+
 	// 获取所有文章
 	articles, err := scanner.ScanArticles(a.contentDir)
 	if err != nil {
+		utils.ErrorWithFields("扫描文章失败", map[string]interface{}{
+			"content_dir": a.contentDir,
+			"error":       err.Error(),
+		})
 		return fmt.Errorf("扫描文章失败: %v", err)
 	}
 
@@ -142,8 +152,14 @@ func (a *ArticleTranslator) TranslateArticles(mode string) error {
 	// 测试连接
 	fmt.Printf("正在测试与LM Studio的连接...\n")
 	if err := a.translator.TestConnection(); err != nil {
+		utils.ErrorWithFields("LM Studio连接失败", map[string]interface{}{
+			"error": err.Error(),
+		})
 		return fmt.Errorf("无法连接到LM Studio: %v", err)
 	}
+	utils.InfoWithFields("LM Studio连接成功", map[string]interface{}{
+		"status": "connected",
+	})
 	fmt.Printf("LM Studio连接成功！\n")
 
 	totalSuccessCount := 0
@@ -156,8 +172,14 @@ func (a *ArticleTranslator) TranslateArticles(mode string) error {
 			targetLangName = targetLang
 		}
 
+		utils.LogOperation("开始翻译语言", map[string]interface{}{
+			"target_language": targetLang,
+			"language_name":   targetLangName,
+			"language_index":  langIndex + 1,
+			"total_languages": len(targetLanguages),
+		})
+
 		fmt.Printf("\n🌐 开始翻译为 %s (%d/%d)\n", targetLangName, langIndex+1, len(targetLanguages))
-		utils.Info("开始翻译为 %s (%d/%d)", targetLangName, langIndex+1, len(targetLanguages))
 
 		successCount := 0
 		errorCount := 0
@@ -191,6 +213,14 @@ func (a *ArticleTranslator) TranslateArticles(mode string) error {
 				continue
 			}
 
+			utils.DebugWithFields("处理文章翻译", map[string]interface{}{
+				"article_index":   i + 1,
+				"total_articles":  len(targetArticles),
+				"title":           article.Title,
+				"target_language": targetLang,
+				"target_file":     targetFile,
+			})
+
 			fmt.Printf("\n处理文章 (%d/%d): %s\n", i+1, len(targetArticles), article.Title)
 			fmt.Printf("目标语言: %s\n", targetLangName)
 			fmt.Printf("目标文件: %s\n", targetFile)
@@ -202,20 +232,44 @@ func (a *ArticleTranslator) TranslateArticles(mode string) error {
 			}
 
 			if err := a.translateSingleArticleToLanguage(preview, targetLang); err != nil {
+				utils.ErrorWithFields("文章翻译失败", map[string]interface{}{
+					"title":           article.Title,
+					"target_language": targetLang,
+					"target_file":     targetFile,
+					"error":           err.Error(),
+				})
 				fmt.Printf("❌ 翻译失败: %v\n", err)
 				errorCount++
 				totalErrorCount++
 			} else {
+				utils.InfoWithFields("文章翻译成功", map[string]interface{}{
+					"title":           article.Title,
+					"target_language": targetLang,
+					"target_file":     targetFile,
+				})
 				fmt.Printf("✅ 翻译完成: %s\n", targetFile)
 				successCount++
 				totalSuccessCount++
 			}
 		}
 
+		utils.LogOperation("语言翻译完成", map[string]interface{}{
+			"target_language": targetLang,
+			"language_name":   targetLangName,
+			"success_count":   successCount,
+			"error_count":     errorCount,
+		})
+
 		fmt.Printf("\n%s 翻译完成:\n", targetLangName)
 		fmt.Printf("- 成功翻译: %d 篇\n", successCount)
 		fmt.Printf("- 翻译失败: %d 篇\n", errorCount)
 	}
+
+	utils.LogOperation("多语言翻译全部完成", map[string]interface{}{
+		"target_languages":    targetLanguages,
+		"total_success_count": totalSuccessCount,
+		"total_error_count":   totalErrorCount,
+	})
 
 	fmt.Printf("\n🎉 多语言翻译全部完成！\n")
 	fmt.Printf("- 目标语言: %v\n", targetLanguages)

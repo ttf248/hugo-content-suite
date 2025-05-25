@@ -37,13 +37,25 @@ func main() {
 		log.Printf("日志初始化失败: %v", err)
 	}
 
-	utils.Info("程序启动，日志等级: %s", cfg.Logging.Level)
-	defer utils.Info("程序退出")
-	defer utils.Close() // 确保程序退出时关闭日志文件
+	utils.InfoWithFields("程序启动", map[string]interface{}{
+		"log_level": cfg.Logging.Level,
+		"version":   "2.0.0",
+		"config":    "loaded",
+	})
+
+	defer func() {
+		utils.InfoWithFields("程序退出", map[string]interface{}{
+			"exit_reason": "normal",
+		})
+		utils.Close()
+	}()
 
 	contentDir := cfg.Paths.DefaultContentDir
 	if len(os.Args) > 1 {
 		contentDir = os.Args[1]
+		utils.InfoWithFields("使用命令行参数指定目录", map[string]interface{}{
+			"content_dir": contentDir,
+		})
 	}
 
 	// 扫描文章

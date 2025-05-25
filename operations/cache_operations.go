@@ -7,6 +7,7 @@ import (
 	"hugo-content-suite/models"
 	"hugo-content-suite/scanner"
 	"hugo-content-suite/translator"
+	"hugo-content-suite/utils"
 	"strings"
 
 	"github.com/fatih/color"
@@ -43,25 +44,58 @@ func (p *Processor) ClearTranslationCache(reader *bufio.Reader) {
 	switch choice {
 	case "1":
 		if p.confirmExecution(reader, "⚠️ 确认清空标签缓存？(y/n): ") {
+			utils.LogOperation("清空标签缓存", map[string]interface{}{
+				"operation_type": "cache_clear",
+				"cache_type":     "tag",
+			})
+
 			if err := translatorInstance.ClearTagCache(); err != nil {
+				utils.ErrorWithFields("清空标签缓存失败", map[string]interface{}{
+					"error": err.Error(),
+				})
 				color.Red("❌ 清空标签缓存失败: %v", err)
 			} else {
+				utils.InfoWithFields("标签缓存清空成功", map[string]interface{}{
+					"operation": "cache_clear_tag",
+				})
 				color.Green("✅ 标签缓存已清空")
 			}
 		}
 	case "2":
 		if p.confirmExecution(reader, "⚠️ 确认清空文章缓存？(y/n): ") {
+			utils.LogOperation("清空文章缓存", map[string]interface{}{
+				"operation_type": "cache_clear",
+				"cache_type":     "article",
+			})
+
 			if err := translatorInstance.ClearArticleCache(); err != nil {
+				utils.ErrorWithFields("清空文章缓存失败", map[string]interface{}{
+					"error": err.Error(),
+				})
 				color.Red("❌ 清空文章缓存失败: %v", err)
 			} else {
+				utils.InfoWithFields("文章缓存清空成功", map[string]interface{}{
+					"operation": "cache_clear_article",
+				})
 				color.Green("✅ 文章缓存已清空")
 			}
 		}
 	case "3":
 		if p.confirmExecution(reader, "⚠️ 确认清空所有缓存？(y/n): ") {
+			utils.LogOperation("清空所有缓存", map[string]interface{}{
+				"operation_type": "cache_clear",
+				"cache_type":     "all",
+			})
+
 			if err := translatorInstance.ClearCache(); err != nil {
+				utils.ErrorWithFields("清空所有缓存失败", map[string]interface{}{
+					"error": err.Error(),
+				})
 				color.Red("❌ 清空缓存失败: %v", err)
 			} else {
+				utils.InfoWithFields("所有缓存清空成功", map[string]interface{}{
+					"operation": "cache_clear_all",
+				})
 				color.Green("✅ 所有缓存已清空")
 			}
 		}

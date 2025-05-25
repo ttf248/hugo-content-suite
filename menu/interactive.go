@@ -66,7 +66,7 @@ func (m *InteractiveMenu) displayMainMenu() {
 	color.Green("📝 内容管理")
 	fmt.Println("  2. 生成标签页面")
 	fmt.Println("  3. 生成文章Slug")
-	fmt.Println("  4. 翻译文章为英文")
+	fmt.Println("  4. 翻译文章为多语言版本") // 更新菜单名称
 	fmt.Println()
 
 	// 缓存管理模块
