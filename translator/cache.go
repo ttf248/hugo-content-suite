@@ -151,14 +151,28 @@ func (c *TranslationCache) Set(text, translation string, cacheType CacheType) {
 	}
 }
 
-func (c *TranslationCache) GetMissingTexts(texts []string, cacheType CacheType) []string {
+// GetMissingTexts 获取缓存中缺失的文本
+func (c *TranslationCache) GetMissingTexts(texts []string, targetLang string, cacheType CacheType) []string {
 	var missing []string
 	for _, text := range texts {
-		if _, exists := c.Get(text, cacheType); !exists {
+		cacheKey := fmt.Sprintf("%s:%s", targetLang, text)
+		if _, exists := c.Get(cacheKey, cacheType); !exists {
 			missing = append(missing, text)
 		}
 	}
 	return missing
+}
+
+// GetCachedTranslations 获取已缓存的翻译
+func (c *TranslationCache) GetCachedTranslations(texts []string, targetLang string, cacheType CacheType) map[string]string {
+	result := make(map[string]string)
+	for _, text := range texts {
+		cacheKey := fmt.Sprintf("%s:%s", targetLang, text)
+		if translation, exists := c.Get(cacheKey, cacheType); exists {
+			result[text] = translation
+		}
+	}
+	return result
 }
 
 func (c *TranslationCache) GetStats(cacheType CacheType) (total int, expired int) {

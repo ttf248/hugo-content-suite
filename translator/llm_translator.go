@@ -120,8 +120,9 @@ func (t *LLMTranslator) TestConnection() error {
 
 // translateWithCache 通用的带缓存翻译方法
 func (t *LLMTranslator) translateWithCache(text string, cacheType CacheType, promptTemplate string) (string, error) {
-	// 检查缓存
-	if cached, exists := t.cache.Get(text, cacheType); exists {
+	// 检查缓存 - 使用正确的缓存键格式
+	cacheKey := fmt.Sprintf("en:%s", text)
+	if cached, exists := t.cache.Get(cacheKey, cacheType); exists {
 		utils.RecordCacheHit()
 		return cached, nil
 	}
@@ -130,7 +131,7 @@ func (t *LLMTranslator) translateWithCache(text string, cacheType CacheType, pro
 	// 如果已经是英文，直接处理
 	if isEnglishOnly(text) {
 		slug := normalizeSlug(text)
-		t.cache.Set(text, slug, cacheType)
+		t.cache.Set(cacheKey, slug, cacheType)
 		return slug, nil
 	}
 
@@ -144,7 +145,7 @@ func (t *LLMTranslator) translateWithCache(text string, cacheType CacheType, pro
 	}
 
 	normalizedResult := normalizeSlug(result)
-	t.cache.Set(text, normalizedResult, cacheType)
+	t.cache.Set(cacheKey, normalizedResult, cacheType)
 
 	return normalizedResult, nil
 }
@@ -302,8 +303,8 @@ func (t *LLMTranslator) batchTranslate(texts []string, cacheType CacheType, type
 		fmt.Printf("📋 从缓存获取 %d 个%s翻译\n", cachedCount, typeName)
 	}
 
-	// 获取需要翻译的文本
-	missingTexts := t.cache.GetMissingTexts(texts, cacheType)
+	// 获取需要翻译的文本 - 修复参数
+	missingTexts := t.cache.GetMissingTexts(texts, "en", cacheType)
 	if len(missingTexts) == 0 {
 		fmt.Printf("✅ 所有%s都已有缓存，无需重新翻译\n", typeName)
 		return result, nil
@@ -327,7 +328,8 @@ func (t *LLMTranslator) batchTranslate(texts []string, cacheType CacheType, type
 func (t *LLMTranslator) loadFromCache(texts []string, cacheType CacheType, result map[string]string) int {
 	cachedCount := 0
 	for _, text := range texts {
-		if translation, exists := t.cache.Get(text, cacheType); exists {
+		cacheKey := fmt.Sprintf("en:%s", text)
+		if translation, exists := t.cache.Get(cacheKey, cacheType); exists {
 			result[text] = translation
 			cachedCount++
 			utils.RecordCacheHit()
@@ -350,6 +352,17 @@ func (t *LLMTranslator) translateMissingTexts(missingTexts []string, result map[
 			utils.RecordError()
 			slug = fallbackSlug(text)
 		}
+
+		// 保存到缓存 - 使用正确的缓存键
+		cacheKey := fmt.Sprintf("en:%s", text)
+		// 根据文本类型选择缓存类型
+		var cacheType CacheType
+		if len(text) <= 20 && !strings.Contains(text, "：") && !strings.Contains(text, ":") {
+			cacheType = TagCache
+		} else {
+			cacheType = ArticleCache
+		}
+		t.cache.Set(cacheKey, slug, cacheType)
 
 		utils.RecordTranslation(time.Since(translationStart))
 		result[text] = slug
@@ -387,11 +400,11 @@ func (t *LLMTranslator) saveCacheAndLog(startTime time.Time) {
 
 // 简化的缓存相关方法
 func (t *LLMTranslator) GetMissingTags(tags []string) []string {
-	return t.cache.GetMissingTexts(tags, TagCache)
+	return t.cache.GetMissingTexts(tags, "en", TagCache)
 }
 
 func (t *LLMTranslator) GetMissingArticles(articles []string) []string {
-	return t.cache.GetMissingTexts(articles, ArticleCache)
+	return t.cache.GetMissingTexts(articles, "en", ArticleCache)
 }
 
 func (t *LLMTranslator) PrepareBulkTranslation(allTexts []string) ([]string, int) {
