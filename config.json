@@ -1,6 +1,6 @@
 {
   "lm_studio": {
-    "url": "http://172.19.192.1:2234/v1/chat/completions",
+    "url": "http://192.168.4.2:2234/v1/chat/completions",
     "model": "gemma-3-12b-it",
     "timeout_seconds": 30
   },
