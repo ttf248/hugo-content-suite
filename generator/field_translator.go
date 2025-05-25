@@ -194,7 +194,8 @@ func (a *ArticleTranslator) translateArticleBodyToLanguage(body, targetLang stri
 		targetLangName = targetLang
 	}
 
-	fmt.Printf("\n翻译正文到 %s (%d 字符)...\n", targetLangName, len(body))
+	totalChars := len(body)
+	fmt.Printf("\n翻译正文到 %s (总计 %d 字符)...\n", targetLangName, totalChars)
 
 	return a.translateContentByLinesToLanguage(body, targetLang)
 }
@@ -205,6 +206,11 @@ func (a *ArticleTranslator) translateContentByLinesToLanguage(content, targetLan
 	lines := strings.Split(content, "\n")
 	var result []string
 
+	// 翻译统计信息
+	totalChars := len(content)
+	translatedChars := 0
+	startTime := time.Now()
+
 	inCodeBlock := false
 	translationCount := 0
 
@@ -213,37 +219,67 @@ func (a *ArticleTranslator) translateContentByLinesToLanguage(content, targetLan
 		if strings.HasPrefix(strings.TrimSpace(line), "```") {
 			inCodeBlock = !inCodeBlock
 			result = append(result, line)
+			translatedChars += len(line) + 1 // +1 for newline
 			continue
 		}
 
 		// 代码块内容直接保留
 		if inCodeBlock {
 			result = append(result, line)
+			translatedChars += len(line) + 1 // +1 for newline
 			continue
 		}
 
 		// 空行直接保留
 		if strings.TrimSpace(line) == "" {
 			result = append(result, line)
+			translatedChars += len(line) + 1 // +1 for newline
 			continue
 		}
 
 		// 检查是否包含中文
 		if !a.translationUtils.ContainsChinese(line) {
 			result = append(result, line)
+			translatedChars += len(line) + 1 // +1 for newline
 			continue
 		}
 
 		// 需要翻译的行
 		translationCount++
-		fmt.Printf("  [%d] ", translationCount)
+		lineStartTime := time.Now()
+
+		fmt.Printf("  [%d/%d] 翻译 %d 字符... ", translationCount, len(lines), len(line))
 
 		translatedLine, err := a.translateSingleLineToLanguage(line, translationCount, targetLang)
 		if err != nil {
 			fmt.Printf("翻译失败\n")
 			result = append(result, line)
+			translatedChars += len(line) + 1 // +1 for newline
 		} else {
-			fmt.Printf("完成\n")
+			// 计算翻译统计信息
+			lineEndTime := time.Now()
+			lineDuration := lineEndTime.Sub(lineStartTime)
+			translatedChars += len(line) + 1 // +1 for newline
+
+			// 计算总体进度和效率
+			totalDuration := lineEndTime.Sub(startTime)
+			charsPerSecond := float64(translatedChars) / totalDuration.Seconds()
+			charsPer100 := 100.0 / charsPerSecond
+
+			// 计算剩余字符和预估时间
+			remainingChars := totalChars - translatedChars
+			estimatedRemainingSeconds := float64(remainingChars) / charsPerSecond
+			estimatedRemainingTime := time.Duration(estimatedRemainingSeconds) * time.Second
+
+			// 计算进度百分比
+			progress := float64(translatedChars) * 100.0 / float64(totalChars)
+
+			fmt.Printf("完成 (%.1fs) | 进度: %.1f%% | 效率: %.1f字符/100s | 预估剩余: %v\n",
+				lineDuration.Seconds(),
+				progress,
+				charsPer100,
+				estimatedRemainingTime.Round(time.Second))
+
 			result = append(result, translatedLine)
 		}
 
@@ -252,6 +288,12 @@ func (a *ArticleTranslator) translateContentByLinesToLanguage(content, targetLan
 			time.Sleep(time.Duration(cfg.Translation.DelayBetweenMs) * time.Millisecond)
 		}
 	}
+
+	// 输出最终统计信息
+	totalDuration := time.Since(startTime)
+	fmt.Printf("\n翻译完成！总计用时: %v | 平均效率: %.1f字符/秒\n",
+		totalDuration.Round(time.Second),
+		float64(totalChars)/totalDuration.Seconds())
 
 	return strings.Join(result, "\n"), nil
 }
