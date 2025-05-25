@@ -20,7 +20,8 @@ func ScanArticles(dir string) ([]Article, error) {
 			return err
 		}
 
-		if !strings.HasSuffix(path, ".md") {
+		// 只扫描 index.md 文件，过滤多语言版本
+		if filepath.Base(path) != "index.md" {
 			return nil
 		}
 
