@@ -295,7 +295,7 @@ func (t *LLMTranslator) batchTranslate(texts []string, cacheType CacheType, type
 	result := make(map[string]string)
 
 	fmt.Printf("🔍 检查%s缓存...\n", typeName)
-	
+
 	// 批量检查缓存
 	cachedCount := t.loadFromCache(texts, cacheType, result)
 	if cachedCount > 0 {
@@ -341,7 +341,7 @@ func (t *LLMTranslator) loadFromCache(texts []string, cacheType CacheType, resul
 // translateMissingTexts 翻译缺失的文本
 func (t *LLMTranslator) translateMissingTexts(missingTexts []string, result map[string]string, translateFunc func(string) (string, error), progressBar *utils.ProgressBar, cfg *config.Config) int {
 	newTranslationsAdded := 0
-	
+
 	for i, text := range missingTexts {
 		translationStart := time.Now()
 
@@ -371,7 +371,7 @@ func (t *LLMTranslator) translateMissingTexts(missingTexts []string, result map[
 			time.Sleep(time.Duration(cfg.Cache.DelayMs) * time.Millisecond)
 		}
 	}
-	
+
 	return newTranslationsAdded
 }
 
@@ -398,17 +398,17 @@ func (t *LLMTranslator) PrepareBulkTranslation(allTexts []string) ([]string, int
 	tags, articles := t.categorizeTexts(allTexts)
 	missingTags := t.GetMissingTags(tags)
 	missingArticles := t.GetMissingArticles(articles)
-	
+
 	allMissing := append(missingTags, missingArticles...)
 	cachedCount := len(allTexts) - len(allMissing)
-	
+
 	return allMissing, cachedCount
 }
 
 // categorizeTexts 分类文本为标签和文章
 func (t *LLMTranslator) categorizeTexts(allTexts []string) ([]string, []string) {
 	var tags, articles []string
-	
+
 	for _, text := range allTexts {
 		if len(text) <= 20 && !strings.Contains(text, "：") && !strings.Contains(text, ":") {
 			tags = append(tags, text)
@@ -416,7 +416,7 @@ func (t *LLMTranslator) categorizeTexts(allTexts []string) ([]string, []string) 
 			articles = append(articles, text)
 		}
 	}
-	
+
 	return tags, articles
 }
 
