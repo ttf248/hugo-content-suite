@@ -212,20 +212,14 @@ grep "ERROR" logs/app.log | cut -d' ' -f1-2 | sort | uniq -c
 ## 📚 文档链接
 
 ### 中文文档
-- [架构设计文档](docs/architecture.md)
-- [性能优化指南](docs/performance.md)
-- [缓存策略说明](docs/caching.md)
-- [配置文件说明](docs/configuration.md)
-- [日志系统指南](docs/logging.md)
-- [故障排除](docs/troubleshooting.md)
+
+- [安装部署](docs/installation.md)
+- [使用说明](docs/usage.md)
 
 ### English Documentation
-- [Architecture Guide](docs/architecture_en.md)
-- [Performance Guide](docs/performance_en.md)
-- [Caching Strategy](docs/caching_en.md)
-- [Configuration Guide](docs/configuration_en.md)
-- [Logging Guide](docs/logging_en.md)
-- [Troubleshooting](docs/troubleshooting_en.md)
+
+- [Installation Guide](docs/installation_en.md)
+- [Usage Instructions](docs/usage_en.md)
 
 ## 🤝 贡献指南
 
