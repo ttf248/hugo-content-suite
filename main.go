@@ -38,9 +38,10 @@ func main() {
 	}
 
 	utils.InfoWithFields("程序启动", map[string]interface{}{
-		"log_level": cfg.Logging.Level,
-		"version":   "2.0.0",
-		"config":    "loaded",
+		"log_level":    cfg.Logging.Level,
+		"version":      "3.0.0", // 更新版本号以反映重构
+		"config":       "loaded",
+		"architecture": "refactored",
 	})
 
 	defer func() {
