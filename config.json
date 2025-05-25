@@ -5,9 +5,11 @@
     "timeout_seconds": 30
   },
   "cache": {
-    "file_name": "tag_translations_cache.json",
+    "tag_file_name": "tag_translations_cache.json",
+    "article_file_name": "article_translations_cache.json",
     "auto_save_count": 5,
-    "delay_ms": 500
+    "delay_ms": 500,
+    "expire_days": 30
   },
   "display": {
     "default_limit": 20,
@@ -16,5 +18,31 @@
   "paths": {
     "default_content_dir": "../../content/post",
     "tags_dir": "../tags"
+  },
+  "translation": {
+    "retry_attempts": 2,
+    "delay_between_ms": 0,
+    "validate_result": true,
+    "cleanup_patterns": [
+      "Translation:",
+      "Translated:",
+      "English:",
+      "Result:",
+      "Output:"
+    ]
+  },
+  "logging": {
+    "level": "DEBUG",
+    "file": "hugo-content-suite.log"
+  },
+  "language": {
+    "target_languages": [
+      "en", "ja", "ko"
+    ],
+    "language_names": {
+      "en": "English",
+      "ja": "Japanese",
+      "ko": "Korean"
+    }
   }
 }
