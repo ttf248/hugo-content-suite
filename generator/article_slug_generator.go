@@ -43,33 +43,6 @@ func (g *ArticleSlugGenerator) PreviewArticleSlugs() ([]ArticleSlugPreview, erro
 
 	var previews []ArticleSlugPreview
 
-	// 收集需要预览的文章标题
-	var previewTitles []string
-	maxSample := 5 // 预览时只翻译前5个作为示例
-	sampleCount := 0
-
-	for _, article := range articles {
-		if article.Title == "" {
-			continue
-		}
-
-		if sampleCount < maxSample {
-			previewTitles = append(previewTitles, article.Title)
-			sampleCount++
-		}
-	}
-
-	// 批量翻译预览标题（使用文章专用接口）
-	var translationMap map[string]string
-	if len(previewTitles) > 0 {
-		translationMap, err = g.translator.BatchTranslateArticles(previewTitles)
-		if err != nil {
-			fmt.Printf("⚠️ 批量翻译失败: %v\n", err)
-			translationMap = make(map[string]string)
-		}
-	}
-
-	sampleCount = 0
 	for _, article := range articles {
 		if article.Title == "" {
 			continue
@@ -77,32 +50,18 @@ func (g *ArticleSlugGenerator) PreviewArticleSlugs() ([]ArticleSlugPreview, erro
 
 		currentSlug := g.extractSlugFromFile(article.FilePath)
 
-		var newSlug string
 		var status string
-
 		if currentSlug == "" {
 			status = "missing"
 		} else {
-			status = "update"
-		}
-
-		// 预览时使用批量翻译的结果
-		if sampleCount < maxSample {
-			if slug, exists := translationMap[article.Title]; exists {
-				newSlug = slug
-			} else {
-				newSlug = translator.FallbackSlug(article.Title)
-			}
-			sampleCount++
-		} else {
-			newSlug = "[预览模式 - 需要生成]"
+			status = "exists"
 		}
 
 		preview := ArticleSlugPreview{
 			FilePath:    article.FilePath,
 			Title:       article.Title,
 			CurrentSlug: currentSlug,
-			NewSlug:     newSlug,
+			NewSlug:     "[需要生成]", // 简化预览
 			Status:      status,
 		}
 

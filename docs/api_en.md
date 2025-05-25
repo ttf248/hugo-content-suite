@@ -263,7 +263,7 @@ func NewInteractiveMenu(reader *bufio.Reader, contentDir string) *InteractiveMen
 ```
 
 #### Show
-Display main menu.
+Display streamlined main menu (9 core features).
 
 ```go
 func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []models.CategoryStats, noTagArticles []models.Article)

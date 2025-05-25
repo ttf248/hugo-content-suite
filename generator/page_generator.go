@@ -145,7 +145,8 @@ func (g *TagPageGenerator) GenerateTagPagesWithMode(tagStats []models.TagStats, 
 	updatedCount := 0
 	errorCount := 0
 
-	// 注意：此时slug已经在PreviewTagPages中通过BatchTranslate获得并缓存了
+	fmt.Println("正在生成标签页面...")
+
 	for i, preview := range targetPreviews {
 		fmt.Printf("处理标签 (%d/%d): %s\n", i+1, len(targetPreviews), preview.TagName)
 
@@ -185,8 +186,9 @@ slug: "%s"
 	fmt.Printf("\n标签页面生成完成！\n")
 	fmt.Printf("- 新建: %d 个\n", createdCount)
 	fmt.Printf("- 更新: %d 个\n", updatedCount)
-	fmt.Printf("- 失败: %d 个\n", errorCount)
-	fmt.Printf("- 总计: %d 个\n", createdCount+updatedCount)
+	if errorCount > 0 {
+		fmt.Printf("- 失败: %d 个\n", errorCount)
+	}
 
 	return nil
 }

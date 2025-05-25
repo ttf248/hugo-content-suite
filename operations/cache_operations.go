@@ -90,16 +90,8 @@ func (p *Processor) PreviewBulkTranslationCache(tagStats []models.TagStats) *dis
 	return cachePreview
 }
 
-// ShowBulkTranslationPreview 显示批量翻译缓存预览（新增方法用于显示）
-func (p *Processor) ShowBulkTranslationPreview(tagStats []models.TagStats) {
-	color.Cyan("=== 全量翻译缓存预览 ===")
-
-	cachePreview := p.PreviewBulkTranslationCache(tagStats)
-	display.DisplayBulkTranslationPreview(cachePreview, 20)
-}
-
 func (p *Processor) GenerateBulkTranslationCache(tagStats []models.TagStats, reader *bufio.Reader) {
-	color.Cyan("🔍 正在收集翻译目标...")
+	color.Cyan("🔍 正在分析翻译需求...")
 
 	cachePreview, err := p.collectTranslationTargets(tagStats)
 	if err != nil {

@@ -263,7 +263,7 @@ func NewInteractiveMenu(reader *bufio.Reader, contentDir string) *InteractiveMen
 ```
 
 #### Show
-显示主菜单。
+显示精简主菜单 (9个核心功能)。
 
 ```go
 func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []models.CategoryStats, noTagArticles []models.Article)

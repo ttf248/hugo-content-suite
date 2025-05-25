@@ -28,40 +28,26 @@ func NewInteractiveMenu(reader *bufio.Reader, contentDir string) *InteractiveMen
 func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []models.CategoryStats, noTagArticles []models.Article) {
 	for {
 		m.displayMainMenu()
-		choice := m.getChoice("请选择功能 (0-16): ")
+		choice := m.getChoice("请选择功能 (0-9): ")
 
 		switch choice {
 		case "1":
 			m.processor.QuickProcessAll(tagStats, m.reader)
 		case "2":
-			m.showTagAnalysisMenu(tagStats)
-		case "3":
-			display.DisplayCategoryStats(categoryStats)
-		case "4":
-			display.DisplayNoTagArticles(noTagArticles, len(noTagArticles))
-		case "5":
-			m.processor.PreviewTagPages(tagStats)
-		case "6":
 			m.processor.GenerateTagPages(tagStats, m.reader)
-		case "7":
-			m.processor.PreviewArticleSlugs()
-		case "8":
+		case "3":
 			m.processor.GenerateArticleSlugs(m.reader)
-		case "9":
-			m.processor.PreviewArticleTranslations()
-		case "10":
+		case "4":
 			m.processor.TranslateArticles(m.reader)
-		case "11":
+		case "5":
 			m.processor.ShowCacheStatus()
-		case "12":
-			m.processor.ShowBulkTranslationPreview(tagStats)
-		case "13":
+		case "6":
 			m.processor.GenerateBulkTranslationCache(tagStats, m.reader)
-		case "14":
+		case "7":
 			m.processor.ClearTranslationCache(m.reader)
-		case "15":
+		case "8":
 			m.showPerformanceStats()
-		case "16":
+		case "9":
 			m.resetPerformanceStats()
 		case "0":
 			color.Green("感谢使用！再见！")
@@ -73,47 +59,32 @@ func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []model
 }
 
 func (m *InteractiveMenu) displayMainMenu() {
-	color.Cyan("\n=== 博客标签管理工具 ===")
+	color.Cyan("\n=== Hugo 博客管理工具 ===")
 	fmt.Println()
 
-	// 快速处理模块
-	color.Red("🚀 快速处理")
-	fmt.Println("  1. 一键处理全部 (缓存→标签页面→文章Slug→文章翻译)")
+	// 主要功能模块
+	color.Red("🚀 核心功能")
+	fmt.Println("  1. 一键处理全部 (完整博客处理流程)")
 	fmt.Println()
 
-	// 数据查看模块
-	color.Green("📊 数据查看")
-	fmt.Println("  2. 标签统计与分析")
-	fmt.Println("  3. 分类统计")
-	fmt.Println("  4. 无标签文章")
-	fmt.Println()
-
-	// 页面生成模块
-	color.Yellow("🏷️  标签页面管理")
-	fmt.Println("  5. 预览标签页面")
-	fmt.Println("  6. 生成标签页面")
-	fmt.Println()
-
-	// 文章管理模块
-	color.Blue("📝 文章管理")
-	fmt.Println("  7. 预览文章Slug")
-	fmt.Println("  8. 生成文章Slug")
-	fmt.Println("  9. 预览文章翻译")
-	fmt.Println(" 10. 翻译文章为英文")
+	// 内容管理模块
+	color.Green("📝 内容管理")
+	fmt.Println("  2. 生成标签页面")
+	fmt.Println("  3. 生成文章Slug")
+	fmt.Println("  4. 翻译文章为英文")
 	fmt.Println()
 
 	// 缓存管理模块
 	color.Magenta("💾 缓存管理")
-	fmt.Println(" 11. 查看缓存状态")
-	fmt.Println(" 12. 预览全量翻译缓存")
-	fmt.Println(" 13. 生成全量翻译缓存")
-	fmt.Println(" 14. 清空翻译缓存 (支持分类)")
+	fmt.Println("  5. 查看缓存状态")
+	fmt.Println("  6. 生成全量翻译缓存")
+	fmt.Println("  7. 清空翻译缓存")
 	fmt.Println()
 
 	// 系统工具模块
 	color.Cyan("🔧 系统工具")
-	fmt.Println(" 15. 查看性能统计")
-	fmt.Println(" 16. 重置性能统计")
+	fmt.Println("  8. 查看性能统计")
+	fmt.Println("  9. 重置性能统计")
 	fmt.Println()
 
 	color.Red("  0. 退出程序")

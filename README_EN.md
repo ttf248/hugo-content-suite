@@ -2,7 +2,7 @@
 
 English | [中文](README.md)
 
-> 🚀 An intelligent blog management tool designed for Hugo blogs, featuring AI translation, local caching, and user-friendly interactive interface
+> 🚀 An intelligent blog management tool designed for Hugo blogs, featuring AI translation, local caching, and streamlined workflow
 
 ## ✨ Key Features
 
@@ -17,38 +17,15 @@ English | [中文](README.md)
 - Cache management and cleanup functionality
 
 ### 🎯 User-Friendly Interface
-- Intuitive command-line menu system
+- Streamlined command-line menu system
 - Colorful output for clear readability
-- Preview functionality for safe operations
-
-### 📊 Data Analysis & Statistics
-- Tag usage frequency analysis
-- Category statistics and visualization
-- Detection of articles without tags
-
-### 📝 Comprehensive Logging System
-- Multi-level logging (DEBUG, INFO, WARN, ERROR)
-- Automatic log file rotation and archiving
-- Detailed operation records and error tracking
-- Support for both console and file output
-
-### ⚡ Performance Monitoring
-- Real-time processing speed statistics
-- Memory usage monitoring
-- API call count and response time statistics
-- Cache hit rate analysis
-
-### ⚙️ Flexible Configuration Management
-- YAML format configuration files
-- Environment variable override support
-- Hot reload configuration updates
-- Configuration validation and default value handling
+- One-click processing for efficiency
 
 ### 🚀 One-Click Processing
 - Full workflow automation
-- Intelligent status analysis and preview
-- Batch cache generation
-- Article translation support
+- Intelligent status analysis
+- Batch cache generation and content processing
+- Complete blog management solution
 
 ## 🚀 Quick Start
 
@@ -70,14 +47,11 @@ go run main.go [content-directory-path]
 ```
 
 ### Basic Usage
-1. **One-Click Process All**: Automatically execute cache→tag pages→article slugs→article translation
-2. **Tag Analysis**: View blog tag usage statistics
-3. **Generate Tag Pages**: Create dedicated pages for each tag
-4. **Article Slug Management**: Generate SEO-friendly URLs for article titles
-5. **Article Translation**: Translate Chinese articles to English
-6. **Cache Management**: View and manage translation cache
-7. **Performance Monitoring**: View processing performance and system resource usage
-8. **Log Analysis**: View detailed operation logs and error records
+1. **One-Click Process All**: Complete blog processing workflow
+2. **Generate Tag Pages**: Create dedicated pages for each tag
+3. **Generate Article Slugs**: Add SEO-friendly URLs for articles
+4. **Translate Articles**: Translate Chinese articles to English
+5. **Cache Management**: Manage translation cache efficiently
 
 ## 📁 Project Architecture
 
@@ -102,28 +76,17 @@ hugo-content-suite/
 ## 🎮 Main Features
 
 ### 🚀 Quick Processing
-- 📦 One-Click Process All (cache→tag pages→article slugs→article translation)
+- 📦 One-Click Process All (automatic workflow)
 
-### 📊 Data Viewing
-- 🔍 Tag statistics and analysis
-- 📊 Category statistics
-- 📝 Articles without tags detection
-
-### 🏷️ Tag Page Management
-- 👀 Preview tag pages
+### 🏷️ Content Management
 - 🏷️ Generate tag pages
-
-### 📝 Article Management
-- 👀 Preview article slugs
 - 📝 Generate article slugs
-- 👀 Preview article translations
 - 🌐 Translate articles to English
 
 ### 💾 Cache Management
 - 📊 View cache status
-- 👀 Preview bulk translation cache
 - 🚀 Generate bulk translation cache
-- 🗑️ Clear translation cache (with categorization support)
+- 🗑️ Clear translation cache
 
 ### 🔧 System Tools
 - 📈 View performance statistics
@@ -133,12 +96,6 @@ hugo-content-suite/
 - 🤖 AI-driven translation
 - 💾 Intelligent caching mechanism
 - 🎯 Precise content recognition
-
-### System Monitoring
-- 📈 Real-time performance statistics
-- 📋 Detailed logging
-- ⚙️ Flexible configuration management
-- 🔍 Operation audit tracking
 
 ## ⚙️ Configuration
 
@@ -178,74 +135,19 @@ paths:
   default_content_dir: "../../content/post"
 ```
 
-### Environment Variable Override
-```bash
-export LM_STUDIO_URL="http://192.168.1.100:2234/v1/chat/completions"
-export LOG_LEVEL="DEBUG"
-export CACHE_DIR="./custom_cache"
-```
-
-## 📝 Logging Features
-
-### Log Levels
-- **DEBUG**: Detailed debugging information
-- **INFO**: General information logging
-- **WARN**: Warning messages
-- **ERROR**: Error messages
-
-### Log File Management
-- Automatic log file rotation by size
-- Retain specified number of historical logs
-- Automatic cleanup of expired logs by time
-
-### Log Viewing
-```bash
-# View real-time logs
-tail -f logs/app.log
-
-# View error logs
-grep "ERROR" logs/app.log
-
-# View logs for specific time
-grep "2024-01-01" logs/app.log
-```
-
-## 📈 Performance Monitoring
-
-### Real-time Statistics
-- Processing speed (articles/second)
-- Memory usage
-- CPU usage
-- Network request latency
-
-### Performance Reports
-- Translation count statistics
-- Cache hit rate analysis
-- Average translation time
-- File operation count
-- Error count statistics
-
 ## 📚 Documentation Links
 
 ### 中文文档
 - [安装配置指南](docs/installation.md)
 - [功能使用说明](docs/usage.md)
 - [配置文件说明](docs/configuration.md)
-- [日志系统指南](docs/logging.md)
-- [性能监控指南](docs/performance.md)
-- [API接口文档](docs/api.md)
 - [故障排除](docs/troubleshooting.md)
-- [贡献指南](docs/contributing.md)
 
 ### English Documentation
 - [Installation Guide](docs/installation_en.md)
 - [Usage Guide](docs/usage_en.md)
 - [Configuration Guide](docs/configuration_en.md)
-- [Logging Guide](docs/logging_en.md)
-- [Performance Guide](docs/performance_en.md)
-- [API Documentation](docs/api_en.md)
 - [Troubleshooting](docs/troubleshooting_en.md)
-- [Contributing Guide](docs/contributing_en.md)
 
 ## 🤝 Contributing
 

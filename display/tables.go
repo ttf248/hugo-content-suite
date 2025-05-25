@@ -39,7 +39,7 @@ type TranslationItem struct {
 }
 
 func DisplaySummary(articlesCount int, tagStats []models.TagStats, categoryStats []models.CategoryStats) {
-	titleColor.Println("=== 博客文章统计概览 ===")
+	titleColor.Println("=== Hugo 博客管理工具 ===")
 
 	table := tablewriter.NewWriter(os.Stdout)
 	table.SetHeader([]string{"统计项", "数量"})
@@ -59,6 +59,8 @@ func DisplaySummary(articlesCount int, tagStats []models.TagStats, categoryStats
 
 	table.AppendBulk(data)
 	table.Render()
+
+	color.Green("\n💡 使用 '一键处理全部' 功能可自动完成所有必要的博客管理任务")
 	fmt.Println()
 }
 

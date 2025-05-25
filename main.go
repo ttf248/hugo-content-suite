@@ -62,11 +62,8 @@ func main() {
 	categoryStats := stats.CalculateCategoryStats(articles)
 	noTagArticles := stats.FindNoTagArticles(articles)
 
-	// 显示概览
+	// 显示简化概览
 	display.DisplaySummary(len(articles), tagStats, categoryStats)
-	display.DisplayTagStats(tagStats, 20)
-	display.DisplayCategoryStats(categoryStats)
-	display.DisplayNoTagArticles(noTagArticles, 10)
 
 	// 启动交互式菜单
 	reader := bufio.NewReader(os.Stdin)

@@ -95,15 +95,58 @@ func (p *Processor) QuickProcessAll(tagStats []models.TagStats, reader *bufio.Re
 		return
 	}
 
-	fmt.Printf("\n需要执行 %d 个步骤\n", totalTasks)
-
-	if !p.confirmExecution(reader, "\n⚠️ 确认开始一键处理？(y/n): ") {
-		color.Yellow("⏹️ 操作已取消")
+	if !p.confirmExecution(reader, fmt.Sprintf("\n确认执行 %d 个处理步骤？(y/n): ", totalTasks)) {
+		color.Yellow("❌ 已取消处理")
 		return
 	}
 
 	// 执行处理流程
-	p.executeProcessFlow(cachePreview, createTagCount, missingSlugCount, tagStats)
+	currentStep := 1
+	color.Cyan("🚀 开始执行一键处理...")
+
+	// 步骤1: 生成翻译缓存
+	if len(cachePreview.MissingTranslations) > 0 {
+		fmt.Printf("\n步骤 %d/%d: 生成翻译缓存\n", currentStep, totalTasks)
+		p.GenerateBulkTranslationCache(tagStats, reader)
+		currentStep++
+	}
+
+	// 步骤2: 生成标签页面
+	if createTagCount > 0 {
+		fmt.Printf("\n步骤 %d/%d: 生成标签页面\n", currentStep, totalTasks)
+		err := tagGenerator.GenerateTagPagesWithMode(tagStats, "create")
+		if err != nil {
+			color.Red("❌ 生成标签页面失败: %v", err)
+		} else {
+			color.Green("✅ 标签页面生成完成")
+		}
+		currentStep++
+	}
+
+	// 步骤3: 生成文章Slug
+	if missingSlugCount > 0 {
+		fmt.Printf("\n步骤 %d/%d: 生成文章Slug\n", currentStep, totalTasks)
+		err := slugGenerator.GenerateArticleSlugsWithMode("missing")
+		if err != nil {
+			color.Red("❌ 生成文章Slug失败: %v", err)
+		} else {
+			color.Green("✅ 文章Slug生成完成")
+		}
+		currentStep++
+	}
+
+	// 步骤4: 翻译文章
+	if missingTranslationCount > 0 {
+		fmt.Printf("\n步骤 %d/%d: 翻译文章\n", currentStep, totalTasks)
+		err := articleTranslator.TranslateArticles("missing")
+		if err != nil {
+			color.Red("❌ 文章翻译失败: %v", err)
+		} else {
+			color.Green("✅ 文章翻译完成")
+		}
+	}
+
+	color.Green("\n🎉 一键处理全部完成！")
 }
 
 func (p *Processor) analyzeCurrentState(tagStats []models.TagStats) (*display.BulkTranslationPreview, int, int, error) {
