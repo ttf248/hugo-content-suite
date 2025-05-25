@@ -3,24 +3,10 @@ package operations
 import (
 	"bufio"
 	"fmt"
-	"hugo-content-suite/display"
 	"hugo-content-suite/generator"
 
 	"github.com/fatih/color"
 )
-
-func (p *Processor) PreviewArticleTranslations() {
-	color.Cyan("=== 文章翻译预览 ===")
-
-	articleTranslator := generator.NewArticleTranslator(p.contentDir)
-	previews, err := articleTranslator.PreviewArticleTranslations()
-	if err != nil {
-		color.Red("❌ 获取翻译预览失败: %v", err)
-		return
-	}
-
-	display.DisplayArticleTranslationPreview(previews, 20)
-}
 
 func (p *Processor) TranslateArticles(reader *bufio.Reader) {
 	if p.contentDir == "" {

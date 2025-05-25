@@ -3,25 +3,11 @@ package operations
 import (
 	"bufio"
 	"fmt"
-	"hugo-content-suite/display"
 	"hugo-content-suite/generator"
 	"hugo-content-suite/models"
 
 	"github.com/fatih/color"
 )
-
-func (p *Processor) PreviewTagPages(tagStats []models.TagStats) {
-	if len(tagStats) == 0 {
-		fmt.Println("没有找到任何标签，无法预览")
-		return
-	}
-
-	pageGenerator := generator.NewTagPageGenerator(p.contentDir)
-	fmt.Printf("即将为 %d 个标签生成页面预览...\n", len(tagStats))
-
-	previews := pageGenerator.PreviewTagPages(tagStats)
-	display.DisplayTagPagePreview(previews, 20)
-}
 
 func (p *Processor) GenerateTagPages(tagStats []models.TagStats, reader *bufio.Reader) {
 	if len(tagStats) == 0 {

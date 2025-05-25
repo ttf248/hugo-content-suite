@@ -3,29 +3,10 @@ package operations
 import (
 	"bufio"
 	"fmt"
-	"hugo-content-suite/display"
 	"hugo-content-suite/generator"
 
 	"github.com/fatih/color"
 )
-
-func (p *Processor) PreviewArticleSlugs() {
-	fmt.Println("正在扫描文章并生成Slug预览...")
-
-	slugGenerator := generator.NewArticleSlugGenerator(p.contentDir)
-	previews, err := slugGenerator.PreviewArticleSlugs()
-	if err != nil {
-		fmt.Printf("预览失败: %v\n", err)
-		return
-	}
-
-	if len(previews) == 0 {
-		fmt.Println("没有找到需要处理的文章")
-		return
-	}
-
-	display.DisplayArticleSlugPreview(previews, 20)
-}
 
 func (p *Processor) GenerateArticleSlugs(reader *bufio.Reader) {
 	color.Cyan("🔍 正在扫描文章...")
