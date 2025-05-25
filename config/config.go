@@ -59,7 +59,7 @@ type LanguageConfig struct {
 
 var defaultConfig = Config{
 	LMStudio: LMStudioConfig{
-		URL:     "http://172.19.192.1:2234/v1/chat/completions",
+		URL:     "http://192.168.4.2:2234/v1/chat/completions",
 		Model:   "gemma-3-12b-it",
 		Timeout: 30,
 	},
