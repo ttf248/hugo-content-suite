@@ -3,12 +3,12 @@ package generator
 import (
 	"bufio"
 	"fmt"
+	"hugo-content-suite/models"
+	"hugo-content-suite/scanner"
+	"hugo-content-suite/translator"
 	"os"
 	"regexp"
 	"strings"
-	"tag-scanner/models"
-	"tag-scanner/scanner"
-	"tag-scanner/translator"
 )
 
 // ArticleSlugGenerator 文章slug生成器

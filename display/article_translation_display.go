@@ -2,10 +2,10 @@ package display
 
 import (
 	"fmt"
+	"hugo-content-suite/generator"
 	"os"
 	"path/filepath"
 	"strconv"
-	"tag-scanner/generator"
 
 	"github.com/olekukonko/tablewriter"
 )

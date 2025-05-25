@@ -3,8 +3,8 @@ package translator
 import (
 	"encoding/json"
 	"fmt"
+	"hugo-content-suite/config"
 	"os"
-	"tag-scanner/config"
 	"time"
 )
 

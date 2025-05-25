@@ -92,7 +92,7 @@ var defaultConfig = Config{
 	},
 	Logging: LoggingConfig{
 		Level: "DEBUG",
-		File:  "tag-scanner.log",
+		File:  "hugo-content-suite.log",
 	},
 	Language: LanguageConfig{
 		TargetLanguages: []string{"en"},

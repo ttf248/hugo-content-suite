@@ -60,13 +60,13 @@
 
 #### 问题现象
 ```
-go: module tag-scanner: cannot find module providing package
+go: module hugo-content-suite: cannot find module providing package
 ```
 
 #### 解决方法
 1. **重新初始化模块**
    ```bash
-   go mod init tag-scanner
+   go mod init hugo-content-suite
    go mod tidy
    ```
 

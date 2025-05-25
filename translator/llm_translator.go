@@ -4,12 +4,12 @@ import (
 	"bytes"
 	"encoding/json"
 	"fmt"
+	"hugo-content-suite/config"
+	"hugo-content-suite/utils"
 	"io"
 	"net/http"
 	"regexp"
 	"strings"
-	"tag-scanner/config"
-	"tag-scanner/utils"
 	"time"
 )
 

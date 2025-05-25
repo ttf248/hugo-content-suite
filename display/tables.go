@@ -2,12 +2,12 @@ package display
 
 import (
 	"fmt"
+	"hugo-content-suite/generator"
+	"hugo-content-suite/models"
 	"os"
 	"path/filepath"
 	"strconv"
 	"strings"
-	"tag-scanner/generator"
-	"tag-scanner/models"
 
 	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"

@@ -3,12 +3,12 @@ package generator
 import (
 	"bufio"
 	"fmt"
+	"hugo-content-suite/models"
+	"hugo-content-suite/translator"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
-	"tag-scanner/models"
-	"tag-scanner/translator"
 )
 
 // TagPageGenerator 标签页面生成器

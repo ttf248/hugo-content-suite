@@ -1,8 +1,8 @@
 package stats
 
 import (
+	"hugo-content-suite/models"
 	"sort"
-	"tag-scanner/models"
 )
 
 func CalculateTagStats(articles []models.Article) []models.TagStats {

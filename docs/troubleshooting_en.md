@@ -62,13 +62,13 @@ Failed to write cache file: permission denied
 
 #### Issue Symptoms
 ```
-go: module tag-scanner: cannot find module providing package
+go: module hugo-content-suite: cannot find module providing package
 ```
 
 #### Solutions
 1. **Reinitialize Module**
    ```bash
-   go mod init tag-scanner
+   go mod init hugo-content-suite
    go mod tidy
    ```
 

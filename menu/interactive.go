@@ -3,12 +3,12 @@ package menu
 import (
 	"bufio"
 	"fmt"
+	"hugo-content-suite/display"
+	"hugo-content-suite/models"
+	"hugo-content-suite/operations"
+	"hugo-content-suite/stats"
+	"hugo-content-suite/utils"
 	"strings"
-	"tag-scanner/display"
-	"tag-scanner/models"
-	"tag-scanner/operations"
-	"tag-scanner/stats"
-	"tag-scanner/utils"
 
 	"github.com/fatih/color"
 )

@@ -3,12 +3,12 @@ package operations
 import (
 	"bufio"
 	"fmt"
+	"hugo-content-suite/display"
+	"hugo-content-suite/generator"
+	"hugo-content-suite/models"
+	"hugo-content-suite/translator"
+	"hugo-content-suite/utils"
 	"strings"
-	"tag-scanner/display"
-	"tag-scanner/generator"
-	"tag-scanner/models"
-	"tag-scanner/translator"
-	"tag-scanner/utils"
 
 	"github.com/fatih/color"
 )

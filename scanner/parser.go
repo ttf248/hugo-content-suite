@@ -2,11 +2,11 @@ package scanner
 
 import (
 	"bufio"
+	"hugo-content-suite/models"
 	"os"
 	"path/filepath"
 	"regexp"
 	"strings"
-	"tag-scanner/models"
 )
 
 // Article 类型别名，方便引用
