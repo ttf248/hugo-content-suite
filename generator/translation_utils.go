@@ -314,3 +314,90 @@ func (t *TranslationUtils) SaveCache() error {
 func (t *TranslationUtils) GetCacheStats() string {
 	return t.cache.GetInfo()
 }
+
+// IsMarkdownStructuralElement 检查是否为markdown结构元素
+func (t *TranslationUtils) IsMarkdownStructuralElement(line string) bool {
+	trimmed := strings.TrimSpace(line)
+
+	// 代码块
+	if strings.HasPrefix(trimmed, "```") {
+		return true
+	}
+
+	// 水平分割线
+	if matched, _ := regexp.MatchString(`^(-{3,}|\*{3,}|_{3,})$`, trimmed); matched {
+		return true
+	}
+
+	// HTML标签
+	if matched, _ := regexp.MatchString(`^<[^>]+>.*</[^>]+>$`, trimmed); matched {
+		return true
+	}
+
+	// 链接定义
+	if matched, _ := regexp.MatchString(`^\[.+\]:\s+https?://`, trimmed); matched {
+		return true
+	}
+
+	return false
+}
+
+// ProtectMarkdownSyntax 保护markdown语法
+func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[string]string) {
+	protectedElements := make(map[string]string)
+	counter := 0
+
+	// 保护内联代码
+	inlineCodeRegex := regexp.MustCompile("`[^`]+`")
+	text = inlineCodeRegex.ReplaceAllStringFunc(text, func(match string) string {
+		placeholder := fmt.Sprintf("__INLINE_CODE_%d__", counter)
+		protectedElements[placeholder] = match
+		counter++
+		return placeholder
+	})
+
+	// 保护链接
+	linkRegex := regexp.MustCompile(`\[([^\]]+)\]\(([^)]+)\)`)
+	text = linkRegex.ReplaceAllStringFunc(text, func(match string) string {
+		placeholder := fmt.Sprintf("__LINK_%d__", counter)
+		protectedElements[placeholder] = match
+		counter++
+		return placeholder
+	})
+
+	// 保护粗体和斜体
+	boldRegex := regexp.MustCompile(`\*\*[^*]+\*\*`)
+	text = boldRegex.ReplaceAllStringFunc(text, func(match string) string {
+		placeholder := fmt.Sprintf("__BOLD_%d__", counter)
+		protectedElements[placeholder] = match
+		counter++
+		return placeholder
+	})
+
+	italicRegex := regexp.MustCompile(`\*[^*]+\*`)
+	text = italicRegex.ReplaceAllStringFunc(text, func(match string) string {
+		placeholder := fmt.Sprintf("__ITALIC_%d__", counter)
+		protectedElements[placeholder] = match
+		counter++
+		return placeholder
+	})
+
+	// 保护图片
+	imageRegex := regexp.MustCompile(`!\[([^\]]*)\]\(([^)]+)\)`)
+	text = imageRegex.ReplaceAllStringFunc(text, func(match string) string {
+		placeholder := fmt.Sprintf("__IMAGE_%d__", counter)
+		protectedElements[placeholder] = match
+		counter++
+		return placeholder
+	})
+
+	return text, protectedElements
+}
+
+// RestoreMarkdownSyntax 恢复markdown语法
+func (t *TranslationUtils) RestoreMarkdownSyntax(text string, protectedElements map[string]string) string {
+	for placeholder, original := range protectedElements {
+		text = strings.ReplaceAll(text, placeholder, original)
+	}
+	return text
+}

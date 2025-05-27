@@ -209,3 +209,109 @@ func (c *ContentParser) isSpecialFormatLine(line string) bool {
 
 	return false
 }
+
+// IsMarkdownElement 检查是否为markdown元素行
+func (c *ContentParser) IsMarkdownElement(line string) bool {
+	trimmed := strings.TrimSpace(line)
+
+	// 空行
+	if trimmed == "" {
+		return false
+	}
+
+	// 代码块标记
+	if strings.HasPrefix(trimmed, "```") {
+		return true
+	}
+
+	// 标题 (# ## ### 等)
+	if strings.HasPrefix(trimmed, "#") && (len(trimmed) == 1 || trimmed[1] == '#' || trimmed[1] == ' ') {
+		return true
+	}
+
+	// 有序列表
+	if matched, _ := regexp.MatchString(`^\d+\.\s`, trimmed); matched {
+		return true
+	}
+
+	// 无序列表
+	if matched, _ := regexp.MatchString(`^[-*+]\s`, trimmed); matched {
+		return true
+	}
+
+	// 引用
+	if strings.HasPrefix(trimmed, ">") {
+		return true
+	}
+
+	// 水平分割线
+	if matched, _ := regexp.MatchString(`^(-{3,}|\*{3,}|_{3,})$`, trimmed); matched {
+		return true
+	}
+
+	// 表格行
+	if strings.Contains(trimmed, "|") && (strings.Count(trimmed, "|") >= 2) {
+		return true
+	}
+
+	// 链接定义
+	if matched, _ := regexp.MatchString(`^\[.+\]:\s+`, trimmed); matched {
+		return true
+	}
+
+	// HTML标签
+	if matched, _ := regexp.MatchString(`^<[^>]+>`, trimmed); matched {
+		return true
+	}
+
+	return false
+}
+
+// ExtractMarkdownPrefix 提取markdown前缀
+func (c *ContentParser) ExtractMarkdownPrefix(line string) (string, string) {
+	trimmed := strings.TrimSpace(line)
+
+	// 标题
+	if strings.HasPrefix(trimmed, "#") {
+		for i, r := range trimmed {
+			if r != '#' {
+				if i > 0 && (i == len(trimmed) || r == ' ') {
+					return trimmed[:i], strings.TrimSpace(trimmed[i:])
+				}
+				break
+			}
+		}
+	}
+
+	// 列表项
+	if matched, _ := regexp.MatchString(`^(\d+\.\s|[-*+]\s)`, trimmed); matched {
+		re := regexp.MustCompile(`^(\d+\.\s|[-*+]\s)`)
+		matches := re.FindStringSubmatch(trimmed)
+		if len(matches) > 1 {
+			prefix := matches[1]
+			content := strings.TrimSpace(trimmed[len(prefix):])
+			return prefix, content
+		}
+	}
+
+	// 引用
+	if strings.HasPrefix(trimmed, ">") {
+		re := regexp.MustCompile(`^(>\s*)`)
+		matches := re.FindStringSubmatch(trimmed)
+		if len(matches) > 1 {
+			prefix := matches[1]
+			content := strings.TrimSpace(trimmed[len(prefix):])
+			return prefix, content
+		}
+	}
+
+	return "", trimmed
+}
+
+// ReconstructMarkdownLine 重构markdown行
+func (c *ContentParser) ReconstructMarkdownLine(prefix, translatedContent string) string {
+	if prefix == "" {
+		return translatedContent
+	}
+	return prefix + translatedContent
+}

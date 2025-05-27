@@ -224,7 +224,7 @@ func (a *ArticleTranslator) translateContentByLinesToLanguage(content, targetLan
 	// 预扫描计算需要翻译的行数
 	for _, line := range lines {
 		if !inCodeBlock && strings.TrimSpace(line) != "" && a.translationUtils.ContainsChinese(line) {
-			if !strings.HasPrefix(strings.TrimSpace(line), "```") {
+			if !strings.HasPrefix(strings.TrimSpace(line), "```") && !a.translationUtils.IsMarkdownStructuralElement(line) {
 				needsTranslationCount++
 			}
 		}
@@ -260,6 +260,13 @@ func (a *ArticleTranslator) translateContentByLinesToLanguage(content, targetLan
 			continue
 		}
 
+		// markdown结构元素直接保留
+		if a.translationUtils.IsMarkdownStructuralElement(line) {
+			result = append(result, line)
+			translatedChars += len(line) + 1
+			continue
+		}
+
 		// 检查是否包含中文
 		if !a.translationUtils.ContainsChinese(line) {
 			result = append(result, line)
@@ -282,7 +289,8 @@ func (a *ArticleTranslator) translateContentByLinesToLanguage(content, targetLan
 		fmt.Printf("  [%d/%d] Stage%d/%d %s 翻译 %d 字符...\n",
 			translationCount, needsTranslationCount, currentStage, totalStages, progressBar, lineChars)
 
-		translatedLine, err := a.translateSingleLineToLanguage(line, translationCount, targetLang)
+		// 处理markdown元素
+		translatedLine, err := a.translateMarkdownAwareLine(line, translationCount, targetLang)
 		apiCallCount++
 
 		if err != nil {
@@ -376,6 +384,45 @@ func (a *ArticleTranslator) translateContentByLinesToLanguage(content, targetLan
 	fmt.Printf("   📝 处理: %d 字符, %d 行翻译\n", totalChars, needsTranslationCount)
 
 	return strings.Join(result, "\n"), nil
+}
+
+// translateMarkdownAwareLine 智能翻译markdown行
+func (a *ArticleTranslator) translateMarkdownAwareLine(line string, lineNum int, targetLang string) (string, error) {
+	// 检查是否为markdown元素行
+	if a.contentParser.IsMarkdownElement(line) {
+		// 提取markdown前缀和内容
+		prefix, content := a.contentParser.ExtractMarkdownPrefix(line)
+
+		if content != "" && a.translationUtils.ContainsChinese(content) {
+			// 保护markdown语法
+			protectedContent, protectedElements := a.translationUtils.ProtectMarkdownSyntax(content)
+
+			// 翻译内容
+			translatedContent, err := a.translationUtils.TranslateToLanguage(protectedContent, targetLang)
+			if err != nil {
+				return "", err
+			}
+
+			// 恢复markdown语法
+			translatedContent = a.translationUtils.RestoreMarkdownSyntax(translatedContent, protectedElements)
+
+			// 重构完整行
+			return a.contentParser.ReconstructMarkdownLine(prefix, translatedContent), nil
+		}
+
+		// 如果没有中文内容，直接返回原行
+		return line, nil
+	}
+
+	// 普通文本行：保护markdown语法后翻译
+	protectedContent, protectedElements := a.translationUtils.ProtectMarkdownSyntax(line)
+	translatedContent, err := a.translationUtils.TranslateToLanguage(protectedContent, targetLang)
+	if err != nil {
+		return "", err
+	}
+
+	// 恢复markdown语法
+	return a.translationUtils.RestoreMarkdownSyntax(translatedContent, protectedElements), nil
 }
 
 // generateProgressBar 生成进度条
