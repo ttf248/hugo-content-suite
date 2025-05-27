@@ -114,7 +114,12 @@ func (a *ArticleTranslator) translateSingleField(line, prefix, targetLang string
 			fmt.Printf("翻译失败\n")
 			return ""
 		} else {
+			// 彻底移除所有引号
 			translated = a.translationUtils.RemoveQuotes(translated)
+			translated = a.translationUtils.CleanTranslationResult(translated)
+			// 再次确保移除双引号
+			translated = strings.ReplaceAll(translated, "\"", "")
+			translated = strings.ReplaceAll(translated, "'", "")
 			fmt.Printf("%s\n", translated)
 			return fmt.Sprintf("%s \"%s\"", prefix, translated)
 		}
@@ -134,7 +139,12 @@ func (a *ArticleTranslator) translateSlugField(line, targetLang string) string {
 			fmt.Printf("翻译失败\n")
 			return ""
 		} else {
+			// 彻底移除所有引号
 			translated = a.translationUtils.RemoveQuotes(translated)
+			translated = a.translationUtils.CleanTranslationResult(translated)
+			// 再次确保移除双引号
+			translated = strings.ReplaceAll(translated, "\"", "")
+			translated = strings.ReplaceAll(translated, "'", "")
 			translated = a.translationUtils.FormatSlugField(translated)
 			fmt.Printf("%s\n", translated)
 			return fmt.Sprintf("slug: \"%s\"", translated)
@@ -169,7 +179,12 @@ func (a *ArticleTranslator) translateArrayItems(items []string, fieldType, targe
 				fmt.Printf("失败 ")
 				translated = append(translated, item)
 			} else {
+				// 彻底移除所有引号
 				translatedItem = a.translationUtils.RemoveQuotes(translatedItem)
+				translatedItem = a.translationUtils.CleanTranslationResult(translatedItem)
+				// 再次确保移除双引号
+				translatedItem = strings.ReplaceAll(translatedItem, "\"", "")
+				translatedItem = strings.ReplaceAll(translatedItem, "'", "")
 				fmt.Printf("%s ", translatedItem)
 				translated = append(translated, translatedItem)
 			}

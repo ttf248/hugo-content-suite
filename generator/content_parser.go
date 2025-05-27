@@ -81,7 +81,12 @@ func (c *ContentParser) FormatArrayField(items []string) string {
 
 	var quotedItems []string
 	for _, item := range items {
+		// 彻底清理引号
 		cleanItem := c.translationUtils.RemoveQuotes(item)
+		// 再次确保移除双引号
+		cleanItem = strings.ReplaceAll(cleanItem, "\"", "")
+		cleanItem = strings.ReplaceAll(cleanItem, "'", "")
+		cleanItem = strings.TrimSpace(cleanItem)
 		quotedItems = append(quotedItems, fmt.Sprintf("\"%s\"", cleanItem))
 	}
 
