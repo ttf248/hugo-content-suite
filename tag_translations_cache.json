@@ -4,6 +4,11 @@
     "timestamp": "2025-05-25T22:42:20.8016783+08:00",
     "type": "tag"
   },
+  "en:AI": {
+    "translation": "Artificial intelligence",
+    "timestamp": "2025-05-28T03:23:50.758949+08:00",
+    "type": "tag"
+  },
   "en:A股": {
     "translation": "a-stock",
     "timestamp": "2025-05-25T22:41:09.5871108+08:00",
@@ -209,6 +214,11 @@
     "timestamp": "2025-05-25T22:40:09.0693928+08:00",
     "type": "tag"
   },
+  "en:deploy": {
+    "translation": "deploy",
+    "timestamp": "2025-05-28T03:23:49.9171396+08:00",
+    "type": "tag"
+  },
   "en:docker": {
     "translation": "docker",
     "timestamp": "2025-05-25T22:40:01.5323739+08:00",
@@ -252,6 +262,11 @@
   "en:github copilot": {
     "translation": "github-copilot",
     "timestamp": "2025-05-25T22:41:40.93063+08:00",
+    "type": "tag"
+  },
+  "en:github-pages": {
+    "translation": "GitHub Pages",
+    "timestamp": "2025-05-28T03:23:50.4708905+08:00",
     "type": "tag"
   },
   "en:glibc": {
@@ -329,6 +344,11 @@
     "timestamp": "2025-05-25T22:41:32.385441+08:00",
     "type": "tag"
   },
+  "en:multiple-pages": {
+    "translation": "Multi-page",
+    "timestamp": "2025-05-28T03:23:49.7043365+08:00",
+    "type": "tag"
+  },
   "en:mysql": {
     "translation": "mysql",
     "timestamp": "2025-05-25T22:41:14.0782986+08:00",
@@ -342,6 +362,11 @@
   "en:ollama": {
     "translation": "ollama",
     "timestamp": "2025-05-25T22:40:46.8693002+08:00",
+    "type": "tag"
+  },
+  "en:pages": {
+    "translation": "pages",
+    "timestamp": "2025-05-28T03:23:51.1832094+08:00",
     "type": "tag"
   },
   "en:pdb": {
@@ -514,6 +539,11 @@
     "timestamp": "2025-05-25T22:41:11.4388811+08:00",
     "type": "tag"
   },
+  "en:前端": {
+    "translation": "Frontend",
+    "timestamp": "2025-05-28T03:23:50.9713523+08:00",
+    "type": "tag"
+  },
   "en:医学教育": {
     "translation": "medical-education",
     "timestamp": "2025-05-25T22:40:44.4156516+08:00",
@@ -552,6 +582,11 @@
   "en:台湾": {
     "translation": "taiwan",
     "timestamp": "2025-05-25T22:40:42.3509271+08:00",
+    "type": "tag"
+  },
+  "en:后端": {
+    "translation": "Backend",
+    "timestamp": "2025-05-28T03:23:50.1657478+08:00",
     "type": "tag"
   },
   "en:哪吒": {
