@@ -271,14 +271,41 @@ func (c *ContentParser) IsMarkdownElement(line string) bool {
 func (c *ContentParser) ExtractMarkdownPrefix(line string) (string, string) {
 	trimmed := strings.TrimSpace(line)
 
-	// 标题
+	// 标题处理
 	if strings.HasPrefix(trimmed, "#") {
+		hashCount := 0
+		spaceIndex := -1
+
+		// 计算连续的#号数量，并找到第一个空格位置
 		for i, r := range trimmed {
-			if r != '#' {
-				if i > 0 && (i == len(trimmed) || r == ' ') {
-					return trimmed[:i], strings.TrimSpace(trimmed[i:])
-				}
+			if r == '#' {
+				hashCount++
+			} else if r == ' ' {
+				spaceIndex = i
 				break
+			} else {
+				// 遇到非#非空格字符，说明格式不标准
+				break
+			}
+		}
+
+		// 如果找到了空格，提取前缀和内容
+		if spaceIndex > 0 {
+			prefix := trimmed[:spaceIndex+1] // 包含空格
+			content := strings.TrimSpace(trimmed[spaceIndex+1:])
+			return prefix, content
+		}
+
+		// 如果只有#号没有空格，补充空格
+		if hashCount > 0 && spaceIndex == -1 {
+			if hashCount == len(trimmed) {
+				// 只有#号，没有内容
+				return trimmed + " ", ""
+			} else {
+				// 有#号和内容但没有空格，插入空格
+				prefix := trimmed[:hashCount] + " "
+				content := strings.TrimSpace(trimmed[hashCount:])
+				return prefix, content
 			}
 		}
 	}

@@ -347,8 +347,8 @@ func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[strin
 	protectedElements := make(map[string]string)
 	counter := 0
 
-	// 保护内联代码
-	inlineCodeRegex := regexp.MustCompile("`[^`]+`")
+	// 保护内联代码（优先级最高）
+	inlineCodeRegex := regexp.MustCompile("`[^`\n]+`")
 	text = inlineCodeRegex.ReplaceAllStringFunc(text, func(match string) string {
 		placeholder := fmt.Sprintf("__INLINE_CODE_%d__", counter)
 		protectedElements[placeholder] = match
@@ -365,8 +365,17 @@ func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[strin
 		return placeholder
 	})
 
-	// 保护粗体和斜体
-	boldRegex := regexp.MustCompile(`\*\*[^*]+\*\*`)
+	// 保护图片
+	imageRegex := regexp.MustCompile(`!\[([^\]]*)\]\(([^)]+)\)`)
+	text = imageRegex.ReplaceAllStringFunc(text, func(match string) string {
+		placeholder := fmt.Sprintf("__IMAGE_%d__", counter)
+		protectedElements[placeholder] = match
+		counter++
+		return placeholder
+	})
+
+	// 保护粗体（两个星号或下划线）
+	boldRegex := regexp.MustCompile(`(\*\*|__)[^*_\n]+(\*\*|__)`)
 	text = boldRegex.ReplaceAllStringFunc(text, func(match string) string {
 		placeholder := fmt.Sprintf("__BOLD_%d__", counter)
 		protectedElements[placeholder] = match
@@ -374,18 +383,34 @@ func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[strin
 		return placeholder
 	})
 
-	italicRegex := regexp.MustCompile(`\*[^*]+\*`)
+	// 保护斜体（单个星号或下划线，但要避免与粗体冲突）
+	italicRegex := regexp.MustCompile(`(?:^|[^*_])(\*|_)([^*_\n]+)(\*|_)(?:[^*_]|$)`)
 	text = italicRegex.ReplaceAllStringFunc(text, func(match string) string {
+		// 检查是否已经被保护
+		for _, protected := range protectedElements {
+			if strings.Contains(protected, match) {
+				return match
+			}
+		}
 		placeholder := fmt.Sprintf("__ITALIC_%d__", counter)
 		protectedElements[placeholder] = match
 		counter++
 		return placeholder
 	})
 
-	// 保护图片
-	imageRegex := regexp.MustCompile(`!\[([^\]]*)\]\(([^)]+)\)`)
-	text = imageRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__IMAGE_%d__", counter)
+	// 保护删除线
+	strikeRegex := regexp.MustCompile(`~~[^~\n]+~~`)
+	text = strikeRegex.ReplaceAllStringFunc(text, func(match string) string {
+		placeholder := fmt.Sprintf("__STRIKE_%d__", counter)
+		protectedElements[placeholder] = match
+		counter++
+		return placeholder
+	})
+
+	// 保护HTML标签
+	htmlRegex := regexp.MustCompile(`<[^>]+>`)
+	text = htmlRegex.ReplaceAllStringFunc(text, func(match string) string {
+		placeholder := fmt.Sprintf("__HTML_%d__", counter)
 		protectedElements[placeholder] = match
 		counter++
 		return placeholder

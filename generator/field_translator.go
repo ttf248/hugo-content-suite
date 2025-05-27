@@ -403,6 +403,9 @@ func (a *ArticleTranslator) translateMarkdownAwareLine(line string, lineNum int,
 				return "", err
 			}
 
+			// 清理翻译结果
+			translatedContent = a.translationUtils.CleanTranslationResult(translatedContent)
+
 			// 恢复markdown语法
 			translatedContent = a.translationUtils.RestoreMarkdownSyntax(translatedContent, protectedElements)
 
@@ -414,15 +417,24 @@ func (a *ArticleTranslator) translateMarkdownAwareLine(line string, lineNum int,
 		return line, nil
 	}
 
-	// 普通文本行：保护markdown语法后翻译
-	protectedContent, protectedElements := a.translationUtils.ProtectMarkdownSyntax(line)
-	translatedContent, err := a.translationUtils.TranslateToLanguage(protectedContent, targetLang)
-	if err != nil {
-		return "", err
+	// 普通文本行：检查是否包含中文
+	if a.translationUtils.ContainsChinese(line) {
+		// 保护markdown语法后翻译
+		protectedContent, protectedElements := a.translationUtils.ProtectMarkdownSyntax(line)
+		translatedContent, err := a.translationUtils.TranslateToLanguage(protectedContent, targetLang)
+		if err != nil {
+			return "", err
+		}
+
+		// 清理翻译结果
+		translatedContent = a.translationUtils.CleanTranslationResult(translatedContent)
+
+		// 恢复markdown语法
+		return a.translationUtils.RestoreMarkdownSyntax(translatedContent, protectedElements), nil
 	}
 
-	// 恢复markdown语法
-	return a.translationUtils.RestoreMarkdownSyntax(translatedContent, protectedElements), nil
+	// 没有中文内容，直接返回原行
+	return line, nil
 }
 
 // generateProgressBar 生成进度条
