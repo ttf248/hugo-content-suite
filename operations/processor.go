@@ -25,7 +25,7 @@ func NewProcessor(contentDir string) *Processor {
 
 func (p *Processor) QuickProcessAll(tagStats []models.TagStats, reader *bufio.Reader) {
 	color.Cyan("=== 一键处理全部 ===")
-	fmt.Println("这将自动执行以下操作：")
+	fmt.Println("正在自动执行完整的处理流程：")
 	fmt.Println("1. 生成全量翻译缓存")
 	fmt.Println("2. 生成新增标签页面")
 	fmt.Println("3. 生成缺失文章Slug")
@@ -70,7 +70,7 @@ func (p *Processor) QuickProcessAll(tagStats []models.TagStats, reader *bufio.Re
 	}
 
 	// 显示总体预览
-	fmt.Printf("📊 总体预览:\n")
+	fmt.Printf("📊 检测到需要处理的内容:\n")
 	fmt.Printf("   🔄 需要翻译: %d 个项目\n", len(cachePreview.MissingTranslations))
 	fmt.Printf("   🏷️  需要创建标签页面: %d 个\n", createTagCount)
 	fmt.Printf("   📝 需要添加文章Slug: %d 个\n", missingSlugCount)
@@ -95,14 +95,9 @@ func (p *Processor) QuickProcessAll(tagStats []models.TagStats, reader *bufio.Re
 		return
 	}
 
-	if !p.confirmExecution(reader, fmt.Sprintf("\n确认执行 %d 个处理步骤？(y/n): ", totalTasks)) {
-		color.Yellow("❌ 已取消处理")
-		return
-	}
-
-	// 执行处理流程
+	// 直接执行处理流程，无需确认
 	currentStep := 1
-	color.Cyan("🚀 开始执行一键处理...")
+	color.Cyan("🚀 开始自动执行处理流程...")
 
 	// 步骤1: 生成翻译缓存
 	if len(cachePreview.MissingTranslations) > 0 {

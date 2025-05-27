@@ -59,7 +59,7 @@ func DisplaySummary(articlesCount int, tagStats []models.TagStats, categoryStats
 	table.AppendBulk(data)
 	table.Render()
 
-	color.Green("\n💡 使用 '一键处理全部' 功能可自动完成所有必要的博客管理任务")
+	color.Green("\n💡 使用 '一键处理全部' 功能可自动执行所有必要的博客管理任务 (无需确认)")
 	fmt.Println()
 }
 
