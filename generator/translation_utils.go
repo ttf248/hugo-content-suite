@@ -35,6 +35,16 @@ func (t *TranslationUtils) TestConnection() error {
 	return t.translator.TestConnection()
 }
 
+// ContainsEnglish 检查文本是否包含英文
+func (t *TranslationUtils) ContainsEnglish(text string) bool {
+	for _, r := range text {
+		if (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') {
+			return true
+		}
+	}
+	return false
+}
+
 // ContainsChinese 检查文本是否包含中文
 func (t *TranslationUtils) ContainsChinese(text string) bool {
 	for _, r := range text {
@@ -43,6 +53,102 @@ func (t *TranslationUtils) ContainsChinese(text string) bool {
 		}
 	}
 	return false
+}
+
+// IsOnlyEnglish 检查文本是否只包含英文（和标点符号、数字等）
+func (t *TranslationUtils) IsOnlyEnglish(text string) bool {
+	// 移除空白字符后检查
+	trimmed := strings.TrimSpace(text)
+	if trimmed == "" {
+		return false
+	}
+
+	// 如果包含中文，则不是纯英文
+	if t.ContainsChinese(trimmed) {
+		return false
+	}
+
+	// 如果包含英文字母，且不包含中文，则认为是英文内容
+	return t.ContainsEnglish(trimmed)
+}
+
+// SplitMixedText 分离中英文混合文本
+func (t *TranslationUtils) SplitMixedText(text string) ([]TextSegment, bool) {
+	if !t.ContainsChinese(text) {
+		// 没有中文，无需翻译
+		return []TextSegment{{Content: text, NeedsTranslation: false}}, false
+	}
+
+	if !t.ContainsEnglish(text) {
+		// 没有英文，全部翻译
+		return []TextSegment{{Content: text, NeedsTranslation: true}}, true
+	}
+
+	// 中英文混合，需要分割
+	segments := t.segmentMixedText(text)
+	hasTranslatableContent := false
+
+	for _, segment := range segments {
+		if segment.NeedsTranslation {
+			hasTranslatableContent = true
+			break
+		}
+	}
+
+	return segments, hasTranslatableContent
+}
+
+// TextSegment 文本片段
+type TextSegment struct {
+	Content          string
+	NeedsTranslation bool
+}
+
+// segmentMixedText 分割混合文本为片段
+func (t *TranslationUtils) segmentMixedText(text string) []TextSegment {
+	var segments []TextSegment
+	var currentSegment strings.Builder
+	var currentType bool // true表示中文，false表示英文
+	var hasContent bool
+
+	runes := []rune(text)
+
+	for _, r := range runes {
+		isChinese := r >= 0x4e00 && r <= 0x9fff
+		isEnglish := (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z')
+
+		if isChinese || isEnglish {
+			// 如果是第一个字符，或者类型改变了
+			if !hasContent || (isChinese != currentType) {
+				// 保存之前的片段
+				if hasContent && currentSegment.Len() > 0 {
+					segments = append(segments, TextSegment{
+						Content:          currentSegment.String(),
+						NeedsTranslation: currentType,
+					})
+					currentSegment.Reset()
+				}
+
+				currentType = isChinese
+				hasContent = true
+			}
+
+			currentSegment.WriteRune(r)
+		} else {
+			// 标点符号、数字、空格等，附加到当前片段
+			currentSegment.WriteRune(r)
+		}
+	}
+
+	// 保存最后一个片段
+	if hasContent && currentSegment.Len() > 0 {
+		segments = append(segments, TextSegment{
+			Content:          currentSegment.String(),
+			NeedsTranslation: currentType,
+		})
+	}
+
+	return segments
 }
 
 // CleanTranslationResult 清理翻译结果
@@ -122,6 +228,43 @@ func (t *TranslationUtils) FormatSlugField(slug string) string {
 
 // TranslateToLanguage 翻译文本到指定语言（带缓存）
 func (t *TranslationUtils) TranslateToLanguage(content, targetLang string) (string, error) {
+	// 检查是否只包含英文，如果是则直接返回
+	if t.IsOnlyEnglish(content) {
+		return content, nil
+	}
+
+	// 分离中英文内容
+	segments, hasTranslatableContent := t.SplitMixedText(content)
+
+	// 如果没有需要翻译的内容，直接返回原文
+	if !hasTranslatableContent {
+		return content, nil
+	}
+
+	// 如果只有一个片段且需要翻译，使用原有逻辑
+	if len(segments) == 1 && segments[0].NeedsTranslation {
+		return t.translateSingleText(content, targetLang)
+	}
+
+	// 处理混合文本
+	var result strings.Builder
+	for _, segment := range segments {
+		if segment.NeedsTranslation {
+			translated, err := t.translateSingleText(segment.Content, targetLang)
+			if err != nil {
+				return "", err
+			}
+			result.WriteString(translated)
+		} else {
+			result.WriteString(segment.Content)
+		}
+	}
+
+	return result.String(), nil
+}
+
+// translateSingleText 翻译单个文本片段
+func (t *TranslationUtils) translateSingleText(content, targetLang string) (string, error) {
 	// 先检查缓存
 	cacheKey := fmt.Sprintf("%s:%s", targetLang, content)
 	if cached, found := t.cache.Get(cacheKey, translator.TagCache); found {
