@@ -74,13 +74,28 @@ func (t *TranslationUtils) IsOnlyEnglish(text string) bool {
 
 // SplitMixedText 分离中英文混合文本
 func (t *TranslationUtils) SplitMixedText(text string) ([]TextSegment, bool) {
-	// 简化逻辑：如果包含中文就需要翻译
-	if t.ContainsChinese(text) {
+	if !t.ContainsChinese(text) {
+		// 没有中文，无需翻译
+		return []TextSegment{{Content: text, NeedsTranslation: false}}, false
+	}
+
+	if !t.ContainsEnglish(text) {
+		// 没有英文，全部翻译
 		return []TextSegment{{Content: text, NeedsTranslation: true}}, true
 	}
 
-	// 没有中文，无需翻译
-	return []TextSegment{{Content: text, NeedsTranslation: false}}, false
+	// 中英文混合，需要分割
+	segments := t.segmentMixedText(text)
+	hasTranslatableContent := false
+
+	for _, segment := range segments {
+		if segment.NeedsTranslation {
+			hasTranslatableContent = true
+			break
+		}
+	}
+
+	return segments, hasTranslatableContent
 }
 
 // TextSegment 文本片段
@@ -89,14 +104,51 @@ type TextSegment struct {
 	NeedsTranslation bool
 }
 
-// segmentMixedText 分割混合文本为片段（保留但简化实现）
+// segmentMixedText 分割混合文本为片段
 func (t *TranslationUtils) segmentMixedText(text string) []TextSegment {
-	// 简化实现：直接返回整个文本作为一个需要翻译的片段
-	// 这样可以避免复杂的分割逻辑导致的翻译遗漏
-	if t.ContainsChinese(text) {
-		return []TextSegment{{Content: text, NeedsTranslation: true}}
+	var segments []TextSegment
+	var currentSegment strings.Builder
+	var currentType bool // true表示中文，false表示英文
+	var hasContent bool
+
+	runes := []rune(text)
+
+	for _, r := range runes {
+		isChinese := r >= 0x4e00 && r <= 0x9fff
+		isEnglish := (r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z')
+
+		if isChinese || isEnglish {
+			// 如果是第一个字符，或者类型改变了
+			if !hasContent || (isChinese != currentType) {
+				// 保存之前的片段
+				if hasContent && currentSegment.Len() > 0 {
+					segments = append(segments, TextSegment{
+						Content:          currentSegment.String(),
+						NeedsTranslation: currentType,
+					})
+					currentSegment.Reset()
+				}
+
+				currentType = isChinese
+				hasContent = true
+			}
+
+			currentSegment.WriteRune(r)
+		} else {
+			// 标点符号、数字、空格等，附加到当前片段
+			currentSegment.WriteRune(r)
+		}
 	}
-	return []TextSegment{{Content: text, NeedsTranslation: false}}
+
+	// 保存最后一个片段
+	if hasContent && currentSegment.Len() > 0 {
+		segments = append(segments, TextSegment{
+			Content:          currentSegment.String(),
+			NeedsTranslation: currentType,
+		})
+	}
+
+	return segments
 }
 
 // CleanTranslationResult 清理翻译结果
@@ -181,13 +233,34 @@ func (t *TranslationUtils) TranslateToLanguage(content, targetLang string) (stri
 		return content, nil
 	}
 
-	// 简化逻辑：如果包含中文就直接翻译整个文本
-	if t.ContainsChinese(content) {
+	// 分离中英文内容
+	segments, hasTranslatableContent := t.SplitMixedText(content)
+
+	// 如果没有需要翻译的内容，直接返回原文
+	if !hasTranslatableContent {
+		return content, nil
+	}
+
+	// 如果只有一个片段且需要翻译，使用原有逻辑
+	if len(segments) == 1 && segments[0].NeedsTranslation {
 		return t.translateSingleText(content, targetLang)
 	}
 
-	// 没有中文，直接返回原文
-	return content, nil
+	// 处理混合文本
+	var result strings.Builder
+	for _, segment := range segments {
+		if segment.NeedsTranslation {
+			translated, err := t.translateSingleText(segment.Content, targetLang)
+			if err != nil {
+				return "", err
+			}
+			result.WriteString(translated)
+		} else {
+			result.WriteString(segment.Content)
+		}
+	}
+
+	return result.String(), nil
 }
 
 // translateSingleText 翻译单个文本片段
@@ -417,20 +490,10 @@ func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[strin
 	protectedElements := make(map[string]string)
 	counter := 0
 
-	// 保护内联代码（优先级最高，使用更精确的正则）
-	// 修复：使用更健壮的内联代码匹配模式
-	inlineCodeRegex := regexp.MustCompile("`([^`\n]*)`")
+	// 保护内联代码（优先级最高）
+	inlineCodeRegex := regexp.MustCompile("`[^`\n]+`")
 	text = inlineCodeRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__PROTECTED_INLINE_CODE_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
-		return placeholder
-	})
-
-	// 保护多行内联代码（三个反引号的代码块开始/结束标记）
-	multilineCodeRegex := regexp.MustCompile("```[^`]*```")
-	text = multilineCodeRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__PROTECTED_MULTILINE_CODE_%d__", counter)
+		placeholder := fmt.Sprintf("__INLINE_CODE_%d__", counter)
 		protectedElements[placeholder] = match
 		counter++
 		return placeholder
@@ -439,7 +502,7 @@ func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[strin
 	// 保护链接
 	linkRegex := regexp.MustCompile(`\[([^\]]+)\]\(([^)]+)\)`)
 	text = linkRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__PROTECTED_LINK_%d__", counter)
+		placeholder := fmt.Sprintf("__LINK_%d__", counter)
 		protectedElements[placeholder] = match
 		counter++
 		return placeholder
@@ -448,7 +511,7 @@ func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[strin
 	// 保护图片
 	imageRegex := regexp.MustCompile(`!\[([^\]]*)\]\(([^)]+)\)`)
 	text = imageRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__PROTECTED_IMAGE_%d__", counter)
+		placeholder := fmt.Sprintf("__IMAGE_%d__", counter)
 		protectedElements[placeholder] = match
 		counter++
 		return placeholder
@@ -457,7 +520,7 @@ func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[strin
 	// 保护粗体（两个星号或下划线）
 	boldRegex := regexp.MustCompile(`(\*\*|__)[^*_\n]+(\*\*|__)`)
 	text = boldRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__PROTECTED_BOLD_%d__", counter)
+		placeholder := fmt.Sprintf("__BOLD_%d__", counter)
 		protectedElements[placeholder] = match
 		counter++
 		return placeholder
@@ -472,7 +535,7 @@ func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[strin
 				return match
 			}
 		}
-		placeholder := fmt.Sprintf("__PROTECTED_ITALIC_%d__", counter)
+		placeholder := fmt.Sprintf("__ITALIC_%d__", counter)
 		protectedElements[placeholder] = match
 		counter++
 		return placeholder
@@ -481,7 +544,7 @@ func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[strin
 	// 保护删除线
 	strikeRegex := regexp.MustCompile(`~~[^~\n]+~~`)
 	text = strikeRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__PROTECTED_STRIKE_%d__", counter)
+		placeholder := fmt.Sprintf("__STRIKE_%d__", counter)
 		protectedElements[placeholder] = match
 		counter++
 		return placeholder
@@ -490,7 +553,7 @@ func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[strin
 	// 保护HTML标签
 	htmlRegex := regexp.MustCompile(`<[^>]+>`)
 	text = htmlRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__PROTECTED_HTML_%d__", counter)
+		placeholder := fmt.Sprintf("__HTML_%d__", counter)
 		protectedElements[placeholder] = match
 		counter++
 		return placeholder
@@ -501,51 +564,8 @@ func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[strin
 
 // RestoreMarkdownSyntax 恢复markdown语法
 func (t *TranslationUtils) RestoreMarkdownSyntax(text string, protectedElements map[string]string) string {
-	// 按照特定顺序恢复，确保不会出现替换冲突
-	restoreOrder := []string{
-		"__PROTECTED_INLINE_CODE_",
-		"__PROTECTED_MULTILINE_CODE_",
-		"__PROTECTED_LINK_",
-		"__PROTECTED_IMAGE_",
-		"__PROTECTED_BOLD_",
-		"__PROTECTED_ITALIC_",
-		"__PROTECTED_STRIKE_",
-		"__PROTECTED_HTML_",
+	for placeholder, original := range protectedElements {
+		text = strings.ReplaceAll(text, placeholder, original)
 	}
-
-	for _, prefix := range restoreOrder {
-		for placeholder, original := range protectedElements {
-			if strings.HasPrefix(placeholder, prefix) {
-				text = strings.ReplaceAll(text, placeholder, original)
-			}
-		}
-	}
-
-	// 验证是否还有未恢复的占位符
-	for placeholder := range protectedElements {
-		if strings.Contains(text, placeholder) {
-			// 强制恢复剩余的占位符
-			text = strings.ReplaceAll(text, placeholder, protectedElements[placeholder])
-		}
-	}
-
 	return text
-}
-
-// ValidateMarkdownProtection 验证markdown保护的完整性
-func (t *TranslationUtils) ValidateMarkdownProtection(original, protected string, protectedElements map[string]string) bool {
-	// 检查是否所有保护的元素都有对应的占位符
-	for placeholder := range protectedElements {
-		if !strings.Contains(protected, placeholder) {
-			return false
-		}
-	}
-
-	// 检查占位符数量是否匹配
-	totalPlaceholders := 0
-	for placeholder := range protectedElements {
-		totalPlaceholders += strings.Count(protected, placeholder)
-	}
-
-	return totalPlaceholders == len(protectedElements)
 }

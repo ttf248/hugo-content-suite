@@ -106,7 +106,12 @@ func (a *ArticleTranslator) translateFieldLine(line, targetLang string) string {
 func (a *ArticleTranslator) translateSingleField(line, prefix, targetLang string) string {
 	value := a.contentParser.ExtractFieldValue(line, prefix)
 	if value != "" {
-		// 简化判断：如果包含中文就翻译
+		// 检查是否只包含英文，如果是则直接返回
+		if a.translationUtils.IsOnlyEnglish(value) {
+			return ""
+		}
+
+		// 检查是否包含中文需要翻译
 		if a.translationUtils.ContainsChinese(value) {
 			fmt.Printf("  %s: %s -> ", strings.TrimSuffix(prefix, ":"), value)
 
@@ -134,7 +139,12 @@ func (a *ArticleTranslator) translateSingleField(line, prefix, targetLang string
 func (a *ArticleTranslator) translateSlugField(line, targetLang string) string {
 	slug := a.contentParser.ExtractFieldValue(line, "slug:")
 	if slug != "" {
-		// 简化判断：如果包含中文就翻译
+		// 检查是否只包含英文，如果是则直接返回
+		if a.translationUtils.IsOnlyEnglish(slug) {
+			return ""
+		}
+
+		// 检查是否包含中文需要翻译
 		if a.translationUtils.ContainsChinese(slug) {
 			fmt.Printf("  slug: %s -> ", slug)
 
@@ -176,7 +186,14 @@ func (a *ArticleTranslator) translateArrayItems(items []string, fieldType, targe
 	fmt.Printf("  %s: ", fieldType)
 
 	for _, item := range items {
-		// 简化判断：如果包含中文就翻译
+		// 检查是否只包含英文，如果是则保持原样
+		if a.translationUtils.IsOnlyEnglish(item) {
+			translated = append(translated, item)
+			fmt.Printf("%s (保持) ", item)
+			continue
+		}
+
+		// 检查是否包含中文需要翻译
 		if a.translationUtils.ContainsChinese(item) {
 			fmt.Printf("%s -> ", item)
 
@@ -196,9 +213,7 @@ func (a *ArticleTranslator) translateArrayItems(items []string, fieldType, targe
 				translated = append(translated, translatedItem)
 			}
 		} else {
-			// 没有中文，保持原样
 			translated = append(translated, item)
-			fmt.Printf("%s (保持) ", item)
 		}
 	}
 
@@ -412,8 +427,8 @@ func (a *ArticleTranslator) translateContentByLinesToLanguage(content, targetLan
 
 // translateMarkdownAwareLine 智能翻译markdown行
 func (a *ArticleTranslator) translateMarkdownAwareLine(line string, lineNum int, targetLang string) (string, error) {
-	// 简化判断：如果包含中文就需要翻译
-	if !a.translationUtils.ContainsChinese(line) {
+	// 检查是否只包含英文，如果是则直接返回
+	if a.translationUtils.IsOnlyEnglish(line) {
 		return line, nil
 	}
 
@@ -425,11 +440,6 @@ func (a *ArticleTranslator) translateMarkdownAwareLine(line string, lineNum int,
 		if content != "" && a.translationUtils.ContainsChinese(content) {
 			// 保护markdown语法
 			protectedContent, protectedElements := a.translationUtils.ProtectMarkdownSyntax(content)
-
-			// 验证保护的完整性
-			if !a.translationUtils.ValidateMarkdownProtection(content, protectedContent, protectedElements) {
-				return "", fmt.Errorf("markdown保护验证失败，行号: %d", lineNum)
-			}
 
 			// 翻译内容
 			translatedContent, err := a.translationUtils.TranslateToLanguage(protectedContent, targetLang)
@@ -443,11 +453,6 @@ func (a *ArticleTranslator) translateMarkdownAwareLine(line string, lineNum int,
 			// 恢复markdown语法
 			translatedContent = a.translationUtils.RestoreMarkdownSyntax(translatedContent, protectedElements)
 
-			// 验证恢复后是否还有占位符残留
-			if a.containsPlaceholders(translatedContent) {
-				return "", fmt.Errorf("markdown恢复后仍有占位符残留，行号: %d", lineNum)
-			}
-
 			// 重构完整行
 			return a.contentParser.ReconstructMarkdownLine(prefix, translatedContent), nil
 		}
@@ -456,16 +461,10 @@ func (a *ArticleTranslator) translateMarkdownAwareLine(line string, lineNum int,
 		return line, nil
 	}
 
-	// 普通文本行：包含中文就翻译
+	// 普通文本行：检查是否包含中文
 	if a.translationUtils.ContainsChinese(line) {
 		// 保护markdown语法后翻译
 		protectedContent, protectedElements := a.translationUtils.ProtectMarkdownSyntax(line)
-
-		// 验证保护的完整性
-		if !a.translationUtils.ValidateMarkdownProtection(line, protectedContent, protectedElements) {
-			return "", fmt.Errorf("markdown保护验证失败，行号: %d", lineNum)
-		}
-
 		translatedContent, err := a.translationUtils.TranslateToLanguage(protectedContent, targetLang)
 		if err != nil {
 			return "", err
@@ -475,39 +474,11 @@ func (a *ArticleTranslator) translateMarkdownAwareLine(line string, lineNum int,
 		translatedContent = a.translationUtils.CleanTranslationResult(translatedContent)
 
 		// 恢复markdown语法
-		restoredContent := a.translationUtils.RestoreMarkdownSyntax(translatedContent, protectedElements)
-
-		// 验证恢复后是否还有占位符残留
-		if a.containsPlaceholders(restoredContent) {
-			return "", fmt.Errorf("markdown恢复后仍有占位符残留，行号: %d", lineNum)
-		}
-
-		return restoredContent, nil
+		return a.translationUtils.RestoreMarkdownSyntax(translatedContent, protectedElements), nil
 	}
 
 	// 没有中文内容，直接返回原行
 	return line, nil
-}
-
-// containsPlaceholders 检查是否包含未恢复的占位符
-func (a *ArticleTranslator) containsPlaceholders(text string) bool {
-	placeholderPatterns := []string{
-		"__PROTECTED_INLINE_CODE_",
-		"__PROTECTED_MULTILINE_CODE_",
-		"__PROTECTED_LINK_",
-		"__PROTECTED_IMAGE_",
-		"__PROTECTED_BOLD_",
-		"__PROTECTED_ITALIC_",
-		"__PROTECTED_STRIKE_",
-		"__PROTECTED_HTML_",
-	}
-
-	for _, pattern := range placeholderPatterns {
-		if strings.Contains(text, pattern) {
-			return true
-		}
-	}
-	return false
 }
 
 // generateProgressBar 生成进度条
