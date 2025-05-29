@@ -347,3 +347,155 @@ func (c *ContentParser) ReconstructMarkdownLine(prefix, translatedContent string
 	}
 	return prefix + translatedContent
 }
+
+// ParseContentIntoParagraphs 将内容解析为段落
+func (c *ContentParser) ParseContentIntoParagraphs(content string) []string {
+	if strings.TrimSpace(content) == "" {
+		return []string{}
+	}
+
+	lines := strings.Split(content, "\n")
+	var paragraphs []string
+	var currentParagraph []string
+	inCodeBlock := false
+
+	for _, line := range lines {
+		trimmedLine := strings.TrimSpace(line)
+
+		// 检测代码块开始/结束
+		if strings.HasPrefix(trimmedLine, "```") {
+			if !inCodeBlock {
+				// 代码块开始
+				if len(currentParagraph) > 0 {
+					paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
+					currentParagraph = nil
+				}
+				inCodeBlock = true
+				currentParagraph = append(currentParagraph, line)
+			} else if trimmedLine == "```" || strings.HasPrefix(trimmedLine, "```") {
+				// 代码块结束
+				currentParagraph = append(currentParagraph, line)
+				paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
+				currentParagraph = nil
+				inCodeBlock = false
+			} else {
+				currentParagraph = append(currentParagraph, line)
+			}
+			continue
+		}
+
+		// 在代码块内，直接添加行
+		if inCodeBlock {
+			currentParagraph = append(currentParagraph, line)
+			continue
+		}
+
+		// 空行表示段落结束
+		if trimmedLine == "" {
+			if len(currentParagraph) > 0 {
+				paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
+				currentParagraph = nil
+			}
+			continue
+		}
+
+		// 特殊markdown元素单独成段
+		if c.isBlockLevelElement(line) {
+			// 先结束当前段落
+			if len(currentParagraph) > 0 {
+				paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
+				currentParagraph = nil
+			}
+			// 单独成段
+			paragraphs = append(paragraphs, line)
+			continue
+		}
+
+		// 普通行添加到当前段落
+		currentParagraph = append(currentParagraph, line)
+	}
+
+	// 处理最后一个段落
+	if len(currentParagraph) > 0 {
+		paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
+	}
+
+	return c.cleanEmptyParagraphs(paragraphs)
+}
+
+// isBlockLevelElement 检查是否为块级元素
+func (c *ContentParser) isBlockLevelElement(line string) bool {
+	trimmed := strings.TrimSpace(line)
+
+	// 标题
+	if strings.HasPrefix(trimmed, "#") && (len(trimmed) == 1 || trimmed[1] == '#' || trimmed[1] == ' ') {
+		return true
+	}
+
+	// 水平分割线
+	if matched, _ := regexp.MatchString(`^(-{3,}|\*{3,}|_{3,})$`, trimmed); matched {
+		return true
+	}
+
+	// HTML块级标签
+	if matched, _ := regexp.MatchString(`^<(div|p|h[1-6]|blockquote|pre|table|ul|ol|li)[^>]*>`, trimmed); matched {
+		return true
+	}
+
+	// 链接定义
+	if matched, _ := regexp.MatchString(`^\[.+\]:\s+https?://`, trimmed); matched {
+		return true
+	}
+
+	return false
+}
+
+// cleanEmptyParagraphs 清理空段落
+func (c *ContentParser) cleanEmptyParagraphs(paragraphs []string) []string {
+	var result []string
+	for _, p := range paragraphs {
+		if strings.TrimSpace(p) != "" {
+			result = append(result, p)
+		}
+	}
+	return result
+}
+
+// CountTranslatableParagraphs 统计需要翻译的段落数
+func (c *ContentParser) CountTranslatableParagraphs(paragraphs []string) int {
+	count := 0
+	for _, p := range paragraphs {
+		if c.needsTranslation(p) {
+			count++
+		}
+	}
+	return count
+}
+
+// needsTranslation 检查段落是否需要翻译
+func (c *ContentParser) needsTranslation(paragraph string) bool {
+	trimmed := strings.TrimSpace(paragraph)
+
+	// 空段落不需要翻译
+	if trimmed == "" {
+		return false
+	}
+
+	// 纯代码块不需要翻译
+	if strings.HasPrefix(trimmed, "```") && strings.HasSuffix(trimmed, "```") {
+		return false
+	}
+
+	// 水平分割线不需要翻译
+	if matched, _ := regexp.MatchString(`^(-{3,}|\*{3,}|_{3,})$`, trimmed); matched {
+		return false
+	}
+
+	// 链接定义不需要翻译
+	if matched, _ := regexp.MatchString(`^\[.+\]:\s+https?://`, trimmed); matched {
+		return false
+	}
+
+	// 检查是否包含中文
+	return c.translationUtils.ContainsChinese(paragraph)
+}

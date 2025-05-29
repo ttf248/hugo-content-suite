@@ -342,12 +342,21 @@ func (t *TranslationUtils) IsMarkdownStructuralElement(line string) bool {
 	return false
 }
 
-// ProtectMarkdownSyntax 保护markdown语法
-func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[string]string) {
+// ProtectMarkdownElements 保护关键markdown元素（简化版）
+func (t *TranslationUtils) ProtectMarkdownElements(text string) (string, map[string]string) {
 	protectedElements := make(map[string]string)
 	counter := 0
 
-	// 保护内联代码（优先级最高）
+	// 1. 保护代码块（优先级最高）
+	codeBlockRegex := regexp.MustCompile("(?s)```[^`]*```")
+	text = codeBlockRegex.ReplaceAllStringFunc(text, func(match string) string {
+		placeholder := fmt.Sprintf("__CODE_BLOCK_%d__", counter)
+		protectedElements[placeholder] = match
+		counter++
+		return placeholder
+	})
+
+	// 2. 保护内联代码
 	inlineCodeRegex := regexp.MustCompile("`[^`\n]+`")
 	text = inlineCodeRegex.ReplaceAllStringFunc(text, func(match string) string {
 		placeholder := fmt.Sprintf("__INLINE_CODE_%d__", counter)
@@ -356,7 +365,7 @@ func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[strin
 		return placeholder
 	})
 
-	// 保护链接
+	// 3. 保护完整链接
 	linkRegex := regexp.MustCompile(`\[([^\]]+)\]\(([^)]+)\)`)
 	text = linkRegex.ReplaceAllStringFunc(text, func(match string) string {
 		placeholder := fmt.Sprintf("__LINK_%d__", counter)
@@ -365,7 +374,7 @@ func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[strin
 		return placeholder
 	})
 
-	// 保护图片
+	// 4. 保护图片
 	imageRegex := regexp.MustCompile(`!\[([^\]]*)\]\(([^)]+)\)`)
 	text = imageRegex.ReplaceAllStringFunc(text, func(match string) string {
 		placeholder := fmt.Sprintf("__IMAGE_%d__", counter)
@@ -374,43 +383,10 @@ func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[strin
 		return placeholder
 	})
 
-	// 保护粗体（两个星号或下划线）
-	boldRegex := regexp.MustCompile(`(\*\*|__)[^*_\n]+(\*\*|__)`)
-	text = boldRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__BOLD_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
-		return placeholder
-	})
-
-	// 保护斜体（单个星号或下划线，但要避免与粗体冲突）
-	italicRegex := regexp.MustCompile(`(?:^|[^*_])(\*|_)([^*_\n]+)(\*|_)(?:[^*_]|$)`)
-	text = italicRegex.ReplaceAllStringFunc(text, func(match string) string {
-		// 检查是否已经被保护
-		for _, protected := range protectedElements {
-			if strings.Contains(protected, match) {
-				return match
-			}
-		}
-		placeholder := fmt.Sprintf("__ITALIC_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
-		return placeholder
-	})
-
-	// 保护删除线
-	strikeRegex := regexp.MustCompile(`~~[^~\n]+~~`)
-	text = strikeRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__STRIKE_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
-		return placeholder
-	})
-
-	// 保护HTML标签
-	htmlRegex := regexp.MustCompile(`<[^>]+>`)
-	text = htmlRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__HTML_%d__", counter)
+	// 5. 保护URL
+	urlRegex := regexp.MustCompile(`https?://[^\s<>"{}|\\^` + "`" + `\[\]]+`)
+	text = urlRegex.ReplaceAllStringFunc(text, func(match string) string {
+		placeholder := fmt.Sprintf("__URL_%d__", counter)
 		protectedElements[placeholder] = match
 		counter++
 		return placeholder
@@ -419,10 +395,30 @@ func (t *TranslationUtils) ProtectMarkdownSyntax(text string) (string, map[strin
 	return text, protectedElements
 }
 
-// RestoreMarkdownSyntax 恢复markdown语法
-func (t *TranslationUtils) RestoreMarkdownSyntax(text string, protectedElements map[string]string) string {
+// RestoreMarkdownElements 恢复保护的markdown元素
+func (t *TranslationUtils) RestoreMarkdownElements(text string, protectedElements map[string]string) string {
 	for placeholder, original := range protectedElements {
 		text = strings.ReplaceAll(text, placeholder, original)
 	}
 	return text
+}
+
+// TranslateParagraphToLanguage 翻译段落到指定语言
+func (t *TranslationUtils) TranslateParagraphToLanguage(paragraph, targetLang string) (string, error) {
+	// 保护关键元素
+	protectedContent, protectedElements := t.ProtectMarkdownElements(paragraph)
+
+	// 翻译处理后的内容
+	translatedContent, err := t.TranslateToLanguage(protectedContent, targetLang)
+	if err != nil {
+		return "", err
+	}
+
+	// 清理翻译结果
+	translatedContent = t.CleanTranslationResult(translatedContent)
+
+	// 恢复保护的元素
+	finalContent := t.RestoreMarkdownElements(translatedContent, protectedElements)
+
+	return finalContent, nil
 }
