@@ -5,6 +5,8 @@ import (
 	"hugo-content-suite/config"
 	"strings"
 	"time"
+
+	"gopkg.in/yaml.v3"
 )
 
 // FieldTranslator 字段翻译器
@@ -23,8 +25,8 @@ func NewFieldTranslator() *FieldTranslator {
 
 // translateFrontMatterToLanguage 翻译前置数据到指定语言
 func (a *ArticleTranslator) translateFrontMatterToLanguage(frontMatter, targetLang string) (string, error) {
-	if frontMatter == "" {
-		return "", nil
+	if strings.TrimSpace(frontMatter) == "" {
+		return frontMatter, nil
 	}
 
 	cfg := config.GetGlobalConfig()
@@ -35,166 +37,191 @@ func (a *ArticleTranslator) translateFrontMatterToLanguage(frontMatter, targetLa
 
 	fmt.Printf("翻译前置数据到 %s...\n", targetLangName)
 
-	lines := strings.Split(frontMatter, "\n")
-	var translatedLines []string
-
-	for _, line := range lines {
-		trimmedLine := strings.TrimSpace(line)
-
-		if trimmedLine == "---" {
-			translatedLines = append(translatedLines, line)
-			continue
-		}
-
-		// 翻译各种字段
-		if translatedLine := a.translateFieldLine(line, targetLang); translatedLine != "" {
-			translatedLines = append(translatedLines, translatedLine)
-		} else {
-			translatedLines = append(translatedLines, line)
-		}
+	// 解析 YAML
+	var frontMatterData map[string]interface{}
+	if err := yaml.Unmarshal([]byte(frontMatter), &frontMatterData); err != nil {
+		return "", fmt.Errorf("解析前置数据失败: %v", err)
 	}
 
-	return strings.Join(translatedLines, "\n"), nil
+	// 翻译各个字段
+	translatedData, err := a.translateFrontMatterFields(frontMatterData, targetLang)
+	if err != nil {
+		return "", fmt.Errorf("翻译前置数据字段失败: %v", err)
+	}
+
+	// 将翻译后的数据转换回 YAML
+	translatedYAML, err := yaml.Marshal(translatedData)
+	if err != nil {
+		return "", fmt.Errorf("生成翻译后的YAML失败: %v", err)
+	}
+
+	return "---\r\n" + string(translatedYAML) + "---\r\n", nil
 }
 
-// translateFieldLine 翻译字段行
-func (a *ArticleTranslator) translateFieldLine(line, targetLang string) string {
-	trimmedLine := strings.TrimSpace(line)
+// translateFrontMatterFields 翻译前置数据的所有字段
+func (a *ArticleTranslator) translateFrontMatterFields(data map[string]interface{}, targetLang string) (map[string]interface{}, error) {
+	result := make(map[string]interface{})
 
-	// 处理标题字段
-	if strings.HasPrefix(trimmedLine, "title:") {
-		return a.translateSingleField(line, "title:", targetLang)
+	// 定义需要翻译的字段
+	translatableFields := map[string]bool{
+		"title":       true,
+		"description": true,
+		"subtitle":    true,
+		"summary":     true,
 	}
 
-	// 处理描述字段
-	if strings.HasPrefix(trimmedLine, "description:") {
-		return a.translateSingleField(line, "description:", targetLang)
+	// 定义需要翻译的数组字段
+	translatableArrayFields := map[string]bool{
+		"tags":       true,
+		"categories": true,
+		"authors":    true,
 	}
 
-	// 处理副标题
-	if strings.HasPrefix(trimmedLine, "subtitle:") {
-		return a.translateSingleField(line, "subtitle:", targetLang)
-	}
+	for key, value := range data {
+		switch {
+		case translatableFields[key]:
+			// 翻译单个字符串字段
+			if strValue, ok := value.(string); ok {
+				translatedValue, err := a.translateStringField(key, strValue, targetLang)
+				if err != nil {
+					fmt.Printf("  警告: 翻译字段 %s 失败: %v\n", key, err)
+					result[key] = value // 保持原值
+				} else {
+					result[key] = translatedValue
+				}
+			} else {
+				result[key] = value
+			}
 
-	// 处理摘要
-	if strings.HasPrefix(trimmedLine, "summary:") {
-		return a.translateSingleField(line, "summary:", targetLang)
-	}
+		case translatableArrayFields[key]:
+			// 翻译数组字段
+			if arrayValue, ok := value.([]interface{}); ok {
+				translatedArray, err := a.translateArrayField(key, arrayValue, targetLang)
+				if err != nil {
+					fmt.Printf("  警告: 翻译数组字段 %s 失败: %v\n", key, err)
+					result[key] = value // 保持原值
+				} else {
+					result[key] = translatedArray
+				}
+			} else {
+				result[key] = value
+			}
 
-	// 处理slug字段
-	if strings.HasPrefix(trimmedLine, "slug:") {
-		return a.translateSlugField(line, targetLang)
-	}
+		case key == "slug":
+			// 特殊处理 slug 字段
+			if strValue, ok := value.(string); ok {
+				translatedSlug, err := a.translateSlugField(strValue, targetLang)
+				if err != nil {
+					fmt.Printf("  警告: 翻译slug失败: %v\n", err)
+					result[key] = value // 保持原值
+				} else {
+					result[key] = translatedSlug
+				}
+			} else {
+				result[key] = value
+			}
 
-	// 处理数组字段
-	if strings.HasPrefix(trimmedLine, "tags:") {
-		return a.translateArrayField(line, "tags:", targetLang)
-	}
-
-	if strings.HasPrefix(trimmedLine, "categories:") {
-		return a.translateArrayField(line, "categories:", targetLang)
-	}
-
-	if strings.HasPrefix(trimmedLine, "authors:") {
-		return a.translateArrayField(line, "authors:", targetLang)
-	}
-
-	return ""
-}
-
-// translateSingleField 翻译单个字段
-func (a *ArticleTranslator) translateSingleField(line, prefix, targetLang string) string {
-	value := a.contentParser.ExtractFieldValue(line, prefix)
-	if value != "" && a.translationUtils.ContainsChinese(value) {
-		fmt.Printf("  %s: %s -> ", strings.TrimSuffix(prefix, ":"), value)
-
-		// 使用缓存翻译
-		translated, err := a.translationUtils.TranslateToLanguage(value, targetLang)
-		if err != nil {
-			fmt.Printf("翻译失败\n")
-			return ""
-		} else {
-			// 彻底移除所有引号
-			translated = a.translationUtils.RemoveQuotes(translated)
-			translated = a.translationUtils.CleanTranslationResult(translated)
-			// 再次确保移除双引号
-			translated = strings.ReplaceAll(translated, "\"", "")
-			translated = strings.ReplaceAll(translated, "'", "")
-			fmt.Printf("%s\n", translated)
-			return fmt.Sprintf("%s \"%s\"", prefix, translated)
+		default:
+			// 其他字段保持不变
+			result[key] = value
 		}
 	}
-	return ""
+
+	return result, nil
 }
 
-// translateSlugField 翻译slug字段
-func (a *ArticleTranslator) translateSlugField(line, targetLang string) string {
-	slug := a.contentParser.ExtractFieldValue(line, "slug:")
-	if slug != "" && a.translationUtils.ContainsChinese(slug) {
-		fmt.Printf("  slug: %s -> ", slug)
-
-		// 使用缓存翻译
-		translated, err := a.translationUtils.TranslateToLanguage(slug, targetLang)
-		if err != nil {
-			fmt.Printf("翻译失败\n")
-			return ""
-		} else {
-			// 彻底移除所有引号
-			translated = a.translationUtils.RemoveQuotes(translated)
-			translated = a.translationUtils.CleanTranslationResult(translated)
-			// 再次确保移除双引号
-			translated = strings.ReplaceAll(translated, "\"", "")
-			translated = strings.ReplaceAll(translated, "'", "")
-			translated = a.translationUtils.FormatSlugField(translated)
-			fmt.Printf("%s\n", translated)
-			return fmt.Sprintf("slug: \"%s\"", translated)
-		}
+// translateStringField 翻译字符串字段
+func (a *ArticleTranslator) translateStringField(fieldName, value, targetLang string) (string, error) {
+	if value == "" || !a.translationUtils.ContainsChinese(value) {
+		return value, nil
 	}
-	return ""
+
+	fmt.Printf("  %s: %s -> ", fieldName, value)
+
+	// 使用缓存翻译
+	translated, err := a.translationUtils.TranslateToLanguage(value, targetLang)
+	if err != nil {
+		fmt.Printf("翻译失败\n")
+		return value, err
+	}
+
+	// 清理翻译结果
+	translated = a.translationUtils.RemoveQuotes(translated)
+	translated = a.translationUtils.CleanTranslationResult(translated)
+	translated = strings.ReplaceAll(translated, "\"", "")
+	translated = strings.ReplaceAll(translated, "'", "")
+
+	fmt.Printf("%s\n", translated)
+	return translated, nil
 }
 
 // translateArrayField 翻译数组字段
-func (a *ArticleTranslator) translateArrayField(line, prefix, targetLang string) string {
-	items := a.contentParser.ExtractArrayField(line, prefix)
-	if len(items) > 0 {
-		translatedItems := a.translateArrayItems(items, strings.TrimSuffix(prefix, ":"), targetLang)
-		return fmt.Sprintf("%s %s", prefix, a.contentParser.FormatArrayField(translatedItems))
+func (a *ArticleTranslator) translateArrayField(fieldName string, items []interface{}, targetLang string) ([]interface{}, error) {
+	if len(items) == 0 {
+		return items, nil
 	}
-	return ""
-}
 
-// translateArrayItems 翻译数组项目
-func (a *ArticleTranslator) translateArrayItems(items []string, fieldType, targetLang string) []string {
-	var translated []string
+	fmt.Printf("  %s: ", fieldName)
 
-	fmt.Printf("  %s: ", fieldType)
-
+	var translatedItems []interface{}
 	for _, item := range items {
-		if a.translationUtils.ContainsChinese(item) {
-			fmt.Printf("%s -> ", item)
+		if strItem, ok := item.(string); ok {
+			if a.translationUtils.ContainsChinese(strItem) {
+				fmt.Printf("%s -> ", strItem)
 
-			// 使用缓存翻译
-			translatedItem, err := a.translationUtils.TranslateToLanguage(item, targetLang)
-			if err != nil {
-				fmt.Printf("失败 ")
-				translated = append(translated, item)
+				// 使用缓存翻译
+				translated, err := a.translationUtils.TranslateToLanguage(strItem, targetLang)
+				if err != nil {
+					fmt.Printf("失败 ")
+					translatedItems = append(translatedItems, item)
+					continue
+				}
+
+				// 清理翻译结果
+				translated = a.translationUtils.RemoveQuotes(translated)
+				translated = a.translationUtils.CleanTranslationResult(translated)
+				translated = strings.ReplaceAll(translated, "\"", "")
+				translated = strings.ReplaceAll(translated, "'", "")
+
+				fmt.Printf("%s ", translated)
+				translatedItems = append(translatedItems, translated)
 			} else {
-				// 彻底移除所有引号
-				translatedItem = a.translationUtils.RemoveQuotes(translatedItem)
-				translatedItem = a.translationUtils.CleanTranslationResult(translatedItem)
-				// 再次确保移除双引号
-				translatedItem = strings.ReplaceAll(translatedItem, "\"", "")
-				translatedItem = strings.ReplaceAll(translatedItem, "'", "")
-				fmt.Printf("%s ", translatedItem)
-				translated = append(translated, translatedItem)
+				fmt.Printf("%s -> %s\t", strItem, strItem)
+				translatedItems = append(translatedItems, item)
 			}
 		} else {
-			translated = append(translated, item)
+			translatedItems = append(translatedItems, item)
 		}
 	}
 
 	fmt.Printf("\n")
-	return translated
+	return translatedItems, nil
+}
+
+// translateSlugField 翻译slug字段
+func (a *ArticleTranslator) translateSlugField(slug, targetLang string) (string, error) {
+	if slug == "" || !a.translationUtils.ContainsChinese(slug) {
+		return slug, nil
+	}
+
+	fmt.Printf("  slug: %s -> ", slug)
+
+	// 使用缓存翻译
+	translated, err := a.translationUtils.TranslateToLanguage(slug, targetLang)
+	if err != nil {
+		fmt.Printf("翻译失败\n")
+		return slug, err
+	}
+
+	// 清理翻译结果
+	translated = a.translationUtils.RemoveQuotes(translated)
+	translated = a.translationUtils.CleanTranslationResult(translated)
+	translated = strings.ReplaceAll(translated, "\"", "")
+	translated = strings.ReplaceAll(translated, "'", "")
+	translated = a.translationUtils.FormatSlugField(translated)
+
+	fmt.Printf("%s\n", translated)
+	return translated, nil
 }
 
 // translateArticleBodyToLanguage 翻译正文到指定语言
