@@ -38,7 +38,7 @@ func (c *ContentParser) ParseArticleContent(content string) (string, string) {
 		return "", content
 	}
 
-	frontMatter := strings.Join(lines[0:frontMatterEnd+1], "\n")
+	frontMatter := strings.Join(lines[1:frontMatterEnd], "\n") // 不包含前后的 ---
 	body := strings.Join(lines[frontMatterEnd+1:], "\n")
 
 	return frontMatter, body
