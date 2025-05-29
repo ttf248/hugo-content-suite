@@ -59,14 +59,10 @@ func (p *Processor) QuickProcessAll(tagStats []models.TagStats, reader *bufio.Re
 
 	// 预览文章翻译
 	articleTranslator := generator.NewArticleTranslator(p.contentDir)
-	translationPreviews, err := articleTranslator.PreviewArticleTranslations()
+	translationStatus, err := articleTranslator.GetTranslationStatus()
 	missingTranslationCount := 0
 	if err == nil {
-		for _, preview := range translationPreviews {
-			if preview.Status == "missing" {
-				missingTranslationCount++
-			}
-		}
+		missingTranslationCount = translationStatus.MissingArticles
 	}
 
 	// 显示总体预览
@@ -193,22 +189,16 @@ func (p *Processor) executeProcessFlow(cachePreview *display.BulkTranslationPrev
 	color.Cyan("🚀 开始一键处理流程...")
 	utils.Info("开始一键处理流程")
 
-	// 获取文章翻译预览信息
+	// 获取文章翻译状态
 	articleTranslator := generator.NewArticleTranslator(p.contentDir)
-	translationPreviews, err := articleTranslator.PreviewArticleTranslations()
+	translationStatus, err := articleTranslator.GetTranslationStatus()
 	if err != nil {
-		color.Red("❌ 获取文章翻译预览失败: %v", err)
-		utils.Error("获取文章翻译预览失败: %v", err)
+		color.Red("❌ 获取文章翻译状态失败: %v", err)
+		utils.Error("获取文章翻译状态失败: %v", err)
 		return
 	}
 
-	// 统计需要翻译的文章数量
-	missingTranslationCount := 0
-	for _, preview := range translationPreviews {
-		if preview.Status == "missing" {
-			missingTranslationCount++
-		}
-	}
+	missingTranslationCount := translationStatus.MissingArticles
 
 	// 步骤1: 生成全量翻译缓存
 	if len(cachePreview.MissingTranslations) > 0 {

@@ -17,15 +17,11 @@ type ArticleTranslator struct {
 	contentParser    *ContentParser
 }
 
-// ArticleTranslationPreview 文章翻译预览信息
-type ArticleTranslationPreview struct {
-	OriginalFile   string
-	EnglishFile    string
-	Title          string
-	WordCount      int
-	ParagraphCount int
-	Status         string // "missing", "exists"
-	EstimatedTime  string
+// TranslationStatus 翻译状态信息
+type TranslationStatus struct {
+	MissingArticles  int // 有缺失翻译的文章数
+	ExistingArticles int // 所有翻译都存在的文章数
+	TotalArticles    int // 文章总数
 }
 
 // NewArticleTranslator 创建新的文章翻译器
@@ -38,8 +34,8 @@ func NewArticleTranslator(contentDir string) *ArticleTranslator {
 	}
 }
 
-// PreviewArticleTranslations 预览需要翻译的文章
-func (a *ArticleTranslator) PreviewArticleTranslations() ([]ArticleTranslationPreview, error) {
+// GetTranslationStatus 获取翻译状态统计
+func (a *ArticleTranslator) GetTranslationStatus() (*TranslationStatus, error) {
 	articles, err := scanner.ScanArticles(a.contentDir)
 	if err != nil {
 		return nil, fmt.Errorf("扫描文章失败: %v", err)
@@ -48,46 +44,47 @@ func (a *ArticleTranslator) PreviewArticleTranslations() ([]ArticleTranslationPr
 	cfg := config.GetGlobalConfig()
 	targetLanguages := cfg.Language.TargetLanguages
 
-	var previews []ArticleTranslationPreview
+	missingCount := 0
+	existingCount := 0
+	totalArticles := 0
 
 	for _, article := range articles {
 		if article.Title == "" {
 			continue
 		}
+		totalArticles++
 
-		// 为每种目标语言生成预览
+		hasMissing := false
+		hasExisting := false
+
+		// 检查每种目标语言的翻译状态
 		for _, targetLang := range targetLanguages {
 			targetFile := a.fileUtils.BuildTargetFilePath(article.FilePath, targetLang)
 			if targetFile == "" {
 				continue
 			}
 
-			// 检查目标文件是否存在
-			status := "missing"
 			if a.fileUtils.FileExists(targetFile) {
-				status = "exists"
+				hasExisting = true
+			} else {
+				hasMissing = true
 			}
+		}
 
-			// 分析文章内容
-			content, _ := a.fileUtils.ReadFileContent(article.FilePath)
-			wordCount, paragraphCount := a.contentParser.AnalyzeArticleContent(content)
-			estimatedTime := a.contentParser.EstimateTranslationTime(paragraphCount)
-
-			preview := ArticleTranslationPreview{
-				OriginalFile:   article.FilePath,
-				EnglishFile:    targetFile,
-				Title:          fmt.Sprintf("%s (%s)", article.Title, cfg.Language.LanguageNames[targetLang]),
-				WordCount:      wordCount,
-				ParagraphCount: paragraphCount,
-				Status:         status,
-				EstimatedTime:  estimatedTime,
-			}
-
-			previews = append(previews, preview)
+		// 如果有任何语言缺失翻译，则算作需要翻译的文章
+		if hasMissing {
+			missingCount++
+		} else if hasExisting {
+			// 只有当所有语言都存在时，才算作已翻译的文章
+			existingCount++
 		}
 	}
 
-	return previews, nil
+	return &TranslationStatus{
+		MissingArticles:  missingCount,
+		ExistingArticles: existingCount,
+		TotalArticles:    totalArticles,
+	}, nil
 }
 
 // TranslateArticles 翻译文章到多种语言
@@ -138,13 +135,13 @@ func (a *ArticleTranslator) TranslateArticles(mode string) error {
 }
 
 // translateSingleArticleToLanguage 翻译单篇文章到指定语言
-func (a *ArticleTranslator) translateSingleArticleToLanguage(preview ArticleTranslationPreview, targetLang string) error {
-	utils.Info("开始翻译文章到 %s: %s", targetLang, preview.OriginalFile)
+func (a *ArticleTranslator) translateSingleArticleToLanguage(originalFile, targetFile, targetLang string) error {
+	utils.Info("开始翻译文章到 %s: %s", targetLang, originalFile)
 
 	// 读取原文件
-	content, err := a.fileUtils.ReadFileContent(preview.OriginalFile)
+	content, err := a.fileUtils.ReadFileContent(originalFile)
 	if err != nil {
-		utils.Error("读取原文件失败: %s, 错误: %v", preview.OriginalFile, err)
+		utils.Error("读取原文件失败: %s, 错误: %v", originalFile, err)
 		return fmt.Errorf("读取原文件失败: %v", err)
 	}
 
@@ -164,11 +161,11 @@ func (a *ArticleTranslator) translateSingleArticleToLanguage(preview ArticleTran
 
 	// 合成并写入最终内容
 	finalContent := a.contentParser.CombineTranslatedContent(translatedFrontMatter, translatedBody)
-	if err := a.fileUtils.WriteFileContent(preview.EnglishFile, finalContent); err != nil {
+	if err := a.fileUtils.WriteFileContent(targetFile, finalContent); err != nil {
 		return fmt.Errorf("写入目标文件失败: %v", err)
 	}
 
-	utils.Info("文章翻译完成 (%s): %s", targetLang, preview.EnglishFile)
+	utils.Info("文章翻译完成 (%s): %s", targetLang, targetFile)
 	return nil
 }
 
@@ -206,13 +203,7 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 			fmt.Printf("目标语言: %s\n", targetLangName)
 			fmt.Printf("目标文件: %s\n", targetFile)
 
-			preview := ArticleTranslationPreview{
-				OriginalFile: article.FilePath,
-				EnglishFile:  targetFile,
-				Title:        article.Title,
-			}
-
-			if err := a.translateSingleArticleToLanguage(preview, targetLang); err != nil {
+			if err := a.translateSingleArticleToLanguage(article.FilePath, targetFile, targetLang); err != nil {
 				fmt.Printf("❌ 翻译失败: %v\n", err)
 				errorCount++
 				totalErrorCount++
