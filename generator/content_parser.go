@@ -399,7 +399,19 @@ func (c *ContentParser) ParseContentIntoParagraphs(content string) []string {
 			continue
 		}
 
-		// 特殊markdown元素单独成段
+		// 标题行必须单独成段
+		if c.isHeaderLine(line) {
+			// 先结束当前段落
+			if len(currentParagraph) > 0 {
+				paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
+				currentParagraph = nil
+			}
+			// 标题行单独成段
+			paragraphs = append(paragraphs, line)
+			continue
+		}
+
+		// 其他特殊markdown元素单独成段
 		if c.isBlockLevelElement(line) {
 			// 先结束当前段落
 			if len(currentParagraph) > 0 {
@@ -423,14 +435,43 @@ func (c *ContentParser) ParseContentIntoParagraphs(content string) []string {
 	return c.cleanEmptyParagraphs(paragraphs)
 }
 
+// isHeaderLine 检查是否为标题行
+func (c *ContentParser) isHeaderLine(line string) bool {
+	trimmed := strings.TrimSpace(line)
+
+	// 检查是否以#开头
+	if !strings.HasPrefix(trimmed, "#") {
+		return false
+	}
+
+	// 计算连续的#号数量
+	hashCount := 0
+	for _, r := range trimmed {
+		if r == '#' {
+			hashCount++
+		} else {
+			break
+		}
+	}
+
+	// 必须是1-6个#号，且后面要么是空格要么是结尾
+	if hashCount >= 1 && hashCount <= 6 {
+		if len(trimmed) == hashCount {
+			// 只有#号
+			return true
+		}
+		if len(trimmed) > hashCount && trimmed[hashCount] == ' ' {
+			// #号后面跟空格
+			return true
+		}
+	}
+
+	return false
+}
+
 // isBlockLevelElement 检查是否为块级元素
 func (c *ContentParser) isBlockLevelElement(line string) bool {
 	trimmed := strings.TrimSpace(line)
-
-	// 标题
-	if strings.HasPrefix(trimmed, "#") && (len(trimmed) == 1 || trimmed[1] == '#' || trimmed[1] == ' ') {
-		return true
-	}
 
 	// 水平分割线
 	if matched, _ := regexp.MatchString(`^(-{3,}|\*{3,}|_{3,})$`, trimmed); matched {
@@ -448,6 +489,52 @@ func (c *ContentParser) isBlockLevelElement(line string) bool {
 	}
 
 	return false
+}
+
+// ExtractHeaderPrefix 提取标题前缀和内容
+func (c *ContentParser) ExtractHeaderPrefix(line string) (string, string) {
+	trimmed := strings.TrimSpace(line)
+
+	if !strings.HasPrefix(trimmed, "#") {
+		return "", line
+	}
+
+	// 计算连续的#号数量
+	hashCount := 0
+	for _, r := range trimmed {
+		if r == '#' {
+			hashCount++
+		} else {
+			break
+		}
+	}
+
+	// 构建前缀
+	prefix := strings.Repeat("#", hashCount)
+
+	// 提取内容
+	content := ""
+	if len(trimmed) > hashCount {
+		if trimmed[hashCount] == ' ' {
+			// 有空格，提取空格后的内容
+			content = strings.TrimSpace(trimmed[hashCount+1:])
+			prefix += " "
+		} else {
+			// 没有空格，提取#号后的内容
+			content = strings.TrimSpace(trimmed[hashCount:])
+			prefix += " " // 补充空格
+		}
+	}
+
+	return prefix, content
+}
+
+// ReconstructHeaderLine 重构标题行
+func (c *ContentParser) ReconstructHeaderLine(prefix, translatedContent string) string {
+	if prefix == "" {
+		return translatedContent
+	}
+	return prefix + translatedContent
 }
 
 // cleanEmptyParagraphs 清理空段落

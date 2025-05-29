@@ -405,6 +405,11 @@ func (t *TranslationUtils) RestoreMarkdownElements(text string, protectedElement
 
 // TranslateParagraphToLanguage 翻译段落到指定语言
 func (t *TranslationUtils) TranslateParagraphToLanguage(paragraph, targetLang string) (string, error) {
+	// 检查是否为标题行
+	if t.isHeaderLine(paragraph) {
+		return t.translateHeaderLine(paragraph, targetLang)
+	}
+
 	// 保护关键元素
 	protectedContent, protectedElements := t.ProtectMarkdownElements(paragraph)
 
@@ -421,4 +426,105 @@ func (t *TranslationUtils) TranslateParagraphToLanguage(paragraph, targetLang st
 	finalContent := t.RestoreMarkdownElements(translatedContent, protectedElements)
 
 	return finalContent, nil
+}
+
+// isHeaderLine 检查是否为标题行
+func (t *TranslationUtils) isHeaderLine(line string) bool {
+	trimmed := strings.TrimSpace(line)
+
+	// 检查是否以#开头
+	if !strings.HasPrefix(trimmed, "#") {
+		return false
+	}
+
+	// 计算连续的#号数量
+	hashCount := 0
+	for _, r := range trimmed {
+		if r == '#' {
+			hashCount++
+		} else {
+			break
+		}
+	}
+
+	// 必须是1-6个#号，且后面要么是空格要么是结尾
+	if hashCount >= 1 && hashCount <= 6 {
+		if len(trimmed) == hashCount {
+			// 只有#号
+			return true
+		}
+		if len(trimmed) > hashCount && trimmed[hashCount] == ' ' {
+			// #号后面跟空格
+			return true
+		}
+	}
+
+	return false
+}
+
+// translateHeaderLine 翻译标题行
+func (t *TranslationUtils) translateHeaderLine(line, targetLang string) (string, error) {
+	trimmed := strings.TrimSpace(line)
+
+	// 提取标题前缀和内容
+	prefix, content := t.extractHeaderPrefix(trimmed)
+
+	// 如果没有内容需要翻译，直接返回原行
+	if content == "" || !t.ContainsChinese(content) {
+		return line, nil
+	}
+
+	// 翻译标题内容
+	translatedContent, err := t.TranslateToLanguage(content, targetLang)
+	if err != nil {
+		return "", err
+	}
+
+	// 清理翻译结果
+	translatedContent = t.CleanTranslationResult(translatedContent)
+	translatedContent = t.RemoveQuotes(translatedContent)
+
+	// 重构标题行，保持原有的缩进
+	originalIndent := ""
+	if len(line) > len(trimmed) {
+		originalIndent = line[:len(line)-len(trimmed)]
+	}
+
+	return originalIndent + prefix + translatedContent, nil
+}
+
+// extractHeaderPrefix 提取标题前缀
+func (t *TranslationUtils) extractHeaderPrefix(line string) (string, string) {
+	if !strings.HasPrefix(line, "#") {
+		return "", line
+	}
+
+	// 计算连续的#号数量
+	hashCount := 0
+	for _, r := range line {
+		if r == '#' {
+			hashCount++
+		} else {
+			break
+		}
+	}
+
+	// 构建前缀
+	prefix := strings.Repeat("#", hashCount)
+
+	// 提取内容
+	content := ""
+	if len(line) > hashCount {
+		if line[hashCount] == ' ' {
+			// 有空格，提取空格后的内容
+			content = strings.TrimSpace(line[hashCount+1:])
+			prefix += " "
+		} else {
+			// 没有空格，提取#号后的内容
+			content = strings.TrimSpace(line[hashCount:])
+			prefix += " " // 补充空格
+		}
+	}
+
+	return prefix, content
 }
