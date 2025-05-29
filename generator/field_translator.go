@@ -105,31 +105,23 @@ func (a *ArticleTranslator) translateFieldLine(line, targetLang string) string {
 // translateSingleField 翻译单个字段
 func (a *ArticleTranslator) translateSingleField(line, prefix, targetLang string) string {
 	value := a.contentParser.ExtractFieldValue(line, prefix)
-	if value != "" {
-		// 检查是否只包含英文，如果是则直接返回
-		if a.translationUtils.IsOnlyEnglish(value) {
+	if value != "" && a.translationUtils.ContainsChinese(value) {
+		fmt.Printf("  %s: %s -> ", strings.TrimSuffix(prefix, ":"), value)
+
+		// 使用缓存翻译
+		translated, err := a.translationUtils.TranslateToLanguage(value, targetLang)
+		if err != nil {
+			fmt.Printf("翻译失败\n")
 			return ""
-		}
-
-		// 检查是否包含中文需要翻译
-		if a.translationUtils.ContainsChinese(value) {
-			fmt.Printf("  %s: %s -> ", strings.TrimSuffix(prefix, ":"), value)
-
-			// 使用缓存翻译
-			translated, err := a.translationUtils.TranslateToLanguage(value, targetLang)
-			if err != nil {
-				fmt.Printf("翻译失败\n")
-				return ""
-			} else {
-				// 彻底移除所有引号
-				translated = a.translationUtils.RemoveQuotes(translated)
-				translated = a.translationUtils.CleanTranslationResult(translated)
-				// 再次确保移除双引号
-				translated = strings.ReplaceAll(translated, "\"", "")
-				translated = strings.ReplaceAll(translated, "'", "")
-				fmt.Printf("%s\n", translated)
-				return fmt.Sprintf("%s \"%s\"", prefix, translated)
-			}
+		} else {
+			// 彻底移除所有引号
+			translated = a.translationUtils.RemoveQuotes(translated)
+			translated = a.translationUtils.CleanTranslationResult(translated)
+			// 再次确保移除双引号
+			translated = strings.ReplaceAll(translated, "\"", "")
+			translated = strings.ReplaceAll(translated, "'", "")
+			fmt.Printf("%s\n", translated)
+			return fmt.Sprintf("%s \"%s\"", prefix, translated)
 		}
 	}
 	return ""
@@ -138,32 +130,24 @@ func (a *ArticleTranslator) translateSingleField(line, prefix, targetLang string
 // translateSlugField 翻译slug字段
 func (a *ArticleTranslator) translateSlugField(line, targetLang string) string {
 	slug := a.contentParser.ExtractFieldValue(line, "slug:")
-	if slug != "" {
-		// 检查是否只包含英文，如果是则直接返回
-		if a.translationUtils.IsOnlyEnglish(slug) {
+	if slug != "" && a.translationUtils.ContainsChinese(slug) {
+		fmt.Printf("  slug: %s -> ", slug)
+
+		// 使用缓存翻译
+		translated, err := a.translationUtils.TranslateToLanguage(slug, targetLang)
+		if err != nil {
+			fmt.Printf("翻译失败\n")
 			return ""
-		}
-
-		// 检查是否包含中文需要翻译
-		if a.translationUtils.ContainsChinese(slug) {
-			fmt.Printf("  slug: %s -> ", slug)
-
-			// 使用缓存翻译
-			translated, err := a.translationUtils.TranslateToLanguage(slug, targetLang)
-			if err != nil {
-				fmt.Printf("翻译失败\n")
-				return ""
-			} else {
-				// 彻底移除所有引号
-				translated = a.translationUtils.RemoveQuotes(translated)
-				translated = a.translationUtils.CleanTranslationResult(translated)
-				// 再次确保移除双引号
-				translated = strings.ReplaceAll(translated, "\"", "")
-				translated = strings.ReplaceAll(translated, "'", "")
-				translated = a.translationUtils.FormatSlugField(translated)
-				fmt.Printf("%s\n", translated)
-				return fmt.Sprintf("slug: \"%s\"", translated)
-			}
+		} else {
+			// 彻底移除所有引号
+			translated = a.translationUtils.RemoveQuotes(translated)
+			translated = a.translationUtils.CleanTranslationResult(translated)
+			// 再次确保移除双引号
+			translated = strings.ReplaceAll(translated, "\"", "")
+			translated = strings.ReplaceAll(translated, "'", "")
+			translated = a.translationUtils.FormatSlugField(translated)
+			fmt.Printf("%s\n", translated)
+			return fmt.Sprintf("slug: \"%s\"", translated)
 		}
 	}
 	return ""
@@ -186,14 +170,6 @@ func (a *ArticleTranslator) translateArrayItems(items []string, fieldType, targe
 	fmt.Printf("  %s: ", fieldType)
 
 	for _, item := range items {
-		// 检查是否只包含英文，如果是则保持原样
-		if a.translationUtils.IsOnlyEnglish(item) {
-			translated = append(translated, item)
-			fmt.Printf("%s (保持) ", item)
-			continue
-		}
-
-		// 检查是否包含中文需要翻译
 		if a.translationUtils.ContainsChinese(item) {
 			fmt.Printf("%s -> ", item)
 
@@ -427,11 +403,6 @@ func (a *ArticleTranslator) translateContentByLinesToLanguage(content, targetLan
 
 // translateMarkdownAwareLine 智能翻译markdown行
 func (a *ArticleTranslator) translateMarkdownAwareLine(line string, lineNum int, targetLang string) (string, error) {
-	// 检查是否只包含英文，如果是则直接返回
-	if a.translationUtils.IsOnlyEnglish(line) {
-		return line, nil
-	}
-
 	// 检查是否为markdown元素行
 	if a.contentParser.IsMarkdownElement(line) {
 		// 提取markdown前缀和内容
