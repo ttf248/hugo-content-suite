@@ -49,10 +49,11 @@ type TranslationConfig struct {
 }
 
 type ParagraphConfig struct {
-	MaxLength        int  `json:"max_length"`         // 段落最大长度（字符数）
-	EnableSplitting  bool `json:"enable_splitting"`   // 是否启用段落拆分
-	SplitAtSentences bool `json:"split_at_sentences"` // 是否在句子边界拆分
-	MinSplitLength   int  `json:"min_split_length"`   // 拆分后段落的最小长度
+	MaxLength             int  `json:"max_length"`              // 段落最大长度（字符数）
+	EnableSplitting       bool `json:"enable_splitting"`        // 是否启用段落拆分
+	SplitAtSentences      bool `json:"split_at_sentences"`      // 是否在句子边界拆分
+	MinSplitLength        int  `json:"min_split_length"`        // 拆分后段落的最小长度
+	MergeAfterTranslation bool `json:"merge_after_translation"` // 翻译后是否合并拆分的段落
 }
 
 type LoggingConfig struct {
@@ -98,10 +99,11 @@ var defaultConfig = Config{
 		},
 	},
 	Paragraph: ParagraphConfig{
-		MaxLength:        800,  // 段落最大2000字符
-		EnableSplitting:  true, // 默认启用段落拆分
-		SplitAtSentences: true, // 在句子边界拆分
-		MinSplitLength:   200,  // 拆分后段落最小200字符
+		MaxLength:             800,  // 段落最大2000字符
+		EnableSplitting:       true, // 默认启用段落拆分
+		SplitAtSentences:      true, // 在句子边界拆分
+		MinSplitLength:        200,  // 拆分后段落最小200字符
+		MergeAfterTranslation: true, // 默认翻译后合并拆分的段落
 	},
 	Logging: LoggingConfig{
 		Level: "DEBUG",

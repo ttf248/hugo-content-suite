@@ -7,6 +7,19 @@ import (
 	"strings"
 )
 
+// ParagraphMapping 段落映射信息，用于追踪拆分的段落关系
+type ParagraphMapping struct {
+	OriginalIndex int      // 原始段落索引
+	SplitParts    []string // 拆分后的部分
+	IsOriginal    bool     // 是否为原始段落（未拆分）
+}
+
+// SplitResult 段落拆分结果
+type SplitResult struct {
+	Paragraphs []string           // 拆分后的段落列表
+	Mappings   []ParagraphMapping // 段落映射关系
+}
+
 // ContentParser 内容解析器
 type ContentParser struct {
 	translationUtils *TranslationUtils
@@ -445,6 +458,181 @@ func (c *ContentParser) ParseContentIntoParagraphs(content string) []string {
 	}
 
 	return splitParagraphs
+}
+
+// ParseContentIntoParagraphsWithMapping 将内容解析为段落并保留映射关系
+func (c *ContentParser) ParseContentIntoParagraphsWithMapping(content string) (*SplitResult, error) {
+	if strings.TrimSpace(content) == "" {
+		return &SplitResult{
+			Paragraphs: []string{},
+			Mappings:   []ParagraphMapping{},
+		}, nil
+	}
+
+	// 首先使用现有的解析逻辑获取基础段落
+	lines := strings.Split(content, "\n")
+	var paragraphs []string
+	var currentParagraph []string
+	inCodeBlock := false
+
+	for _, line := range lines {
+		trimmedLine := strings.TrimSpace(line)
+
+		// 检测代码块开始/结束
+		if strings.HasPrefix(trimmedLine, "```") {
+			if !inCodeBlock {
+				// 代码块开始
+				if len(currentParagraph) > 0 {
+					paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
+					currentParagraph = nil
+				}
+				inCodeBlock = true
+				currentParagraph = append(currentParagraph, line)
+			} else if trimmedLine == "```" || strings.HasPrefix(trimmedLine, "```") {
+				// 代码块结束
+				currentParagraph = append(currentParagraph, line)
+				paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
+				currentParagraph = nil
+				inCodeBlock = false
+			} else {
+				currentParagraph = append(currentParagraph, line)
+			}
+			continue
+		}
+
+		// 在代码块内，直接添加行
+		if inCodeBlock {
+			currentParagraph = append(currentParagraph, line)
+			continue
+		}
+
+		// 空行表示段落结束
+		if trimmedLine == "" {
+			if len(currentParagraph) > 0 {
+				paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
+				currentParagraph = nil
+			}
+			continue
+		}
+
+		// 标题行必须单独成段
+		if c.isHeaderLine(line) {
+			// 先结束当前段落
+			if len(currentParagraph) > 0 {
+				paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
+				currentParagraph = nil
+			}
+			// 标题行单独成段
+			paragraphs = append(paragraphs, line)
+			continue
+		}
+
+		// 其他特殊markdown元素单独成段
+		if c.isBlockLevelElement(line) {
+			// 先结束当前段落
+			if len(currentParagraph) > 0 {
+				paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
+				currentParagraph = nil
+			}
+			// 单独成段
+			paragraphs = append(paragraphs, line)
+			continue
+		}
+
+		// 普通行添加到当前段落
+		currentParagraph = append(currentParagraph, line)
+	}
+
+	// 处理最后一个段落
+	if len(currentParagraph) > 0 {
+		paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
+	}
+
+	cleanedParagraphs := c.cleanEmptyParagraphs(paragraphs)
+
+	// 应用段落拆分并生成映射关系
+	return c.applySplittingWithMapping(cleanedParagraphs), nil
+}
+
+// applySplittingWithMapping 对段落列表应用拆分并生成映射关系
+func (c *ContentParser) applySplittingWithMapping(paragraphs []string) *SplitResult {
+	var resultParagraphs []string
+	var mappings []ParagraphMapping
+
+	for originalIndex, paragraph := range paragraphs {
+		// 检查是否为特殊格式（代码块、标题等），这些不需要拆分
+		if c.shouldSkipSplitting(paragraph) || !c.config.Paragraph.EnableSplitting {
+			resultParagraphs = append(resultParagraphs, paragraph)
+			mappings = append(mappings, ParagraphMapping{
+				OriginalIndex: originalIndex,
+				SplitParts:    []string{paragraph},
+				IsOriginal:    true,
+			})
+			continue
+		}
+
+		// 对普通段落应用拆分
+		splitParagraphs := c.splitLongParagraph(paragraph)
+		resultParagraphs = append(resultParagraphs, splitParagraphs...)
+
+		// 记录映射关系
+		mappings = append(mappings, ParagraphMapping{
+			OriginalIndex: originalIndex,
+			SplitParts:    splitParagraphs,
+			IsOriginal:    len(splitParagraphs) == 1 && splitParagraphs[0] == paragraph,
+		})
+	}
+
+	result := &SplitResult{
+		Paragraphs: resultParagraphs,
+		Mappings:   mappings,
+	}
+
+	// 生成并记录统计信息
+	if c.config.Paragraph.EnableSplitting {
+		stats := c.GetParagraphSplitStats(paragraphs, resultParagraphs)
+		c.LogParagraphSplitInfo(stats)
+	}
+
+	return result
+}
+
+// MergeTranslatedParagraphs 合并翻译后的拆分段落
+func (c *ContentParser) MergeTranslatedParagraphs(translatedParagraphs []string, mappings []ParagraphMapping) ([]string, error) {
+	if !c.config.Paragraph.MergeAfterTranslation {
+		// 如果配置为不合并，直接返回翻译后的段落
+		return translatedParagraphs, nil
+	}
+
+	var mergedParagraphs []string
+	var currentIndex int
+
+	for _, mapping := range mappings {
+		if mapping.IsOriginal {
+			// 原始段落未被拆分，直接添加
+			if currentIndex < len(translatedParagraphs) {
+				mergedParagraphs = append(mergedParagraphs, translatedParagraphs[currentIndex])
+				currentIndex++
+			}
+		} else {
+			// 段落被拆分了，需要合并翻译后的片段
+			var parts []string
+			for i := 0; i < len(mapping.SplitParts); i++ {
+				if currentIndex < len(translatedParagraphs) {
+					parts = append(parts, strings.TrimSpace(translatedParagraphs[currentIndex]))
+					currentIndex++
+				}
+			}
+
+			if len(parts) > 0 {
+				// 合并拆分的段落为单个段落
+				merged := strings.Join(parts, " ")
+				mergedParagraphs = append(mergedParagraphs, merged)
+			}
+		}
+	}
+
+	return mergedParagraphs, nil
 }
 
 // isHeaderLine 检查是否为标题行

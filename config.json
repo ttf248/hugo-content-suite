@@ -35,7 +35,8 @@
     "max_length": 800,
     "enable_splitting": true,
     "split_at_sentences": true,
-    "min_split_length": 200
+    "min_split_length": 200,
+    "merge_after_translation": true
   },
   "logging": {
     "level": "DEBUG",

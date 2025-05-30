@@ -224,7 +224,7 @@ func (a *ArticleTranslator) translateSlugField(slug, targetLang string) (string,
 	return translated, nil
 }
 
-// translateArticleBodyToLanguage 翻译正文到指定语言（段落级）
+// translateArticleBodyToLanguage 翻译正文到指定语言（段落级，支持拆分合并）
 func (a *ArticleTranslator) translateArticleBodyToLanguage(body, targetLang string) (string, error) {
 	if strings.TrimSpace(body) == "" {
 		return body, nil
@@ -238,18 +238,141 @@ func (a *ArticleTranslator) translateArticleBodyToLanguage(body, targetLang stri
 
 	fmt.Printf("\n翻译正文到 %s...\n", targetLangName)
 
-	// 解析为段落
-	paragraphs := a.contentParser.ParseContentIntoParagraphs(body)
+	// 解析为段落并获取映射关系
+	splitResult, err := a.contentParser.ParseContentIntoParagraphsWithMapping(body)
+	if err != nil {
+		return "", fmt.Errorf("解析段落失败: %v", err)
+	}
+
+	paragraphs := splitResult.Paragraphs
+	mappings := splitResult.Mappings
 	totalParagraphs := len(paragraphs)
 	translatableParagraphs := a.contentParser.CountTranslatableParagraphs(paragraphs)
 
 	fmt.Printf("📖 总段落数: %d | 需翻译: %d | 跳过: %d\n",
 		totalParagraphs, translatableParagraphs, totalParagraphs-translatableParagraphs)
 
-	return a.translateParagraphsToLanguage(paragraphs, targetLang)
+	// 翻译段落
+	translatedParagraphs, err := a.translateParagraphsToLanguageWithMapping(paragraphs, targetLang)
+	if err != nil {
+		return "", err
+	}
+
+	// 如果启用了合并功能，则合并拆分后的段落
+	if cfg.Paragraph.MergeAfterTranslation {
+		fmt.Printf("🔄 合并拆分的段落...\n")
+		mergedParagraphs, err := a.contentParser.MergeTranslatedParagraphs(translatedParagraphs, mappings)
+		if err != nil {
+			fmt.Printf("⚠️ 段落合并失败，使用原始翻译结果: %v\n", err)
+			return strings.Join(translatedParagraphs, "\n\n"), nil
+		}
+
+		fmt.Printf("✅ 段落合并完成: %d个翻译段落 → %d个合并段落\n",
+			len(translatedParagraphs), len(mergedParagraphs))
+		return strings.Join(mergedParagraphs, "\n\n"), nil
+	}
+
+	return strings.Join(translatedParagraphs, "\n\n"), nil
 }
 
-// translateParagraphsToLanguage 翻译段落列表到指定语言
+// translateParagraphsToLanguageWithMapping 翻译段落列表到指定语言（支持映射关系）
+func (a *ArticleTranslator) translateParagraphsToLanguageWithMapping(paragraphs []string, targetLang string) ([]string, error) {
+	cfg := config.GetGlobalConfig()
+	var translatedParagraphs []string
+
+	// 统计信息
+	totalParagraphs := len(paragraphs)
+	translatableParagraphs := a.contentParser.CountTranslatableParagraphs(paragraphs)
+	translatedCount := 0
+	successCount := 0
+	errorCount := 0
+	startTime := time.Now()
+
+	fmt.Printf("\n开始段落级翻译...\n")
+
+	for _, paragraph := range paragraphs {
+		trimmed := strings.TrimSpace(paragraph)
+
+		// 检查是否需要翻译
+		if !a.contentParser.needsTranslation(paragraph) {
+			translatedParagraphs = append(translatedParagraphs, paragraph)
+			continue
+		}
+
+		translatedCount++
+
+		// 生成进度信息
+		progressPercent := float64(translatedCount) * 100.0 / float64(translatableParagraphs)
+		progressBar := a.generateProgressBar(translatedCount, translatableParagraphs, 30)
+
+		// 计算效率和预估时间
+		elapsed := time.Since(startTime)
+		avgTimePerParagraph := float64(elapsed.Nanoseconds()) / float64(translatedCount) / 1e9
+		remainingParagraphs := translatableParagraphs - translatedCount
+		estimatedRemaining := time.Duration(float64(remainingParagraphs) * avgTimePerParagraph * 1e9)
+
+		fmt.Printf("\n📝 段落 %d/%d %s %.1f%%\n",
+			translatedCount, translatableParagraphs, progressBar, progressPercent)
+		fmt.Printf("📄 长度: %d 字符 | 预计剩余: %v\n",
+			len(trimmed), estimatedRemaining.Round(time.Second))
+
+		// 显示段落预览（前80字符）
+		preview := trimmed
+		if len(preview) > 80 {
+			preview = preview[:80] + "..."
+		}
+		fmt.Printf("📖 内容: %s\n", preview)
+
+		// 翻译段落
+		paragraphStartTime := time.Now()
+		translatedParagraph, err := a.translationUtils.TranslateParagraphToLanguage(paragraph, targetLang)
+		paragraphDuration := time.Since(paragraphStartTime)
+
+		if err != nil {
+			fmt.Printf("❌ 翻译失败 (%.1fs): %v\n", paragraphDuration.Seconds(), err)
+			fmt.Printf("📝 保留原文\n")
+			translatedParagraphs = append(translatedParagraphs, paragraph)
+			errorCount++
+		} else {
+			fmt.Printf("✅ 翻译完成 (%.1fs)\n", paragraphDuration.Seconds())
+			translatedParagraphs = append(translatedParagraphs, translatedParagraph)
+			successCount++
+
+			// 显示翻译结果预览
+			translatedPreview := strings.TrimSpace(translatedParagraph)
+			if len(translatedPreview) > 80 {
+				translatedPreview = translatedPreview[:80] + "..."
+			}
+			fmt.Printf("📝 译文: %s\n", translatedPreview)
+		}
+
+		// 添加延迟避免API频率限制
+		if cfg.Translation.DelayBetweenMs > 0 && translatedCount < translatableParagraphs {
+			time.Sleep(time.Duration(cfg.Translation.DelayBetweenMs) * time.Millisecond)
+		}
+
+		// 每10个段落输出阶段报告
+		if translatedCount%10 == 0 {
+			a.printParagraphStageReport(translatedCount, translatableParagraphs, elapsed, successCount, errorCount)
+		}
+	}
+
+	// 输出最终统计
+	totalDuration := time.Since(startTime)
+	successRate := float64(successCount) * 100.0 / float64(translatedCount)
+	avgParagraphTime := totalDuration.Seconds() / float64(translatedCount)
+
+	fmt.Printf("\n🎉 段落翻译完成！\n")
+	fmt.Printf("   ⏱️  总用时: %v\n", totalDuration.Round(time.Second))
+	fmt.Printf("   📊 成功率: %.1f%% (%d/%d)\n", successRate, successCount, translatedCount)
+	fmt.Printf("   ⚡ 平均速度: %.1f 秒/段落\n", avgParagraphTime)
+	fmt.Printf("   📖 处理: %d 段落 (翻译 %d | 跳过 %d)\n",
+		totalParagraphs, translatedCount, totalParagraphs-translatedCount)
+
+	return translatedParagraphs, nil
+}
+
+// translateParagraphsToLanguage 翻译段落列表到指定语言（保留原有方法以保持兼容性）
 func (a *ArticleTranslator) translateParagraphsToLanguage(paragraphs []string, targetLang string) (string, error) {
 	cfg := config.GetGlobalConfig()
 	var translatedParagraphs []string
