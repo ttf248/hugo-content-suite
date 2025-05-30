@@ -688,6 +688,11 @@ func (c *ContentParser) isBlockLevelElement(line string) bool {
 		return true
 	}
 
+	// github secrets 或其他类似的特殊标记
+	if strings.HasPrefix(trimmed, "- ") || strings.HasPrefix(trimmed, "* ") || strings.HasPrefix(trimmed, "+ ") {
+		return true
+	}
+
 	return false
 }
 

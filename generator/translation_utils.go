@@ -212,12 +212,13 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 		strings.Contains(content, "__URL_") ||
 		strings.Contains(content, "__URL_ENCODED_") ||
 		strings.Contains(content, "__QUOTE_") ||
-		strings.Contains(content, "__ENGLISH_WORD_")
+		strings.Contains(content, "__ENGLISH_WORD_") ||
+		strings.Contains(content, "__LIST_ITEM_")
 
 	// 构建提示词内容
 	systemContent := fmt.Sprintf("Translate Chinese to %s accurately and concisely. Only output the translated text without any additional content.", targetLangName)
 	if containsPlaceholders {
-		systemContent += " Keep all placeholders (like __CODE_BLOCK_0__, __INLINE_CODE_1__, __LINK_0__, __IMAGE_0__, __URL_0__, __URL_ENCODED_0__, __QUOTE_0__, __ENGLISH_WORD_0__) unchanged."
+		systemContent += " Keep all placeholders (like __CODE_BLOCK_0__, __INLINE_CODE_1__, __LINK_0__, __IMAGE_0__, __URL_0__, __URL_ENCODED_0__, __QUOTE_0__, __ENGLISH_WORD_0__, __LIST_ITEM_0__) unchanged."
 	}
 
 	request := translator.LMStudioRequest{
@@ -385,6 +386,15 @@ func (t *TranslationUtils) ProtectMarkdownElements(text string, targetLang strin
 			return placeholder
 		})
 	}
+
+	// 9. 保护Markdown列表项（以-, *, +开头的行）
+	listItemRegex := regexp.MustCompile(`(?m)^[-*+]\s+.*$`)
+	text = listItemRegex.ReplaceAllStringFunc(text, func(match string) string {
+		placeholder := fmt.Sprintf("__LIST_ITEM_%d__", counter)
+		protectedElements[placeholder] = match
+		counter++
+		return placeholder
+	})
 
 	return text, protectedElements
 }
