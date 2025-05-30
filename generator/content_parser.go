@@ -491,52 +491,6 @@ func (c *ContentParser) isBlockLevelElement(line string) bool {
 	return false
 }
 
-// ExtractHeaderPrefix 提取标题前缀和内容
-func (c *ContentParser) ExtractHeaderPrefix(line string) (string, string) {
-	trimmed := strings.TrimSpace(line)
-
-	if !strings.HasPrefix(trimmed, "#") {
-		return "", line
-	}
-
-	// 计算连续的#号数量
-	hashCount := 0
-	for _, r := range trimmed {
-		if r == '#' {
-			hashCount++
-		} else {
-			break
-		}
-	}
-
-	// 构建前缀
-	prefix := strings.Repeat("#", hashCount)
-
-	// 提取内容
-	content := ""
-	if len(trimmed) > hashCount {
-		if trimmed[hashCount] == ' ' {
-			// 有空格，提取空格后的内容
-			content = strings.TrimSpace(trimmed[hashCount+1:])
-			prefix += " "
-		} else {
-			// 没有空格，提取#号后的内容
-			content = strings.TrimSpace(trimmed[hashCount:])
-			prefix += " " // 补充空格
-		}
-	}
-
-	return prefix, content
-}
-
-// ReconstructHeaderLine 重构标题行
-func (c *ContentParser) ReconstructHeaderLine(prefix, translatedContent string) string {
-	if prefix == "" {
-		return translatedContent
-	}
-	return prefix + translatedContent
-}
-
 // cleanEmptyParagraphs 清理空段落
 func (c *ContentParser) cleanEmptyParagraphs(paragraphs []string) []string {
 	var result []string
