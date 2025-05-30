@@ -71,10 +71,10 @@ func (p *Processor) selectTranslationMode(missingCount, existingCount int, reade
 	if missingCount > 0 {
 		options = append(options, fmt.Sprintf("1. 仅翻译缺失的文章 (%d 篇)", missingCount))
 	}
-	if existingCount > 0 {
+	if existingCount >= 0 {
 		options = append(options, fmt.Sprintf("2. 重新翻译现有文章 (%d 篇)", existingCount))
 	}
-	if missingCount > 0 && existingCount > 0 {
+	if missingCount > 0 && existingCount >= 0 {
 		options = append(options, fmt.Sprintf("3. 翻译全部文章 (%d 篇)", missingCount+existingCount))
 	}
 
