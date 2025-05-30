@@ -175,19 +175,20 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 	totalSuccessCount := 0
 	totalErrorCount := 0
 
-	// 按语言顺序翻译
-	for langIndex, targetLang := range targetLanguages {
-		targetLangName := cfg.Language.LanguageNames[targetLang]
-		if targetLangName == "" {
-			targetLangName = targetLang
-		}
+	// 按文章顺序翻译，每篇文章完成所有语言后再处理下一篇
+	for i, article := range targetArticles {
+		fmt.Printf("\n📄 处理文章 (%d/%d): %s\n", i+1, len(targetArticles), article.Title)
 
-		fmt.Printf("\n🌐 开始翻译为 %s (%d/%d)\n", targetLangName, langIndex+1, len(targetLanguages))
+		articleSuccessCount := 0
+		articleErrorCount := 0
 
-		successCount := 0
-		errorCount := 0
+		// 为当前文章翻译所有目标语言
+		for langIndex, targetLang := range targetLanguages {
+			targetLangName := cfg.Language.LanguageNames[targetLang]
+			if targetLangName == "" {
+				targetLangName = targetLang
+			}
 
-		for i, article := range targetArticles {
 			targetFile := a.fileUtils.BuildTargetFilePath(article.FilePath, targetLang)
 			if targetFile == "" {
 				continue
@@ -196,27 +197,25 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 			// 检查是否需要翻译
 			shouldTranslate := a.shouldTranslateArticle(targetFile, mode)
 			if !shouldTranslate {
+				fmt.Printf("  ⏭️  跳过 %s (已存在)\n", targetLangName)
 				continue
 			}
 
-			fmt.Printf("\n处理文章 (%d/%d): %s\n", i+1, len(targetArticles), article.Title)
-			fmt.Printf("目标语言: %s\n", targetLangName)
-			fmt.Printf("目标文件: %s\n", targetFile)
+			fmt.Printf("  🌐 翻译为 %s (%d/%d)\n", targetLangName, langIndex+1, len(targetLanguages))
+			fmt.Printf("     目标文件: %s\n", targetFile)
 
 			if err := a.translateSingleArticleToLanguage(article.FilePath, targetFile, targetLang); err != nil {
-				fmt.Printf("❌ 翻译失败: %v\n", err)
-				errorCount++
+				fmt.Printf("     ❌ 翻译失败: %v\n", err)
+				articleErrorCount++
 				totalErrorCount++
 			} else {
-				fmt.Printf("✅ 翻译完成: %s\n", targetFile)
-				successCount++
+				fmt.Printf("     ✅ 翻译完成\n")
+				articleSuccessCount++
 				totalSuccessCount++
 			}
 		}
 
-		fmt.Printf("\n%s 翻译完成:\n", targetLangName)
-		fmt.Printf("- 成功翻译: %d 篇\n", successCount)
-		fmt.Printf("- 翻译失败: %d 篇\n", errorCount)
+		fmt.Printf("  📊 当前文章翻译结果: 成功 %d, 失败 %d\n", articleSuccessCount, articleErrorCount)
 	}
 
 	fmt.Printf("\n🎉 多语言翻译全部完成！\n")
