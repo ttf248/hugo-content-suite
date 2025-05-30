@@ -392,6 +392,24 @@ func (t *TranslationUtils) ProtectMarkdownElements(text string) (string, map[str
 		return placeholder
 	})
 
+	// 6. 保护URL编码字符（百分号编码）
+	urlEncodedRegex := regexp.MustCompile(`%[0-9A-Fa-f]{2}`)
+	text = urlEncodedRegex.ReplaceAllStringFunc(text, func(match string) string {
+		placeholder := fmt.Sprintf("__URL_ENCODED_%d__", counter)
+		protectedElements[placeholder] = match
+		counter++
+		return placeholder
+	})
+
+	// 7. 保护完整的英文单词
+	englishWordRegex := regexp.MustCompile(`\b[A-Za-z]+(?:[0-9]*['-]?[A-Za-z0-9]*)*\b`)
+	text = englishWordRegex.ReplaceAllStringFunc(text, func(match string) string {
+		placeholder := fmt.Sprintf("__ENGLISH_WORD_%d__", counter)
+		protectedElements[placeholder] = match
+		counter++
+		return placeholder
+	})
+
 	return text, protectedElements
 }
 
