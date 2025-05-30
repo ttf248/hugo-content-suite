@@ -12,6 +12,7 @@ type Config struct {
 	Display     DisplayConfig     `json:"display"`
 	Paths       PathsConfig       `json:"paths"`
 	Translation TranslationConfig `json:"translation"`
+	Paragraph   ParagraphConfig   `json:"paragraph"`
 	Logging     LoggingConfig     `json:"logging"`
 	Language    LanguageConfig    `json:"language"`
 }
@@ -47,6 +48,13 @@ type TranslationConfig struct {
 	CleanupPatterns []string `json:"cleanup_patterns"`
 }
 
+type ParagraphConfig struct {
+	MaxLength        int  `json:"max_length"`         // 段落最大长度（字符数）
+	EnableSplitting  bool `json:"enable_splitting"`   // 是否启用段落拆分
+	SplitAtSentences bool `json:"split_at_sentences"` // 是否在句子边界拆分
+	MinSplitLength   int  `json:"min_split_length"`   // 拆分后段落的最小长度
+}
+
 type LoggingConfig struct {
 	Level string `json:"level"`
 	File  string `json:"file"`
@@ -77,8 +85,7 @@ var defaultConfig = Config{
 	Paths: PathsConfig{
 		DefaultContentDir: "../../content/post",
 		TagsDir:           "../tags",
-	},
-	Translation: TranslationConfig{
+	}, Translation: TranslationConfig{
 		RetryAttempts:  2,
 		DelayBetweenMs: 0,
 		ValidateResult: true,
@@ -90,12 +97,18 @@ var defaultConfig = Config{
 			"Output:",
 		},
 	},
+	Paragraph: ParagraphConfig{
+		MaxLength:        800,  // 段落最大2000字符
+		EnableSplitting:  true, // 默认启用段落拆分
+		SplitAtSentences: true, // 在句子边界拆分
+		MinSplitLength:   200,  // 拆分后段落最小200字符
+	},
 	Logging: LoggingConfig{
 		Level: "DEBUG",
 		File:  "hugo-content-suite.log",
 	},
 	Language: LanguageConfig{
-		TargetLanguages: []string{"en"},
+		TargetLanguages: []string{"en", "ja", "ko"},
 		LanguageNames: map[string]string{
 			"en": "English",
 			"ja": "Japanese",
