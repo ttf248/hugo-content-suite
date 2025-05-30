@@ -206,15 +206,15 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 	var prompt string
 	switch targetLang {
 	case "ja":
-		prompt = fmt.Sprintf(`Please translate this Chinese text to Japanese. Return ONLY the Japanese translation:
+		prompt = fmt.Sprintf(`Please translate this Chinese text to Japanese. Do NOT translate placeholders like __CODE_BLOCK_0__, __INLINE_CODE_1__, __ENGLISH_WORD_0__, etc. Return ONLY the Japanese translation:
 
 %s`, content)
 	case "ko":
-		prompt = fmt.Sprintf(`Please translate this Chinese text to Korean. Return ONLY the Korean translation:
+		prompt = fmt.Sprintf(`Please translate this Chinese text to Korean. Do NOT translate placeholders like __CODE_BLOCK_0__, __INLINE_CODE_1__, __ENGLISH_WORD_0__, etc. Return ONLY the Korean translation:
 
 %s`, content)
 	default:
-		prompt = fmt.Sprintf(`Please translate this Chinese text to English. Return ONLY the English translation:
+		prompt = fmt.Sprintf(`Please translate this Chinese text to English. Do NOT translate placeholders like __CODE_BLOCK_0__, __INLINE_CODE_1__, __ENGLISH_WORD_0__, etc. Return ONLY the English translation:
 
 %s`, content)
 	}
@@ -224,7 +224,7 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 		Messages: []translator.Message{
 			{
 				Role:    "system",
-				Content: fmt.Sprintf("You are a professional translator. You translate Chinese to %s accurately and concisely.", targetLangName),
+				Content: fmt.Sprintf("You are a professional translator. You translate Chinese to %s accurately and concisely. Ensure placeholders like __CODE_BLOCK_0__, __INLINE_CODE_1__, __ENGLISH_WORD_0__, etc., remain unchanged.", targetLangName),
 			},
 			{
 				Role:    "user",
