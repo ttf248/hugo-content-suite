@@ -364,7 +364,16 @@ func (t *TranslationUtils) ProtectMarkdownElements(text string) (string, map[str
 		return placeholder
 	})
 
-	// 7. 保护完整的英文单词
+	// 7. 保护Markdown引用（以>开头的行）
+	quoteRegex := regexp.MustCompile(`(?m)^>\s*.*$`)
+	text = quoteRegex.ReplaceAllStringFunc(text, func(match string) string {
+		placeholder := fmt.Sprintf("__QUOTE_%d__", counter)
+		protectedElements[placeholder] = match
+		counter++
+		return placeholder
+	})
+
+	// 8. 保护完整的英文单词
 	englishWordRegex := regexp.MustCompile(`\b[A-Za-z]+(?:[0-9]*['-]?[A-Za-z0-9]*)*\b`)
 	text = englishWordRegex.ReplaceAllStringFunc(text, func(match string) string {
 		placeholder := fmt.Sprintf("__ENGLISH_WORD_%d__", counter)
