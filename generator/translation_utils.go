@@ -199,36 +199,25 @@ func (t *TranslationUtils) BatchTranslateWithCache(texts []string, targetLang st
 func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string, error) {
 	cfg := config.GetGlobalConfig()
 	targetLangName := cfg.Language.LanguageNames[targetLang]
+
 	if targetLangName == "" {
 		targetLangName = targetLang
 	}
 
-	var prompt string
-	switch targetLang {
-	case "ja":
-		prompt = fmt.Sprintf(`Please translate this Chinese text to Japanese. Do NOT translate placeholders like __CODE_BLOCK_0__, __INLINE_CODE_1__, __ENGLISH_WORD_0__, etc. Return ONLY the Japanese translation:
+	// 检查内容是否包含占位符信息
+	containsPlaceholders := strings.Contains(content, "__CODE_BLOCK_") ||
+		strings.Contains(content, "__INLINE_CODE_") ||
+		strings.Contains(content, "__LINK_") ||
+		strings.Contains(content, "__IMAGE_") ||
+		strings.Contains(content, "__URL_") ||
+		strings.Contains(content, "__URL_ENCODED_") ||
+		strings.Contains(content, "__QUOTE_") ||
+		strings.Contains(content, "__ENGLISH_WORD_")
 
-%s`, content)
-	case "ko":
-		prompt = fmt.Sprintf(`Please translate this Chinese text to Korean. Do NOT translate placeholders like __CODE_BLOCK_0__, __INLINE_CODE_1__, __ENGLISH_WORD_0__, etc. Return ONLY the Korean translation:
-
-%s`, content)
-	case "fr":
-		prompt = fmt.Sprintf(`Please translate this Chinese text to French. Do NOT translate placeholders like __CODE_BLOCK_0__, __INLINE_CODE_1__, __ENGLISH_WORD_0__, etc. Return ONLY the French translation:
-
-%s`, content)
-	case "ru":
-		prompt = fmt.Sprintf(`Please translate this Chinese text to Russian. Do NOT translate placeholders like __CODE_BLOCK_0__, __INLINE_CODE_1__, __ENGLISH_WORD_0__, etc. Return ONLY the Russian translation:
-
-%s`, content)
-	case "hi":
-		prompt = fmt.Sprintf(`Please translate this Chinese text to Hindi. Do NOT translate placeholders like __CODE_BLOCK_0__, __INLINE_CODE_1__, __ENGLISH_WORD_0__, etc. Return ONLY the Hindi translation:
-
-%s`, content)
-	default:
-		prompt = fmt.Sprintf(`Please translate this Chinese text to English. Do NOT translate placeholders like __CODE_BLOCK_0__, __INLINE_CODE_1__, __ENGLISH_WORD_0__, etc. Return ONLY the English translation:
-
-%s`, content)
+	// 构建提示词内容
+	systemContent := fmt.Sprintf("Translate Chinese to %s accurately and concisely. Only output the translated text without any additional content.", targetLangName)
+	if containsPlaceholders {
+		systemContent += " Keep all placeholders (like __CODE_BLOCK_0__, __INLINE_CODE_1__, __LINK_0__, __IMAGE_0__, __URL_0__, __URL_ENCODED_0__, __QUOTE_0__, __ENGLISH_WORD_0__) unchanged."
 	}
 
 	request := translator.LMStudioRequest{
@@ -236,11 +225,11 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 		Messages: []translator.Message{
 			{
 				Role:    "system",
-				Content: fmt.Sprintf("You are a professional translator. You translate Chinese to %s accurately and concisely. Ensure placeholders like __CODE_BLOCK_0__, __INLINE_CODE_1__, __ENGLISH_WORD_0__, etc., remain unchanged.", targetLangName),
+				Content: systemContent,
 			},
 			{
 				Role:    "user",
-				Content: prompt,
+				Content: fmt.Sprintf("Translate to %s:\n\n%s", targetLangName, content),
 			},
 		},
 		Stream: false,
@@ -248,35 +237,35 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 
 	jsonData, err := json.Marshal(request)
 	if err != nil {
-		return "", fmt.Errorf("序列化请求失败: %v", err)
+		return "", fmt.Errorf("failed to serialize request: %v", err)
 	}
 
 	client := &http.Client{Timeout: time.Duration(cfg.LMStudio.Timeout) * time.Second}
 	resp, err := client.Post(cfg.LMStudio.URL, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
-		return "", fmt.Errorf("发送请求失败: %v", err)
+		return "", fmt.Errorf("failed to send request: %v", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("LM Studio返回错误状态: %d", resp.StatusCode)
+		return "", fmt.Errorf("LM Studio returned error status: %d", resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return "", fmt.Errorf("读取响应失败: %v", err)
+		return "", fmt.Errorf("failed to read response: %v", err)
 	}
 
 	var response translator.LMStudioResponse
 	if err := json.Unmarshal(body, &response); err != nil {
-		return "", fmt.Errorf("解析响应失败: %v", err)
+		return "", fmt.Errorf("failed to parse response: %v", err)
 	}
 
 	if len(response.Choices) == 0 {
-		return "", fmt.Errorf("没有获取到翻译结果")
+		return "", fmt.Errorf("no translation result received")
 	}
-
 	result := strings.TrimSpace(response.Choices[0].Message.Content)
+
 	return t.CleanTranslationResult(result), nil
 }
 
