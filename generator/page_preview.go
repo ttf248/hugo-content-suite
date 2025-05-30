@@ -46,12 +46,13 @@ func (g *TagPageGenerator) PreviewTagPages(tagStats []models.TagStats) []TagPage
 	}
 
 	if !useAI {
-		fmt.Println("🔄 使用备用翻译...")
+		fmt.Println("🔄 使用原文作为slug...")
 		slugMap = make(map[string]string)
 		for i, tag := range tagNames {
 			fmt.Printf("  [%d/%d] %s -> ", i+1, len(tagNames), tag)
-			slugMap[tag] = g.translationUtils.FallbackSlug(tag)
-			fmt.Printf("%s\n", slugMap[tag])
+			slug := g.translationUtils.FormatSlugField(tag)
+			slugMap[tag] = slug
+			fmt.Printf("%s\n", slug)
 			time.Sleep(50 * time.Millisecond) // 短暂延迟让用户看到进度
 		}
 	}
@@ -85,9 +86,12 @@ func (g *TagPageGenerator) PreviewTagPages(tagStats []models.TagStats) []TagPage
 			fmt.Printf(" ✨ 需要新建\n")
 		}
 
+		// 生成slug（从映射中获取）
+		slug := slugMap[stat.Name]
+
 		preview := TagPagePreview{
 			TagName:       stat.Name,
-			Slug:          slugMap[stat.Name],
+			Slug:          slug,
 			ArticleCount:  stat.Count,
 			DirectoryPath: fmt.Sprintf("tags/%s/", stat.Name),
 			FilePath:      fmt.Sprintf("tags/%s/_index.md", stat.Name),

@@ -166,8 +166,8 @@ func (t *TranslationUtils) BatchTranslateWithCache(texts []string, targetLang st
 			translated, err := t.translateWithAPI(text, targetLang)
 			if err != nil {
 				fmt.Printf("失败 (%v)\n", err)
-				// 使用备用方案
-				translated = t.FallbackSlug(text)
+				// 翻译失败，使用原文
+				translated = text
 			} else {
 				translated = t.CleanTranslationResult(translated)
 			}
@@ -266,43 +266,6 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 
 	result := strings.TrimSpace(response.Choices[0].Message.Content)
 	return t.CleanTranslationResult(result), nil
-}
-
-// FallbackSlug 备用slug生成方案
-func (t *TranslationUtils) FallbackSlug(tag string) string {
-	fallbackTranslations := map[string]string{
-		"人工智能":       "artificial-intelligence",
-		"机器学习":       "machine-learning",
-		"深度学习":       "deep-learning",
-		"前端开发":       "frontend-development",
-		"后端开发":       "backend-development",
-		"JavaScript": "javascript",
-		"Python":     "python",
-		"Go":         "golang",
-		"技术":         "technology",
-		"教程":         "tutorial",
-		"编程":         "programming",
-		"开发":         "development",
-		"数据库":        "database",
-		"网络":         "network",
-		"安全":         "security",
-		"算法":         "algorithm",
-		"框架":         "framework",
-		"工具":         "tools",
-		"设计":         "design",
-		"产品":         "product",
-	}
-
-	if slug, exists := fallbackTranslations[tag]; exists {
-		return slug
-	}
-
-	// 简单处理
-	slug := strings.ToLower(tag)
-	slug = strings.ReplaceAll(slug, " ", "-")
-	reg := regexp.MustCompile(`[^\w\x{4e00}-\x{9fff}\-]`)
-	slug = reg.ReplaceAllString(slug, "")
-	return strings.Trim(slug, "-")
 }
 
 // SaveCache 保存缓存

@@ -123,12 +123,13 @@ func (g *ArticleSlugGenerator) GenerateArticleSlugs() error {
 		// 生成新的slug
 		newSlug, err := g.translator.TranslateToSlug(article.Title)
 		if err != nil {
-			utils.WarnWithFields("翻译失败，使用备用方案", map[string]interface{}{
+			utils.WarnWithFields("翻译失败", map[string]interface{}{
 				"title": article.Title,
 				"error": err.Error(),
 			})
-			fmt.Printf("  翻译失败，使用备用方案: %v\n", err)
-			newSlug = translator.FallbackSlug(article.Title)
+			fmt.Printf("  翻译失败: %v，跳过此文章\n", err)
+			errorCount++
+			continue
 		}
 
 		// 更新文件
@@ -268,8 +269,9 @@ func (g *ArticleSlugGenerator) GenerateArticleSlugsWithMode(mode string) error {
 			// 如果批量翻译失败，尝试单独翻译（使用文章专用接口）
 			slug, err := g.translator.TranslateToArticleSlug(article.Title)
 			if err != nil {
-				fmt.Printf("  翻译失败，使用备用方案: %v\n", err)
-				newSlug = translator.FallbackSlug(article.Title)
+				fmt.Printf("  翻译失败: %v，跳过此文章\n", err)
+				errorCount++
+				continue
 			} else {
 				newSlug = slug
 			}

@@ -350,7 +350,10 @@ func (t *LLMTranslator) translateMissingTexts(missingTexts []string, result map[
 		slug, err := translateFunc(text)
 		if err != nil {
 			utils.RecordError()
-			slug = fallbackSlug(text)
+			// 翻译失败，跳过此项
+			utils.Error("翻译失败: %s - %v", text, err)
+			progressBar.Update(i + 1)
+			continue
 		}
 
 		// 保存到缓存 - 使用正确的缓存键
@@ -479,35 +482,4 @@ func normalizeSlug(s string) string {
 	s = strings.Trim(s, "-")
 
 	return s
-}
-
-// fallbackSlug 当翻译失败时的备用方案
-func fallbackSlug(tag string) string {
-	// 预定义的映射表作为备用
-	fallbackTranslations := map[string]string{
-		"人工智能":       "artificial-intelligence",
-		"机器学习":       "machine-learning",
-		"深度学习":       "deep-learning",
-		"前端开发":       "frontend-development",
-		"后端开发":       "backend-development",
-		"JavaScript": "javascript",
-		"Python":     "python",
-		"Go":         "golang",
-		"技术":         "technology",
-		"教程":         "tutorial",
-		"编程":         "programming",
-		"开发":         "development",
-	}
-
-	if slug, exists := fallbackTranslations[tag]; exists {
-		return slug
-	}
-
-	// 最后的备用方案：简单处理
-	return normalizeSlug(tag)
-}
-
-// FallbackSlug 导出的备用slug生成函数
-func FallbackSlug(tag string) string {
-	return fallbackSlug(tag)
 }

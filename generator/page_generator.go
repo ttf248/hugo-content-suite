@@ -67,12 +67,12 @@ func (g *TagPageGenerator) GenerateTagPages(tagStats []models.TagStats) error {
 	}
 
 	if !useAI {
-		// 使用备用翻译方案
-		fmt.Println("🔄 使用备用翻译...")
+		// 使用原文作为备用方案
+		fmt.Println("🔄 使用原文作为slug...")
 		slugMap = make(map[string]string)
 		for i, tag := range tagNames {
 			fmt.Printf("  [%d/%d] %s -> ", i+1, len(tagNames), tag)
-			slug := g.translationUtils.FallbackSlug(tag)
+			slug := g.translationUtils.FormatSlugField(tag)
 			slugMap[tag] = slug
 			fmt.Printf("%s\n", slug)
 			time.Sleep(10 * time.Millisecond)
