@@ -45,11 +45,19 @@
   "language": {
     "target_languages": [
       "en",
-      "ko"
+      "ja",
+      "ko",
+      "fr",
+      "ru",
+      "hi"
     ],
     "language_names": {
       "en": "English",
-      "ko": "Korean"
+      "fr": "French",
+      "hi": "Hindi",
+      "ja": "Japanese",
+      "ko": "Korean",
+      "ru": "Russian"
     }
   }
 }
