@@ -307,7 +307,7 @@ func (t *TranslationUtils) IsMarkdownStructuralElement(line string) bool {
 }
 
 // ProtectMarkdownElements 保护关键markdown元素（简化版）
-func (t *TranslationUtils) ProtectMarkdownElements(text string) (string, map[string]string) {
+func (t *TranslationUtils) ProtectMarkdownElements(text string, targetLang string) (string, map[string]string) {
 	protectedElements := make(map[string]string)
 	counter := 0
 
@@ -374,14 +374,17 @@ func (t *TranslationUtils) ProtectMarkdownElements(text string) (string, map[str
 		return placeholder
 	})
 
-	// 8. 保护完整的英文单词
-	englishWordRegex := regexp.MustCompile(`\b[A-Za-z]+(?:[0-9]*['-]?[A-Za-z0-9]*)*\b`)
-	text = englishWordRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__ENGLISH_WORD_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
-		return placeholder
-	})
+	// 8. 保护英文单词（假设英文单词是以字母开头的连续字母）
+	// 注意：这里假设目标语言不是英文时才保护英文单词
+	if targetLang != "en" {
+		englishWordRegex := regexp.MustCompile(`\b[A-Za-z]+(?:[0-9]*['-]?[A-Za-z0-9]*)*\b`)
+		text = englishWordRegex.ReplaceAllStringFunc(text, func(match string) string {
+			placeholder := fmt.Sprintf("__ENGLISH_WORD_%d__", counter)
+			protectedElements[placeholder] = match
+			counter++
+			return placeholder
+		})
+	}
 
 	return text, protectedElements
 }
@@ -402,7 +405,7 @@ func (t *TranslationUtils) TranslateParagraphToLanguage(paragraph, targetLang st
 	}
 
 	// 保护关键元素
-	protectedContent, protectedElements := t.ProtectMarkdownElements(paragraph)
+	protectedContent, protectedElements := t.ProtectMarkdownElements(paragraph, targetLang)
 
 	// 翻译处理后的内容
 	translatedContent, err := t.TranslateToLanguage(protectedContent, targetLang)
