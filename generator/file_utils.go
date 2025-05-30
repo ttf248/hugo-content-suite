@@ -114,6 +114,12 @@ func (f *FileUtils) BuildTargetFilePath(originalPath, targetLang string) string 
 		return filepath.Join(dir, "index.ja.md")
 	case "ko":
 		return filepath.Join(dir, "index.ko.md")
+	case "fr":
+		return filepath.Join(dir, "index.fr.md")
+	case "ru":
+		return filepath.Join(dir, "index.ru.md")
+	case "hi":
+		return filepath.Join(dir, "index.hi.md")
 	default: // "en" 或其他
 		return filepath.Join(dir, "index.en.md")
 	}

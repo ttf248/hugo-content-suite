@@ -110,11 +110,14 @@ var defaultConfig = Config{
 		File:  "hugo-content-suite.log",
 	},
 	Language: LanguageConfig{
-		TargetLanguages: []string{"en", "ja", "ko"},
+		TargetLanguages: []string{"en", "ja", "ko", "fr", "ru", "hi"},
 		LanguageNames: map[string]string{
 			"en": "English",
 			"ja": "Japanese",
 			"ko": "Korean",
+			"fr": "French",
+			"ru": "Russian",
+			"hi": "Hindi",
 		},
 	},
 }

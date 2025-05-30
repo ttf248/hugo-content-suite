@@ -213,6 +213,18 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 		prompt = fmt.Sprintf(`Please translate this Chinese text to Korean. Do NOT translate placeholders like __CODE_BLOCK_0__, __INLINE_CODE_1__, __ENGLISH_WORD_0__, etc. Return ONLY the Korean translation:
 
 %s`, content)
+	case "fr":
+		prompt = fmt.Sprintf(`Please translate this Chinese text to French. Do NOT translate placeholders like __CODE_BLOCK_0__, __INLINE_CODE_1__, __ENGLISH_WORD_0__, etc. Return ONLY the French translation:
+
+%s`, content)
+	case "ru":
+		prompt = fmt.Sprintf(`Please translate this Chinese text to Russian. Do NOT translate placeholders like __CODE_BLOCK_0__, __INLINE_CODE_1__, __ENGLISH_WORD_0__, etc. Return ONLY the Russian translation:
+
+%s`, content)
+	case "hi":
+		prompt = fmt.Sprintf(`Please translate this Chinese text to Hindi. Do NOT translate placeholders like __CODE_BLOCK_0__, __INLINE_CODE_1__, __ENGLISH_WORD_0__, etc. Return ONLY the Hindi translation:
+
+%s`, content)
 	default:
 		prompt = fmt.Sprintf(`Please translate this Chinese text to English. Do NOT translate placeholders like __CODE_BLOCK_0__, __INLINE_CODE_1__, __ENGLISH_WORD_0__, etc. Return ONLY the English translation:
 

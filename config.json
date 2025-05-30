@@ -46,12 +46,18 @@
     "target_languages": [
       "en",
       "ja",
-      "ko"
+      "ko",
+      "fr",
+      "ru",
+      "hi"
     ],
     "language_names": {
       "en": "English",
+      "fr": "French",
+      "hi": "Hindi",
       "ja": "Japanese",
-      "ko": "Korean"
+      "ko": "Korean",
+      "ru": "Russian"
     }
   }
 }
