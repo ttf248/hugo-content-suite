@@ -411,7 +411,19 @@ func (t *TranslationUtils) RestoreMarkdownElements(text string, protectedElement
 func (t *TranslationUtils) TranslateParagraphToLanguage(paragraph, targetLang string) (string, error) {
 	// 检查是否为标题行
 	if t.isHeaderLine(paragraph) {
-		return t.translateHeaderLine(paragraph, targetLang)
+		// 保护关键元素
+		protectedContent, protectedElements := t.ProtectMarkdownElements(paragraph, targetLang)
+
+		// 翻译标题行
+		translatedHeader, err := t.translateHeaderLine(protectedContent, targetLang)
+		if err != nil {
+			return "", err
+		}
+
+		// 恢复保护的元素
+		finalHeader := t.RestoreMarkdownElements(translatedHeader, protectedElements)
+
+		return finalHeader, nil
 	}
 
 	// 保护关键元素
