@@ -179,8 +179,13 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 
 	// 1. 统计所有需要翻译的正文总字符数
 	totalCharsAllArticles := 0
-	for _, article := range targetArticles {
-		for _, targetLang := range targetLanguages {
+	type articleLang struct {
+		ArticleIdx int
+		LangIdx    int
+	}
+	var pendingArticleLangs []articleLang
+	for articleIdx, article := range targetArticles {
+		for langIdx, targetLang := range targetLanguages {
 			targetFile := a.fileUtils.BuildTargetFilePath(article.FilePath, targetLang)
 			if targetFile == "" {
 				continue
@@ -195,6 +200,7 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 			}
 			_, body := a.contentParser.ParseArticleContent(content)
 			totalCharsAllArticles += len([]rune(body))
+			pendingArticleLangs = append(pendingArticleLangs, articleLang{ArticleIdx: articleIdx, LangIdx: langIdx})
 		}
 	}
 
@@ -207,6 +213,19 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 
 		articleSuccessCount := 0
 		articleErrorCount := 0
+
+		// 统计当前文章剩余语言数
+		remainingLangsOfCurrentArticle := 0
+		for _, targetLang := range targetLanguages {
+			targetFile := a.fileUtils.BuildTargetFilePath(article.FilePath, targetLang)
+			if targetFile == "" {
+				continue
+			}
+			shouldTranslate := a.shouldTranslateArticle(targetFile, mode)
+			if shouldTranslate {
+				remainingLangsOfCurrentArticle++
+			}
+		}
 
 		for langIndex, targetLang := range targetLanguages {
 			targetLangName := cfg.Language.LanguageNames[targetLang]
@@ -224,10 +243,29 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 				continue
 			}
 
+			// 统计全局剩余文章数
+			remainingArticles := 0
+			for j := i + 1; j < len(targetArticles); j++ {
+				for _, tl := range targetLanguages {
+					tf := a.fileUtils.BuildTargetFilePath(targetArticles[j].FilePath, tl)
+					if tf == "" {
+						continue
+					}
+					if a.shouldTranslateArticle(tf, mode) {
+						remainingArticles++
+						break
+					}
+				}
+			}
+
 			fmt.Printf("  🌐 翻译为 %s (%d/%d)\n", targetLangName, langIndex+1, len(targetLanguages))
 			fmt.Printf("     目标文件: %s\n", targetFile)
 
-			if err := a.translateSingleArticleToLanguageWithProgress(article.FilePath, targetFile, targetLang, totalCharsAllArticles, &globalTranslatedChars, startTime); err != nil {
+			if err := a.translateSingleArticleToLanguageWithProgress(
+				article.FilePath, targetFile, targetLang,
+				totalCharsAllArticles, &globalTranslatedChars, startTime,
+				remainingArticles, remainingLangsOfCurrentArticle-1,
+			); err != nil {
 				fmt.Printf("     ❌ 翻译失败: %v\n", err)
 				articleErrorCount++
 				totalErrorCount++
@@ -236,6 +274,7 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 				articleSuccessCount++
 				totalSuccessCount++
 			}
+			remainingLangsOfCurrentArticle--
 		}
 
 		fmt.Printf("  📊 当前文章翻译结果: 成功 %d, 失败 %d\n", articleSuccessCount, articleErrorCount)
@@ -250,7 +289,11 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 }
 
 // 新增：带全局进度的单篇文章翻译
-func (a *ArticleTranslator) translateSingleArticleToLanguageWithProgress(originalFile, targetFile, targetLang string, totalCharsAllArticles int, globalTranslatedChars *int, globalStartTime time.Time) error {
+func (a *ArticleTranslator) translateSingleArticleToLanguageWithProgress(
+	originalFile, targetFile, targetLang string,
+	totalCharsAllArticles int, globalTranslatedChars *int, globalStartTime time.Time,
+	remainingArticles int, remainingLangsOfCurrentArticle int,
+) error {
 	utils.Info("开始翻译文章到 %s: %s", targetLang, originalFile)
 
 	// 读取原文件
@@ -269,7 +312,10 @@ func (a *ArticleTranslator) translateSingleArticleToLanguageWithProgress(origina
 		return fmt.Errorf("翻译前置数据失败: %v", err)
 	}
 
-	translatedBody, err := a.translateArticleBodyToLanguageWithProgress(bodyContent, targetLang, totalCharsAllArticles, globalTranslatedChars, globalStartTime)
+	translatedBody, err := a.translateArticleBodyToLanguageWithProgress(
+		bodyContent, targetLang, totalCharsAllArticles, globalTranslatedChars, globalStartTime,
+		remainingArticles, remainingLangsOfCurrentArticle,
+	)
 	if err != nil {
 		return fmt.Errorf("翻译正文失败: %v", err)
 	}
@@ -285,7 +331,11 @@ func (a *ArticleTranslator) translateSingleArticleToLanguageWithProgress(origina
 }
 
 // 新增：带全局进度的正文翻译
-func (a *ArticleTranslator) translateArticleBodyToLanguageWithProgress(body, targetLang string, totalCharsAllArticles int, globalTranslatedChars *int, globalStartTime time.Time) (string, error) {
+func (a *ArticleTranslator) translateArticleBodyToLanguageWithProgress(
+	body, targetLang string,
+	totalCharsAllArticles int, globalTranslatedChars *int, globalStartTime time.Time,
+	remainingArticles int, remainingLangsOfCurrentArticle int,
+) (string, error) {
 	if strings.TrimSpace(body) == "" {
 		return body, nil
 	}
@@ -317,7 +367,10 @@ func (a *ArticleTranslator) translateArticleBodyToLanguageWithProgress(body, tar
 	fmt.Printf("🔢 总字符数: %d\n", totalChars)
 
 	// 翻译段落，传递全局进度参数
-	translatedParagraphs, err := a.translateParagraphsToLanguageWithMappingAndGlobalProgress(paragraphs, targetLang, totalChars, totalCharsAllArticles, globalTranslatedChars, globalStartTime)
+	translatedParagraphs, err := a.translateParagraphsToLanguageWithMappingAndGlobalProgress(
+		paragraphs, targetLang, totalChars, totalCharsAllArticles, globalTranslatedChars, globalStartTime,
+		remainingArticles, remainingLangsOfCurrentArticle,
+	)
 	if err != nil {
 		return "", err
 	}
@@ -340,7 +393,11 @@ func (a *ArticleTranslator) translateArticleBodyToLanguageWithProgress(body, tar
 }
 
 // 新增：带全局进度的段落翻译
-func (a *ArticleTranslator) translateParagraphsToLanguageWithMappingAndGlobalProgress(paragraphs []string, targetLang string, totalChars int, totalCharsAllArticles int, globalTranslatedChars *int, globalStartTime time.Time) ([]string, error) {
+func (a *ArticleTranslator) translateParagraphsToLanguageWithMappingAndGlobalProgress(
+	paragraphs []string, targetLang string, totalChars int, totalCharsAllArticles int,
+	globalTranslatedChars *int, globalStartTime time.Time,
+	remainingArticles int, remainingLangsOfCurrentArticle int,
+) ([]string, error) {
 	cfg := config.GetGlobalConfig()
 	var translatedParagraphs []string
 
@@ -354,8 +411,6 @@ func (a *ArticleTranslator) translateParagraphsToLanguageWithMappingAndGlobalPro
 
 	// 新增：累计已翻译字符数
 	translatedChars := 0
-
-	fmt.Printf("\n开始段落级翻译...\n")
 
 	for _, paragraph := range paragraphs {
 		trimmed := strings.TrimSpace(paragraph)
@@ -396,8 +451,11 @@ func (a *ArticleTranslator) translateParagraphsToLanguageWithMappingAndGlobalPro
 				globalAvgTimePerChar := globalElapsed.Seconds() / float64(*globalTranslatedChars)
 				globalRemainingChars := totalCharsAllArticles - *globalTranslatedChars
 				globalEstimatedRemaining := time.Duration(float64(globalRemainingChars) * globalAvgTimePerChar * float64(time.Second))
-				globalProgressLine = fmt.Sprintf("🌏 总进度: %d/%d 字符 (%.1f%%) | 总用时: %v | 预计剩余: %v\n",
-					*globalTranslatedChars, totalCharsAllArticles, globalPercent, globalElapsed.Round(time.Second), globalEstimatedRemaining.Round(time.Second))
+				globalProgressLine = fmt.Sprintf(
+					"\n🌏 总进度: %d/%d 字符 (%.1f%%) | 总用时: %v | 预计剩余: %v\n"+
+						"   剩余文章: %d | 当前文章剩余语言: %d",
+					*globalTranslatedChars, totalCharsAllArticles, globalPercent, globalElapsed.Round(time.Second), globalEstimatedRemaining.Round(time.Second),
+					remainingArticles, remainingLangsOfCurrentArticle)
 			}
 
 			// 先打印总进度，再打印全局进度
@@ -434,7 +492,6 @@ func (a *ArticleTranslator) translateParagraphsToLanguageWithMappingAndGlobalPro
 			errorCount++
 		} else {
 			if showDetail {
-				fmt.Printf("✅ 翻译完成 (%.1fs)\n", paragraphDuration.Seconds())
 				translatedPreview := strings.TrimSpace(translatedParagraph)
 				if len(translatedPreview) > 200 {
 					translatedPreview = translatedPreview[:200] + "..."
