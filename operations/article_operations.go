@@ -132,17 +132,3 @@ func (p *Processor) displayTranslationWarning(mode string, missingCount, existin
 		fmt.Printf("• 将处理 %d 篇文章的翻译（包括新增和更新）\n", missingCount+existingCount)
 	}
 }
-
-// PreviewArticleTranslations 预览文章翻译状态（简化版本）
-func (p *Processor) PreviewArticleTranslations() {
-	color.Cyan("=== 文章翻译预览 ===")
-
-	articleTranslator := generator.NewArticleTranslator(p.contentDir)
-	status, err := articleTranslator.GetTranslationStatus()
-	if err != nil {
-		color.Red("❌ 获取翻译状态失败: %v", err)
-		return
-	}
-
-	p.displayTranslationStats(status.MissingArticles, status.ExistingArticles, status.TotalArticles)
-}
