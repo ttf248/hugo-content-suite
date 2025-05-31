@@ -387,21 +387,3 @@ func (a *ArticleTranslator) printParagraphStageReport(current, total int, elapse
 	fmt.Printf("   📊 成功率: %.1f%% (%d 成功, %d 失败)\n", successRate, success, error)
 	fmt.Printf("   ▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔▔\n")
 }
-
-// generateProgressBar 生成进度条
-func (a *ArticleTranslator) generateProgressBar(current, total, width int) string {
-	if total == 0 {
-		return strings.Repeat("░", width)
-	}
-
-	progress := float64(current) / float64(total)
-	completed := int(progress * float64(width))
-
-	bar := strings.Repeat("█", completed)
-	remaining := strings.Repeat("░", width-completed)
-
-	return fmt.Sprintf("[%s%s]", bar, remaining)
-}
-
-// 移除不再需要的行级翻译相关方法
-// translateContentByLinesToLanguage, translateMarkdownAwareLine 等方法可以删除或标记为废弃

@@ -428,7 +428,6 @@ func (a *ArticleTranslator) translateParagraphsToLanguageWithMappingAndGlobalPro
 		if showProgress {
 			// 进度信息
 			progressPercent := float64(translatedCount) * 100.0 / float64(translatableParagraphs)
-			progressBar := a.generateProgressBar(translatedCount, translatableParagraphs, 30)
 
 			// 文章级进度（按字符数）
 			charProgressPercent := 0.0
@@ -462,9 +461,9 @@ func (a *ArticleTranslator) translateParagraphsToLanguageWithMappingAndGlobalPro
 			if globalProgressLine != "" {
 				fmt.Print(globalProgressLine)
 			}
-			fmt.Printf("\n📊 文章进度: %d/%d 字符 (%.1f%%) | 段落 %d/%d %s %.1f%% | 预计剩余: %v\n",
+			fmt.Printf("\n📊 文章进度: %d/%d 字符 (%.1f%%) | 段落 %d/%d %.1f%% | 预计剩余: %v\n",
 				translatedChars, totalChars, charProgressPercent,
-				translatedCount, translatableParagraphs, progressBar, progressPercent,
+				translatedCount, translatableParagraphs, progressPercent,
 				estimatedCharRemaining.Round(time.Second))
 		}
 
