@@ -213,12 +213,13 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 		strings.Contains(content, "__URL_ENCODED_") ||
 		strings.Contains(content, "__QUOTE_") ||
 		strings.Contains(content, "__ENGLISH_WORD_") ||
-		strings.Contains(content, "__LIST_ITEM_")
+		strings.Contains(content, "__LIST_ITEM_") ||
+		strings.Contains(content, "__NUMBERED_LIST_")
 
 	// 构建提示词内容
 	systemContent := fmt.Sprintf("Translate Chinese to %s accurately and concisely. Only output the translated text without any additional content.", targetLangName)
 	if containsPlaceholders {
-		systemContent += " Keep all placeholders (like __CODE_BLOCK_0__, __INLINE_CODE_1__, __LINK_0__, __IMAGE_0__, __URL_0__, __URL_ENCODED_0__, __QUOTE_0__, __ENGLISH_WORD_0__, __LIST_ITEM_0__) unchanged."
+		systemContent += " Keep all placeholders (like __CODE_BLOCK_0__, __INLINE_CODE_1__, __LINK_0__, __IMAGE_0__, __URL_0__, __URL_ENCODED_0__, __QUOTE_0__, __ENGLISH_WORD_0__, __LIST_ITEM_0__, __NUMBERED_LIST_0__) unchanged."
 	}
 
 	request := translator.LMStudioRequest{
@@ -396,6 +397,15 @@ func (t *TranslationUtils) ProtectMarkdownElements(text string, targetLang strin
 		return placeholder
 	})
 
+	// 10. 保护数字列表（以数字加点开头的行）
+	numberedListRegex := regexp.MustCompile(`(?m)^\d+\.\s`)
+	text = numberedListRegex.ReplaceAllStringFunc(text, func(match string) string {
+		placeholder := fmt.Sprintf("__NUMBERED_LIST_%d__", counter)
+		protectedElements[placeholder] = match
+		counter++
+		return placeholder
+	})
+
 	return text, protectedElements
 }
 
@@ -411,19 +421,13 @@ func (t *TranslationUtils) RestoreMarkdownElements(text string, protectedElement
 func (t *TranslationUtils) TranslateParagraphToLanguage(paragraph, targetLang string) (string, error) {
 	// 检查是否为标题行
 	if t.isHeaderLine(paragraph) {
-		// 保护关键元素
-		protectedContent, protectedElements := t.ProtectMarkdownElements(paragraph, targetLang)
-
 		// 翻译标题行
-		translatedHeader, err := t.translateHeaderLine(protectedContent, targetLang)
+		translatedHeader, err := t.translateHeaderLine(paragraph, targetLang)
 		if err != nil {
 			return "", err
 		}
 
-		// 恢复保护的元素
-		finalHeader := t.RestoreMarkdownElements(translatedHeader, protectedElements)
-
-		return finalHeader, nil
+		return translatedHeader, nil
 	}
 
 	// 保护关键元素
@@ -490,17 +494,23 @@ func (t *TranslationUtils) translateHeaderLine(line, targetLang string) (string,
 		return line, nil
 	}
 
+	// 保护关键元素
+	protectedContent, protectedElements := t.ProtectMarkdownElements(content, targetLang)
+
 	// 翻译标题内容
-	translatedContent, err := t.TranslateToLanguage(content, targetLang)
+	translatedContent, err := t.TranslateToLanguage(protectedContent, targetLang)
 	if err != nil {
 		return "", err
 	}
 
-	// 清理翻译结果
-	translatedContent = t.CleanTranslationResult(translatedContent)
-	translatedContent = t.RemoveQuotes(translatedContent)
+	// 恢复保护的元素
+	finalHeader := t.RestoreMarkdownElements(translatedContent, protectedElements)
 
-	return prefix + translatedContent, nil
+	// 清理翻译结果
+	finalHeader = t.CleanTranslationResult(finalHeader)
+	finalHeader = t.RemoveQuotes(finalHeader)
+
+	return prefix + finalHeader, nil
 }
 
 // extractHeaderPrefix 提取标题前缀
