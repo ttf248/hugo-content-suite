@@ -149,219 +149,30 @@ func (c *ContentParser) EstimateTranslationTime(paragraphCount int) string {
 
 // splitIntoParagraphs 将文本分割成段落
 func (c *ContentParser) splitIntoParagraphs(text string) []string {
-	preliminaryParagraphs := strings.Split(text, "\n\n")
-	var finalParagraphs []string
+	// 移除首尾空白字符
+	text = strings.TrimSpace(text)
+	if text == "" {
+		return []string{}
+	}
 
-	for _, p := range preliminaryParagraphs {
-		trimmed := strings.TrimSpace(p)
-		if trimmed == "" {
-			continue
-		}
+	// 按照两个或多个连续换行符分割段落
+	re := regexp.MustCompile(`\n\s*\n`)
+	paragraphs := re.Split(text, -1)
 
-		if strings.Contains(trimmed, "```") {
-			finalParagraphs = append(finalParagraphs, trimmed)
-		} else {
-			lines := strings.Split(trimmed, "\n")
-			var currentParagraph []string
-
-			for _, line := range lines {
-				line = strings.TrimSpace(line)
-				if line == "" {
-					if len(currentParagraph) > 0 {
-						finalParagraphs = append(finalParagraphs, strings.Join(currentParagraph, "\n"))
-						currentParagraph = nil
-					}
-				} else {
-					if c.isSpecialFormatLine(line) && c.translationUtils.ContainsChinese(line) {
-						if len(currentParagraph) > 0 {
-							finalParagraphs = append(finalParagraphs, strings.Join(currentParagraph, "\n"))
-							currentParagraph = nil
-						}
-						finalParagraphs = append(finalParagraphs, line)
-					} else if c.isSpecialFormatLine(line) {
-						if len(currentParagraph) > 0 {
-							finalParagraphs = append(finalParagraphs, strings.Join(currentParagraph, "\n"))
-							currentParagraph = nil
-						}
-						finalParagraphs = append(finalParagraphs, line)
-					} else {
-						currentParagraph = append(currentParagraph, line)
-					}
-				}
-			}
-
-			if len(currentParagraph) > 0 {
-				finalParagraphs = append(finalParagraphs, strings.Join(currentParagraph, "\n"))
-			}
+	// 清理每个段落，移除首尾空白并过滤空段落
+	var result []string
+	for _, paragraph := range paragraphs {
+		cleaned := strings.TrimSpace(paragraph)
+		if cleaned != "" {
+			// 将段落内的单个换行符替换为空格，保持文本连续
+			cleaned = regexp.MustCompile(`\n`).ReplaceAllString(cleaned, " ")
+			// 压缩多个空格为单个空格
+			cleaned = regexp.MustCompile(`\s+`).ReplaceAllString(cleaned, " ")
+			result = append(result, cleaned)
 		}
 	}
 
-	return finalParagraphs
-}
-
-// isSpecialFormatLine 判断是否为特殊格式行
-func (c *ContentParser) isSpecialFormatLine(line string) bool {
-	trimmed := strings.TrimSpace(line)
-
-	// 标题
-	if strings.HasPrefix(trimmed, "#") {
-		return true
-	}
-
-	// 列表
-	if strings.HasPrefix(trimmed, "- ") || strings.HasPrefix(trimmed, "* ") || strings.HasPrefix(trimmed, "+ ") {
-		return true
-	}
-
-	// 有序列表
-	if matched, _ := regexp.MatchString(`^\d+\. `, trimmed); matched {
-		return true
-	}
-
-	// 引用
-	if strings.HasPrefix(trimmed, ">") {
-		return true
-	}
-
-	// 水平线
-	if trimmed == "---" || trimmed == "***" || trimmed == "___" {
-		return true
-	}
-
-	return false
-}
-
-// IsMarkdownElement 检查是否为markdown元素行
-func (c *ContentParser) IsMarkdownElement(line string) bool {
-	trimmed := strings.TrimSpace(line)
-
-	// 空行
-	if trimmed == "" {
-		return false
-	}
-
-	// 代码块标记
-	if strings.HasPrefix(trimmed, "```") {
-		return true
-	}
-
-	// 标题 (# ## ### 等)
-	if strings.HasPrefix(trimmed, "#") && (len(trimmed) == 1 || trimmed[1] == '#' || trimmed[1] == ' ') {
-		return true
-	}
-
-	// 有序列表
-	if matched, _ := regexp.MatchString(`^\d+\.\s`, trimmed); matched {
-		return true
-	}
-
-	// 无序列表
-	if matched, _ := regexp.MatchString(`^[-*+]\s`, trimmed); matched {
-		return true
-	}
-
-	// 引用
-	if strings.HasPrefix(trimmed, ">") {
-		return true
-	}
-
-	// 水平分割线
-	if matched, _ := regexp.MatchString(`^(-{3,}|\*{3,}|_{3,})$`, trimmed); matched {
-		return true
-	}
-
-	// 表格行
-	if strings.Contains(trimmed, "|") && (strings.Count(trimmed, "|") >= 2) {
-		return true
-	}
-
-	// 链接定义
-	if matched, _ := regexp.MatchString(`^\[.+\]:\s+`, trimmed); matched {
-		return true
-	}
-
-	// HTML标签
-	if matched, _ := regexp.MatchString(`^<[^>]+>`, trimmed); matched {
-		return true
-	}
-
-	return false
-}
-
-// ExtractMarkdownPrefix 提取markdown前缀
-func (c *ContentParser) ExtractMarkdownPrefix(line string) (string, string) {
-	trimmed := strings.TrimSpace(line)
-
-	// 标题处理
-	if strings.HasPrefix(trimmed, "#") {
-		hashCount := 0
-		spaceIndex := -1
-
-		// 计算连续的#号数量，并找到第一个空格位置
-		for i, r := range trimmed {
-			if r == '#' {
-				hashCount++
-			} else if r == ' ' {
-				spaceIndex = i
-				break
-			} else {
-				// 遇到非#非空格字符，说明格式不标准
-				break
-			}
-		}
-
-		// 如果找到了空格，提取前缀和内容
-		if spaceIndex > 0 {
-			prefix := trimmed[:spaceIndex+1] // 包含空格
-			content := strings.TrimSpace(trimmed[spaceIndex+1:])
-			return prefix, content
-		}
-
-		// 如果只有#号没有空格，补充空格
-		if hashCount > 0 && spaceIndex == -1 {
-			if hashCount == len(trimmed) {
-				// 只有#号，没有内容
-				return trimmed + " ", ""
-			} else {
-				// 有#号和内容但没有空格，插入空格
-				prefix := trimmed[:hashCount] + " "
-				content := strings.TrimSpace(trimmed[hashCount:])
-				return prefix, content
-			}
-		}
-	}
-
-	// 列表项
-	if matched, _ := regexp.MatchString(`^(\d+\.\s|[-*+]\s)`, trimmed); matched {
-		re := regexp.MustCompile(`^(\d+\.\s|[-*+]\s)`)
-		matches := re.FindStringSubmatch(trimmed)
-		if len(matches) > 1 {
-			prefix := matches[1]
-			content := strings.TrimSpace(trimmed[len(prefix):])
-			return prefix, content
-		}
-	}
-
-	// 引用
-	if strings.HasPrefix(trimmed, ">") {
-		re := regexp.MustCompile(`^(>\s*)`)
-		matches := re.FindStringSubmatch(trimmed)
-		if len(matches) > 1 {
-			prefix := matches[1]
-			content := strings.TrimSpace(trimmed[len(prefix):])
-			return prefix, content
-		}
-	}
-
-	return "", trimmed
-}
-
-// ReconstructMarkdownLine 重构markdown行
-func (c *ContentParser) ReconstructMarkdownLine(prefix, translatedContent string) string {
-	if prefix == "" {
-		return translatedContent
-	}
-	return prefix + translatedContent
+	return result
 }
 
 // ParseContentIntoParagraphs 将内容解析为段落
@@ -370,83 +181,7 @@ func (c *ContentParser) ParseContentIntoParagraphs(content string) []string {
 		return []string{}
 	}
 
-	lines := strings.Split(content, "\n")
-	var paragraphs []string
-	var currentParagraph []string
-	inCodeBlock := false
-
-	for _, line := range lines {
-		trimmedLine := strings.TrimSpace(line)
-
-		// 检测代码块开始/结束
-		if strings.HasPrefix(trimmedLine, "```") {
-			if !inCodeBlock {
-				// 代码块开始
-				if len(currentParagraph) > 0 {
-					paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
-					currentParagraph = nil
-				}
-				inCodeBlock = true
-				currentParagraph = append(currentParagraph, line)
-			} else if trimmedLine == "```" || strings.HasPrefix(trimmedLine, "```") {
-				// 代码块结束
-				currentParagraph = append(currentParagraph, line)
-				paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
-				currentParagraph = nil
-				inCodeBlock = false
-			} else {
-				currentParagraph = append(currentParagraph, line)
-			}
-			continue
-		}
-
-		// 在代码块内，直接添加行
-		if inCodeBlock {
-			currentParagraph = append(currentParagraph, line)
-			continue
-		}
-
-		// 空行表示段落结束
-		if trimmedLine == "" {
-			if len(currentParagraph) > 0 {
-				paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
-				currentParagraph = nil
-			}
-			continue
-		}
-
-		// 标题行必须单独成段
-		if c.isHeaderLine(line) {
-			// 先结束当前段落
-			if len(currentParagraph) > 0 {
-				paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
-				currentParagraph = nil
-			}
-			// 标题行单独成段
-			paragraphs = append(paragraphs, line)
-			continue
-		}
-
-		// 其他特殊markdown元素单独成段
-		if c.isBlockLevelElement(line) {
-			// 先结束当前段落
-			if len(currentParagraph) > 0 {
-				paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
-				currentParagraph = nil
-			}
-			// 单独成段
-			paragraphs = append(paragraphs, line)
-			continue
-		}
-
-		// 普通行添加到当前段落
-		currentParagraph = append(currentParagraph, line)
-	}
-	// 处理最后一个段落
-	if len(currentParagraph) > 0 {
-		paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
-	}
-	cleanedParagraphs := c.cleanEmptyParagraphs(paragraphs)
+	cleanedParagraphs := c.splitIntoParagraphs(content)
 
 	// 应用段落拆分
 	splitParagraphs := c.applySplittingToParagraphs(cleanedParagraphs)
@@ -462,96 +197,10 @@ func (c *ContentParser) ParseContentIntoParagraphs(content string) []string {
 
 // ParseContentIntoParagraphsWithMapping 将内容解析为段落并保留映射关系
 func (c *ContentParser) ParseContentIntoParagraphsWithMapping(content string) (*SplitResult, error) {
-	if strings.TrimSpace(content) == "" {
-		return &SplitResult{
-			Paragraphs: []string{},
-			Mappings:   []ParagraphMapping{},
-		}, nil
-	}
-
-	// 首先使用现有的解析逻辑获取基础段落
-	lines := strings.Split(content, "\n")
-	var paragraphs []string
-	var currentParagraph []string
-	inCodeBlock := false
-
-	for _, line := range lines {
-		trimmedLine := strings.TrimSpace(line)
-
-		// 检测代码块开始/结束
-		if strings.HasPrefix(trimmedLine, "```") {
-			if !inCodeBlock {
-				// 代码块开始
-				if len(currentParagraph) > 0 {
-					paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
-					currentParagraph = nil
-				}
-				inCodeBlock = true
-				currentParagraph = append(currentParagraph, line)
-			} else if trimmedLine == "```" || strings.HasPrefix(trimmedLine, "```") {
-				// 代码块结束
-				currentParagraph = append(currentParagraph, line)
-				paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
-				currentParagraph = nil
-				inCodeBlock = false
-			} else {
-				currentParagraph = append(currentParagraph, line)
-			}
-			continue
-		}
-
-		// 在代码块内，直接添加行
-		if inCodeBlock {
-			currentParagraph = append(currentParagraph, line)
-			continue
-		}
-
-		// 空行表示段落结束
-		if trimmedLine == "" {
-			if len(currentParagraph) > 0 {
-				paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
-				currentParagraph = nil
-			}
-			continue
-		}
-
-		// 标题行必须单独成段
-		if c.isHeaderLine(line) {
-			// 先结束当前段落
-			if len(currentParagraph) > 0 {
-				paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
-				currentParagraph = nil
-			}
-			// 标题行单独成段
-			paragraphs = append(paragraphs, line)
-			continue
-		}
-
-		// 其他特殊markdown元素单独成段
-		if c.isBlockLevelElement(line) {
-			// 先结束当前段落
-			if len(currentParagraph) > 0 {
-				paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
-				currentParagraph = nil
-			}
-			// 单独成段
-			paragraphs = append(paragraphs, line)
-			continue
-		}
-
-		// 普通行添加到当前段落
-		currentParagraph = append(currentParagraph, line)
-	}
-
-	// 处理最后一个段落
-	if len(currentParagraph) > 0 {
-		paragraphs = append(paragraphs, strings.Join(currentParagraph, "\n"))
-	}
-
-	cleanedParagraphs := c.cleanEmptyParagraphs(paragraphs)
+	paragraphs := c.splitIntoParagraphs(content)
 
 	// 应用段落拆分并生成映射关系
-	return c.applySplittingWithMapping(cleanedParagraphs), nil
+	return c.applySplittingWithMapping(paragraphs), nil
 }
 
 // applySplittingWithMapping 对段落列表应用拆分并生成映射关系
@@ -560,16 +209,6 @@ func (c *ContentParser) applySplittingWithMapping(paragraphs []string) *SplitRes
 	var mappings []ParagraphMapping
 
 	for originalIndex, paragraph := range paragraphs {
-		// 检查是否为特殊格式（代码块、标题等），这些不需要拆分
-		if c.shouldSkipSplitting(paragraph) || !c.config.Paragraph.EnableSplitting {
-			resultParagraphs = append(resultParagraphs, paragraph)
-			mappings = append(mappings, ParagraphMapping{
-				OriginalIndex: originalIndex,
-				SplitParts:    []string{paragraph},
-				IsOriginal:    true,
-			})
-			continue
-		}
 
 		// 对普通段落应用拆分
 		splitParagraphs := c.splitLongParagraph(paragraph)
@@ -635,89 +274,6 @@ func (c *ContentParser) MergeTranslatedParagraphs(translatedParagraphs []string,
 	return mergedParagraphs, nil
 }
 
-// isHeaderLine 检查是否为标题行
-func (c *ContentParser) isHeaderLine(line string) bool {
-	trimmed := strings.TrimSpace(line)
-
-	// 检查是否以#开头
-	if !strings.HasPrefix(trimmed, "#") {
-		return false
-	}
-
-	// 计算连续的#号数量
-	hashCount := 0
-	for _, r := range trimmed {
-		if r == '#' {
-			hashCount++
-		} else {
-			break
-		}
-	}
-
-	// 必须是1-6个#号，且后面要么是空格要么是结尾
-	if hashCount >= 1 && hashCount <= 6 {
-		if len(trimmed) == hashCount {
-			// 只有#号
-			return true
-		}
-		if len(trimmed) > hashCount && trimmed[hashCount] == ' ' {
-			// #号后面跟空格
-			return true
-		}
-	}
-
-	return false
-}
-
-// isBlockLevelElement 检查是否为块级元素
-func (c *ContentParser) isBlockLevelElement(line string) bool {
-	trimmed := strings.TrimSpace(line)
-
-	// 水平分割线
-	if matched, _ := regexp.MatchString(`^(-{3,}|\*{3,}|_{3,})$`, trimmed); matched {
-		return true
-	}
-
-	// HTML块级标签
-	if matched, _ := regexp.MatchString(`^<(div|p|h[1-6]|blockquote|pre|table|ul|ol|li)[^>]*>`, trimmed); matched {
-		return true
-	}
-
-	// 链接定义
-	if matched, _ := regexp.MatchString(`^\[.+\]:\s+https?://`, trimmed); matched {
-		return true
-	}
-
-	// github secrets 或其他类似的特殊标记
-	if strings.HasPrefix(trimmed, "- ") || strings.HasPrefix(trimmed, "* ") || strings.HasPrefix(trimmed, "+ ") {
-		return true
-	}
-
-	return false
-}
-
-// cleanEmptyParagraphs 清理空段落
-func (c *ContentParser) cleanEmptyParagraphs(paragraphs []string) []string {
-	var result []string
-	for _, p := range paragraphs {
-		if strings.TrimSpace(p) != "" {
-			result = append(result, p)
-		}
-	}
-	return result
-}
-
-// CountTranslatableParagraphs 统计需要翻译的段落数
-func (c *ContentParser) CountTranslatableParagraphs(paragraphs []string) int {
-	count := 0
-	for _, p := range paragraphs {
-		if c.needsTranslation(p) {
-			count++
-		}
-	}
-	return count
-}
-
 // applySplittingToParagraphs 对段落列表应用拆分
 func (c *ContentParser) applySplittingToParagraphs(paragraphs []string) []string {
 	if !c.config.Paragraph.EnableSplitting {
@@ -727,11 +283,6 @@ func (c *ContentParser) applySplittingToParagraphs(paragraphs []string) []string
 	var result []string
 
 	for _, paragraph := range paragraphs {
-		// 检查是否为特殊格式（代码块、标题等），这些不需要拆分
-		if c.shouldSkipSplitting(paragraph) {
-			result = append(result, paragraph)
-			continue
-		}
 
 		// 对普通段落应用拆分
 		splitParagraphs := c.splitLongParagraph(paragraph)
@@ -739,44 +290,6 @@ func (c *ContentParser) applySplittingToParagraphs(paragraphs []string) []string
 	}
 
 	return result
-}
-
-// shouldSkipSplitting 检查段落是否应该跳过拆分
-func (c *ContentParser) shouldSkipSplitting(paragraph string) bool {
-	trimmed := strings.TrimSpace(paragraph)
-
-	// 空段落
-	if trimmed == "" {
-		return true
-	}
-
-	// 代码块
-	if strings.HasPrefix(trimmed, "```") || strings.Contains(paragraph, "```") {
-		return true
-	}
-
-	// 标题行
-	if c.isHeaderLine(paragraph) {
-		return true
-	}
-
-	// 其他块级元素
-	if c.isBlockLevelElement(paragraph) {
-		return true
-	}
-
-	// 特殊格式行
-	lines := strings.Split(paragraph, "\n")
-	if len(lines) == 1 && c.IsMarkdownElement(lines[0]) {
-		return true
-	}
-
-	// 表格
-	if strings.Contains(trimmed, "|") && strings.Count(trimmed, "|") >= 2 {
-		return true
-	}
-
-	return false
 }
 
 // splitLongParagraph 拆分过长的段落
@@ -912,34 +425,6 @@ func (c *ContentParser) splitAtCharacterLimit(paragraph string) []string {
 	}
 
 	return result
-}
-
-// needsTranslation 检查段落是否需要翻译
-func (c *ContentParser) needsTranslation(paragraph string) bool {
-	trimmed := strings.TrimSpace(paragraph)
-
-	// 空段落不需要翻译
-	if trimmed == "" {
-		return false
-	}
-
-	// 纯代码块不需要翻译
-	if strings.HasPrefix(trimmed, "```") && strings.HasSuffix(trimmed, "```") {
-		return false
-	}
-
-	// 水平分割线不需要翻译
-	if matched, _ := regexp.MatchString(`^(-{3,}|\*{3,}|_{3,})$`, trimmed); matched {
-		return false
-	}
-
-	// 链接定义不需要翻译
-	if matched, _ := regexp.MatchString(`^\[.+\]:\s+https?://`, trimmed); matched {
-		return false
-	}
-
-	// 检查是否包含中文
-	return c.translationUtils.ContainsChinese(paragraph)
 }
 
 // GetParagraphSplitStats 获取段落拆分统计信息

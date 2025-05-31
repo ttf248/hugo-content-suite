@@ -247,7 +247,7 @@ func (a *ArticleTranslator) translateArticleBodyToLanguage(body, targetLang stri
 	paragraphs := splitResult.Paragraphs
 	mappings := splitResult.Mappings
 	totalParagraphs := len(paragraphs)
-	translatableParagraphs := a.contentParser.CountTranslatableParagraphs(paragraphs)
+	translatableParagraphs := len(paragraphs)
 
 	fmt.Printf("📖 总段落数: %d | 需翻译: %d | 跳过: %d\n",
 		totalParagraphs, translatableParagraphs, totalParagraphs-translatableParagraphs)
@@ -282,7 +282,7 @@ func (a *ArticleTranslator) translateParagraphsToLanguageWithMapping(paragraphs 
 
 	// 统计信息
 	totalParagraphs := len(paragraphs)
-	translatableParagraphs := a.contentParser.CountTranslatableParagraphs(paragraphs)
+	translatableParagraphs := len(paragraphs)
 	translatedCount := 0
 	successCount := 0
 	errorCount := 0
@@ -292,12 +292,6 @@ func (a *ArticleTranslator) translateParagraphsToLanguageWithMapping(paragraphs 
 
 	for _, paragraph := range paragraphs {
 		trimmed := strings.TrimSpace(paragraph)
-
-		// 检查是否需要翻译
-		if !a.contentParser.needsTranslation(paragraph) {
-			translatedParagraphs = append(translatedParagraphs, paragraph)
-			continue
-		}
 
 		translatedCount++
 
