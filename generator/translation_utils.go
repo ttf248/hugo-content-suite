@@ -488,13 +488,7 @@ func (t *TranslationUtils) translateHeaderLine(line, targetLang string) (string,
 	translatedContent = t.CleanTranslationResult(translatedContent)
 	translatedContent = t.RemoveQuotes(translatedContent)
 
-	// 重构标题行，保持原有的缩进
-	originalIndent := ""
-	if len(line) > len(trimmed) {
-		originalIndent = line[:len(line)-len(trimmed)]
-	}
-
-	return originalIndent + prefix + translatedContent, nil
+	return prefix + translatedContent, nil
 }
 
 // extractHeaderPrefix 提取标题前缀
