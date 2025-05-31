@@ -60,7 +60,13 @@ func main() {
 	}
 
 	// 扫描文章
-	articles, err := scanner.ScanArticles(contentDir)
+	absContentDir, err := utils.GetAbsolutePath(contentDir)
+	if err != nil {
+		log.Fatal("无法转换为绝对路径:", err)
+	}
+	fmt.Printf("📂 扫描目录: %s\n", absContentDir)
+
+	articles, err := scanner.ScanArticles(absContentDir)
 	if err != nil {
 		log.Fatal(err)
 	}
