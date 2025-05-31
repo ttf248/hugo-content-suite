@@ -69,7 +69,7 @@ type LanguageConfig struct {
 var defaultConfig = Config{
 	LMStudio: LMStudioConfig{
 		URL:     "http://localhost:2234/v1/chat/completions",
-		Model:   "deepseek/deepseek-r1-0528-qwen3-8b",
+		Model:   "gemma-3-12b-it",
 		Timeout: 30,
 	},
 	Cache: CacheConfig{
