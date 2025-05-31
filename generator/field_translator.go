@@ -232,11 +232,15 @@ func (a *ArticleTranslator) translateArticleBodyToLanguage(body, targetLang stri
 	totalParagraphs := len(paragraphs)
 	translatableParagraphs := len(paragraphs)
 
+	// 统计总字符数
+	totalChars := len([]rune(body))
+
 	fmt.Printf("📖 总段落数: %d | 需翻译: %d | 跳过: %d\n",
 		totalParagraphs, translatableParagraphs, totalParagraphs-translatableParagraphs)
+	fmt.Printf("🔢 总字符数: %d\n", totalChars)
 
-	// 翻译段落
-	translatedParagraphs, err := a.translateParagraphsToLanguageWithMapping(paragraphs, targetLang)
+	// 翻译段落，传递总字符数
+	translatedParagraphs, err := a.translateParagraphsToLanguageWithMapping(paragraphs, targetLang, totalChars)
 	if err != nil {
 		return "", err
 	}
@@ -259,7 +263,7 @@ func (a *ArticleTranslator) translateArticleBodyToLanguage(body, targetLang stri
 }
 
 // translateParagraphsToLanguageWithMapping 翻译段落列表到指定语言（支持映射关系）
-func (a *ArticleTranslator) translateParagraphsToLanguageWithMapping(paragraphs []string, targetLang string) ([]string, error) {
+func (a *ArticleTranslator) translateParagraphsToLanguageWithMapping(paragraphs []string, targetLang string, totalChars int) ([]string, error) {
 	cfg := config.GetGlobalConfig()
 	var translatedParagraphs []string
 
@@ -271,12 +275,17 @@ func (a *ArticleTranslator) translateParagraphsToLanguageWithMapping(paragraphs 
 	errorCount := 0
 	startTime := time.Now()
 
+	// 新增：累计已翻译字符数
+	translatedChars := 0
+
 	fmt.Printf("\n开始段落级翻译...\n")
 
 	for _, paragraph := range paragraphs {
 		trimmed := strings.TrimSpace(paragraph)
+		paraLen := len([]rune(trimmed))
 
 		translatedCount++
+		translatedChars += paraLen
 
 		// 生成进度信息
 		progressPercent := float64(translatedCount) * 100.0 / float64(translatableParagraphs)
@@ -288,10 +297,27 @@ func (a *ArticleTranslator) translateParagraphsToLanguageWithMapping(paragraphs 
 		remainingParagraphs := translatableParagraphs - translatedCount
 		estimatedRemaining := time.Duration(float64(remainingParagraphs) * avgTimePerParagraph * 1e9)
 
-		fmt.Printf("\n📝 段落 %d/%d %s %.1f%%\n",
+		// 新增：总进度（按字符数）
+		charProgressPercent := 0.0
+		if totalChars > 0 {
+			charProgressPercent = float64(translatedChars) * 100.0 / float64(totalChars)
+		}
+		// 预计剩余时间（按字符数）
+		avgTimePerChar := 0.0
+		if translatedChars > 0 {
+			avgTimePerChar = elapsed.Seconds() / float64(translatedChars)
+		}
+		remainingChars := totalChars - translatedChars
+		estimatedCharRemaining := time.Duration(float64(remainingChars) * avgTimePerChar * float64(time.Second))
+
+		// 输出总进度信息
+		fmt.Printf("\n📊 总进度: %d/%d 字符 (%.1f%%) | 预计剩余: %v\n",
+			translatedChars, totalChars, charProgressPercent, estimatedCharRemaining.Round(time.Second))
+
+		fmt.Printf("📝 段落 %d/%d %s %.1f%%\n",
 			translatedCount, translatableParagraphs, progressBar, progressPercent)
 		fmt.Printf("📄 长度: %d 字符 | 预计剩余: %v\n",
-			len(trimmed), estimatedRemaining.Round(time.Second))
+			paraLen, estimatedRemaining.Round(time.Second))
 
 		// 显示段落预览（前80字符）
 		preview := trimmed
