@@ -309,70 +309,56 @@ func (t *TranslationUtils) IsMarkdownStructuralElement(line string) bool {
 }
 
 // ProtectMarkdownElements 保护关键markdown元素（简化版）
-func (t *TranslationUtils) ProtectMarkdownElements(text string, targetLang string) (string, map[string]string) {
-	protectedElements := make(map[string]string)
-	counter := 0
+func (t *TranslationUtils) ProtectMarkdownElements(text string, targetLang string) (string, []string) {
+	protectedElements := []string{}
+	placeholder := "__MARKDOWN__"
 
 	// 1. 保护代码块（优先级最高）
 	codeBlockRegex := regexp.MustCompile("(?s)```[^`]*```")
 	text = codeBlockRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__CODE_BLOCK_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
+		protectedElements = append(protectedElements, match)
 		return placeholder
 	})
 
 	// 2. 保护内联代码
 	inlineCodeRegex := regexp.MustCompile("`[^`\n]+`")
 	text = inlineCodeRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__INLINE_CODE_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
+		protectedElements = append(protectedElements, match)
 		return placeholder
 	})
 
 	// 3. 保护完整链接
 	linkRegex := regexp.MustCompile(`\[([^\]]+)\]\(([^)]+)\)`)
 	text = linkRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__LINK_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
+		protectedElements = append(protectedElements, match)
 		return placeholder
 	})
 
 	// 4. 保护图片
 	imageRegex := regexp.MustCompile(`!\[([^\]]*)\]\(([^)]+)\)`)
 	text = imageRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__IMAGE_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
+		protectedElements = append(protectedElements, match)
 		return placeholder
 	})
 
 	// 5. 保护URL
 	urlRegex := regexp.MustCompile(`https?://[^\s<>"{}|\\^` + "`" + `\[\]]+`)
 	text = urlRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__URL_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
+		protectedElements = append(protectedElements, match)
 		return placeholder
 	})
 
 	// 6. 保护URL编码字符（百分号编码）
 	urlEncodedRegex := regexp.MustCompile(`%[0-9A-Fa-f]{2}`)
 	text = urlEncodedRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__URL_ENCODED_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
+		protectedElements = append(protectedElements, match)
 		return placeholder
 	})
 
 	// 7. 保护Markdown引用（以>开头的行）
 	quoteRegex := regexp.MustCompile(`(?m)^>\s*.*$`)
 	text = quoteRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__QUOTE_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
+		protectedElements = append(protectedElements, match)
 		return placeholder
 	})
 
@@ -381,9 +367,7 @@ func (t *TranslationUtils) ProtectMarkdownElements(text string, targetLang strin
 	if targetLang != "en" {
 		englishWordRegex := regexp.MustCompile(`\b[A-Za-z]+(?:[0-9]*['-]?[A-Za-z0-9]*)*\b`)
 		text = englishWordRegex.ReplaceAllStringFunc(text, func(match string) string {
-			placeholder := fmt.Sprintf("__ENGLISH_WORD_%d__", counter)
-			protectedElements[placeholder] = match
-			counter++
+			protectedElements = append(protectedElements, match)
 			return placeholder
 		})
 	}
@@ -391,18 +375,14 @@ func (t *TranslationUtils) ProtectMarkdownElements(text string, targetLang strin
 	// 9. 保护Markdown列表项（以-, *, +开头的行）
 	listItemRegex := regexp.MustCompile(`(?m)^[-*+]\s+.*$`)
 	text = listItemRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__LIST_ITEM_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
+		protectedElements = append(protectedElements, match)
 		return placeholder
 	})
 
 	// 10. 保护数字列表（以数字加点开头的行）
 	numberedListRegex := regexp.MustCompile(`(?m)^\d+\.\s`)
 	text = numberedListRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__NUMBERED_LIST_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
+		protectedElements = append(protectedElements, match)
 		return placeholder
 	})
 
