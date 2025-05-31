@@ -3,10 +3,8 @@ package menu
 import (
 	"bufio"
 	"fmt"
-	"hugo-content-suite/display"
 	"hugo-content-suite/models"
 	"hugo-content-suite/operations"
-	"hugo-content-suite/stats"
 	"strings"
 
 	"github.com/fatih/color"
@@ -78,66 +76,6 @@ func (m *InteractiveMenu) displayMainMenu() {
 
 	color.Red("  0. 退出程序")
 	fmt.Println()
-}
-
-func (m *InteractiveMenu) showTagAnalysisMenu(tagStats []models.TagStats) {
-	for {
-		color.Cyan("\n=== 标签统计与分析 ===")
-		fmt.Println("1. 查看所有标签")
-		fmt.Println("2. 查看特定标签详情")
-		fmt.Println("3. 按频率分组查看")
-		fmt.Println("4. 返回主菜单")
-
-		choice := m.getChoice("请选择 (1-4): ")
-
-		switch choice {
-		case "1":
-			display.DisplayTagStats(tagStats, len(tagStats))
-		case "2":
-			tagName := m.getChoice("请输入标签名: ")
-			if tagName != "" {
-				display.DisplayTagDetails(tagStats, tagName)
-			} else {
-				color.Red("标签名不能为空")
-			}
-		case "3":
-			m.showTagFrequencyGroups(tagStats)
-		case "4":
-			return
-		default:
-			color.Red("⚠️  无效选择，请重新输入")
-		}
-	}
-}
-
-func (m *InteractiveMenu) showTagFrequencyGroups(tagStats []models.TagStats) {
-	high, medium, low := stats.GroupTagsByFrequency(tagStats)
-
-	color.Green("=== 高频标签 (≥5篇) ===")
-	if len(high) > 0 {
-		display.DisplayTagStats(high, len(high))
-	} else {
-		fmt.Println("没有高频标签")
-	}
-
-	color.Yellow("=== 中频标签 (2-4篇) ===")
-	if len(medium) > 0 {
-		display.DisplayTagStats(medium, len(medium))
-	} else {
-		fmt.Println("没有中频标签")
-	}
-
-	color.Blue("=== 低频标签 (1篇) ===")
-	if len(low) > 0 {
-		fmt.Printf("共有 %d 个低频标签，显示前20个：\n", len(low))
-		limit := 20
-		if len(low) < 20 {
-			limit = len(low)
-		}
-		display.DisplayTagStats(low, limit)
-	} else {
-		fmt.Println("没有低频标签")
-	}
 }
 
 func (m *InteractiveMenu) getChoice(prompt string) string {

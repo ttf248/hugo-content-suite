@@ -219,13 +219,6 @@ func DisplayTagDetails(tagStats []models.TagStats, tagName string) {
 	fmt.Println()
 }
 
-func min(a, b int) int {
-	if a < b {
-		return a
-	}
-	return b
-}
-
 func groupTagsByFrequency(tagStats []models.TagStats) (high, medium, low []models.TagStats) {
 	for _, stat := range tagStats {
 		if stat.Count >= 5 {

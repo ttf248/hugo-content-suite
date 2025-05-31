@@ -136,41 +136,6 @@ func (a *ArticleTranslator) TranslateArticles(mode string) error {
 	return a.processArticlesByLanguage(targetArticles, targetLanguages, mode)
 }
 
-// translateSingleArticleToLanguage 翻译单篇文章到指定语言
-func (a *ArticleTranslator) translateSingleArticleToLanguage(originalFile, targetFile, targetLang string) error {
-	utils.Info("开始翻译文章到 %s: %s", targetLang, originalFile)
-
-	// 读取原文件
-	content, err := a.fileUtils.ReadFileContent(originalFile)
-	if err != nil {
-		utils.Error("读取原文件失败: %s, 错误: %v", originalFile, err)
-		return fmt.Errorf("读取原文件失败: %v", err)
-	}
-
-	// 解析文章结构
-	frontMatter, bodyContent := a.contentParser.ParseArticleContent(content)
-
-	// 翻译前置数据和正文
-	translatedFrontMatter, err := a.translateFrontMatterToLanguage(frontMatter, targetLang)
-	if err != nil {
-		return fmt.Errorf("翻译前置数据失败: %v", err)
-	}
-
-	translatedBody, err := a.translateArticleBodyToLanguage(bodyContent, targetLang)
-	if err != nil {
-		return fmt.Errorf("翻译正文失败: %v", err)
-	}
-
-	// 合成并写入最终内容
-	finalContent := a.contentParser.CombineTranslatedContent(translatedFrontMatter, translatedBody)
-	if err := a.fileUtils.WriteFileContent(targetFile, finalContent); err != nil {
-		return fmt.Errorf("写入目标文件失败: %v", err)
-	}
-
-	utils.Info("文章翻译完成 (%s): %s", targetLang, targetFile)
-	return nil
-}
-
 // processArticlesByLanguage 按语言处理文章
 func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Article, targetLanguages []string, mode string) error {
 	cfg := config.GetGlobalConfig()
@@ -423,7 +388,7 @@ func (a *ArticleTranslator) translateParagraphsToLanguageWithMappingAndGlobalPro
 		}
 
 		// 仅每N个段落输出一次进度，减少刷屏
-		const progressStep = 5
+		const progressStep = 1
 		showProgress := translatedCount == 1 || translatedCount == translatableParagraphs || translatedCount%progressStep == 0
 		if showProgress {
 			// 进度信息
@@ -451,10 +416,10 @@ func (a *ArticleTranslator) translateParagraphsToLanguageWithMappingAndGlobalPro
 				globalRemainingChars := totalCharsAllArticles - *globalTranslatedChars
 				globalEstimatedRemaining := time.Duration(float64(globalRemainingChars) * globalAvgTimePerChar * float64(time.Second))
 				globalProgressLine = fmt.Sprintf(
-					"\n🌏 总进度: %d/%d 字符 (%.1f%%) | 总用时: %v | 预计剩余: %v\n"+
-						"   剩余文章: %d | 当前文章剩余语言: %d",
-					*globalTranslatedChars, totalCharsAllArticles, globalPercent, globalElapsed.Round(time.Second), globalEstimatedRemaining.Round(time.Second),
-					remainingArticles, remainingLangsOfCurrentArticle)
+					"\n🌏 总进度: %d/%d 字符 (%.1f%%) | 剩余文章: %d | 当前文章剩余语言: %d | 总用时: %v | 预计剩余: %v\n",
+					*globalTranslatedChars, totalCharsAllArticles, globalPercent,
+					remainingArticles, remainingLangsOfCurrentArticle,
+					globalElapsed.Round(time.Second), globalEstimatedRemaining.Round(time.Second))
 			}
 
 			// 先打印总进度，再打印全局进度
@@ -467,15 +432,11 @@ func (a *ArticleTranslator) translateParagraphsToLanguageWithMappingAndGlobalPro
 				estimatedCharRemaining.Round(time.Second))
 		}
 
-		// 仅在debug或首段/末段输出段落内容和译文
-		showDetail := translatedCount == 1 || translatedCount == translatableParagraphs
-		if showDetail {
-			preview := trimmed
-			if len(preview) > 200 {
-				preview = preview[:200] + "..."
-			}
-			fmt.Printf("📖 内容: %s\n", preview)
+		preview := trimmed
+		if len(preview) > 80 {
+			preview = preview[:80] + "..."
 		}
+		fmt.Printf("📖 内容: %s\n", preview)
 
 		// 翻译段落
 		paragraphStartTime := time.Now()
@@ -483,20 +444,16 @@ func (a *ArticleTranslator) translateParagraphsToLanguageWithMappingAndGlobalPro
 		paragraphDuration := time.Since(paragraphStartTime)
 
 		if err != nil {
-			if showDetail {
-				fmt.Printf("❌ 翻译失败 (%.1fs): %v\n", paragraphDuration.Seconds(), err)
-				fmt.Printf("📝 保留原文\n")
-			}
+			fmt.Printf("❌ 翻译失败 (%.1fs): %v\n", paragraphDuration.Seconds(), err)
+			fmt.Printf("📝 保留原文\n")
 			translatedParagraphs = append(translatedParagraphs, paragraph)
 			errorCount++
 		} else {
-			if showDetail {
-				translatedPreview := strings.TrimSpace(translatedParagraph)
-				if len(translatedPreview) > 200 {
-					translatedPreview = translatedPreview[:200] + "..."
-				}
-				fmt.Printf("📝 译文: %s\n", translatedPreview)
+			translatedPreview := strings.TrimSpace(translatedParagraph)
+			if len(translatedPreview) > 80 {
+				translatedPreview = translatedPreview[:80] + "..."
 			}
+			fmt.Printf("📝 译文: %s\n", translatedPreview)
 			translatedParagraphs = append(translatedParagraphs, translatedParagraph)
 			successCount++
 		}

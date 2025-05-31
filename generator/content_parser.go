@@ -238,24 +238,6 @@ func (c *ContentParser) MergeTranslatedParagraphs(translatedParagraphs []string,
 	return mergedParagraphs, nil
 }
 
-// applySplittingToParagraphs 对段落列表应用拆分
-func (c *ContentParser) applySplittingToParagraphs(paragraphs []string) []string {
-	if !c.config.Paragraph.EnableSplitting {
-		return paragraphs
-	}
-
-	var result []string
-
-	for _, paragraph := range paragraphs {
-
-		// 对普通段落应用拆分
-		splitParagraphs := c.splitLongParagraph(paragraph)
-		result = append(result, splitParagraphs...)
-	}
-
-	return result
-}
-
 // splitLongParagraph 拆分过长的段落
 func (c *ContentParser) splitLongParagraph(paragraph string) []string {
 	// 如果未启用拆分或段落不超长，直接返回
