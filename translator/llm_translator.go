@@ -114,7 +114,7 @@ func (t *LLMTranslator) makeRequest(prompt string, timeout time.Duration) (strin
 
 // TestConnection 测试与LM Studio的连接
 func (t *LLMTranslator) TestConnection() error {
-	_, err := t.makeRequest("test", 5*time.Second)
+	_, err := t.makeRequest("这是一个测试请求，无需处理，直接应答就行", 30*time.Second)
 	return err
 }
 

@@ -204,23 +204,10 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 		targetLangName = targetLang
 	}
 
-	// 检查内容是否包含占位符信息
-	containsPlaceholders := strings.Contains(content, "__CODE_BLOCK_") ||
-		strings.Contains(content, "__INLINE_CODE_") ||
-		strings.Contains(content, "__LINK_") ||
-		strings.Contains(content, "__IMAGE_") ||
-		strings.Contains(content, "__URL_") ||
-		strings.Contains(content, "__URL_ENCODED_") ||
-		strings.Contains(content, "__QUOTE_") ||
-		strings.Contains(content, "__ENGLISH_WORD_") ||
-		strings.Contains(content, "__LIST_ITEM_") ||
-		strings.Contains(content, "__NUMBERED_LIST_")
-
-	// 构建提示词内容
-	systemContent := fmt.Sprintf("Translate Chinese to %s accurately and concisely. Only output the translated text without any additional content.", targetLangName)
-	if containsPlaceholders {
-		systemContent += " Keep all placeholders (like __CODE_BLOCK_0__, __INLINE_CODE_1__, __LINK_0__, __IMAGE_0__, __URL_0__, __URL_ENCODED_0__, __QUOTE_0__, __ENGLISH_WORD_0__, __LIST_ITEM_0__, __NUMBERED_LIST_0__) unchanged."
-	}
+	systemContent := fmt.Sprintf(`你是一位资深的翻译专家，精通多国语言，将中文翻译为%s。
+	只输出翻译后的文本，不要添加任何额外内容。
+	翻译的文本为 markdown 格式，记得保持文档的格式。
+	翻译后的时候从整体考虑，不是所有的英文单词都需要翻译，代码之类的都无需翻译`, targetLangName)
 
 	request := translator.LMStudioRequest{
 		Model: cfg.LMStudio.Model,
@@ -231,7 +218,7 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 			},
 			{
 				Role:    "user",
-				Content: fmt.Sprintf("Translate to %s:\n\n%s", targetLangName, content),
+				Content: content,
 			},
 		},
 		Stream: false,
@@ -267,6 +254,11 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 		return "", fmt.Errorf("no translation result received")
 	}
 	result := strings.TrimSpace(response.Choices[0].Message.Content)
+
+	// 兼容思考模型，移除 <think> </think> 标签之间的内容
+	thinkRegex := regexp.MustCompile(`(?s)<think>.*?</think>`)
+	result = thinkRegex.ReplaceAllString(result, "")
+	result = strings.TrimSpace(result)
 
 	return t.CleanTranslationResult(result), nil
 }
@@ -308,115 +300,6 @@ func (t *TranslationUtils) IsMarkdownStructuralElement(line string) bool {
 	return false
 }
 
-// ProtectMarkdownElements 保护关键markdown元素（简化版）
-func (t *TranslationUtils) ProtectMarkdownElements(text string, targetLang string) (string, map[string]string) {
-	protectedElements := make(map[string]string)
-	counter := 0
-
-	// 1. 保护代码块（优先级最高）
-	codeBlockRegex := regexp.MustCompile("(?s)```[^`]*```")
-	text = codeBlockRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__CODE_BLOCK_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
-		return placeholder
-	})
-
-	// 2. 保护内联代码
-	inlineCodeRegex := regexp.MustCompile("`[^`\n]+`")
-	text = inlineCodeRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__INLINE_CODE_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
-		return placeholder
-	})
-
-	// 3. 保护完整链接
-	linkRegex := regexp.MustCompile(`\[([^\]]+)\]\(([^)]+)\)`)
-	text = linkRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__LINK_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
-		return placeholder
-	})
-
-	// 4. 保护图片
-	imageRegex := regexp.MustCompile(`!\[([^\]]*)\]\(([^)]+)\)`)
-	text = imageRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__IMAGE_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
-		return placeholder
-	})
-
-	// 5. 保护URL
-	urlRegex := regexp.MustCompile(`https?://[^\s<>"{}|\\^` + "`" + `\[\]]+`)
-	text = urlRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__URL_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
-		return placeholder
-	})
-
-	// 6. 保护URL编码字符（百分号编码）
-	urlEncodedRegex := regexp.MustCompile(`%[0-9A-Fa-f]{2}`)
-	text = urlEncodedRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__URL_ENCODED_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
-		return placeholder
-	})
-
-	// 7. 保护Markdown引用（以>开头的行）
-	quoteRegex := regexp.MustCompile(`(?m)^>\s*.*$`)
-	text = quoteRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__QUOTE_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
-		return placeholder
-	})
-
-	// 8. 保护英文单词（假设英文单词是以字母开头的连续字母）
-	// 注意：这里假设目标语言不是英文时才保护英文单词
-	if targetLang != "en" {
-		englishWordRegex := regexp.MustCompile(`\b[A-Za-z]+(?:[0-9]*['-]?[A-Za-z0-9]*)*\b`)
-		text = englishWordRegex.ReplaceAllStringFunc(text, func(match string) string {
-			placeholder := fmt.Sprintf("__ENGLISH_WORD_%d__", counter)
-			protectedElements[placeholder] = match
-			counter++
-			return placeholder
-		})
-	}
-
-	// 9. 保护Markdown列表项（以-, *, +开头的行）
-	listItemRegex := regexp.MustCompile(`(?m)^[-*+]\s+.*$`)
-	text = listItemRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__LIST_ITEM_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
-		return placeholder
-	})
-
-	// 10. 保护数字列表（以数字加点开头的行）
-	numberedListRegex := regexp.MustCompile(`(?m)^\d+\.\s`)
-	text = numberedListRegex.ReplaceAllStringFunc(text, func(match string) string {
-		placeholder := fmt.Sprintf("__NUMBERED_LIST_%d__", counter)
-		protectedElements[placeholder] = match
-		counter++
-		return placeholder
-	})
-
-	return text, protectedElements
-}
-
-// RestoreMarkdownElements 恢复保护的markdown元素
-func (t *TranslationUtils) RestoreMarkdownElements(text string, protectedElements map[string]string) string {
-	for placeholder, original := range protectedElements {
-		text = strings.ReplaceAll(text, placeholder, original)
-	}
-	return text
-}
-
 // TranslateParagraphToLanguage 翻译段落到指定语言
 func (t *TranslationUtils) TranslateParagraphToLanguage(paragraph, targetLang string) (string, error) {
 	// 检查是否为标题行
@@ -430,11 +313,8 @@ func (t *TranslationUtils) TranslateParagraphToLanguage(paragraph, targetLang st
 		return translatedHeader, nil
 	}
 
-	// 保护关键元素
-	protectedContent, protectedElements := t.ProtectMarkdownElements(paragraph, targetLang)
-
 	// 翻译处理后的内容
-	translatedContent, err := t.TranslateToLanguage(protectedContent, targetLang)
+	translatedContent, err := t.TranslateToLanguage(paragraph, targetLang)
 	if err != nil {
 		return "", err
 	}
@@ -442,10 +322,7 @@ func (t *TranslationUtils) TranslateParagraphToLanguage(paragraph, targetLang st
 	// 清理翻译结果
 	translatedContent = t.CleanTranslationResult(translatedContent)
 
-	// 恢复保护的元素
-	finalContent := t.RestoreMarkdownElements(translatedContent, protectedElements)
-
-	return finalContent, nil
+	return translatedContent, nil
 }
 
 // isHeaderLine 检查是否为标题行
@@ -494,23 +371,17 @@ func (t *TranslationUtils) translateHeaderLine(line, targetLang string) (string,
 		return line, nil
 	}
 
-	// 保护关键元素
-	protectedContent, protectedElements := t.ProtectMarkdownElements(content, targetLang)
-
 	// 翻译标题内容
-	translatedContent, err := t.TranslateToLanguage(protectedContent, targetLang)
+	translatedContent, err := t.TranslateToLanguage(content, targetLang)
 	if err != nil {
 		return "", err
 	}
 
-	// 恢复保护的元素
-	finalHeader := t.RestoreMarkdownElements(translatedContent, protectedElements)
-
 	// 清理翻译结果
-	finalHeader = t.CleanTranslationResult(finalHeader)
-	finalHeader = t.RemoveQuotes(finalHeader)
+	translatedContent = t.CleanTranslationResult(translatedContent)
+	translatedContent = t.RemoveQuotes(translatedContent)
 
-	return prefix + finalHeader, nil
+	return prefix + translatedContent, nil
 }
 
 // extractHeaderPrefix 提取标题前缀
