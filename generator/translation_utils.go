@@ -386,13 +386,15 @@ func (t *TranslationUtils) ProtectMarkdownElements(text string, targetLang strin
 		return placeholder
 	})
 
+	fmt.Printf("📖 替换: %s\n", text)
 	return text, protectedElements
 }
 
 // RestoreMarkdownElements 恢复保护的markdown元素
-func (t *TranslationUtils) RestoreMarkdownElements(text string, protectedElements map[string]string) string {
-	for placeholder, original := range protectedElements {
-		text = strings.ReplaceAll(text, placeholder, original)
+func (t *TranslationUtils) RestoreMarkdownElements(text string, protectedElements []string) string {
+	placeholder := "__MARKDOWN__"
+	for _, original := range protectedElements {
+		text = strings.Replace(text, placeholder, original, 1)
 	}
 	return text
 }
