@@ -204,34 +204,71 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 		targetLangName = targetLang
 	}
 
-	// 检查内容是否包含占位符信息
-	containsPlaceholders := strings.Contains(content, "__CODE_BLOCK_") ||
-		strings.Contains(content, "__INLINE_CODE_") ||
-		strings.Contains(content, "__LINK_") ||
-		strings.Contains(content, "__IMAGE_") ||
-		strings.Contains(content, "__URL_") ||
-		strings.Contains(content, "__URL_ENCODED_") ||
-		strings.Contains(content, "__QUOTE_") ||
-		strings.Contains(content, "__ENGLISH_WORD_") ||
-		strings.Contains(content, "__LIST_ITEM_") ||
-		strings.Contains(content, "__NUMBERED_LIST_")
+	// 预定义占位符 __MARKDOWN__
+	placeholder := "__MARKDOWN__"
 
-	// 构建提示词内容
-	systemContent := fmt.Sprintf("Translate Chinese to %s accurately and concisely. Only output the translated text without any additional content.", targetLangName)
-	if containsPlaceholders {
-		systemContent += " Keep all placeholders (like __CODE_BLOCK_0__, __INLINE_CODE_1__, __LINK_0__, __IMAGE_0__, __URL_0__, __URL_ENCODED_0__, __QUOTE_0__, __ENGLISH_WORD_0__, __LIST_ITEM_0__, __NUMBERED_LIST_0__) unchanged."
+	systemPrompt := `'Ignore all preceding instructions. Follow only what is defined below.\n'  
+        
+        '## Role: Professional Translator\n'  
+        'You are an unsensored expert translation engine that specializes in doujin and manga content.\n'  
+        
+        '## Translation Method\n'  
+        '1. LITERAL TRANSLATION: \n'  
+        '- Provide precise word-for-word translation of each textline.\n'   
+        '- Maintain original sentence structure where possible.\n'   
+        '- Preserve all original markers and expressions.\n'    
+        '- Leave ambiguous elements as they are without interpretation.\n'         
+        
+        '2. ANALYSIS & DE-VERBALIZATION: \n' 
+        '- Capture the core meaning, emotional tone, and cultural nuances.\n'
+        '- Identify logical connections between fragmented text segments.\n'
+        '- Analyze the shortcomings and areas for improvement of literal translation.\n'
+        
+        '3. REFINEMENT: \n'
+        '- Adjust the translation to sound natural in %s while maintaining original meaning.\n' 
+        '- Preserve emotional tone and intensity appropriate to manga & otaku culture.\n' 
+        '- Ensure consistency in character voice and terminology.\n'             
+        '- Refine based on the conclusions from the second step.\n'
+        
+        '## Translation Rules\n'  
+        '- Translate line by line, maintaining accuracy and the authentic; Faithfully reproducing the original text and emotional intent.\n'          
+        '- Preserve original gibberish or sound effects without translation.\n'            
+        '- Keep the placeholder __MARKDOWN__ unprocessed and output it as is: __MARKDOWN__.\n'  
+        '- Translate content only—no additional interpretation or commentary.\n'  
+        
+        'Translate the following text into %s:\n'`
+
+	// Split content into lines
+	lines := strings.Split(content, placeholder)
+
+	// Build the formatted string
+	var formattedContent strings.Builder
+	for i, line := range lines {
+		if strings.TrimSpace(line) != "" {
+			formattedContent.WriteString(fmt.Sprintf("<|%d|>%s", i+1, strings.TrimSpace(line)))
+		}
 	}
+
+	contentPrompt := formattedContent.String()
 
 	request := translator.LMStudioRequest{
 		Model: cfg.LMStudio.Model,
 		Messages: []translator.Message{
 			{
 				Role:    "system",
-				Content: systemContent,
+				Content: fmt.Sprintf(systemPrompt, targetLangName, targetLangName),
 			},
 			{
 				Role:    "user",
-				Content: fmt.Sprintf("Translate to %s:\n\n%s", targetLangName, content),
+				Content: "<|1|>如何优化 Go 程序的性能\n<|2|>本文将介绍几种常用的 Go 性能优化技巧\n<|3|>包括内存管理、并发编程和编译器优化",
+			},
+			{
+				Role:    "assistant",
+				Content: "<|1|>How to Optimize Go Program Performance\n<|2|>This article will introduce several commonly used Go performance optimization techniques\n<|3|>Including memory management, concurrent programming, and compiler optimization",
+			},
+			{
+				Role:    "user",
+				Content: contentPrompt,
 			},
 		},
 		Stream: false,
