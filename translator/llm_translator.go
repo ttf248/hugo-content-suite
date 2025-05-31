@@ -15,9 +15,15 @@ import (
 
 // LM Studio API 相关类型定义
 type LMStudioRequest struct {
-	Model    string    `json:"model"`
-	Messages []Message `json:"messages"`
-	Stream   bool      `json:"stream"`
+	Model            string    `json:"model"`
+	Messages         []Message `json:"messages"`
+	Stream           bool      `json:"stream"`
+	Temperature      float64   `json:"temperature,omitempty"`
+	TopP             float64   `json:"top_p,omitempty"`
+	MaxTokens        int       `json:"max_tokens,omitempty"`
+	Stop             []string  `json:"stop,omitempty"`
+	PresencePenalty  float64   `json:"presence_penalty,omitempty"`
+	FrequencyPenalty float64   `json:"frequency_penalty,omitempty"`
 }
 
 type Message struct {

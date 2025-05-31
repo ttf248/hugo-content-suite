@@ -204,24 +204,86 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 		targetLangName = targetLang
 	}
 
-	systemContent := fmt.Sprintf(`你是一位资深的翻译专家，精通多国语言，将中文翻译为%s。
-	只输出翻译后的文本，不要添加任何额外内容。
-	翻译的文本为 markdown 格式，记得保持文档的格式。
-	翻译后的时候从整体考虑，不是所有的英文单词都需要翻译，代码之类的都无需翻译`, targetLangName)
+	systemContent := `
+	忽略以前设置的所有指令。
+	你是一位专业的技术文档翻译人员。
+
+	请执行以下任务：
+	1. 将用户提供的中文内容准确翻译为指定语言
+	2. 保持原文档的markdown格式结构不变
+
+	仅输出翻译的内容`
+
+	// 构建历史对话，提供翻译示例
+	var messages []translator.Message
+
+	// 系统消息
+	messages = append(messages, translator.Message{
+		Role:    "system",
+		Content: systemContent,
+	})
+
+	// 添加历史翻译示例
+	switch targetLang {
+	case "en":
+		messages = append(messages,
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 English: 人工智能"},
+			translator.Message{Role: "assistant", Content: "Artificial Intelligence"},
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 English: 机器学习"},
+			translator.Message{Role: "assistant", Content: "Machine Learning"},
+		)
+	case "ja":
+		messages = append(messages,
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 Japanese: 人工智能"},
+			translator.Message{Role: "assistant", Content: "人工知能"},
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 Japanese: 机器学习"},
+			translator.Message{Role: "assistant", Content: "機械学習"},
+		)
+	case "ko":
+		messages = append(messages,
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 Korean: 人工智能"},
+			translator.Message{Role: "assistant", Content: "인공지능"},
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 Korean: 机器学习"},
+			translator.Message{Role: "assistant", Content: "기계학습"},
+		)
+	case "fr":
+		messages = append(messages,
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 French: 人工智能"},
+			translator.Message{Role: "assistant", Content: "Intelligence Artificielle"},
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 French: 机器学习"},
+			translator.Message{Role: "assistant", Content: "Apprentissage Automatique"},
+		)
+	case "ru":
+		messages = append(messages,
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 Russian: 人工智能"},
+			translator.Message{Role: "assistant", Content: "Искусственный интеллект"},
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 Russian: 机器学习"},
+			translator.Message{Role: "assistant", Content: "Машинное обучение"},
+		)
+	case "hi":
+		messages = append(messages,
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 Hindi: 人工智能"},
+			translator.Message{Role: "assistant", Content: "कृत्रिम बुद्धिमत्ता"},
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 Hindi: 机器学习"},
+			translator.Message{Role: "assistant", Content: "मशीन लर्निंग"},
+		)
+	}
+
+	// 添加当前翻译请求
+	messages = append(messages, translator.Message{
+		Role:    "user",
+		Content: fmt.Sprintf("请将以下内容翻译为 %s: %s", targetLangName, content),
+	})
 
 	request := translator.LMStudioRequest{
-		Model: cfg.LMStudio.Model,
-		Messages: []translator.Message{
-			{
-				Role:    "system",
-				Content: systemContent,
-			},
-			{
-				Role:    "user",
-				Content: content,
-			},
-		},
-		Stream: false,
+		Model:            cfg.LMStudio.Model,
+		Messages:         messages,
+		Stream:           false,
+		Temperature:      0.0,  // 设置为 0.0 可使输出更确定，适合需要精确翻译的场景。
+		TopP:             1.0,  // 与 Temperature 配合使用，设置为 1.0 表示不限制采样范围。
+		MaxTokens:        1000, // 根据翻译内容的长度调整，确保输出完整。
+		PresencePenalty:  0.0,  // 设置为 0.0 可防止模型引入新的话题或内容，保持翻译的忠实性。
+		FrequencyPenalty: 0.0,  // 设置为 0.0 可避免模型对词汇的重复使用进行惩罚，适合保持原文结构的翻译。
 	}
 
 	jsonData, err := json.Marshal(request)
