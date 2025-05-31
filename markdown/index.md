@@ -14,6 +14,14 @@ draft: false
 slug: "auto-integration-system-switch"
 ---
 
+- 苹果  
+- 香蕉  
+- 橙子 
+
+1. 第一步：打开文档  
+2. 第二步：输入内容  
+3. 第三步：保存文件  
+
 # Markdown 标记符用法全解析
 
 ## 一、标题（Heading）
@@ -25,10 +33,15 @@ slug: "auto-integration-system-switch"
 ### 显示效果：
 
 # 一级标题（最大层级）
+
 ## 二级标题
+
 ### 三级标题
+
 #### 四级标题
+
 ##### 五级标题
+
 ###### 六级标题（最小层级）
 
 ## 二、文本格式（Text Formatting）
