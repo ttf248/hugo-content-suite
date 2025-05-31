@@ -318,8 +318,8 @@ func (a *ArticleTranslator) translateParagraphsToLanguageWithMapping(paragraphs 
 
 		// 显示段落预览（前80字符）
 		preview := trimmed
-		if len(preview) > 80 {
-			preview = preview[:80] + "..."
+		if len(preview) > 200 {
+			preview = preview[:200] + "..."
 		}
 		fmt.Printf("📖 内容: %s\n", preview)
 
@@ -340,8 +340,8 @@ func (a *ArticleTranslator) translateParagraphsToLanguageWithMapping(paragraphs 
 
 			// 显示翻译结果预览
 			translatedPreview := strings.TrimSpace(translatedParagraph)
-			if len(translatedPreview) > 80 {
-				translatedPreview = translatedPreview[:80] + "..."
+			if len(translatedPreview) > 200 {
+				translatedPreview = translatedPreview[:200] + "..."
 			}
 			fmt.Printf("📝 译文: %s\n", translatedPreview)
 		}
