@@ -1,7 +1,7 @@
 {
   "lm_studio": {
     "url": "http://localhost:2234/v1/chat/completions",
-    "model": "gemma-3-12b-it",
+    "model": "qwen3-8b",
     "timeout_seconds": 30
   },
   "cache": {
@@ -16,7 +16,7 @@
     "colors": true
   },
   "paths": {
-    "default_content_dir": "../../content/post",
+    "default_content_dir": "markdown",
     "tags_dir": "../tags"
   },
   "translation": {
@@ -46,10 +46,7 @@
     "target_languages": [
       "en",
       "ja",
-      "ko",
-      "fr",
-      "ru",
-      "hi"
+      "ko"
     ],
     "language_names": {
       "en": "English",
