@@ -45,66 +45,6 @@ func (t *TranslationUtils) ContainsChinese(text string) bool {
 	return false
 }
 
-// CleanTranslationResult 清理翻译结果
-func (t *TranslationUtils) CleanTranslationResult(result string) string {
-	cfg := config.GetGlobalConfig()
-
-	// 移除首尾空白
-	result = strings.TrimSpace(result)
-
-	// 移除常见的多余前缀
-	unwantedPrefixes := []string{
-		"Translation:", "English:", "Japanese:", "Korean:",
-		"The translation is:", "Here is the translation:",
-		"Translated:", "Answer:", "Result:", "Output:",
-		"翻译:", "英文:", "日文:", "韩文:",
-	}
-
-	for _, prefix := range unwantedPrefixes {
-		if strings.HasPrefix(result, prefix) {
-			result = strings.TrimSpace(strings.TrimPrefix(result, prefix))
-		}
-	}
-
-	// 使用配置中的清理模式
-	for _, pattern := range cfg.Translation.CleanupPatterns {
-		if strings.HasPrefix(result, pattern) {
-			result = strings.TrimSpace(strings.TrimPrefix(result, pattern))
-		}
-	}
-
-	// 移除多层引号
-	for strings.HasPrefix(result, "\"") && strings.HasSuffix(result, "\"") && len(result) > 2 {
-		inner := result[1 : len(result)-1]
-		if !strings.Contains(inner, "\"") || strings.Count(inner, "\"")%2 == 0 {
-			result = strings.TrimSpace(inner)
-		} else {
-			break
-		}
-	}
-
-	// 移除句号结尾
-	if strings.HasSuffix(result, ".") && !strings.Contains(result, ". ") {
-		result = strings.TrimSpace(strings.TrimSuffix(result, "."))
-	}
-
-	// 移除多余的换行符和空格
-	result = strings.ReplaceAll(result, "\n", " ")
-	result = strings.ReplaceAll(result, "\r", " ")
-	result = regexp.MustCompile(`\s+`).ReplaceAllString(result, " ")
-
-	return strings.TrimSpace(result)
-}
-
-// RemoveQuotes 移除译文中的所有引号
-func (t *TranslationUtils) RemoveQuotes(text string) string {
-	quotes := []string{"\"", "'", "'", "'", "„", "‚", "‹", "›", "«", "»"}
-	for _, quote := range quotes {
-		text = strings.ReplaceAll(text, quote, "")
-	}
-	return strings.TrimSpace(text)
-}
-
 // FormatSlugField 格式化slug字段
 func (t *TranslationUtils) FormatSlugField(slug string) string {
 	slug = strings.ToLower(slug)
@@ -168,8 +108,6 @@ func (t *TranslationUtils) BatchTranslateWithCache(texts []string, targetLang st
 				fmt.Printf("失败 (%v)\n", err)
 				// 翻译失败，使用原文
 				translated = text
-			} else {
-				translated = t.CleanTranslationResult(translated)
 			}
 
 			result[text] = translated
@@ -231,6 +169,8 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 			translator.Message{Role: "assistant", Content: "Artificial Intelligence"},
 			translator.Message{Role: "user", Content: "请将以下内容翻译为 English: 机器学习"},
 			translator.Message{Role: "assistant", Content: "Machine Learning"},
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 English: - 数据挖掘\n- 深度学习\n- 神经网络"},
+			translator.Message{Role: "assistant", Content: "- Data Mining\n- Deep Learning\n- Neural Network"},
 		)
 	case "ja":
 		messages = append(messages,
@@ -238,6 +178,8 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 			translator.Message{Role: "assistant", Content: "人工知能"},
 			translator.Message{Role: "user", Content: "请将以下内容翻译为 Japanese: 机器学习"},
 			translator.Message{Role: "assistant", Content: "機械学習"},
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 Japanese: - 数据挖掘\n- 深度学习\n- 神经网络"},
+			translator.Message{Role: "assistant", Content: "- データマイニング\n- ディープラーニング\n- ニューラルネットワーク"},
 		)
 	case "ko":
 		messages = append(messages,
@@ -245,6 +187,8 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 			translator.Message{Role: "assistant", Content: "인공지능"},
 			translator.Message{Role: "user", Content: "请将以下内容翻译为 Korean: 机器学习"},
 			translator.Message{Role: "assistant", Content: "기계학습"},
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 Korean: - 数据挖掘\n- 深度学习\n- 神经网络"},
+			translator.Message{Role: "assistant", Content: "- 데이터 마이닝\n- 딥러닝\n- 신경망"},
 		)
 	case "fr":
 		messages = append(messages,
@@ -252,6 +196,8 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 			translator.Message{Role: "assistant", Content: "Intelligence Artificielle"},
 			translator.Message{Role: "user", Content: "请将以下内容翻译为 French: 机器学习"},
 			translator.Message{Role: "assistant", Content: "Apprentissage Automatique"},
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 French: - 数据挖掘\n- 深度学习\n- 神经网络"},
+			translator.Message{Role: "assistant", Content: "- Exploration de Données\n- Apprentissage Profond\n- Réseau de Neurones"},
 		)
 	case "ru":
 		messages = append(messages,
@@ -259,6 +205,8 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 			translator.Message{Role: "assistant", Content: "Искусственный интеллект"},
 			translator.Message{Role: "user", Content: "请将以下内容翻译为 Russian: 机器学习"},
 			translator.Message{Role: "assistant", Content: "Машинное обучение"},
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 Russian: - 数据挖掘\n- 深度学习\n- 神经网络"},
+			translator.Message{Role: "assistant", Content: "- Интеллектуальный анализ данных\n- Глубокое обучение\n- Нейронная сеть"},
 		)
 	case "hi":
 		messages = append(messages,
@@ -266,6 +214,8 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 			translator.Message{Role: "assistant", Content: "कृत्रिम बुद्धिमत्ता"},
 			translator.Message{Role: "user", Content: "请将以下内容翻译为 Hindi: 机器学习"},
 			translator.Message{Role: "assistant", Content: "मशीन लर्निंग"},
+			translator.Message{Role: "user", Content: "请将以下内容翻译为 Hindi: - 数据挖掘\n- 深度学习\n- 神经网络"},
+			translator.Message{Role: "assistant", Content: "- डेटा माइनिंग\n- डीप लर्निंग\n- न्यूरल नेटवर्क"},
 		)
 	}
 
@@ -322,7 +272,7 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 	result = thinkRegex.ReplaceAllString(result, "")
 	result = strings.TrimSpace(result)
 
-	return t.CleanTranslationResult(result), nil
+	return result, nil
 }
 
 // SaveCache 保存缓存
@@ -333,151 +283,4 @@ func (t *TranslationUtils) SaveCache() error {
 // GetCacheStats 获取缓存统计
 func (t *TranslationUtils) GetCacheStats() string {
 	return t.cache.GetInfo()
-}
-
-// IsMarkdownStructuralElement 检查是否为markdown结构元素
-func (t *TranslationUtils) IsMarkdownStructuralElement(line string) bool {
-	trimmed := strings.TrimSpace(line)
-
-	// 代码块
-	if strings.HasPrefix(trimmed, "```") {
-		return true
-	}
-
-	// 水平分割线
-	if matched, _ := regexp.MatchString(`^(-{3,}|\*{3,}|_{3,})$`, trimmed); matched {
-		return true
-	}
-
-	// HTML标签
-	if matched, _ := regexp.MatchString(`^<[^>]+>.*</[^>]+>$`, trimmed); matched {
-		return true
-	}
-
-	// 链接定义
-	if matched, _ := regexp.MatchString(`^\[.+\]:\s+https?://`, trimmed); matched {
-		return true
-	}
-
-	return false
-}
-
-// TranslateParagraphToLanguage 翻译段落到指定语言
-func (t *TranslationUtils) TranslateParagraphToLanguage(paragraph, targetLang string) (string, error) {
-	// 检查是否为标题行
-	if t.isHeaderLine(paragraph) {
-		// 翻译标题行
-		translatedHeader, err := t.translateHeaderLine(paragraph, targetLang)
-		if err != nil {
-			return "", err
-		}
-
-		return translatedHeader, nil
-	}
-
-	// 翻译处理后的内容
-	translatedContent, err := t.TranslateToLanguage(paragraph, targetLang)
-	if err != nil {
-		return "", err
-	}
-
-	// 清理翻译结果
-	translatedContent = t.CleanTranslationResult(translatedContent)
-
-	return translatedContent, nil
-}
-
-// isHeaderLine 检查是否为标题行
-func (t *TranslationUtils) isHeaderLine(line string) bool {
-	trimmed := strings.TrimSpace(line)
-
-	// 检查是否以#开头
-	if !strings.HasPrefix(trimmed, "#") {
-		return false
-	}
-
-	// 计算连续的#号数量
-	hashCount := 0
-	for _, r := range trimmed {
-		if r == '#' {
-			hashCount++
-		} else {
-			break
-		}
-	}
-
-	// 必须是1-6个#号，且后面要么是空格要么是结尾
-	if hashCount >= 1 && hashCount <= 6 {
-		if len(trimmed) == hashCount {
-			// 只有#号
-			return true
-		}
-		if len(trimmed) > hashCount && trimmed[hashCount] == ' ' {
-			// #号后面跟空格
-			return true
-		}
-	}
-
-	return false
-}
-
-// translateHeaderLine 翻译标题行
-func (t *TranslationUtils) translateHeaderLine(line, targetLang string) (string, error) {
-	trimmed := strings.TrimSpace(line)
-
-	// 提取标题前缀和内容
-	prefix, content := t.extractHeaderPrefix(trimmed)
-
-	// 如果没有内容需要翻译，直接返回原行
-	if content == "" || !t.ContainsChinese(content) {
-		return line, nil
-	}
-
-	// 翻译标题内容
-	translatedContent, err := t.TranslateToLanguage(content, targetLang)
-	if err != nil {
-		return "", err
-	}
-
-	// 清理翻译结果
-	translatedContent = t.CleanTranslationResult(translatedContent)
-	translatedContent = t.RemoveQuotes(translatedContent)
-
-	return prefix + translatedContent, nil
-}
-
-// extractHeaderPrefix 提取标题前缀
-func (t *TranslationUtils) extractHeaderPrefix(line string) (string, string) {
-	if !strings.HasPrefix(line, "#") {
-		return "", line
-	}
-
-	// 计算连续的#号数量
-	hashCount := 0
-	for _, r := range line {
-		if r == '#' {
-			hashCount++
-		} else {
-			break
-		}
-	}
-
-	// 构建前缀
-	prefix := strings.Repeat("#", hashCount)
-
-	// 提取内容
-	content := ""
-	if len(line) > hashCount {
-		if line[hashCount] == ' ' {
-			// 有空格，提取空格后的内容
-			content = strings.TrimSpace(line[hashCount+1:])
-			prefix += " "
-		} else {
-			// 没有空格，提取#号后的内容
-			content = strings.TrimSpace(line[hashCount:])
-			prefix += " " // 补充空格
-		}
-	}
-
-	return prefix, content
 }

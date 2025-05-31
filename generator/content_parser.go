@@ -5,6 +5,8 @@ import (
 	"hugo-content-suite/config"
 	"regexp"
 	"strings"
+
+	"github.com/tmc/langchaingo/textsplitter"
 )
 
 // ParagraphMapping 段落映射信息，用于追踪拆分的段落关系
@@ -97,8 +99,7 @@ func (c *ContentParser) FormatArrayField(items []string) string {
 
 	var quotedItems []string
 	for _, item := range items {
-		// 彻底清理引号
-		cleanItem := c.translationUtils.RemoveQuotes(item)
+		cleanItem := item
 		// 再次确保移除双引号
 		cleanItem = strings.ReplaceAll(cleanItem, "\"", "")
 		cleanItem = strings.ReplaceAll(cleanItem, "'", "")
@@ -149,50 +150,13 @@ func (c *ContentParser) EstimateTranslationTime(paragraphCount int) string {
 
 // splitIntoParagraphs 将文本分割成段落
 func (c *ContentParser) splitIntoParagraphs(text string) []string {
-	// 移除首尾空白字符
-	text = strings.TrimSpace(text)
-	if text == "" {
+	splitter := textsplitter.NewMarkdownTextSplitter()
+	paragraphs, err := splitter.SplitText(text)
+	if err != nil {
+		// 处理错误
 		return []string{}
 	}
-
-	// 按照两个或多个连续换行符分割段落
-	re := regexp.MustCompile(`\n\s*\n`)
-	paragraphs := re.Split(text, -1)
-
-	// 清理每个段落，移除首尾空白并过滤空段落
-	var result []string
-	for _, paragraph := range paragraphs {
-		cleaned := strings.TrimSpace(paragraph)
-		if cleaned != "" {
-			// 将段落内的单个换行符替换为空格，保持文本连续
-			cleaned = regexp.MustCompile(`\n`).ReplaceAllString(cleaned, " ")
-			// 压缩多个空格为单个空格
-			cleaned = regexp.MustCompile(`\s+`).ReplaceAllString(cleaned, " ")
-			result = append(result, cleaned)
-		}
-	}
-
-	return result
-}
-
-// ParseContentIntoParagraphs 将内容解析为段落
-func (c *ContentParser) ParseContentIntoParagraphs(content string) []string {
-	if strings.TrimSpace(content) == "" {
-		return []string{}
-	}
-
-	cleanedParagraphs := c.splitIntoParagraphs(content)
-
-	// 应用段落拆分
-	splitParagraphs := c.applySplittingToParagraphs(cleanedParagraphs)
-
-	// 生成并记录统计信息
-	if c.config.Paragraph.EnableSplitting {
-		stats := c.GetParagraphSplitStats(cleanedParagraphs, splitParagraphs)
-		c.LogParagraphSplitInfo(stats)
-	}
-
-	return splitParagraphs
+	return paragraphs
 }
 
 // ParseContentIntoParagraphsWithMapping 将内容解析为段落并保留映射关系

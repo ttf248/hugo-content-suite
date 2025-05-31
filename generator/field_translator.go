@@ -145,12 +145,6 @@ func (a *ArticleTranslator) translateStringField(fieldName, value, targetLang st
 		return value, err
 	}
 
-	// 清理翻译结果
-	translated = a.translationUtils.RemoveQuotes(translated)
-	translated = a.translationUtils.CleanTranslationResult(translated)
-	translated = strings.ReplaceAll(translated, "\"", "")
-	translated = strings.ReplaceAll(translated, "'", "")
-
 	fmt.Printf("%s\n", translated)
 	return translated, nil
 }
@@ -176,12 +170,6 @@ func (a *ArticleTranslator) translateArrayField(fieldName string, items []interf
 					translatedItems = append(translatedItems, item)
 					continue
 				}
-
-				// 清理翻译结果
-				translated = a.translationUtils.RemoveQuotes(translated)
-				translated = a.translationUtils.CleanTranslationResult(translated)
-				translated = strings.ReplaceAll(translated, "\"", "")
-				translated = strings.ReplaceAll(translated, "'", "")
 
 				fmt.Printf("%s ", translated)
 				translatedItems = append(translatedItems, translated)
@@ -213,11 +201,6 @@ func (a *ArticleTranslator) translateSlugField(slug, targetLang string) (string,
 		return slug, err
 	}
 
-	// 清理翻译结果
-	translated = a.translationUtils.RemoveQuotes(translated)
-	translated = a.translationUtils.CleanTranslationResult(translated)
-	translated = strings.ReplaceAll(translated, "\"", "")
-	translated = strings.ReplaceAll(translated, "'", "")
 	translated = a.translationUtils.FormatSlugField(translated)
 
 	fmt.Printf("%s\n", translated)
@@ -319,7 +302,7 @@ func (a *ArticleTranslator) translateParagraphsToLanguageWithMapping(paragraphs 
 
 		// 翻译段落
 		paragraphStartTime := time.Now()
-		translatedParagraph, err := a.translationUtils.TranslateParagraphToLanguage(paragraph, targetLang)
+		translatedParagraph, err := a.translationUtils.TranslateToLanguage(paragraph, targetLang)
 		paragraphDuration := time.Since(paragraphStartTime)
 
 		if err != nil {
