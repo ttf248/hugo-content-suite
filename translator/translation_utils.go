@@ -161,9 +161,8 @@ func (t *TranslationUtils) batchTranslateWithCache(texts []string, targetLang st
 
 	total := len(texts)
 	hitRate := float64(hitCount) / float64(total) * 100
-	info := t.cache.GetInfo()
+
 	fmt.Printf("📊 [Batch Cache Stats] 命中率: %.2f%% (%d/%d)\n", hitRate, hitCount, total)
-	fmt.Printf("📦 [Batch Cache Info] %s\n", info)
 
 	return result, nil
 }
