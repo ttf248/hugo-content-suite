@@ -1224,9 +1224,29 @@
     "timestamp": "2025-05-25T22:41:51.0326056+08:00",
     "type": "tag"
   },
+  "ja:A股": {
+    "translation": "A株 (エーショウ)",
+    "timestamp": "2025-06-02T05:43:56.4901197+08:00",
+    "type": "tag"
+  },
   "ja:中央政治局": {
     "translation": "中央政治局 (ちゅうおうせいしんきょく)",
     "timestamp": "2025-06-02T05:11:32.7220954+08:00",
+    "type": "tag"
+  },
+  "ja:主机字节序": {
+    "translation": "ホストバイトオーダー",
+    "timestamp": "2025-06-02T05:38:43.2837246+08:00",
+    "type": "tag"
+  },
+  "ja:主题": {
+    "translation": "トピック / テーマ",
+    "timestamp": "2025-06-02T05:48:02.9274819+08:00",
+    "type": "tag"
+  },
+  "ja:人民币": {
+    "translation": "人民幣 (れんみょうひ)",
+    "timestamp": "2025-06-02T05:43:56.1287609+08:00",
     "type": "tag"
   },
   "ja:人生": {
@@ -1245,7 +1265,7 @@
     "type": "tag"
   },
   "ja:内网穿透": {
-    "translation": "ホログラフィックな透過 (horogurafikuna heitan)\n\nAlternatively, a more common and readily understood translation would be:\n\nトンネリング (tonneringu) - tunneling",
+    "translation": "イントラネット貫通",
     "timestamp": "2025-06-02T05:10:33.1316275+08:00",
     "type": "tag"
   },
@@ -1254,9 +1274,44 @@
     "timestamp": "2025-06-02T05:11:32.4691784+08:00",
     "type": "tag"
   },
+  "ja:基金": {
+    "translation": "ファンド",
+    "timestamp": "2025-06-02T05:50:08.7131541+08:00",
+    "type": "tag"
+  },
   "ja:复制按钮": {
     "translation": "コピーボタン",
     "timestamp": "2025-06-02T05:14:21.3081173+08:00",
+    "type": "tag"
+  },
+  "ja:外汇": {
+    "translation": "外国為替 (がいこくわいふ)",
+    "timestamp": "2025-06-02T05:43:56.3367172+08:00",
+    "type": "tag"
+  },
+  "ja:多线程": {
+    "translation": "マルチスレッド",
+    "timestamp": "2025-06-02T05:47:34.9595552+08:00",
+    "type": "tag"
+  },
+  "ja:大冰": {
+    "translation": "大氷 (Ōhyō)",
+    "timestamp": "2025-06-02T05:47:11.4124821+08:00",
+    "type": "tag"
+  },
+  "ja:大端存储": {
+    "translation": "ロングレンジストレージ (Long Range Storage)",
+    "timestamp": "2025-06-02T05:38:43.189526+08:00",
+    "type": "tag"
+  },
+  "ja:央行": {
+    "translation": "中央銀行",
+    "timestamp": "2025-06-02T05:43:56.5765112+08:00",
+    "type": "tag"
+  },
+  "ja:婆罗门": {
+    "translation": "ブラフマン",
+    "timestamp": "2025-06-02T05:47:12.5450215+08:00",
     "type": "tag"
   },
   "ja:字节序": {
@@ -1264,9 +1319,19 @@
     "timestamp": "2025-06-02T05:05:21.1446577+08:00",
     "type": "tag"
   },
+  "ja:家庭": {
+    "translation": "家庭 (かてい)",
+    "timestamp": "2025-06-02T05:51:34.336796+08:00",
+    "type": "tag"
+  },
   "ja:小程序": {
     "translation": "ミニプログラム (minipurasu)",
     "timestamp": "2025-06-02T05:11:03.0632315+08:00",
+    "type": "tag"
+  },
+  "ja:小端存储": {
+    "translation": "エンドランディングストレージ (Endlanding storage)",
+    "timestamp": "2025-06-02T05:38:43.0200538+08:00",
     "type": "tag"
   },
   "ja:嵌入式": {
@@ -1284,6 +1349,26 @@
     "timestamp": "2025-06-02T05:13:21.8706136+08:00",
     "type": "tag"
   },
+  "ja:性能优化": {
+    "translation": "パフォーマンス最適化 (Pafōmansu Sakuchika)",
+    "timestamp": "2025-06-02T05:47:35.1866166+08:00",
+    "type": "tag"
+  },
+  "ja:房地产": {
+    "translation": "不動産",
+    "timestamp": "2025-06-02T05:45:13.6370795+08:00",
+    "type": "tag"
+  },
+  "ja:投顾": {
+    "translation": "アドバイザー",
+    "timestamp": "2025-06-02T05:49:22.9566662+08:00",
+    "type": "tag"
+  },
+  "ja:抖音": {
+    "translation": "抖音 (Douyin)",
+    "timestamp": "2025-06-02T05:49:23.1076202+08:00",
+    "type": "tag"
+  },
   "ja:抽奖": {
     "translation": "くじ引き",
     "timestamp": "2025-06-02T05:11:02.1908947+08:00",
@@ -1292,6 +1377,16 @@
   "ja:排名": {
     "translation": "ランキング",
     "timestamp": "2025-06-02T05:11:03.1198112+08:00",
+    "type": "tag"
+  },
+  "ja:斗鱼": {
+    "translation": "闘魚",
+    "timestamp": "2025-06-02T05:52:18.2846841+08:00",
+    "type": "tag"
+  },
+  "ja:汇率": {
+    "translation": "為替レート",
+    "timestamp": "2025-06-02T05:43:55.9236265+08:00",
     "type": "tag"
   },
   "ja:流量变现": {
@@ -1304,14 +1399,49 @@
     "timestamp": "2025-06-02T05:13:21.7832901+08:00",
     "type": "tag"
   },
+  "ja:炒股": {
+    "translation": "株式投資 (Kaibu Tōshi)",
+    "timestamp": "2025-06-02T05:49:23.3195906+08:00",
+    "type": "tag"
+  },
+  "ja:焦点访谈": {
+    "translation": "焦點インタビュー (Tokyū intovīrī)",
+    "timestamp": "2025-06-02T05:37:55.8900538+08:00",
+    "type": "tag"
+  },
+  "ja:熊猫TV": {
+    "translation": "パンダTV (panda TV)",
+    "timestamp": "2025-06-02T05:52:17.9401094+08:00",
+    "type": "tag"
+  },
+  "ja:生活": {
+    "translation": "生活 (Seikatsu)",
+    "timestamp": "2025-06-02T05:51:34.4605093+08:00",
+    "type": "tag"
+  },
+  "ja:电竞": {
+    "translation": "eスポーツ (ē supōtsu)",
+    "timestamp": "2025-06-02T05:52:17.7919557+08:00",
+    "type": "tag"
+  },
+  "ja:监管": {
+    "translation": "規制 (きそ)",
+    "timestamp": "2025-06-02T05:49:23.4601688+08:00",
+    "type": "tag"
+  },
   "ja:直播": {
-    "translation": "ライブストリーミング (Raibusutorīmingu) / ライブ (Raibu) - 这两个表达方式都可以，取决于上下文。 通常“ライブ”更常用。",
+    "translation": "生放送",
     "timestamp": "2025-06-02T05:11:02.9034059+08:00",
     "type": "tag"
   },
   "ja:礼物": {
     "translation": "プレゼント (Purezento)",
     "timestamp": "2025-06-02T05:11:02.328919+08:00",
+    "type": "tag"
+  },
+  "ja:社交": {
+    "translation": "ソーシャル (sōsharu)",
+    "timestamp": "2025-06-02T05:44:20.579147+08:00",
     "type": "tag"
   },
   "ja:竞技游戏": {
@@ -1324,9 +1454,59 @@
     "timestamp": "2025-06-02T05:07:09.9619195+08:00",
     "type": "tag"
   },
+  "ja:网络字节序": {
+    "translation": "ネットワークバイト順 (Network byte order)",
+    "timestamp": "2025-06-02T05:38:43.4396937+08:00",
+    "type": "tag"
+  },
+  "ja:美元": {
+    "translation": "ドル",
+    "timestamp": "2025-06-02T05:43:56.6374924+08:00",
+    "type": "tag"
+  },
+  "ja:自定义": {
+    "translation": "カスタム",
+    "timestamp": "2025-06-02T05:48:02.9897042+08:00",
+    "type": "tag"
+  },
+  "ja:虎牙": {
+    "translation": "虎牙",
+    "timestamp": "2025-06-02T05:52:18.3599388+08:00",
+    "type": "tag"
+  },
+  "ja:虚拟世界": {
+    "translation": "仮想世界 (Sasou Sekai)",
+    "timestamp": "2025-06-02T05:51:34.6196669+08:00",
+    "type": "tag"
+  },
+  "ja:虚拟货币": {
+    "translation": "仮想通貨 (Kasoku tūya)",
+    "timestamp": "2025-06-02T05:50:46.8867604+08:00",
+    "type": "tag"
+  },
+  "ja:资本": {
+    "translation": "資本",
+    "timestamp": "2025-06-02T05:52:18.420347+08:00",
+    "type": "tag"
+  },
+  "ja:躺平": {
+    "translation": "横になる",
+    "timestamp": "2025-06-02T05:47:12.4567955+08:00",
+    "type": "tag"
+  },
   "ja:金融": {
     "translation": "金融",
     "timestamp": "2025-06-02T05:11:32.2713081+08:00",
+    "type": "tag"
+  },
+  "ja:问题排查": {
+    "translation": "トラブルシューティング",
+    "timestamp": "2025-06-02T05:39:45.8428836+08:00",
+    "type": "tag"
+  },
+  "ja:降费": {
+    "translation": "解約 (かい yok)",
+    "timestamp": "2025-06-02T05:50:08.8515581+08:00",
     "type": "tag"
   }
 }

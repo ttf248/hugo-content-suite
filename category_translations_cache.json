@@ -9,6 +9,11 @@
     "timestamp": "2025-06-02T05:05:09.9994645+08:00",
     "type": "category"
   },
+  "en:转载": {
+    "translation": "Repost / Share",
+    "timestamp": "2025-06-02T05:38:31.5583164+08:00",
+    "type": "category"
+  },
   "en:金融知识库": {
     "translation": "Financial Knowledge Base",
     "timestamp": "2025-06-02T05:05:54.5080714+08:00",
@@ -32,6 +37,11 @@
   "ja:计算机": {
     "translation": "コンピューター",
     "timestamp": "2025-06-02T05:05:21.2158783+08:00",
+    "type": "category"
+  },
+  "ja:转载": {
+    "translation": "転載 (tenzai)",
+    "timestamp": "2025-06-02T05:38:43.5759713+08:00",
     "type": "category"
   },
   "ja:金融知识库": {
