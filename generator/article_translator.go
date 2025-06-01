@@ -122,7 +122,6 @@ func (a *ArticleTranslator) TranslateArticles(mode string) error {
 	}
 
 	// 测试连接
-	fmt.Printf("正在测试与LM Studio的连接...\n")
 	if err := a.translationUtils.TestConnection(); err != nil {
 		utils.ErrorWithFields("LM Studio连接失败", map[string]interface{}{
 			"error": err.Error(),

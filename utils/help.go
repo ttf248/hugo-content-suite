@@ -55,6 +55,21 @@ func ContainsChinese(text string) bool {
 	return false
 }
 
+// FormatSlugField 格式化slug字段
+func FormatSlugField(slug string) string {
+	slug = strings.ToLower(slug)
+	slug = strings.ReplaceAll(slug, " ", "-")
+
+	reg := regexp.MustCompile(`[^a-z0-9\-]`)
+	slug = reg.ReplaceAllString(slug, "")
+
+	for strings.Contains(slug, "--") {
+		slug = strings.ReplaceAll(slug, "--", "-")
+	}
+
+	return strings.Trim(slug, "-")
+}
+
 // GetAbsolutePath converts a relative path to an absolute path.
 func GetAbsolutePath(relativePath string) (string, error) {
 	absPath, err := filepath.Abs(relativePath)

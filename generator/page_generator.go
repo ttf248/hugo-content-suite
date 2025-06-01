@@ -31,7 +31,7 @@ func (t TagPagePreview) GetStatus() string {
 // TagPageGenerator 标签页面生成器
 type TagPageGenerator struct {
 	contentDir       string
-	translationUtils *TranslationUtils
+	translationUtils *translator.TranslationUtils
 	slugCache        map[string]string
 }
 
@@ -39,7 +39,7 @@ type TagPageGenerator struct {
 func NewTagPageGenerator(contentDir string) *TagPageGenerator {
 	return &TagPageGenerator{
 		contentDir:       contentDir,
-		translationUtils: NewTranslationUtils(),
+		translationUtils: translator.NewTranslationUtils(),
 		slugCache:        make(map[string]string),
 	}
 }
@@ -131,9 +131,8 @@ func (g *TagPageGenerator) PrepareTagPages(tagStats []models.TagStats) ([]TagPag
 
 	fmt.Printf("🌐 正在生成 %d 个标签的slug...\n", len(tagNames))
 
-	// 只使用AI批量翻译（带缓存）
-	fmt.Println("🤖 使用AI翻译...")
-	slugMap, err := g.translationUtils.BatchTranslateWithCache(tagNames, "en", translator.TagCache)
+	// 使用AI批量翻译（带缓存）
+	slugMap, err := g.translationUtils.TranslateTags(tagNames)
 	if err != nil {
 		fmt.Printf("⚠️ 批量翻译失败: %v\n", err)
 		return previews, 0, 0
@@ -141,7 +140,7 @@ func (g *TagPageGenerator) PrepareTagPages(tagStats []models.TagStats) ([]TagPag
 
 	// 格式化所有slug
 	for tag, slug := range slugMap {
-		slugMap[tag] = g.translationUtils.FormatSlugField(slug)
+		slugMap[tag] = utils.FormatSlugField(slug)
 	}
 
 	fmt.Printf("\n📊 正在分析标签状态...\n")

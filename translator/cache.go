@@ -12,9 +12,9 @@ import (
 type CacheType string
 
 const (
-	TagCache      CacheType = "tag"
-	SlugCache     CacheType = "article"
-	CategoryCache CacheType = "category" // 新增
+	kTagCache      CacheType = "tag"
+	kSlugCache     CacheType = "article"
+	kCategoryCache CacheType = "category" // 新增
 )
 
 type CacheEntry struct {
@@ -132,11 +132,11 @@ func (c *TranslationCache) saveCacheFile(filename string, cache map[string]Cache
 func (c *TranslationCache) Get(text string, cacheType CacheType) (string, bool) {
 	var cache map[string]CacheEntry
 	switch cacheType {
-	case TagCache:
+	case kTagCache:
 		cache = c.tagCache
-	case SlugCache:
+	case kSlugCache:
 		cache = c.slugCache
-	case CategoryCache:
+	case kCategoryCache:
 		cache = c.categoryCache
 	default:
 		return "", false
@@ -158,11 +158,11 @@ func (c *TranslationCache) Set(text, translation string, cacheType CacheType) {
 	}
 
 	switch cacheType {
-	case TagCache:
+	case kTagCache:
 		c.tagCache[text] = entry
-	case SlugCache:
+	case kSlugCache:
 		c.slugCache[text] = entry
-	case CategoryCache:
+	case kCategoryCache:
 		c.categoryCache[text] = entry
 	}
 }
@@ -194,11 +194,11 @@ func (c *TranslationCache) GetCachedTranslations(texts []string, targetLang stri
 func (c *TranslationCache) GetStats(cacheType CacheType) (total int) {
 	var cache map[string]CacheEntry
 	switch cacheType {
-	case TagCache:
+	case kTagCache:
 		cache = c.tagCache
-	case SlugCache:
+	case kSlugCache:
 		cache = c.slugCache
-	case CategoryCache:
+	case kCategoryCache:
 		cache = c.categoryCache
 	default:
 		return 0
@@ -209,13 +209,13 @@ func (c *TranslationCache) GetStats(cacheType CacheType) (total int) {
 
 func (c *TranslationCache) Clear(cacheType CacheType) error {
 	switch cacheType {
-	case TagCache:
+	case kTagCache:
 		c.tagCache = make(map[string]CacheEntry)
 		return c.saveCacheFile(c.tagCacheFile, c.tagCache)
-	case SlugCache:
+	case kSlugCache:
 		c.slugCache = make(map[string]CacheEntry)
 		return c.saveCacheFile(c.slugCacheFile, c.slugCache)
-	case CategoryCache:
+	case kCategoryCache:
 		c.categoryCache = make(map[string]CacheEntry)
 		return c.saveCacheFile(c.categoryCacheFile, c.categoryCache)
 	default:
@@ -241,9 +241,9 @@ func (c *TranslationCache) ClearAll() error {
 }
 
 func (c *TranslationCache) GetInfo() string {
-	tagTotal := c.GetStats(TagCache)
-	slugTotal := c.GetStats(SlugCache)
-	categoryTotal := c.GetStats(CategoryCache)
+	tagTotal := c.GetStats(kTagCache)
+	slugTotal := c.GetStats(kSlugCache)
+	categoryTotal := c.GetStats(kCategoryCache)
 
 	return fmt.Sprintf(`📊 缓存状态信息:
 🏷️  标签缓存:

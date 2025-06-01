@@ -14,8 +14,8 @@ import (
 
 // ArticleSlugGenerator 文章slug生成器
 type ArticleSlugGenerator struct {
-	contentDir string
-	translator *translator.LLMTranslator
+	contentDir       string
+	translationUtils *translator.TranslationUtils
 }
 
 // ArticleSlugPreview 文章slug预览信息
@@ -30,8 +30,8 @@ type ArticleSlugPreview struct {
 // NewArticleSlugGenerator 创建新的文章slug生成器
 func NewArticleSlugGenerator(contentDir string) *ArticleSlugGenerator {
 	return &ArticleSlugGenerator{
-		contentDir: contentDir,
-		translator: translator.NewLLMTranslator(),
+		contentDir:       contentDir,
+		translationUtils: translator.NewTranslationUtils(),
 	}
 }
 
@@ -87,9 +87,7 @@ func (g *ArticleSlugGenerator) GenerateArticleSlugs() error {
 		return fmt.Errorf("扫描文章失败: %v", err)
 	}
 
-	// 测试LM Studio连接
-	fmt.Println("正在测试与LM Studio的连接...")
-	if err := g.translator.TestConnection(); err != nil {
+	if err := g.translationUtils.TestConnection(); err != nil {
 		utils.WarnWithFields("LM Studio连接失败", map[string]interface{}{
 			"error": err.Error(),
 		})
@@ -121,7 +119,7 @@ func (g *ArticleSlugGenerator) GenerateArticleSlugs() error {
 		fmt.Printf("处理文章 (%d/%d): %s\n", i+1, len(articles), article.Title)
 
 		// 生成新的slug
-		newSlug, err := g.translator.TranslateToSlug(article.Title)
+		newSlug, err := g.translationUtils.TranslateArticalSlug(article.Title)
 		if err != nil {
 			utils.WarnWithFields("翻译失败", map[string]interface{}{
 				"title": article.Title,
@@ -202,9 +200,7 @@ func (g *ArticleSlugGenerator) GenerateArticleSlugsWithMode(mode string) error {
 		return fmt.Errorf("扫描文章失败: %v", err)
 	}
 
-	// 测试LM Studio连接
-	fmt.Println("正在测试与LM Studio的连接...")
-	if err := g.translator.TestConnection(); err != nil {
+	if err := g.translationUtils.TestConnection(); err != nil {
 		fmt.Printf("警告：无法连接到LM Studio (%v)，将使用备用翻译方案\n", err)
 	} else {
 		fmt.Println("LM Studio连接成功！")
@@ -248,7 +244,7 @@ func (g *ArticleSlugGenerator) GenerateArticleSlugsWithMode(mode string) error {
 		fmt.Printf("处理文章 (%d/%d): %s\n", i+1, len(targetArticles), article.Title)
 
 		// 单个翻译
-		newSlug, err := g.translator.TranslateToSlug(article.Title)
+		newSlug, err := g.translationUtils.TranslateArticalSlug(article.Title)
 		if err != nil {
 			fmt.Printf("  翻译失败: %v，跳过此文章\n", err)
 			errorCount++
