@@ -35,7 +35,7 @@ func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []model
 		case "3":
 			m.processor.TranslateArticles(m.reader)
 		case "4":
-			m.processor.DeleteArticlesByLanguageInteractive(m.reader)
+			m.processor.DeleteArticles(m.reader)
 		case "0":
 			color.Green("感谢使用！再见！")
 			return

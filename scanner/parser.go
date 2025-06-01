@@ -12,7 +12,13 @@ import (
 // Article 类型别名，方便引用
 type Article = models.Article
 
+// 默认只扫描 index.md
 func ScanArticles(dir string) ([]Article, error) {
+	return ScanArticlesWithLangs(dir, false)
+}
+
+// 支持 allLangs 参数
+func ScanArticlesWithLangs(dir string, allLangs bool) ([]Article, error) {
 	var articles []Article
 
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
@@ -20,9 +26,17 @@ func ScanArticles(dir string) ([]Article, error) {
 			return err
 		}
 
-		// 只扫描 index.md 文件，过滤多语言版本
-		if filepath.Base(path) != "index.md" {
-			return nil
+		base := filepath.Base(path)
+		if allLangs {
+			// 匹配 index.md, index.en.md, index.zh-cn.md 等
+			if !strings.HasPrefix(base, "index.") || !strings.HasSuffix(base, ".md") {
+				return nil
+			}
+		} else {
+			// 只扫描 index.md
+			if base != "index.md" {
+				return nil
+			}
 		}
 
 		article, err := parseMarkdownFile(path)
