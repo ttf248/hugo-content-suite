@@ -2,34 +2,7 @@ package stats
 
 import (
 	"hugo-content-suite/models"
-	"sort"
 )
-
-func CalculateCategoryStats(articles []models.Article) []models.CategoryStats {
-	categoryMap := make(map[string]int)
-
-	for _, article := range articles {
-		category := article.Category
-		if category == "" {
-			category = "无分类"
-		}
-		categoryMap[category]++
-	}
-
-	var stats []models.CategoryStats
-	for name, count := range categoryMap {
-		stats = append(stats, models.CategoryStats{
-			Name:  name,
-			Count: count,
-		})
-	}
-
-	sort.Slice(stats, func(i, j int) bool {
-		return stats[i].Count > stats[j].Count
-	})
-
-	return stats
-}
 
 func FindNoTagArticles(articles []models.Article) []models.Article {
 	var noTagArticles []models.Article
