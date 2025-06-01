@@ -46,11 +46,7 @@
   "language": {
     "target_languages": [
       "en",
-      "ja",
-      "ko",
-      "fr",
-      "ru",
-      "hi"
+      "ja"
     ],
     "language_names": {
       "en": "English",

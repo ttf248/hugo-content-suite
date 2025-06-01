@@ -1223,5 +1223,110 @@
     "translation": "reduce-costs",
     "timestamp": "2025-05-25T22:41:51.0326056+08:00",
     "type": "tag"
+  },
+  "ja:中央政治局": {
+    "translation": "中央政治局 (ちゅうおうせいしんきょく)",
+    "timestamp": "2025-06-02T05:11:32.7220954+08:00",
+    "type": "tag"
+  },
+  "ja:人生": {
+    "translation": "人生 (じんせい / jinsei)",
+    "timestamp": "2025-06-02T05:04:52.657416+08:00",
+    "type": "tag"
+  },
+  "ja:代码区域": {
+    "translation": "コード領域",
+    "timestamp": "2025-06-02T05:14:21.2366022+08:00",
+    "type": "tag"
+  },
+  "ja:任务拆解": {
+    "translation": "タスク分解",
+    "timestamp": "2025-06-02T05:14:21.1642787+08:00",
+    "type": "tag"
+  },
+  "ja:内网穿透": {
+    "translation": "ホログラフィックな透過 (horogurafikuna heitan)\n\nAlternatively, a more common and readily understood translation would be:\n\nトンネリング (tonneringu) - tunneling",
+    "timestamp": "2025-06-02T05:10:33.1316275+08:00",
+    "type": "tag"
+  },
+  "ja:反腐": {
+    "translation": "反腐败 (Hанфуbài)",
+    "timestamp": "2025-06-02T05:11:32.4691784+08:00",
+    "type": "tag"
+  },
+  "ja:复制按钮": {
+    "translation": "コピーボタン",
+    "timestamp": "2025-06-02T05:14:21.3081173+08:00",
+    "type": "tag"
+  },
+  "ja:字节序": {
+    "translation": "バイアンス順序",
+    "timestamp": "2025-06-02T05:05:21.1446577+08:00",
+    "type": "tag"
+  },
+  "ja:小程序": {
+    "translation": "ミニプログラム (minipurasu)",
+    "timestamp": "2025-06-02T05:11:03.0632315+08:00",
+    "type": "tag"
+  },
+  "ja:嵌入式": {
+    "translation": "組み込み (ぐみこみ)",
+    "timestamp": "2025-06-02T05:06:54.8967858+08:00",
+    "type": "tag"
+  },
+  "ja:微信小程序": {
+    "translation": "WeChat Mini Programs",
+    "timestamp": "2025-06-02T05:07:26.2047534+08:00",
+    "type": "tag"
+  },
+  "ja:心理学": {
+    "translation": "心理学",
+    "timestamp": "2025-06-02T05:13:21.8706136+08:00",
+    "type": "tag"
+  },
+  "ja:抽奖": {
+    "translation": "くじ引き",
+    "timestamp": "2025-06-02T05:11:02.1908947+08:00",
+    "type": "tag"
+  },
+  "ja:排名": {
+    "translation": "ランキング",
+    "timestamp": "2025-06-02T05:11:03.1198112+08:00",
+    "type": "tag"
+  },
+  "ja:流量变现": {
+    "translation": "トラフィック収益化 (Torakku Shuyaku-ka)",
+    "timestamp": "2025-06-02T05:11:02.1045593+08:00",
+    "type": "tag"
+  },
+  "ja:游戏": {
+    "translation": "ゲーム",
+    "timestamp": "2025-06-02T05:13:21.7832901+08:00",
+    "type": "tag"
+  },
+  "ja:直播": {
+    "translation": "ライブストリーミング (Raibusutorīmingu) / ライブ (Raibu) - 这两个表达方式都可以，取决于上下文。 通常“ライブ”更常用。",
+    "timestamp": "2025-06-02T05:11:02.9034059+08:00",
+    "type": "tag"
+  },
+  "ja:礼物": {
+    "translation": "プレゼント (Purezento)",
+    "timestamp": "2025-06-02T05:11:02.328919+08:00",
+    "type": "tag"
+  },
+  "ja:竞技游戏": {
+    "translation": "eスポーツ (エスポート)",
+    "timestamp": "2025-06-02T05:13:22.0459998+08:00",
+    "type": "tag"
+  },
+  "ja:网络": {
+    "translation": "ネットワーク",
+    "timestamp": "2025-06-02T05:07:09.9619195+08:00",
+    "type": "tag"
+  },
+  "ja:金融": {
+    "translation": "金融",
+    "timestamp": "2025-06-02T05:11:32.2713081+08:00",
+    "type": "tag"
   }
 }
