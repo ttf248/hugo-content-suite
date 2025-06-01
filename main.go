@@ -4,10 +4,8 @@ import (
 	"bufio"
 	"fmt"
 	"hugo-content-suite/config"
-	"hugo-content-suite/display"
 	"hugo-content-suite/menu"
 	"hugo-content-suite/scanner"
-	"hugo-content-suite/stats"
 	"hugo-content-suite/utils"
 	"log"
 	"os"
@@ -76,16 +74,8 @@ func main() {
 		return
 	}
 
-	// 计算统计数据
-	tagStats := stats.CalculateTagStats(articles)
-	categoryStats := stats.CalculateCategoryStats(articles)
-	noTagArticles := stats.FindNoTagArticles(articles)
-
-	// 显示简化概览
-	display.DisplaySummary(len(articles), tagStats, categoryStats)
-
 	// 启动交互式菜单
 	reader := bufio.NewReader(os.Stdin)
 	interactiveMenu := menu.NewInteractiveMenu(reader, contentDir)
-	interactiveMenu.Show(tagStats, categoryStats, noTagArticles)
+	interactiveMenu.Show()
 }

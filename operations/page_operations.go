@@ -3,21 +3,20 @@ package operations
 import (
 	"bufio"
 	"hugo-content-suite/generator"
-	"hugo-content-suite/models"
 
 	"github.com/fatih/color"
 )
 
-func (p *Processor) GenerateTagPages(tagStats []models.TagStats, reader *bufio.Reader) {
-	if len(tagStats) == 0 {
-		color.Yellow("⚠️  没有找到任何标签，无法生成页面")
+func (p *Processor) GenerateTagPages(reader *bufio.Reader) {
+	if p.contentDir == "" {
+		color.Red("❌ 内容目录未设置")
 		return
 	}
 
 	// 先预览以获取统计信息
 	color.Cyan("正在分析标签页面状态...")
 	pageGenerator := generator.NewTagPageGenerator(p.contentDir)
-	previews, createCount, updateCount := pageGenerator.PrepareTagPages(tagStats)
+	previews, createCount, updateCount := pageGenerator.PrepareTagPages()
 
 	if createCount == 0 && updateCount == 0 {
 		color.Green("✅ 所有标签页面都是最新的")

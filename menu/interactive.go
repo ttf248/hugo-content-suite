@@ -3,7 +3,6 @@ package menu
 import (
 	"bufio"
 	"fmt"
-	"hugo-content-suite/models"
 	"hugo-content-suite/operations"
 	"hugo-content-suite/utils"
 
@@ -22,14 +21,14 @@ func NewInteractiveMenu(reader *bufio.Reader, contentDir string) *InteractiveMen
 	}
 }
 
-func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []models.CategoryStats, noTagArticles []models.Article) {
+func (m *InteractiveMenu) Show() {
 	for {
 		m.displayMainMenu()
 		choice := utils.GetChoice(m.reader, "请选择功能 (0-8): ")
 
 		switch choice {
 		case "1":
-			m.processor.GenerateTagPages(tagStats, m.reader)
+			m.processor.GenerateTagPages(m.reader)
 		case "2":
 			m.processor.GenerateArticleSlugs(m.reader)
 		case "3":

@@ -5,35 +5,6 @@ import (
 	"sort"
 )
 
-func CalculateTagStats(articles []models.Article) []models.TagStats {
-	tagMap := make(map[string]*models.TagStats)
-
-	for _, article := range articles {
-		for _, tag := range article.Tags {
-			if _, exists := tagMap[tag]; !exists {
-				tagMap[tag] = &models.TagStats{
-					Name:  tag,
-					Count: 0,
-					Files: []string{},
-				}
-			}
-			tagMap[tag].Count++
-			tagMap[tag].Files = append(tagMap[tag].Files, article.FilePath)
-		}
-	}
-
-	var stats []models.TagStats
-	for _, stat := range tagMap {
-		stats = append(stats, *stat)
-	}
-
-	sort.Slice(stats, func(i, j int) bool {
-		return stats[i].Count > stats[j].Count
-	})
-
-	return stats
-}
-
 func CalculateCategoryStats(articles []models.Article) []models.CategoryStats {
 	categoryMap := make(map[string]int)
 

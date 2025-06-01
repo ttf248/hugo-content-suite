@@ -4,10 +4,12 @@ import (
 	"bufio"
 	"fmt"
 	"hugo-content-suite/models"
+	"hugo-content-suite/scanner"
 	"hugo-content-suite/translator"
 	"hugo-content-suite/utils"
 	"os"
 	"path/filepath"
+	"sort"
 	"strings"
 	"time"
 )
@@ -109,9 +111,46 @@ func (g *TagPageGenerator) processTargetPreviews(targetPreviews []TagPagePreview
 	return nil
 }
 
+func (g *TagPageGenerator) calculateTagStats(articles []models.Article) []models.TagStats {
+	tagMap := make(map[string]*models.TagStats)
+
+	for _, article := range articles {
+		for _, tag := range article.Tags {
+			if _, exists := tagMap[tag]; !exists {
+				tagMap[tag] = &models.TagStats{
+					Name:  tag,
+					Count: 0,
+					Files: []string{},
+				}
+			}
+			tagMap[tag].Count++
+			tagMap[tag].Files = append(tagMap[tag].Files, article.FilePath)
+		}
+	}
+
+	var stats []models.TagStats
+	for _, stat := range tagMap {
+		stats = append(stats, *stat)
+	}
+
+	sort.Slice(stats, func(i, j int) bool {
+		return stats[i].Count > stats[j].Count
+	})
+
+	return stats
+}
+
 // PreviewTagPages 预览即将生成的标签页面
-func (g *TagPageGenerator) PrepareTagPages(tagStats []models.TagStats) ([]TagPagePreview, int, int) {
+func (g *TagPageGenerator) PrepareTagPages() ([]TagPagePreview, int, int) {
 	var previews []TagPagePreview
+
+	// 扫描文章
+	articles, err := scanner.ScanArticles(g.contentDir)
+	if err != nil {
+		return nil, 0, 0
+	}
+
+	tagStats := g.calculateTagStats(articles)
 
 	// 测试LM Studio连接
 	fmt.Print("🔗 测试LM Studio连接... ")
