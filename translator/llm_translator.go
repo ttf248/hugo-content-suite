@@ -35,6 +35,17 @@ const (
 标题：%s
 
 请只返回翻译后的slug，不要其他内容。`
+
+	categorySlugPromptTemplate = `请将以下中文分类名称翻译为适合作为URL的英文slug。要求：
+1. 使用小写字母
+2. 单词之间用连字符(-)连接
+3. 不包含特殊字符
+4. 简洁准确
+5. 只返回翻译结果，不要任何解释
+
+中文分类: %s
+
+英文slug:`
 )
 
 // LM Studio API 相关类型定义
@@ -186,6 +197,11 @@ func (t *LLMTranslator) TranslateToArticleSlug(title string) (string, error) {
 	return t.translateWithCache(title, SlugCache, articleSlugPromptTemplate)
 }
 
+// 新增：翻译分类为slug
+func (t *LLMTranslator) TranslateToCategorySlug(category string) (string, error) {
+	return t.translateWithCache(category, CategoryCache, categorySlugPromptTemplate)
+}
+
 // BatchTranslateTags 批量翻译标签
 func (t *LLMTranslator) BatchTranslateTags(tags []string) (map[string]string, error) {
 	return t.batchTranslate(tags, TagCache, "标签", t.TranslateToSlug)
@@ -194,6 +210,11 @@ func (t *LLMTranslator) BatchTranslateTags(tags []string) (map[string]string, er
 // BatchTranslateSlugs 批量翻译文章标题
 func (t *LLMTranslator) BatchTranslateSlugs(titles []string) (map[string]string, error) {
 	return t.batchTranslate(titles, SlugCache, "Slug", t.TranslateToArticleSlug)
+}
+
+// 新增：批量翻译分类
+func (t *LLMTranslator) BatchTranslateCategories(categories []string) (map[string]string, error) {
+	return t.batchTranslate(categories, CategoryCache, "分类", t.TranslateToCategorySlug)
 }
 
 // batchTranslate 通用批量翻译方法
@@ -328,6 +349,11 @@ func (t *LLMTranslator) GetMissingArticles(articles []string) []string {
 	return t.cache.GetMissingTexts(articles, "en", SlugCache)
 }
 
+// 新增：获取缺失的分类
+func (t *LLMTranslator) GetMissingCategories(categories []string) []string {
+	return t.cache.GetMissingTexts(categories, "en", CategoryCache)
+}
+
 func (t *LLMTranslator) PrepareBulkTranslation(allTexts []string) ([]string, int) {
 	tags, articles := t.categorizeTexts(allTexts)
 	missingTags := t.GetMissingTags(tags)
@@ -355,13 +381,15 @@ func (t *LLMTranslator) categorizeTexts(allTexts []string) ([]string, []string) 
 }
 
 // 缓存管理方法
-func (t *LLMTranslator) GetCacheInfo() string     { return t.cache.GetInfo() }
-func (t *LLMTranslator) ClearCache() error        { return t.cache.ClearAll() }
-func (t *LLMTranslator) ClearTagCache() error     { return t.cache.Clear(TagCache) }
-func (t *LLMTranslator) ClearArticleCache() error { return t.cache.Clear(SlugCache) }
+func (t *LLMTranslator) GetCacheInfo() string      { return t.cache.GetInfo() }
+func (t *LLMTranslator) ClearCache() error         { return t.cache.ClearAll() }
+func (t *LLMTranslator) ClearTagCache() error      { return t.cache.Clear(TagCache) }
+func (t *LLMTranslator) ClearArticleCache() error  { return t.cache.Clear(SlugCache) }
+func (t *LLMTranslator) ClearCategoryCache() error { return t.cache.Clear(CategoryCache) } // 新增
 
 func (t *LLMTranslator) GetCacheStats() int {
 	tagTotal := t.cache.GetStats(TagCache)
 	articleTotal := t.cache.GetStats(SlugCache)
-	return tagTotal + articleTotal
+	categoryTotal := t.cache.GetStats(CategoryCache)
+	return tagTotal + articleTotal + categoryTotal
 }

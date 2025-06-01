@@ -24,11 +24,12 @@ type LMStudioConfig struct {
 }
 
 type CacheConfig struct {
-	TagFileName     string `json:"tag_file_name"`
-	ArticleFileName string `json:"article_file_name"`
-	AutoSaveCount   int    `json:"auto_save_count"`
-	DelayMs         int    `json:"delay_ms"`
-	ExpireDays      int    `json:"expire_days"`
+	TagFileName      string `json:"tag_file_name"`
+	ArticleFileName  string `json:"article_file_name"`
+	CategoryFileName string `json:"category_file_name"` // 新增
+	AutoSaveCount    int    `json:"auto_save_count"`
+	DelayMs          int    `json:"delay_ms"`
+	ExpireDays       int    `json:"expire_days"`
 }
 
 type DisplayConfig struct {
@@ -73,11 +74,12 @@ var defaultConfig = Config{
 		Timeout: 30,
 	},
 	Cache: CacheConfig{
-		TagFileName:     "tag_translations_cache.json",
-		ArticleFileName: "slug_translations_cache.json",
-		AutoSaveCount:   5,
-		DelayMs:         500,
-		ExpireDays:      30,
+		TagFileName:      "tag_translations_cache.json",
+		ArticleFileName:  "slug_translations_cache.json",
+		CategoryFileName: "category_translations_cache.json", // 新增
+		AutoSaveCount:    5,
+		DelayMs:          500,
+		ExpireDays:       30,
 	},
 	Display: DisplayConfig{
 		DefaultLimit: 20,

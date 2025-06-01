@@ -32,10 +32,11 @@ func (p *Processor) ClearTranslationCache(reader *bufio.Reader) {
 	fmt.Println("请选择要清空的缓存类型：")
 	fmt.Println("1. 清空标签缓存")
 	fmt.Println("2. 清空文章缓存")
-	fmt.Println("3. 清空所有缓存")
+	fmt.Println("3. 清空分类缓存") // 新增
+	fmt.Println("4. 清空所有缓存") // 顺延
 	fmt.Println("0. 取消操作")
 
-	choice := p.getChoice(reader, "请选择 (0-3): ")
+	choice := p.getChoice(reader, "请选择 (0-4): ")
 
 	translatorInstance := translator.NewLLMTranslator()
 
@@ -79,6 +80,25 @@ func (p *Processor) ClearTranslationCache(reader *bufio.Reader) {
 			}
 		}
 	case "3":
+		if p.confirmExecution(reader, "⚠️ 确认清空分类缓存？(y/n): ") {
+			utils.LogOperation("清空分类缓存", map[string]interface{}{
+				"operation_type": "cache_clear",
+				"cache_type":     "category",
+			})
+
+			if err := translatorInstance.ClearCategoryCache(); err != nil {
+				utils.ErrorWithFields("清空分类缓存失败", map[string]interface{}{
+					"error": err.Error(),
+				})
+				color.Red("❌ 清空分类缓存失败: %v", err)
+			} else {
+				utils.InfoWithFields("分类缓存清空成功", map[string]interface{}{
+					"operation": "cache_clear_category",
+				})
+				color.Green("✅ 分类缓存已清空")
+			}
+		}
+	case "4":
 		if p.confirmExecution(reader, "⚠️ 确认清空所有缓存？(y/n): ") {
 			utils.LogOperation("清空所有缓存", map[string]interface{}{
 				"operation_type": "cache_clear",

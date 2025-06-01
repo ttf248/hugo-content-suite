@@ -12,8 +12,9 @@ import (
 type CacheType string
 
 const (
-	TagCache  CacheType = "tag"
-	SlugCache CacheType = "article"
+	TagCache      CacheType = "tag"
+	SlugCache     CacheType = "article"
+	CategoryCache CacheType = "category" // 新增
 )
 
 type CacheEntry struct {
@@ -23,19 +24,23 @@ type CacheEntry struct {
 }
 
 type TranslationCache struct {
-	tagCacheFile  string
-	slugCacheFile string
-	tagCache      map[string]CacheEntry
-	slugCache     map[string]CacheEntry
+	tagCacheFile      string
+	slugCacheFile     string
+	categoryCacheFile string // 新增
+	tagCache          map[string]CacheEntry
+	slugCache         map[string]CacheEntry
+	categoryCache     map[string]CacheEntry // 新增
 }
 
 func NewTranslationCache() *TranslationCache {
 	cfg := config.GetGlobalConfig()
 	return &TranslationCache{
-		tagCacheFile:  cfg.Cache.TagFileName,
-		slugCacheFile: cfg.Cache.ArticleFileName,
-		tagCache:      make(map[string]CacheEntry),
-		slugCache:     make(map[string]CacheEntry),
+		tagCacheFile:      cfg.Cache.TagFileName,
+		slugCacheFile:     cfg.Cache.ArticleFileName,
+		categoryCacheFile: cfg.Cache.CategoryFileName, // 新增
+		tagCache:          make(map[string]CacheEntry),
+		slugCache:         make(map[string]CacheEntry),
+		categoryCache:     make(map[string]CacheEntry), // 新增
 	}
 }
 
@@ -58,13 +63,23 @@ func (c *TranslationCache) Load() error {
 		c.slugCache = make(map[string]CacheEntry)
 	}
 
+	// 加载分类缓存
+	if err := c.loadCacheFile(c.categoryCacheFile, &c.categoryCache); err != nil {
+		utils.WarnWithFields("加载分类缓存失败", map[string]interface{}{
+			"file":  c.categoryCacheFile,
+			"error": err.Error(),
+		})
+		c.categoryCache = make(map[string]CacheEntry)
+	}
+
 	utils.InfoWithFields("缓存加载完成", map[string]interface{}{
-		"tag_count":     len(c.tagCache),
-		"article_count": len(c.slugCache),
+		"tag_count":      len(c.tagCache),
+		"article_count":  len(c.slugCache),
+		"category_count": len(c.categoryCache),
 	})
 
-	fmt.Printf("📄 已加载缓存文件 - 标签: %d 个, Slug: %d 个\n",
-		len(c.tagCache), len(c.slugCache))
+	fmt.Printf("📄 已加载缓存文件 - 标签: %d 个, Slug: %d 个, 分类: %d 个\n",
+		len(c.tagCache), len(c.slugCache), len(c.categoryCache))
 	return nil
 }
 
@@ -96,8 +111,13 @@ func (c *TranslationCache) Save() error {
 		return fmt.Errorf("保存文章缓存失败: %v", err)
 	}
 
-	fmt.Printf("💾 已保存缓存文件 - 标签: %d 个, 文章: %d 个\n",
-		len(c.tagCache), len(c.slugCache))
+	// 保存分类缓存
+	if err := c.saveCacheFile(c.categoryCacheFile, c.categoryCache); err != nil {
+		return fmt.Errorf("保存分类缓存失败: %v", err)
+	}
+
+	fmt.Printf("💾 已保存缓存文件 - 标签: %d 个, 文章: %d 个, 分类: %d 个\n",
+		len(c.tagCache), len(c.slugCache), len(c.categoryCache))
 	return nil
 }
 
@@ -116,6 +136,8 @@ func (c *TranslationCache) Get(text string, cacheType CacheType) (string, bool) 
 		cache = c.tagCache
 	case SlugCache:
 		cache = c.slugCache
+	case CategoryCache:
+		cache = c.categoryCache
 	default:
 		return "", false
 	}
@@ -140,6 +162,8 @@ func (c *TranslationCache) Set(text, translation string, cacheType CacheType) {
 		c.tagCache[text] = entry
 	case SlugCache:
 		c.slugCache[text] = entry
+	case CategoryCache:
+		c.categoryCache[text] = entry
 	}
 }
 
@@ -174,6 +198,8 @@ func (c *TranslationCache) GetStats(cacheType CacheType) (total int) {
 		cache = c.tagCache
 	case SlugCache:
 		cache = c.slugCache
+	case CategoryCache:
+		cache = c.categoryCache
 	default:
 		return 0
 	}
@@ -189,6 +215,9 @@ func (c *TranslationCache) Clear(cacheType CacheType) error {
 	case SlugCache:
 		c.slugCache = make(map[string]CacheEntry)
 		return c.saveCacheFile(c.slugCacheFile, c.slugCache)
+	case CategoryCache:
+		c.categoryCache = make(map[string]CacheEntry)
+		return c.saveCacheFile(c.categoryCacheFile, c.categoryCache)
 	default:
 		return fmt.Errorf("未知的缓存类型: %v", cacheType)
 	}
@@ -197,11 +226,15 @@ func (c *TranslationCache) Clear(cacheType CacheType) error {
 func (c *TranslationCache) ClearAll() error {
 	c.tagCache = make(map[string]CacheEntry)
 	c.slugCache = make(map[string]CacheEntry)
+	c.categoryCache = make(map[string]CacheEntry)
 
 	if err := c.saveCacheFile(c.tagCacheFile, c.tagCache); err != nil {
 		return err
 	}
 	if err := c.saveCacheFile(c.slugCacheFile, c.slugCache); err != nil {
+		return err
+	}
+	if err := c.saveCacheFile(c.categoryCacheFile, c.categoryCache); err != nil {
 		return err
 	}
 	return nil
@@ -210,6 +243,7 @@ func (c *TranslationCache) ClearAll() error {
 func (c *TranslationCache) GetInfo() string {
 	tagTotal := c.GetStats(TagCache)
 	slugTotal := c.GetStats(SlugCache)
+	categoryTotal := c.GetStats(CategoryCache)
 
 	return fmt.Sprintf(`📊 缓存状态信息:
 🏷️  标签缓存:
@@ -218,7 +252,12 @@ func (c *TranslationCache) GetInfo() string {
 
 📝 Slug缓存:
    📁 文件: %s
+   📄 总条目: %d 个
+
+📂 分类缓存:
+   📁 文件: %s
    📄 总条目: %d 个`,
 		c.tagCacheFile, tagTotal,
-		c.slugCacheFile, slugTotal)
+		c.slugCacheFile, slugTotal,
+		c.categoryCacheFile, categoryTotal)
 }
