@@ -448,10 +448,10 @@ func (t *LLMTranslator) ClearCache() error        { return t.cache.ClearAll() }
 func (t *LLMTranslator) ClearTagCache() error     { return t.cache.Clear(TagCache) }
 func (t *LLMTranslator) ClearArticleCache() error { return t.cache.Clear(SlugCache) }
 
-func (t *LLMTranslator) GetCacheStats() (int, int) {
-	tagTotal, tagExpired := t.cache.GetStats(TagCache)
-	articleTotal, articleExpired := t.cache.GetStats(SlugCache)
-	return tagTotal + articleTotal, tagExpired + articleExpired
+func (t *LLMTranslator) GetCacheStats() int {
+	tagTotal := t.cache.GetStats(TagCache)
+	articleTotal := t.cache.GetStats(SlugCache)
+	return tagTotal + articleTotal
 }
 
 // isEnglishOnly 检查字符串是否只包含英文字符

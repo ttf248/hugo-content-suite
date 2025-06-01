@@ -23,21 +23,19 @@ type CacheEntry struct {
 }
 
 type TranslationCache struct {
-	tagCacheFile   string
-	slugCacheFile  string
-	tagCache       map[string]CacheEntry
-	slugCache      map[string]CacheEntry
-	expireDuration time.Duration
+	tagCacheFile  string
+	slugCacheFile string
+	tagCache      map[string]CacheEntry
+	slugCache     map[string]CacheEntry
 }
 
 func NewTranslationCache() *TranslationCache {
 	cfg := config.GetGlobalConfig()
 	return &TranslationCache{
-		tagCacheFile:   cfg.Cache.TagFileName,
-		slugCacheFile:  cfg.Cache.ArticleFileName,
-		tagCache:       make(map[string]CacheEntry),
-		slugCache:      make(map[string]CacheEntry),
-		expireDuration: time.Duration(cfg.Cache.ExpireDays) * 24 * time.Hour,
+		tagCacheFile:  cfg.Cache.TagFileName,
+		slugCacheFile: cfg.Cache.ArticleFileName,
+		tagCache:      make(map[string]CacheEntry),
+		slugCache:     make(map[string]CacheEntry),
 	}
 }
 
@@ -127,12 +125,6 @@ func (c *TranslationCache) Get(text string, cacheType CacheType) (string, bool) 
 		return "", false
 	}
 
-	// 检查是否过期
-	if time.Since(entry.Timestamp) > c.expireDuration {
-		delete(cache, text)
-		return "", false
-	}
-
 	return entry.Translation, true
 }
 
@@ -175,7 +167,7 @@ func (c *TranslationCache) GetCachedTranslations(texts []string, targetLang stri
 	return result
 }
 
-func (c *TranslationCache) GetStats(cacheType CacheType) (total int, expired int) {
+func (c *TranslationCache) GetStats(cacheType CacheType) (total int) {
 	var cache map[string]CacheEntry
 	switch cacheType {
 	case TagCache:
@@ -183,16 +175,10 @@ func (c *TranslationCache) GetStats(cacheType CacheType) (total int, expired int
 	case SlugCache:
 		cache = c.slugCache
 	default:
-		return 0, 0
+		return 0
 	}
 
-	total = len(cache)
-	for _, entry := range cache {
-		if time.Since(entry.Timestamp) > c.expireDuration {
-			expired++
-		}
-	}
-	return
+	return len(cache)
 }
 
 func (c *TranslationCache) Clear(cacheType CacheType) error {
@@ -222,21 +208,17 @@ func (c *TranslationCache) ClearAll() error {
 }
 
 func (c *TranslationCache) GetInfo() string {
-	tagTotal, tagExpired := c.GetStats(TagCache)
-	slugTotal, slugExpired := c.GetStats(SlugCache)
+	tagTotal := c.GetStats(TagCache)
+	slugTotal := c.GetStats(SlugCache)
 
 	return fmt.Sprintf(`📊 缓存状态信息:
 🏷️  标签缓存:
    📁 文件: %s
    📄 总条目: %d 个
-   ⏰ 过期条目: %d 个
-   ✅ 有效条目: %d 个
 
 📝 Slug缓存:
    📁 文件: %s
-   📄 总条目: %d 个
-   ⏰ 过期条目: %d 个
-   ✅ 有效条目: %d 个`,
-		c.tagCacheFile, tagTotal, tagExpired, tagTotal-tagExpired,
-		c.slugCacheFile, slugTotal, slugExpired, slugTotal-slugExpired)
+   📄 总条目: %d 个`,
+		c.tagCacheFile, tagTotal,
+		c.slugCacheFile, slugTotal)
 }

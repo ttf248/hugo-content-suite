@@ -22,11 +22,9 @@ func (p *Processor) ShowCacheStatus() {
 	fmt.Println(translatorInstance.GetCacheInfo())
 	fmt.Println()
 
-	totalCount, expiredCount := translatorInstance.GetCacheStats()
+	totalCount := translatorInstance.GetCacheStats()
 	fmt.Printf("📊 统计信息:\n")
 	fmt.Printf("   总翻译条目: %d 个\n", totalCount)
-	fmt.Printf("   过期条目: %d 个\n", expiredCount)
-	fmt.Printf("   有效条目: %d 个\n", totalCount-expiredCount)
 }
 
 func (p *Processor) ClearTranslationCache(reader *bufio.Reader) {
