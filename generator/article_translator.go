@@ -5,6 +5,7 @@ import (
 	"hugo-content-suite/config"
 	"hugo-content-suite/models"
 	"hugo-content-suite/scanner"
+	"hugo-content-suite/translator"
 	"hugo-content-suite/utils"
 	"os"
 	"strings"
@@ -14,7 +15,7 @@ import (
 // ArticleTranslator 文章翻译器
 type ArticleTranslator struct {
 	contentDir       string
-	translationUtils *TranslationUtils
+	translationUtils *translator.TranslationUtils
 	contentParser    *ContentParser
 }
 
@@ -29,7 +30,7 @@ type TranslationStatus struct {
 func NewArticleTranslator(contentDir string) *ArticleTranslator {
 	return &ArticleTranslator{
 		contentDir:       contentDir,
-		translationUtils: NewTranslationUtils(),
+		translationUtils: translator.NewTranslationUtils(),
 		contentParser:    NewContentParser(),
 	}
 }

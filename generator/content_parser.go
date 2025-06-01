@@ -3,6 +3,7 @@ package generator
 import (
 	"fmt"
 	"hugo-content-suite/config"
+	"hugo-content-suite/translator"
 	"regexp"
 	"strings"
 
@@ -24,14 +25,14 @@ type SplitResult struct {
 
 // ContentParser 内容解析器
 type ContentParser struct {
-	translationUtils *TranslationUtils
+	translationUtils *translator.TranslationUtils
 	config           *config.Config
 }
 
 // NewContentParser 创建内容解析器
 func NewContentParser() *ContentParser {
 	return &ContentParser{
-		translationUtils: NewTranslationUtils(),
+		translationUtils: translator.NewTranslationUtils(),
 		config:           config.GetGlobalConfig(),
 	}
 }

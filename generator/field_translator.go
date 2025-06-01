@@ -3,6 +3,8 @@ package generator
 import (
 	"fmt"
 	"hugo-content-suite/config"
+	"hugo-content-suite/translator"
+	"hugo-content-suite/utils"
 	"strings"
 	"time"
 
@@ -11,14 +13,14 @@ import (
 
 // FieldTranslator 字段翻译器
 type FieldTranslator struct {
-	translationUtils *TranslationUtils
+	translationUtils *translator.TranslationUtils
 	contentParser    *ContentParser
 }
 
 // NewFieldTranslator 创建字段翻译器
 func NewFieldTranslator() *FieldTranslator {
 	return &FieldTranslator{
-		translationUtils: NewTranslationUtils(),
+		translationUtils: translator.NewTranslationUtils(),
 		contentParser:    NewContentParser(),
 	}
 }
@@ -132,7 +134,7 @@ func (a *ArticleTranslator) translateFrontMatterFields(data map[string]interface
 
 // translateStringField 翻译字符串字段
 func (a *ArticleTranslator) translateStringField(fieldName, value, targetLang string) (string, error) {
-	if value == "" || !a.translationUtils.ContainsChinese(value) {
+	if value == "" || !utils.ContainsChinese(value) {
 		return value, nil
 	}
 
@@ -160,7 +162,7 @@ func (a *ArticleTranslator) translateArrayField(fieldName string, items []interf
 	var translatedItems []interface{}
 	for _, item := range items {
 		if strItem, ok := item.(string); ok {
-			if a.translationUtils.ContainsChinese(strItem) {
+			if utils.ContainsChinese(strItem) {
 				fmt.Printf("%s -> ", strItem)
 
 				// 使用缓存翻译
@@ -188,7 +190,7 @@ func (a *ArticleTranslator) translateArrayField(fieldName string, items []interf
 
 // translateSlugField 翻译slug字段
 func (a *ArticleTranslator) translateSlugField(slug, targetLang string) (string, error) {
-	if slug == "" || !a.translationUtils.ContainsChinese(slug) {
+	if slug == "" || !utils.ContainsChinese(slug) {
 		return slug, nil
 	}
 
@@ -201,7 +203,7 @@ func (a *ArticleTranslator) translateSlugField(slug, targetLang string) (string,
 		return slug, err
 	}
 
-	translated = a.translationUtils.FormatSlugField(translated)
+	translated = utils.FormatSlugField(translated)
 
 	fmt.Printf("%s\n", translated)
 	return translated, nil
