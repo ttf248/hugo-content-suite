@@ -6,7 +6,6 @@ import (
 	"hugo-content-suite/models"
 	"hugo-content-suite/operations"
 	"hugo-content-suite/utils"
-	"strings"
 
 	"github.com/fatih/color"
 )
@@ -36,7 +35,7 @@ func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []model
 		case "3":
 			m.processor.TranslateArticles(m.reader)
 		case "4":
-			m.deleteArticlesByLanguage()
+			m.processor.DeleteArticlesByLanguageInteractive(m.reader)
 		case "0":
 			color.Green("感谢使用！再见！")
 			return
@@ -62,39 +61,4 @@ func (m *InteractiveMenu) displayMainMenu() {
 
 	color.Red("  0. 退出程序")
 	fmt.Println()
-}
-
-func (m *InteractiveMenu) deleteArticlesByLanguage() {
-	langs, err := m.processor.ScanLanguages()
-	if err != nil {
-		color.Red("扫描语言失败: %v", err)
-		return
-	}
-	if len(langs) == 0 {
-		color.Red("未检测到任何语言")
-		return
-	}
-	color.Cyan("当前检测到的语言：")
-	for i, lang := range langs {
-		fmt.Printf("  %d. %s\n", i+1, lang)
-	}
-	choice := utils.GetChoice(m.reader, "请输入要删除的语言编号: ")
-	idx := -1
-	fmt.Sscanf(choice, "%d", &idx)
-	if idx < 1 || idx > len(langs) {
-		color.Red("无效选择")
-		return
-	}
-	langToDelete := langs[idx-1]
-	confirm := utils.GetChoice(m.reader, fmt.Sprintf("确定要删除所有 [%s] 语言的文章吗？(y/N): ", langToDelete))
-	if strings.ToLower(confirm) == "y" {
-		err := m.processor.DeleteArticlesByLanguage(langToDelete)
-		if err != nil {
-			color.Red("删除失败: %v", err)
-		} else {
-			color.Green("已删除所有 [%s] 语言的文章", langToDelete)
-		}
-	} else {
-		color.Yellow("已取消删除操作")
-	}
 }
