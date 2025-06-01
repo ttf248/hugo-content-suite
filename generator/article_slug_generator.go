@@ -246,7 +246,7 @@ func (g *ArticleSlugGenerator) GenerateArticleSlugsWithMode(mode string) error {
 
 	// 批量翻译所有标题（使用文章专用接口）
 	fmt.Printf("正在批量翻译 %d 个文章标题...\n", len(titlesToTranslate))
-	translationMap, err := g.translator.BatchTranslateArticles(titlesToTranslate)
+	translationMap, err := g.translator.BatchTranslateSlugs(titlesToTranslate)
 	if err != nil {
 		fmt.Printf("⚠️ 批量翻译失败: %v，将逐个翻译\n", err)
 		translationMap = make(map[string]string)

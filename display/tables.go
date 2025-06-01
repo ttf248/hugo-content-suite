@@ -23,11 +23,11 @@ var (
 // BulkTranslationPreview 批量翻译预览信息
 type BulkTranslationPreview struct {
 	TotalTags           int
-	TotalArticles       int
+	TotalSlugs          int
 	CachedCount         int
 	MissingTranslations []string
 	TagsToTranslate     []TranslationItem
-	ArticlesToTranslate []TranslationItem
+	SlugsToTranslate    []TranslationItem
 }
 
 // TranslationItem 翻译项目信息

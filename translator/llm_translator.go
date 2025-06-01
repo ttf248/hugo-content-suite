@@ -183,7 +183,7 @@ func (t *LLMTranslator) TranslateToArticleSlug(title string) (string, error) {
 
 请只返回翻译后的slug，不要其他内容。`
 
-	return t.translateWithCache(title, ArticleCache, promptTemplate)
+	return t.translateWithCache(title, SlugCache, promptTemplate)
 }
 
 func (t *LLMTranslator) TranslateParagraph(paragraph string) (string, error) {
@@ -284,9 +284,9 @@ func (t *LLMTranslator) BatchTranslateTags(tags []string) (map[string]string, er
 	return t.batchTranslate(tags, TagCache, "标签", t.TranslateToSlug)
 }
 
-// BatchTranslateArticles 批量翻译文章标题
-func (t *LLMTranslator) BatchTranslateArticles(titles []string) (map[string]string, error) {
-	return t.batchTranslate(titles, ArticleCache, "文章标题", t.TranslateToArticleSlug)
+// BatchTranslateSlugs 批量翻译文章标题
+func (t *LLMTranslator) BatchTranslateSlugs(titles []string) (map[string]string, error) {
+	return t.batchTranslate(titles, SlugCache, "Slug", t.TranslateToArticleSlug)
 }
 
 // BatchTranslate 兼容旧接口，自动判断类型
@@ -369,7 +369,7 @@ func (t *LLMTranslator) translateMissingTexts(missingTexts []string, result map[
 		if len(text) <= 20 && !strings.Contains(text, "：") && !strings.Contains(text, ":") {
 			cacheType = TagCache
 		} else {
-			cacheType = ArticleCache
+			cacheType = SlugCache
 		}
 		t.cache.Set(cacheKey, slug, cacheType)
 
@@ -413,7 +413,7 @@ func (t *LLMTranslator) GetMissingTags(tags []string) []string {
 }
 
 func (t *LLMTranslator) GetMissingArticles(articles []string) []string {
-	return t.cache.GetMissingTexts(articles, "en", ArticleCache)
+	return t.cache.GetMissingTexts(articles, "en", SlugCache)
 }
 
 func (t *LLMTranslator) PrepareBulkTranslation(allTexts []string) ([]string, int) {
@@ -446,11 +446,11 @@ func (t *LLMTranslator) categorizeTexts(allTexts []string) ([]string, []string) 
 func (t *LLMTranslator) GetCacheInfo() string     { return t.cache.GetInfo() }
 func (t *LLMTranslator) ClearCache() error        { return t.cache.ClearAll() }
 func (t *LLMTranslator) ClearTagCache() error     { return t.cache.Clear(TagCache) }
-func (t *LLMTranslator) ClearArticleCache() error { return t.cache.Clear(ArticleCache) }
+func (t *LLMTranslator) ClearArticleCache() error { return t.cache.Clear(SlugCache) }
 
 func (t *LLMTranslator) GetCacheStats() (int, int) {
 	tagTotal, tagExpired := t.cache.GetStats(TagCache)
-	articleTotal, articleExpired := t.cache.GetStats(ArticleCache)
+	articleTotal, articleExpired := t.cache.GetStats(SlugCache)
 	return tagTotal + articleTotal, tagExpired + articleExpired
 }
 

@@ -113,11 +113,11 @@ func (p *Processor) PreviewBulkTranslationCache(tagStats []models.TagStats) *dis
 		// 返回空的预览结构而不是nil，避免程序崩溃
 		return &display.BulkTranslationPreview{
 			TotalTags:           0,
-			TotalArticles:       0,
+			TotalSlugs:          0,
 			CachedCount:         0,
 			MissingTranslations: []string{},
 			TagsToTranslate:     []display.TranslationItem{},
-			ArticlesToTranslate: []display.TranslationItem{},
+			SlugsToTranslate:    []display.TranslationItem{},
 		}
 	}
 
@@ -161,14 +161,14 @@ func (p *Processor) GenerateBulkTranslationCache(tagStats []models.TagStats, rea
 		}
 	}
 
-	if len(cachePreview.ArticlesToTranslate) > 0 {
-		articleTitles := make([]string, len(cachePreview.ArticlesToTranslate))
-		for i, item := range cachePreview.ArticlesToTranslate {
+	if len(cachePreview.SlugsToTranslate) > 0 {
+		articleTitles := make([]string, len(cachePreview.SlugsToTranslate))
+		for i, item := range cachePreview.SlugsToTranslate {
 			articleTitles[i] = item.Original
 		}
-		_, err = translatorInstance.BatchTranslateArticles(articleTitles)
+		_, err = translatorInstance.BatchTranslateSlugs(articleTitles)
 		if err != nil {
-			color.Red("❌ 文章批量翻译失败: %v", err)
+			color.Red("❌ Slug批量翻译失败: %v", err)
 			return
 		}
 	}
@@ -179,7 +179,7 @@ func (p *Processor) GenerateBulkTranslationCache(tagStats []models.TagStats, rea
 func (p *Processor) displayCacheStats(cachePreview *display.BulkTranslationPreview) {
 	fmt.Printf("\n📊 翻译缓存统计:\n")
 	fmt.Printf("   🏷️  标签总数: %d 个\n", cachePreview.TotalTags)
-	fmt.Printf("   📝 文章总数: %d 篇\n", cachePreview.TotalArticles)
+	fmt.Printf("   📝 Slug总数: %d 篇\n", cachePreview.TotalSlugs)
 	fmt.Printf("   ✅ 已缓存: %d 个\n", cachePreview.CachedCount)
 	fmt.Printf("   🔄 需翻译: %d 个\n", len(cachePreview.MissingTranslations))
 }
@@ -241,11 +241,11 @@ func (p *Processor) collectTranslationTargets(tagStats []models.TagStats) (*disp
 
 	return &display.BulkTranslationPreview{
 		TotalTags:           len(tagStats),
-		TotalArticles:       len(articleTitles),
+		TotalSlugs:          len(articleTitles),
 		CachedCount:         cachedCount,
 		MissingTranslations: allMissingTexts,
 		TagsToTranslate:     tagsToTranslate,
-		ArticlesToTranslate: articlesToTranslate,
+		SlugsToTranslate:    articlesToTranslate,
 	}, nil
 }
 

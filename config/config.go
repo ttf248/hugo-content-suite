@@ -74,7 +74,7 @@ var defaultConfig = Config{
 	},
 	Cache: CacheConfig{
 		TagFileName:     "tag_translations_cache.json",
-		ArticleFileName: "article_translations_cache.json",
+		ArticleFileName: "slug_translations_cache.json",
 		AutoSaveCount:   5,
 		DelayMs:         500,
 		ExpireDays:      30,
