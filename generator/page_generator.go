@@ -38,13 +38,9 @@ func NewTagPageGenerator(contentDir string) *TagPageGenerator {
 }
 
 // GenerateTagPagesWithMode 根据模式生成标签页面文件
-func (g *TagPageGenerator) GenerateTagPagesWithMode(tagStats []models.TagStats, mode string) error {
+func (g *TagPageGenerator) GenerateTagPagesWithMode(previews []TagPagePreview, mode string) error {
 	fmt.Println("\n🏷️  标签页面生成器 (模式选择)")
 	fmt.Println("===============================")
-
-	fmt.Print("🔍 生成预览信息... ")
-	previews := g.PreviewTagPages(tagStats)
-	fmt.Printf("完成 (%d 个标签)\n", len(previews))
 
 	var targetPreviews []TagPagePreview
 	for _, preview := range previews {

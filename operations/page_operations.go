@@ -22,7 +22,6 @@ func (p *Processor) GenerateTagPages(tagStats []models.TagStats, reader *bufio.R
 	previews := pageGenerator.PreviewTagPages(tagStats)
 
 	createCount, updateCount := pageGenerator.CountPageOperations(previews)
-	p.displayPageStats(createCount, updateCount, len(previews))
 
 	if createCount == 0 && updateCount == 0 {
 		color.Green("✅ 所有标签页面都是最新的")
@@ -35,22 +34,32 @@ func (p *Processor) GenerateTagPages(tagStats []models.TagStats, reader *bufio.R
 		return
 	}
 
+	// 根据模式筛选预览
+	var targetPreviews []generator.TagPagePreview
+	for _, preview := range previews {
+		switch mode {
+		case "create":
+			if preview.Status == "create" {
+				targetPreviews = append(targetPreviews, preview)
+			}
+		case "update":
+			if preview.Status == "update" {
+				targetPreviews = append(targetPreviews, preview)
+			}
+		case "all":
+			targetPreviews = append(targetPreviews, preview)
+		}
+	}
+
 	if !p.confirmExecution(reader, "\n确认执行？(y/n): ") {
 		color.Yellow("❌ 已取消生成")
 		return
 	}
 
 	color.Cyan("🚀 正在生成标签页面...")
-	if err := pageGenerator.GenerateTagPagesWithMode(tagStats, mode); err != nil {
+	if err := pageGenerator.GenerateTagPagesWithMode(targetPreviews, mode); err != nil {
 		color.Red("❌ 生成失败: %v", err)
 	}
-}
-
-func (p *Processor) displayPageStats(createCount, updateCount, total int) {
-	fmt.Printf("\n📊 统计信息:\n")
-	fmt.Printf("   🆕 需要新建: %d 个标签页面\n", createCount)
-	fmt.Printf("   🔄 需要更新: %d 个标签页面\n", updateCount)
-	fmt.Printf("   📦 总计: %d 个标签页面\n", total)
 }
 
 func (p *Processor) selectPageMode(createCount, updateCount int, reader *bufio.Reader) string {
@@ -104,5 +113,3 @@ func (p *Processor) selectPageMode(createCount, updateCount int, reader *bufio.R
 		return ""
 	}
 }
-
-// getChoice方法已移动到cache_operations.go文件中，避免重复定义
