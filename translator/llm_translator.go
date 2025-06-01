@@ -8,9 +8,33 @@ import (
 	"hugo-content-suite/utils"
 	"io"
 	"net/http"
-	"regexp"
 	"strings"
 	"time"
+)
+
+// 提示词模板常量
+const (
+	slugPromptTemplate = `请将以下中文标签翻译为适合作为URL的英文slug。要求：
+1. 使用小写字母
+2. 单词之间用连字符(-)连接
+3. 不包含特殊字符
+4. 简洁准确
+5. 只返回翻译结果，不要任何解释
+
+中文标签: %s
+
+英文slug:`
+
+	articleSlugPromptTemplate = `请将以下中文文章标题翻译为简洁的英文slug，要求：
+1. 使用小写字母
+2. 单词间用连字符(-)连接
+3. 去除特殊字符
+4. 保持语义准确
+5. 适合作为URL路径
+
+标题：%s
+
+请只返回翻译后的slug，不要其他内容。`
 )
 
 // LM Studio API 相关类型定义
@@ -90,8 +114,8 @@ func (t *LLMTranslator) makeRequest(prompt string, timeout time.Duration) (strin
 		return "", fmt.Errorf("序列化请求失败: %v", err)
 	}
 
-	client := &http.Client{Timeout: timeout}
-	resp, err := client.Post(t.baseURL, "application/json", bytes.NewBuffer(jsonData))
+	t.client.Timeout = timeout
+	resp, err := t.client.Post(t.baseURL, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return "", fmt.Errorf("发送请求失败: %v", err)
 	}
@@ -133,8 +157,8 @@ func (t *LLMTranslator) translateWithCache(text string, cacheType CacheType, pro
 	}
 
 	// 如果已经是英文，直接处理
-	if isEnglishOnly(text) {
-		slug := normalizeSlug(text)
+	if utils.IsEnglishOnly(text) {
+		slug := utils.NormalizeSlug(text)
 		t.cache.Set(cacheKey, slug, cacheType)
 		return slug, nil
 	}
@@ -148,133 +172,18 @@ func (t *LLMTranslator) translateWithCache(text string, cacheType CacheType, pro
 		return "", err
 	}
 
-	normalizedResult := normalizeSlug(result)
+	normalizedResult := utils.NormalizeSlug(result)
 	t.cache.Set(cacheKey, normalizedResult, cacheType)
 
 	return normalizedResult, nil
 }
 
 func (t *LLMTranslator) TranslateToSlug(text string) (string, error) {
-	promptTemplate := `请将以下中文标签翻译为适合作为URL的英文slug。要求：
-1. 使用小写字母
-2. 单词之间用连字符(-)连接
-3. 不包含特殊字符
-4. 简洁准确
-5. 只返回翻译结果，不要任何解释
-
-中文标签: %s
-
-英文slug:`
-
-	return t.translateWithCache(text, TagCache, promptTemplate)
+	return t.translateWithCache(text, TagCache, slugPromptTemplate)
 }
 
 func (t *LLMTranslator) TranslateToArticleSlug(title string) (string, error) {
-	promptTemplate := `请将以下中文文章标题翻译为简洁的英文slug，要求：
-1. 使用小写字母
-2. 单词间用连字符(-)连接
-3. 去除特殊字符
-4. 保持语义准确
-5. 适合作为URL路径
-
-标题：%s
-
-请只返回翻译后的slug，不要其他内容。`
-
-	return t.translateWithCache(title, SlugCache, promptTemplate)
-}
-
-func (t *LLMTranslator) TranslateParagraph(paragraph string) (string, error) {
-	if strings.TrimSpace(paragraph) == "" {
-		return paragraph, nil
-	}
-
-	if t.shouldSkipTranslation(paragraph) {
-		return paragraph, nil
-	}
-
-	promptTemplate := `请将以下中文段落翻译成自然流畅的英文，保持原文的格式和结构：
-
-%s
-
-要求：
-1. 翻译要自然流畅，符合英文表达习惯
-2. 保持原文的段落结构和格式
-3. 如果包含技术术语，请使用准确的英文术语
-4. 如果包含Markdown格式，请保留格式标记
-5. 直接返回翻译结果，不要添加额外说明
-6. 如果原文已经是英文，请保持不变`
-
-	prompt := fmt.Sprintf(promptTemplate, paragraph)
-	return t.makeRequest(prompt, t.timeout)
-}
-
-// shouldSkipTranslation 判断是否应该跳过翻译
-func (t *LLMTranslator) shouldSkipTranslation(text string) bool {
-	trimmed := strings.TrimSpace(text)
-
-	// 空内容跳过
-	if trimmed == "" {
-		return true
-	}
-
-	// 检查是否为代码块
-	if strings.HasPrefix(trimmed, "```") || strings.HasSuffix(trimmed, "```") {
-		return true
-	}
-
-	// 检查是否为缩进代码块
-	if strings.HasPrefix(trimmed, "    ") {
-		return true
-	}
-
-	// 检查是否为引用块（但如果包含中文仍需翻译）
-	if strings.HasPrefix(trimmed, ">") {
-		// 检查引用内容是否包含中文
-		if !t.containsChinese(trimmed) {
-			return true
-		}
-	}
-
-	// 检查是否为纯链接行（不包含中文描述）
-	if strings.Contains(trimmed, "](") && strings.Contains(trimmed, "[") {
-		// 如果链接中包含中文描述，仍需翻译
-		if !t.containsChinese(trimmed) {
-			return true
-		}
-	}
-
-	// 检查是否为图片（但如果alt文本包含中文仍需翻译）
-	if strings.HasPrefix(trimmed, "![") {
-		if !t.containsChinese(trimmed) {
-			return true
-		}
-	}
-
-	// 检查是否为HTML标签
-	if strings.HasPrefix(trimmed, "<") && strings.HasSuffix(trimmed, ">") {
-		if !t.containsChinese(trimmed) {
-			return true
-		}
-	}
-
-	// 如果没有中文字符，跳过翻译
-	if !t.containsChinese(trimmed) {
-		return true
-	}
-
-	// 只要包含中文就翻译，不再检查中文字符比例
-	return false
-}
-
-// containsChinese 检查文本是否包含中文
-func (t *LLMTranslator) containsChinese(text string) bool {
-	for _, r := range text {
-		if r >= 0x4e00 && r <= 0x9fff {
-			return true
-		}
-	}
-	return false
+	return t.translateWithCache(title, SlugCache, articleSlugPromptTemplate)
 }
 
 // BatchTranslateTags 批量翻译标签
@@ -287,37 +196,20 @@ func (t *LLMTranslator) BatchTranslateSlugs(titles []string) (map[string]string,
 	return t.batchTranslate(titles, SlugCache, "Slug", t.TranslateToArticleSlug)
 }
 
-// BatchTranslate 兼容旧接口，自动判断类型
-func (t *LLMTranslator) BatchTranslate(texts []string) (map[string]string, error) {
-	// 默认当作标签处理，保持向后兼容
-	return t.BatchTranslateTags(texts)
-}
-
 // batchTranslate 通用批量翻译方法
 func (t *LLMTranslator) batchTranslate(texts []string, cacheType CacheType, typeName string, translateFunc func(string) (string, error)) (map[string]string, error) {
 	cfg := config.GetGlobalConfig()
 	startTime := time.Now()
 	result := make(map[string]string)
 
-	fmt.Printf("🔍 检查%s缓存...\n", typeName)
-
-	// 批量检查缓存
-	cachedCount := t.loadFromCache(texts, cacheType, result)
-	if cachedCount > 0 {
-		fmt.Printf("📋 从缓存获取 %d 个%s翻译\n", cachedCount, typeName)
-	}
-
-	// 获取需要翻译的文本 - 修复参数
-	missingTexts := t.cache.GetMissingTexts(texts, "en", cacheType)
+	// 处理缓存
+	_, missingTexts := t.processCacheAndGetMissing(texts, cacheType, typeName, result)
 	if len(missingTexts) == 0 {
-		fmt.Printf("✅ 所有%s都已有缓存，无需重新翻译\n", typeName)
 		return result, nil
 	}
 
-	fmt.Printf("🔄 需要翻译 %d 个新%s\n", len(missingTexts), typeName)
-	progressBar := utils.NewProgressBar(len(missingTexts))
-
 	// 批量翻译
+	progressBar := utils.NewProgressBar(len(missingTexts))
 	newTranslationsAdded := t.translateMissingTexts(missingTexts, result, translateFunc, progressBar, cfg)
 
 	// 保存缓存
@@ -326,6 +218,27 @@ func (t *LLMTranslator) batchTranslate(texts []string, cacheType CacheType, type
 	}
 
 	return result, nil
+}
+
+// processCacheAndGetMissing 处理缓存并获取缺失的文本
+func (t *LLMTranslator) processCacheAndGetMissing(texts []string, cacheType CacheType, typeName string, result map[string]string) (int, []string) {
+	fmt.Printf("🔍 检查%s缓存...\n", typeName)
+
+	// 批量检查缓存
+	cachedCount := t.loadFromCache(texts, cacheType, result)
+	if cachedCount > 0 {
+		fmt.Printf("📋 从缓存获取 %d 个%s翻译\n", cachedCount, typeName)
+	}
+
+	// 获取需要翻译的文本
+	missingTexts := t.cache.GetMissingTexts(texts, "en", cacheType)
+	if len(missingTexts) == 0 {
+		fmt.Printf("✅ 所有%s都已有缓存，无需重新翻译\n", typeName)
+		return cachedCount, nil
+	}
+
+	fmt.Printf("🔄 需要翻译 %d 个新%s\n", len(missingTexts), typeName)
+	return cachedCount, missingTexts
 }
 
 // loadFromCache 从缓存加载已有翻译
@@ -354,36 +267,47 @@ func (t *LLMTranslator) translateMissingTexts(missingTexts []string, result map[
 			continue
 		}
 
-		// 保存到缓存 - 使用正确的缓存键
-		cacheKey := fmt.Sprintf("en:%s", text)
-		// 根据文本类型选择缓存类型
-		var cacheType CacheType
-		if len(text) <= 20 && !strings.Contains(text, "：") && !strings.Contains(text, ":") {
-			cacheType = TagCache
-		} else {
-			cacheType = SlugCache
-		}
-		t.cache.Set(cacheKey, slug, cacheType)
-
-		result[text] = slug
-		newTranslationsAdded++
-
+		// 保存翻译结果
+		newTranslationsAdded += t.saveTranslationResult(text, slug, result)
 		progressBar.Update(i + 1)
 
-		// 中间保存
-		if newTranslationsAdded%cfg.Cache.AutoSaveCount == 0 {
-			if err := t.cache.Save(); err != nil {
-				utils.Error("中间保存缓存失败: %v", err)
-			}
-		}
-
-		// 添加延迟
-		if i < len(missingTexts)-1 {
-			time.Sleep(time.Duration(cfg.Cache.DelayMs) * time.Millisecond)
-		}
+		// 处理自动保存和延迟
+		t.handleAutoSaveAndDelay(newTranslationsAdded, i, len(missingTexts), cfg)
 	}
 
 	return newTranslationsAdded
+}
+
+// saveTranslationResult 保存翻译结果到缓存和结果集
+func (t *LLMTranslator) saveTranslationResult(text, translation string, result map[string]string) int {
+	cacheKey := fmt.Sprintf("en:%s", text)
+	cacheType := t.determineCacheType(text)
+	t.cache.Set(cacheKey, translation, cacheType)
+	result[text] = translation
+	return 1
+}
+
+// determineCacheType 根据文本特征确定缓存类型
+func (t *LLMTranslator) determineCacheType(text string) CacheType {
+	if len(text) <= 20 && !strings.Contains(text, "：") && !strings.Contains(text, ":") {
+		return TagCache
+	}
+	return SlugCache
+}
+
+// handleAutoSaveAndDelay 处理自动保存和延迟
+func (t *LLMTranslator) handleAutoSaveAndDelay(translationsCount, currentIndex, totalCount int, cfg *config.Config) {
+	// 自动保存
+	if translationsCount%cfg.Cache.AutoSaveCount == 0 {
+		if err := t.cache.Save(); err != nil {
+			utils.Error("中间保存缓存失败: %v", err)
+		}
+	}
+
+	// 添加延迟
+	if currentIndex < totalCount-1 {
+		time.Sleep(time.Duration(cfg.Cache.DelayMs) * time.Millisecond)
+	}
 }
 
 // saveCacheAndLog 保存缓存并记录日志
@@ -440,40 +364,4 @@ func (t *LLMTranslator) GetCacheStats() int {
 	tagTotal := t.cache.GetStats(TagCache)
 	articleTotal := t.cache.GetStats(SlugCache)
 	return tagTotal + articleTotal
-}
-
-// isEnglishOnly 检查字符串是否只包含英文字符
-func isEnglishOnly(s string) bool {
-	for _, r := range s {
-		if !((r >= 'a' && r <= 'z') || (r >= 'A' && r <= 'Z') ||
-			(r >= '0' && r <= '9') || r == '-' || r == '_' || r == ' ') {
-			return false
-		}
-	}
-	return true
-}
-
-// normalizeSlug 标准化slug格式
-func normalizeSlug(s string) string {
-	// 转为小写
-	s = strings.ToLower(s)
-
-	// 移除引号和其他特殊字符
-	s = strings.Trim(s, "\"'`")
-
-	// 替换空格为连字符
-	s = strings.ReplaceAll(s, " ", "-")
-
-	// 移除非法字符，只保留字母、数字和连字符
-	reg := regexp.MustCompile(`[^a-z0-9\-]`)
-	s = reg.ReplaceAllString(s, "")
-
-	// 移除多个连续的连字符
-	reg = regexp.MustCompile(`-+`)
-	s = reg.ReplaceAllString(s, "-")
-
-	// 移除开头和结尾的连字符
-	s = strings.Trim(s, "-")
-
-	return s
 }
