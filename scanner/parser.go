@@ -1,14 +1,15 @@
 package scanner
 
 import (
-	"bufio"
+	"fmt"
 	"hugo-content-suite/models"
+	"io"
 	"os"
 	"path/filepath"
-	"regexp"
 	"strings"
 
 	"github.com/tmc/langchaingo/textsplitter"
+	"gopkg.in/yaml.v3"
 )
 
 // Article 类型别名，方便引用
@@ -73,73 +74,96 @@ func parseMarkdownFile(filePath string, withContent bool) (*Article, error) {
 	}
 	defer file.Close()
 
-	var frontMatterLines []string
-	var bodyLines []string
-
-	scanner := bufio.NewScanner(file)
-	inFrontMatter := false
-	frontMatterEnded := false
-
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		if strings.TrimSpace(line) == "---" {
-			if !inFrontMatter {
-				inFrontMatter = true
-				continue
-			} else {
-				frontMatterEnded = true
-				inFrontMatter = false
-				continue
-			}
-		}
-
-		if inFrontMatter {
-			frontMatterLines = append(frontMatterLines, line)
-		} else if frontMatterEnded && withContent {
-			bodyLines = append(bodyLines, line)
-		}
+	// 读取整个文件内容
+	content, err := io.ReadAll(file)
+	if err != nil {
+		return nil, err
 	}
 
-	if err := scanner.Err(); err != nil {
-		return nil, err
+	contentStr := string(content)
+
+	// 查找前置数据边界
+	lines := strings.Split(contentStr, "\n")
+	var frontMatterStart, frontMatterEnd int = -1, -1
+
+	for i, line := range lines {
+		if strings.TrimSpace(line) == "---" {
+			if frontMatterStart == -1 {
+				frontMatterStart = i
+			} else {
+				frontMatterEnd = i
+				break
+			}
+		}
 	}
 
 	article := &Article{
 		FilePath: filePath,
 	}
 
-	// 解析前置信息
-	for _, line := range frontMatterLines {
-		line = strings.TrimSpace(line)
+	// 解析前置数据
+	var frontMatterContent string
+	var bodyContent string
 
-		if strings.HasPrefix(line, "title:") {
-			article.Title = extractValue(line)
-		} else if strings.HasPrefix(line, "tags:") {
-			article.Tags = extractTags(line, frontMatterLines)
-		} else if strings.HasPrefix(line, "categories:") {
-			categories := extractCategories(line, frontMatterLines)
-			if len(categories) > 0 {
-				article.Category = categories[0]
-			}
-		} else if strings.HasPrefix(line, "date:") {
-			article.Date = extractValue(line)
+	if frontMatterStart >= 0 && frontMatterEnd > frontMatterStart {
+		// 提取前置数据
+		frontMatterLines := lines[frontMatterStart+1 : frontMatterEnd]
+		frontMatterContent = strings.Join(frontMatterLines, "\n")
+
+		// 定义前置数据结构体
+		type FrontMatter struct {
+			Title      string   `yaml:"title"`
+			Subtitle   string   `yaml:"subtitle"`
+			Summary    string   `yaml:"summary"`
+			Tags       []string `yaml:"tags"`
+			Categories []string `yaml:"categories"`
+			Date       string   `yaml:"date"`
+			LastMod    string   `yaml:"lastmod"`
+			Featured   bool     `yaml:"featured"`
+			Draft      bool     `yaml:"draft"`
+			Slug       string   `yaml:"slug"`
 		}
+
+		// 解析 YAML 前置数据
+		var frontMatter FrontMatter
+		if err := yaml.Unmarshal([]byte(frontMatterContent), &frontMatter); err != nil {
+			fmt.Printf("❌ YAML解析错误: %s\n", err)
+			fmt.Printf("📄 文章路径: %s\n", filePath)
+			os.Exit(1)
+		}
+		article.Title = frontMatter.Title
+		article.Subtitle = frontMatter.Subtitle
+		article.Summary = frontMatter.Summary
+		article.Tags = frontMatter.Tags
+		article.Categories = frontMatter.Categories
+		article.Date = frontMatter.Date
+		article.LastMod = frontMatter.LastMod
+		article.Featured = frontMatter.Featured
+		article.Draft = frontMatter.Draft
+		article.Slug = frontMatter.Slug
+
+		// 提取正文内容
+		if frontMatterEnd+1 < len(lines) {
+			bodyLines := lines[frontMatterEnd+1:]
+			bodyContent = strings.Join(bodyLines, "\n")
+		}
+	} else {
+		// 没有前置数据，整个内容都是正文
+		bodyContent = contentStr
 	}
 
 	// 如果需要内容信息，则填充相关字段
 	if withContent {
 		// 构建前置信息
-		if len(frontMatterLines) > 0 {
-			article.FrontMatter = strings.Join(frontMatterLines, "\n")
+		if frontMatterContent != "" {
+			article.FrontMatter = frontMatterContent
 		}
 
 		// 解析正文为段落
-		bodyText := strings.Join(bodyLines, "\n")
-		article.BodyContent = splitTextIntoParagraphs(bodyText)
+		article.BodyContent = splitTextIntoParagraphs(bodyContent)
 
 		// 计算正文字符数
-		article.CharCount = len([]rune(bodyText))
+		article.CharCount = len([]rune(bodyContent))
 	}
 
 	return article, nil
@@ -156,106 +180,40 @@ func splitTextIntoParagraphs(text string) []string {
 	return paragraphs
 }
 
-func extractValue(line string) string {
-	parts := strings.SplitN(line, ":", 2)
-	if len(parts) != 2 {
-		return ""
+// extractTagsFromYAML 从 YAML 数据中提取标签
+func extractTagsFromYAML(tags interface{}) []string {
+	var result []string
+
+	switch v := tags.(type) {
+	case []interface{}:
+		for _, tag := range v {
+			if tagStr, ok := tag.(string); ok {
+				result = append(result, tagStr)
+			}
+		}
+	case string:
+		// 处理单个字符串标签
+		result = append(result, v)
 	}
-	value := strings.TrimSpace(parts[1])
-	if strings.HasPrefix(value, "\"") && strings.HasSuffix(value, "\"") {
-		value = value[1 : len(value)-1]
-	}
-	return value
+
+	return result
 }
 
-func extractTags(line string, frontMatterLines []string) []string {
-	if strings.Contains(line, "[") {
-		re := regexp.MustCompile(`\[(.*?)\]`)
-		matches := re.FindStringSubmatch(line)
-		if len(matches) > 1 {
-			tagsStr := matches[1]
-			tags := strings.Split(tagsStr, ",")
-			var result []string
-			for _, tag := range tags {
-				tag = strings.TrimSpace(tag)
-				tag = strings.Trim(tag, "\"")
-				if tag != "" {
-					result = append(result, tag)
-				}
-			}
-			return result
-		}
-	}
+// extractCategoriesFromYAML 从 YAML 数据中提取分类
+func extractCategoriesFromYAML(categories interface{}) []string {
+	var result []string
 
-	var tags []string
-	inTagsArray := false
-
-	for _, fmLine := range frontMatterLines {
-		fmLine = strings.TrimSpace(fmLine)
-
-		if strings.HasPrefix(fmLine, "tags:") {
-			inTagsArray = true
-			continue
-		}
-
-		if inTagsArray {
-			if strings.HasPrefix(fmLine, "-") {
-				tag := strings.TrimSpace(strings.TrimPrefix(fmLine, "-"))
-				tag = strings.Trim(tag, "\"")
-				if tag != "" {
-					tags = append(tags, tag)
-				}
-			} else if !strings.HasPrefix(fmLine, " ") && fmLine != "" {
-				break
+	switch v := categories.(type) {
+	case []interface{}:
+		for _, category := range v {
+			if categoryStr, ok := category.(string); ok {
+				result = append(result, categoryStr)
 			}
 		}
+	case string:
+		// 处理单个字符串分类
+		result = append(result, v)
 	}
 
-	return tags
-}
-
-func extractCategories(line string, frontMatterLines []string) []string {
-	if strings.Contains(line, "[") {
-		re := regexp.MustCompile(`\[(.*?)\]`)
-		matches := re.FindStringSubmatch(line)
-		if len(matches) > 1 {
-			categoriesStr := matches[1]
-			categories := strings.Split(categoriesStr, ",")
-			var result []string
-			for _, category := range categories {
-				category = strings.TrimSpace(category)
-				category = strings.Trim(category, "\"")
-				if category != "" {
-					result = append(result, category)
-				}
-			}
-			return result
-		}
-	}
-
-	var categories []string
-	inCategoriesArray := false
-
-	for _, fmLine := range frontMatterLines {
-		fmLine = strings.TrimSpace(fmLine)
-
-		if strings.HasPrefix(fmLine, "categories:") {
-			inCategoriesArray = true
-			continue
-		}
-
-		if inCategoriesArray {
-			if strings.HasPrefix(fmLine, "-") {
-				category := strings.TrimSpace(strings.TrimPrefix(fmLine, "-"))
-				category = strings.Trim(category, "\"")
-				if category != "" {
-					categories = append(categories, category)
-				}
-			} else if !strings.HasPrefix(fmLine, " ") && fmLine != "" {
-				break
-			}
-		}
-	}
-
-	return categories
+	return result
 }
