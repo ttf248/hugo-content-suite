@@ -24,9 +24,9 @@ type LMStudioConfig struct {
 }
 
 type CacheConfig struct {
-	TagFileName      string `json:"tag_file_name"`
-	ArticleFileName  string `json:"article_file_name"`
-	CategoryFileName string `json:"category_file_name"` // 新增
+	TagFileName      string `json:"article_tag_file_name"`
+	ArticleFileName  string `json:"article_slug_file_name"`
+	CategoryFileName string `json:"article_category_file_name"` // 新增
 	AutoSaveCount    int    `json:"auto_save_count"`
 	DelayMs          int    `json:"delay_ms"`
 	ExpireDays       int    `json:"expire_days"`
