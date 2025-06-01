@@ -7,6 +7,8 @@ import (
 	"path/filepath"
 	"regexp"
 	"strings"
+
+	"github.com/tmc/langchaingo/textsplitter"
 )
 
 // Article 类型别名，方便引用
@@ -76,7 +78,6 @@ func parseMarkdownFile(filePath string, withContent bool) (*Article, error) {
 	}
 	defer file.Close()
 
-	var fullContent strings.Builder
 	var frontMatterLines []string
 	var bodyLines []string
 
@@ -86,10 +87,6 @@ func parseMarkdownFile(filePath string, withContent bool) (*Article, error) {
 
 	for scanner.Scan() {
 		line := scanner.Text()
-
-		if withContent {
-			fullContent.WriteString(line + "\n")
-		}
 
 		if strings.TrimSpace(line) == "---" {
 			if !inFrontMatter {
@@ -139,20 +136,29 @@ func parseMarkdownFile(filePath string, withContent bool) (*Article, error) {
 	if withContent {
 		// 构建前置信息
 		if len(frontMatterLines) > 0 {
-			article.FrontMatter = "---\n" + strings.Join(frontMatterLines, "\n") + "\n---"
+			article.FrontMatter = strings.Join(frontMatterLines, "\n")
 		}
 
-		// 构建正文内容
-		article.BodyContent = strings.Join(bodyLines, "\n")
-
-		// 完整内容
-		article.FullContent = strings.TrimSuffix(fullContent.String(), "\n")
+		// 解析正文为段落
+		bodyText := strings.Join(bodyLines, "\n")
+		article.BodyContent = splitTextIntoParagraphs(bodyText)
 
 		// 计算正文字符数
-		article.CharCount = len([]rune(article.BodyContent))
+		article.CharCount = len([]rune(bodyText))
 	}
 
 	return article, nil
+}
+
+// splitTextIntoParagraphs 将文本分割成段落
+func splitTextIntoParagraphs(text string) []string {
+	splitter := textsplitter.NewMarkdownTextSplitter()
+	paragraphs, err := splitter.SplitText(text)
+	if err != nil {
+		// 处理错误
+		return []string{}
+	}
+	return paragraphs
 }
 
 func extractValue(line string) string {
