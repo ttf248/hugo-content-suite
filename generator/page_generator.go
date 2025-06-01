@@ -16,6 +16,17 @@ type TagPageGenerator struct {
 	slugCache        map[string]string
 }
 
+// TagPagePreview 标签页面预览信息
+type TagPagePreview struct {
+	TagName       string
+	Slug          string
+	ArticleCount  int
+	DirectoryPath string
+	FilePath      string
+	Status        string // "create", "update"
+	ExistingSlug  string
+}
+
 // NewTagPageGenerator 创建新的标签页面生成器
 func NewTagPageGenerator(contentDir string) *TagPageGenerator {
 	return &TagPageGenerator{
@@ -24,69 +35,6 @@ func NewTagPageGenerator(contentDir string) *TagPageGenerator {
 		fileUtils:        NewFileUtils(),
 		slugCache:        make(map[string]string),
 	}
-}
-
-// GenerateTagPages 生成标签页面文件
-func (g *TagPageGenerator) GenerateTagPages(tagStats []models.TagStats) error {
-	fmt.Println("\n🏷️  标签页面生成器")
-	fmt.Println("==================")
-
-	fmt.Print("🔗 测试LM Studio连接... ")
-	useAI := true
-	if err := g.translationUtils.TestConnection(); err != nil {
-		fmt.Printf("❌ 失败 (%v)\n", err)
-		fmt.Println("⚠️  将使用备用翻译方案")
-		useAI = false
-	} else {
-		fmt.Println("✅ 成功")
-	}
-
-	tagsDir := filepath.Join(g.contentDir, "..", "tags")
-	fmt.Printf("📁 确保目录存在: %s\n", tagsDir)
-	if err := g.fileUtils.EnsureDir(tagsDir); err != nil {
-		return fmt.Errorf("❌ 创建tags目录失败: %v", err)
-	}
-
-	// 批量翻译所有标签
-	fmt.Printf("\n🌐 正在翻译 %d 个标签...\n", len(tagStats))
-	tagNames := make([]string, len(tagStats))
-	for i, stat := range tagStats {
-		tagNames[i] = stat.Name
-	}
-
-	var slugMap map[string]string
-	var err error
-
-	if useAI {
-		// 使用带缓存的批量翻译
-		slugMap, err = g.translationUtils.BatchTranslateWithCache(tagNames, "en", translator.TagCache)
-		if err != nil {
-			fmt.Printf("⚠️ 翻译失败: %v，使用备用方案\n", err)
-			useAI = false
-		}
-	}
-
-	if !useAI {
-		// 使用原文作为备用方案
-		fmt.Println("🔄 使用原文作为slug...")
-		slugMap = make(map[string]string)
-		for i, tag := range tagNames {
-			fmt.Printf("  [%d/%d] %s -> ", i+1, len(tagNames), tag)
-			slug := g.translationUtils.FormatSlugField(tag)
-			slugMap[tag] = slug
-			fmt.Printf("%s\n", slug)
-			time.Sleep(10 * time.Millisecond)
-		}
-	}
-
-	// 格式化所有slug
-	for tag, slug := range slugMap {
-		slugMap[tag] = g.translationUtils.FormatSlugField(slug)
-	}
-
-	g.slugCache = slugMap
-
-	return g.generateTagFiles(tagStats, tagsDir)
 }
 
 // GenerateTagPagesWithMode 根据模式生成标签页面文件
@@ -127,50 +75,6 @@ func (g *TagPageGenerator) GenerateTagPagesWithMode(tagStats []models.TagStats, 
 	}
 
 	return g.processTargetPreviews(targetPreviews, tagsDir)
-}
-
-// generateTagFiles 生成标签文件
-func (g *TagPageGenerator) generateTagFiles(tagStats []models.TagStats, tagsDir string) error {
-	createdCount := 0
-	updatedCount := 0
-
-	fmt.Printf("\n📝 正在生成标签页面文件...\n")
-	fmt.Println("================================")
-
-	for i, stat := range tagStats {
-		fmt.Printf("  [%d/%d] 处理标签: %s", i+1, len(tagStats), stat.Name)
-
-		tagDir := filepath.Join(tagsDir, stat.Name)
-		indexFile := filepath.Join(tagDir, "_index.md")
-
-		exists := g.fileUtils.FileExists(indexFile)
-		slug := g.slugCache[stat.Name]
-		content := g.fileUtils.GenerateTagContent(stat.Name, slug)
-
-		if err := g.fileUtils.WriteFileContent(indexFile, content); err != nil {
-			fmt.Printf(" ❌ 失败\n")
-			fmt.Printf("     错误: %v\n", err)
-			return fmt.Errorf("写入文件 %s 失败: %v", indexFile, err)
-		}
-
-		if exists {
-			fmt.Printf(" 🔄 更新\n")
-			updatedCount++
-		} else {
-			fmt.Printf(" ✨ 新建\n")
-			createdCount++
-		}
-
-		// 显示slug信息
-		fmt.Printf("     slug: %s\n", slug)
-	}
-
-	fmt.Printf("\n🎉 标签页面生成完成！\n")
-	fmt.Printf("   ✨ 新建: %d 个\n", createdCount)
-	fmt.Printf("   🔄 更新: %d 个\n", updatedCount)
-	fmt.Printf("   📦 总计: %d 个\n", len(tagStats))
-
-	return nil
 }
 
 // processTargetPreviews 处理目标预览
@@ -218,13 +122,99 @@ func (g *TagPageGenerator) processTargetPreviews(targetPreviews []TagPagePreview
 	return nil
 }
 
-// TagPagePreview 标签页面预览信息
-type TagPagePreview struct {
-	TagName       string
-	Slug          string
-	ArticleCount  int
-	DirectoryPath string
-	FilePath      string
-	Status        string // "create", "update"
-	ExistingSlug  string
+// PreviewTagPages 预览即将生成的标签页面
+func (g *TagPageGenerator) PreviewTagPages(tagStats []models.TagStats) []TagPagePreview {
+	var previews []TagPagePreview
+
+	// 测试LM Studio连接
+	fmt.Print("🔗 测试LM Studio连接... ")
+	if err := g.translationUtils.TestConnection(); err != nil {
+		fmt.Printf("❌ 失败 (%v)\n", err)
+		fmt.Println("⚠️  无法连接AI翻译，终止操作")
+		return previews
+	} else {
+		fmt.Println("✅ 成功")
+	}
+
+	// 收集所有标签名
+	tagNames := make([]string, len(tagStats))
+	for i, stat := range tagStats {
+		tagNames[i] = stat.Name
+	}
+
+	fmt.Printf("🌐 正在生成 %d 个标签的slug...\n", len(tagNames))
+
+	// 只使用AI批量翻译（带缓存）
+	fmt.Println("🤖 使用AI翻译...")
+	slugMap, err := g.translationUtils.BatchTranslateWithCache(tagNames, "en", translator.TagCache)
+	if err != nil {
+		fmt.Printf("⚠️ 批量翻译失败: %v\n", err)
+		return previews
+	}
+
+	// 格式化所有slug
+	for tag, slug := range slugMap {
+		slugMap[tag] = g.translationUtils.FormatSlugField(slug)
+	}
+
+	fmt.Printf("\n📊 正在分析标签状态...\n")
+	createCount := 0
+	updateCount := 0
+
+	for i, stat := range tagStats {
+		fmt.Printf("  [%d/%d] 检查: %s", i+1, len(tagStats), stat.Name)
+
+		var status string
+
+		// 检查标签目录是否已存在
+		tagsDir := filepath.Join(g.contentDir, "..", "tags")
+		tagDir := filepath.Join(tagsDir, stat.Name)
+		indexFile := filepath.Join(tagDir, "_index.md")
+
+		if g.fileUtils.FileExists(indexFile) {
+			status = "update"
+			updateCount++
+			fmt.Printf(" 🔄 需要更新\n")
+		} else {
+			status = "create"
+			createCount++
+			fmt.Printf(" ✨ 需要新建\n")
+		}
+
+		// 生成slug（从映射中获取）
+		slug := slugMap[stat.Name]
+
+		preview := TagPagePreview{
+			TagName:       stat.Name,
+			Slug:          slug,
+			ArticleCount:  stat.Count,
+			DirectoryPath: fmt.Sprintf("tags/%s/", stat.Name),
+			FilePath:      fmt.Sprintf("tags/%s/_index.md", stat.Name),
+			Status:        status,
+			ExistingSlug:  g.fileUtils.ExtractSlugFromFile(indexFile),
+		}
+		previews = append(previews, preview)
+
+		time.Sleep(10 * time.Millisecond) // 短暂延迟
+	}
+
+	fmt.Printf("\n📈 统计结果:\n")
+	fmt.Printf("   ✨ 需要新建: %d 个\n", createCount)
+	fmt.Printf("   🔄 需要更新: %d 个\n", updateCount)
+	fmt.Printf("   📦 总计: %d 个\n", len(previews))
+
+	return previews
+}
+
+func (p *TagPageGenerator) CountPageOperations(previews []TagPagePreview) (int, int) {
+	createCount := 0
+	updateCount := 0
+	for _, preview := range previews {
+		if preview.Status == "create" {
+			createCount++
+		} else if preview.Status == "update" {
+			updateCount++
+		}
+	}
+	return createCount, updateCount
 }
