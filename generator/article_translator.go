@@ -247,17 +247,19 @@ func (a *ArticleTranslator) translateSingleArticleToLanguage(
 ) error {
 	utils.Info("开始翻译文章到 %s: %s", targetLang, article.FilePath)
 
-	// 解析文章结构 - 直接使用缓存的内容
-	frontMatter, bodyContent := a.contentParser.ParseArticleContent(article.FullContent)
+	// 直接使用缓存的前置信息和正文内容
+	frontMatter := article.FrontMatter
+	bodyParagraphs := article.BodyContent
 
 	// 翻译前置数据和正文
 	translatedFrontMatter, err := a.translateFrontMatterToLanguage(frontMatter, targetLang)
 	if err != nil {
+		fmt.Printf("⚠️ 翻译前置数据失败: %v\n", err)
 		return fmt.Errorf("翻译前置数据失败: %v", err)
 	}
 
-	translatedBody, err := a.translateArticleBodyToLanguageWithProgress(
-		bodyContent, targetLang, totalCharsAllArticles, globalTranslatedChars, globalStartTime,
+	translatedBody, err := a.translateArticleBodyParagraphsWithProgress(
+		bodyParagraphs, targetLang, totalCharsAllArticles, globalTranslatedChars, globalStartTime,
 		remainingArticles, remainingLangsOfCurrentArticle,
 	)
 	if err != nil {
@@ -274,14 +276,14 @@ func (a *ArticleTranslator) translateSingleArticleToLanguage(
 	return nil
 }
 
-// 新增：带全局进度的正文翻译
-func (a *ArticleTranslator) translateArticleBodyToLanguageWithProgress(
-	body, targetLang string,
+// translateArticleBodyParagraphsWithProgress 翻译段落数组
+func (a *ArticleTranslator) translateArticleBodyParagraphsWithProgress(
+	paragraphs []string, targetLang string,
 	totalCharsAllArticles int, globalTranslatedChars *int, globalStartTime time.Time,
 	remainingArticles int, remainingLangsOfCurrentArticle int,
 ) (string, error) {
-	if strings.TrimSpace(body) == "" {
-		return body, nil
+	if len(paragraphs) == 0 {
+		return "", nil
 	}
 
 	cfg := config.GetGlobalConfig()
@@ -292,19 +294,19 @@ func (a *ArticleTranslator) translateArticleBodyToLanguageWithProgress(
 
 	fmt.Printf("\n翻译正文到 %s...\n", targetLangName)
 
-	// 解析为段落并获取映射关系
-	splitResult, err := a.contentParser.ParseContentIntoParagraphsWithMapping(body)
-	if err != nil {
-		return "", fmt.Errorf("解析段落失败: %v", err)
-	}
+	// 应用段落拆分并获取映射关系
+	splitResult := a.contentParser.applySplittingWithMapping(paragraphs)
 
-	paragraphs := splitResult.Paragraphs
+	splitParagraphs := splitResult.Paragraphs
 	mappings := splitResult.Mappings
-	totalParagraphs := len(paragraphs)
-	translatableParagraphs := len(paragraphs)
+	totalParagraphs := len(splitParagraphs)
+	translatableParagraphs := len(splitParagraphs)
 
 	// 统计总字符数
-	totalChars := len([]rune(body))
+	totalChars := 0
+	for _, p := range paragraphs {
+		totalChars += len([]rune(p))
+	}
 
 	fmt.Printf("📖 总段落数: %d | 需翻译: %d | 跳过: %d\n",
 		totalParagraphs, translatableParagraphs, totalParagraphs-translatableParagraphs)
@@ -312,7 +314,7 @@ func (a *ArticleTranslator) translateArticleBodyToLanguageWithProgress(
 
 	// 翻译段落，传递全局进度参数
 	translatedParagraphs, err := a.translateParagraphsToLanguageWithMappingAndGlobalProgress(
-		paragraphs, targetLang, totalChars, totalCharsAllArticles, globalTranslatedChars, globalStartTime,
+		splitParagraphs, targetLang, totalChars, totalCharsAllArticles, globalTranslatedChars, globalStartTime,
 		remainingArticles, remainingLangsOfCurrentArticle,
 	)
 	if err != nil {
