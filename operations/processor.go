@@ -33,6 +33,8 @@ func NewProcessor(contentDir string) *Processor {
 	}
 }
 
+// 新增GenerateArticleSlugs方法声明（在article_operations.go中实现）
+
 // 通用筛选函数
 func filterByMode[T StatusLike](items []T, mode string) []T {
 	var result []T

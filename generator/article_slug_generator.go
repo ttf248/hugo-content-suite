@@ -27,6 +27,14 @@ type ArticleSlugPreview struct {
 	Status      string // "missing", "update", "skip"
 }
 
+// 实现 StatusLike 接口
+func (a ArticleSlugPreview) GetStatus() string {
+	if a.Status == "missing" {
+		return "create"
+	}
+	return "update"
+}
+
 // NewArticleSlugGenerator 创建新的文章slug生成器
 func NewArticleSlugGenerator(contentDir string) *ArticleSlugGenerator {
 	return &ArticleSlugGenerator{
@@ -35,257 +43,154 @@ func NewArticleSlugGenerator(contentDir string) *ArticleSlugGenerator {
 	}
 }
 
-// PreviewArticleSlugs 预览文章slug生成
-func (g *ArticleSlugGenerator) PreviewArticleSlugs() ([]ArticleSlugPreview, error) {
-	articles, err := scanner.ScanArticles(g.contentDir)
-	if err != nil {
-		return nil, fmt.Errorf("扫描文章失败: %v", err)
-	}
-
+// PrepareArticleSlugs 预处理文章slug生成
+func (g *ArticleSlugGenerator) PrepareArticleSlugs() ([]ArticleSlugPreview, int, int, error) {
 	var previews []ArticleSlugPreview
 
+	// 扫描文章
+	articles, err := scanner.ScanArticles(g.contentDir)
+	if err != nil {
+		return nil, 0, 0, fmt.Errorf("扫描文章失败: %v", err)
+	}
+
+	// 测试LM Studio连接
+	fmt.Print("🔗 测试LM Studio连接... ")
+	if err := g.translationUtils.TestConnection(); err != nil {
+		fmt.Printf("❌ 失败 (%v)\n", err)
+		fmt.Println("⚠️ 无法连接AI翻译，终止操作")
+		return nil, 0, 0, fmt.Errorf("AI翻译连接失败: %v", err)
+	} else {
+		fmt.Println("✅ 成功")
+	}
+
+	// 收集需要处理的文章标题
+	var validArticles []models.Article
+	var titleList []string
 	for _, article := range articles {
-		if article.Title == "" {
-			continue
+		if article.Title != "" {
+			validArticles = append(validArticles, article)
+			titleList = append(titleList, article.Title)
 		}
+	}
+
+	if len(titleList) == 0 {
+		return previews, 0, 0, nil
+	}
+
+	fmt.Printf("🌐 正在生成 %d 个文章的slug...\n", len(titleList))
+
+	// 使用AI批量翻译slug
+	slugMap, err := g.translationUtils.TranslateArticlesSlugs(titleList)
+	if err != nil {
+		fmt.Printf("⚠️ 批量翻译失败: %v\n", err)
+		return nil, 0, 0, fmt.Errorf("批量翻译失败: %v", err)
+	}
+
+	// 格式化所有slug
+	for title, slug := range slugMap {
+		slugMap[title] = utils.FormatSlugField(slug)
+	}
+
+	fmt.Printf("\n📊 正在分析文章slug状态...\n")
+	createCount := 0
+	updateCount := 0
+
+	for i, article := range validArticles {
+		fmt.Printf("  [%d/%d] 检查: %s", i+1, len(validArticles), article.Title)
 
 		currentSlug := g.extractSlugFromFile(article.FilePath)
+		newSlug := slugMap[article.Title]
 
 		var status string
 		if currentSlug == "" {
 			status = "missing"
+			createCount++
+			fmt.Printf(" ✨ 需要新建\n")
+		} else if currentSlug != newSlug {
+			status = "update"
+			updateCount++
+			fmt.Printf(" 🔄 需要更新\n")
 		} else {
-			status = "exists"
+			status = "skip"
+			fmt.Printf(" ✅ 已是最新\n")
 		}
 
 		preview := ArticleSlugPreview{
 			FilePath:    article.FilePath,
 			Title:       article.Title,
 			CurrentSlug: currentSlug,
-			NewSlug:     "[需要生成]", // 简化预览
+			NewSlug:     newSlug,
 			Status:      status,
 		}
-
 		previews = append(previews, preview)
 	}
 
-	return previews, nil
-}
+	fmt.Printf("\n📈 统计结果:\n")
+	fmt.Printf("   ✨ 需要新建: %d 个\n", createCount)
+	fmt.Printf("   🔄 需要更新: %d 个\n", updateCount)
+	fmt.Printf("   📦 总计: %d 个\n", len(previews))
 
-// GenerateArticleSlugs 生成文章slug
-func (g *ArticleSlugGenerator) GenerateArticleSlugs() error {
-	utils.LogOperation("开始生成文章Slug", map[string]interface{}{
-		"content_dir": g.contentDir,
-	})
-
-	articles, err := scanner.ScanArticles(g.contentDir)
-	if err != nil {
-		utils.ErrorWithFields("扫描文章失败", map[string]interface{}{
-			"content_dir": g.contentDir,
-			"error":       err.Error(),
-		})
-		return fmt.Errorf("扫描文章失败: %v", err)
-	}
-
-	if err := g.translationUtils.TestConnection(); err != nil {
-		utils.WarnWithFields("LM Studio连接失败", map[string]interface{}{
-			"error": err.Error(),
-		})
-		fmt.Printf("警告：无法连接到LM Studio (%v)，将使用备用翻译方案\n", err)
-	} else {
-		utils.InfoWithFields("LM Studio连接成功", map[string]interface{}{
-			"status": "connected",
-		})
-		fmt.Println("LM Studio连接成功！")
-	}
-
-	processedCount := 0
-	updatedCount := 0
-	createdCount := 0
-	errorCount := 0
-
-	for i, article := range articles {
-		if article.Title == "" {
-			continue
-		}
-
-		utils.DebugWithFields("处理文章", map[string]interface{}{
-			"article_index": i + 1,
-			"total_count":   len(articles),
-			"title":         article.Title,
-			"file_path":     article.FilePath,
-		})
-
-		fmt.Printf("处理文章 (%d/%d): %s\n", i+1, len(articles), article.Title)
-
-		// 生成新的slug
-		newSlug, err := g.translationUtils.TranslateArticalSlug(article.Title)
-		if err != nil {
-			utils.WarnWithFields("翻译失败", map[string]interface{}{
-				"title": article.Title,
-				"error": err.Error(),
-			})
-			fmt.Printf("  翻译失败: %v，跳过此文章\n", err)
-			errorCount++
-			continue
-		}
-
-		// 更新文件
-		currentSlug := g.extractSlugFromFile(article.FilePath)
-		if currentSlug == "" {
-			// 添加slug
-			if err := g.addSlugToFile(article.FilePath, newSlug); err != nil {
-				utils.ErrorWithFields("添加slug失败", map[string]interface{}{
-					"file_path": article.FilePath,
-					"new_slug":  newSlug,
-					"error":     err.Error(),
-				})
-				fmt.Printf("  添加slug失败: %v\n", err)
-				errorCount++
-				continue
-			}
-			utils.InfoWithFields("添加slug成功", map[string]interface{}{
-				"file_path": article.FilePath,
-				"slug":      newSlug,
-			})
-			fmt.Printf("  ✓ 添加slug: %s\n", newSlug)
-			createdCount++
-		} else if currentSlug != newSlug {
-			// 更新slug
-			if err := g.updateSlugInFile(article.FilePath, currentSlug, newSlug); err != nil {
-				utils.ErrorWithFields("更新slug失败", map[string]interface{}{
-					"file_path": article.FilePath,
-					"old_slug":  currentSlug,
-					"new_slug":  newSlug,
-					"error":     err.Error(),
-				})
-				fmt.Printf("  更新slug失败: %v\n", err)
-				errorCount++
-				continue
-			}
-			utils.InfoWithFields("更新slug成功", map[string]interface{}{
-				"file_path": article.FilePath,
-				"old_slug":  currentSlug,
-				"new_slug":  newSlug,
-			})
-			fmt.Printf("  ✓ 更新slug: %s -> %s\n", currentSlug, newSlug)
-			updatedCount++
-		} else {
-			fmt.Printf("  - slug已是最新: %s\n", currentSlug)
-		}
-
-		processedCount++
-	}
-
-	utils.LogOperation("文章Slug生成完成", map[string]interface{}{
-		"processed_count": processedCount,
-		"created_count":   createdCount,
-		"updated_count":   updatedCount,
-		"error_count":     errorCount,
-	})
-
-	fmt.Printf("\n文章slug生成完成！\n")
-	fmt.Printf("- 处理文章: %d 篇\n", processedCount)
-	fmt.Printf("- 新增slug: %d 个\n", createdCount)
-	fmt.Printf("- 更新slug: %d 个\n", updatedCount)
-	fmt.Printf("- 处理失败: %d 个\n", errorCount)
-
-	return nil
+	return previews, createCount, updateCount, nil
 }
 
 // GenerateArticleSlugsWithMode 根据模式生成文章slug
-func (g *ArticleSlugGenerator) GenerateArticleSlugsWithMode(mode string) error {
-	articles, err := scanner.ScanArticles(g.contentDir)
-	if err != nil {
-		return fmt.Errorf("扫描文章失败: %v", err)
-	}
+func (g *ArticleSlugGenerator) GenerateArticleSlugsWithMode(targetPreviews []ArticleSlugPreview, mode string) error {
+	fmt.Println("\n📝 文章Slug生成器 (模式选择)")
+	fmt.Println("===============================")
 
-	if err := g.translationUtils.TestConnection(); err != nil {
-		fmt.Printf("警告：无法连接到LM Studio (%v)，将使用备用翻译方案\n", err)
-	} else {
-		fmt.Println("LM Studio连接成功！")
-	}
-
-	// 根据模式过滤需要处理的文章
-	var targetArticles []models.Article
-	for _, article := range articles {
-		if article.Title == "" {
-			continue
-		}
-
-		currentSlug := g.extractSlugFromFile(article.FilePath)
-
-		switch mode {
-		case "missing":
-			if currentSlug == "" {
-				targetArticles = append(targetArticles, article)
-			}
-		case "update":
-			if currentSlug != "" {
-				targetArticles = append(targetArticles, article)
-			}
-		case "all":
-			targetArticles = append(targetArticles, article)
-		}
-	}
-
-	if len(targetArticles) == 0 {
-		fmt.Println("根据选择的模式，没有需要处理的文章")
+	if len(targetPreviews) == 0 {
+		fmt.Printf("ℹ️  根据选择的模式 '%s'，没有需要处理的文章\n", mode)
 		return nil
 	}
 
-	processedCount := 0
-	updatedCount := 0
+	fmt.Printf("📊 将处理 %d 篇文章 (模式: %s)\n", len(targetPreviews), mode)
+
+	return g.processTargetPreviews(targetPreviews)
+}
+
+// processTargetPreviews 处理目标预览
+func (g *ArticleSlugGenerator) processTargetPreviews(targetPreviews []ArticleSlugPreview) error {
 	createdCount := 0
-	skippedCount := 0
+	updatedCount := 0
 	errorCount := 0
 
-	for i, article := range targetArticles {
-		fmt.Printf("处理文章 (%d/%d): %s\n", i+1, len(targetArticles), article.Title)
+	fmt.Printf("\n📝 正在生成文章slug...\n")
+	fmt.Println("========================")
 
-		// 单个翻译
-		newSlug, err := g.translationUtils.TranslateArticalSlug(article.Title)
+	for i, preview := range targetPreviews {
+		fmt.Printf("  [%d/%d] %s", i+1, len(targetPreviews), preview.Title)
+
+		var err error
+		if preview.Status == "missing" {
+			err = g.addSlugToFile(preview.FilePath, preview.NewSlug)
+			if err == nil {
+				fmt.Printf(" ✨ 新建\n")
+				fmt.Printf("     slug: %s\n", preview.NewSlug)
+				createdCount++
+			}
+		} else if preview.Status == "update" {
+			err = g.updateSlugInFile(preview.FilePath, preview.CurrentSlug, preview.NewSlug)
+			if err == nil {
+				fmt.Printf(" 🔄 更新\n")
+				fmt.Printf("     slug: %s -> %s\n", preview.CurrentSlug, preview.NewSlug)
+				updatedCount++
+			}
+		}
+
 		if err != nil {
-			fmt.Printf("  翻译失败: %v，跳过此文章\n", err)
+			fmt.Printf(" ❌ 失败\n")
+			fmt.Printf("     错误: %v\n", err)
 			errorCount++
-			continue
 		}
-
-		// 检查当前slug
-		currentSlug := g.extractSlugFromFile(article.FilePath)
-
-		if currentSlug == "" {
-			// 添加slug
-			if err := g.addSlugToFile(article.FilePath, newSlug); err != nil {
-				fmt.Printf("  添加slug失败: %v\n", err)
-				errorCount++
-				continue
-			}
-			fmt.Printf("  ✓ 添加slug: %s\n", newSlug)
-			createdCount++
-		} else if currentSlug != newSlug && (mode == "update" || mode == "all") {
-			// 更新slug
-			if err := g.updateSlugInFile(article.FilePath, currentSlug, newSlug); err != nil {
-				fmt.Printf("  更新slug失败: %v\n", err)
-				errorCount++
-				continue
-			}
-			fmt.Printf("  ✓ 更新slug: %s -> %s\n", currentSlug, newSlug)
-			updatedCount++
-		} else {
-			fmt.Printf("  - 跳过: slug已是最新 (%s)\n", currentSlug)
-			skippedCount++
-		}
-
-		processedCount++
 	}
 
-	fmt.Printf("\n文章slug生成完成！\n")
-	fmt.Printf("- 处理文章: %d 篇\n", processedCount)
-	fmt.Printf("- 新增slug: %d 个\n", createdCount)
-	fmt.Printf("- 更新slug: %d 个\n", updatedCount)
-	fmt.Printf("- 跳过: %d 个\n", skippedCount)
-	fmt.Printf("- 处理失败: %d 个\n", errorCount)
+	fmt.Printf("\n🎉 文章slug生成完成！\n")
+	fmt.Printf("   ✨ 新建: %d 个\n", createdCount)
+	fmt.Printf("   🔄 更新: %d 个\n", updatedCount)
+	if errorCount > 0 {
+		fmt.Printf("   ❌ 失败: %d 个\n", errorCount)
+	}
+	fmt.Printf("   📦 总计: %d 个\n", len(targetPreviews))
 
 	return nil
 }

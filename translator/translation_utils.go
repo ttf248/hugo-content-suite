@@ -5,7 +5,6 @@ import (
 	"encoding/json"
 	"fmt"
 	"hugo-content-suite/config"
-	"hugo-content-suite/utils"
 	"io"
 	"net/http"
 	"regexp"
@@ -97,12 +96,8 @@ func (t *TranslationUtils) TranslateTags(texts []string) (map[string]string, err
 	return t.batchTranslateWithCache(texts, "en", kTagCache)
 }
 
-func (t *TranslationUtils) TranslateArticalSlug(slug string) (string, error) {
-	translatSlug, err := t.translateWithCache(slug, "en", kSlugCache)
-	if err != nil {
-		return "", err
-	}
-	return utils.FormatSlugField(translatSlug), nil
+func (t *TranslationUtils) TranslateArticlesSlugs(texts []string) (map[string]string, error) {
+	return t.batchTranslateWithCache(texts, "en", kSlugCache)
 }
 
 func (t *TranslationUtils) translateWithCache(text, targetLang string, cacheType CacheType) (string, error) {
