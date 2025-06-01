@@ -28,8 +28,6 @@ func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []model
 		choice := m.getChoice("请选择功能 (0-8): ")
 
 		switch choice {
-		case "1":
-			m.processor.QuickProcessAll(tagStats, m.reader)
 		case "2":
 			m.processor.GenerateTagPages(tagStats, m.reader)
 		case "3":
@@ -59,9 +57,6 @@ func (m *InteractiveMenu) displayMainMenu() {
 
 	// 主要功能模块
 	color.Red("🚀 核心功能")
-	fmt.Println("  1. 一键处理全部 (自动执行完整博客处理流程)")
-	fmt.Println()
-
 	// 内容管理模块
 	color.Green("📝 内容管理")
 	fmt.Println("  2. 生成标签页面")

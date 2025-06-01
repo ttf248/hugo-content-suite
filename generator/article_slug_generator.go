@@ -238,20 +238,6 @@ func (g *ArticleSlugGenerator) GenerateArticleSlugsWithMode(mode string) error {
 		return nil
 	}
 
-	// 收集所有需要翻译的标题
-	var titlesToTranslate []string
-	for _, article := range targetArticles {
-		titlesToTranslate = append(titlesToTranslate, article.Title)
-	}
-
-	// 批量翻译所有标题（使用文章专用接口）
-	fmt.Printf("正在批量翻译 %d 个文章标题...\n", len(titlesToTranslate))
-	translationMap, err := g.translator.BatchTranslateSlugs(titlesToTranslate)
-	if err != nil {
-		fmt.Printf("⚠️ 批量翻译失败: %v，将逐个翻译\n", err)
-		translationMap = make(map[string]string)
-	}
-
 	processedCount := 0
 	updatedCount := 0
 	createdCount := 0
@@ -261,20 +247,12 @@ func (g *ArticleSlugGenerator) GenerateArticleSlugsWithMode(mode string) error {
 	for i, article := range targetArticles {
 		fmt.Printf("处理文章 (%d/%d): %s\n", i+1, len(targetArticles), article.Title)
 
-		// 获取翻译结果
-		var newSlug string
-		if slug, exists := translationMap[article.Title]; exists {
-			newSlug = slug
-		} else {
-			// 如果批量翻译失败，尝试单独翻译（使用文章专用接口）
-			slug, err := g.translator.TranslateToArticleSlug(article.Title)
-			if err != nil {
-				fmt.Printf("  翻译失败: %v，跳过此文章\n", err)
-				errorCount++
-				continue
-			} else {
-				newSlug = slug
-			}
+		// 单个翻译
+		newSlug, err := g.translator.TranslateToSlug(article.Title)
+		if err != nil {
+			fmt.Printf("  翻译失败: %v，跳过此文章\n", err)
+			errorCount++
+			continue
 		}
 
 		// 检查当前slug

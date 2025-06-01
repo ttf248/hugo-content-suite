@@ -124,24 +124,6 @@ func (p *Processor) ClearTranslationCache(reader *bufio.Reader) {
 	}
 }
 
-func (p *Processor) PreviewBulkTranslationCache(tagStats []models.TagStats) *display.BulkTranslationPreview {
-	cachePreview, err := p.collectTranslationTargets(tagStats)
-	if err != nil {
-		color.Red("❌ 收集翻译目标失败: %v", err)
-		// 返回空的预览结构而不是nil，避免程序崩溃
-		return &display.BulkTranslationPreview{
-			TotalTags:           0,
-			TotalSlugs:          0,
-			CachedCount:         0,
-			MissingTranslations: []string{},
-			TagsToTranslate:     []display.TranslationItem{},
-			SlugsToTranslate:    []display.TranslationItem{},
-		}
-	}
-
-	return cachePreview
-}
-
 func (p *Processor) GenerateBulkTranslationCache(tagStats []models.TagStats, reader *bufio.Reader) {
 	color.Cyan("🔍 正在分析翻译需求...")
 
@@ -180,11 +162,11 @@ func (p *Processor) GenerateBulkTranslationCache(tagStats []models.TagStats, rea
 	}
 
 	if len(cachePreview.SlugsToTranslate) > 0 {
-		articleTitles := make([]string, len(cachePreview.SlugsToTranslate))
+		slugTitles := make([]string, len(cachePreview.SlugsToTranslate))
 		for i, item := range cachePreview.SlugsToTranslate {
-			articleTitles[i] = item.Original
+			slugTitles[i] = item.Original
 		}
-		_, err = translatorInstance.BatchTranslateSlugs(articleTitles)
+		_, err = translatorInstance.TranslateToSlug(slugTitles)
 		if err != nil {
 			color.Red("❌ Slug批量翻译失败: %v", err)
 			return

@@ -25,17 +25,6 @@ const (
 
 英文slug:`
 
-	articleSlugPromptTemplate = `请将以下中文文章标题翻译为简洁的英文slug，要求：
-1. 使用小写字母
-2. 单词间用连字符(-)连接
-3. 去除特殊字符
-4. 保持语义准确
-5. 适合作为URL路径
-
-标题：%s
-
-请只返回翻译后的slug，不要其他内容。`
-
 	categorySlugPromptTemplate = `请将以下中文分类名称翻译为适合作为URL的英文slug。要求：
 1. 使用小写字母
 2. 单词之间用连字符(-)连接
@@ -193,151 +182,9 @@ func (t *LLMTranslator) TranslateToSlug(text string) (string, error) {
 	return t.translateWithCache(text, TagCache, slugPromptTemplate)
 }
 
-func (t *LLMTranslator) TranslateToArticleSlug(title string) (string, error) {
-	return t.translateWithCache(title, SlugCache, articleSlugPromptTemplate)
-}
-
 // 新增：翻译分类为slug
 func (t *LLMTranslator) TranslateToCategorySlug(category string) (string, error) {
 	return t.translateWithCache(category, CategoryCache, categorySlugPromptTemplate)
-}
-
-// BatchTranslateTags 批量翻译标签
-func (t *LLMTranslator) BatchTranslateTags(tags []string) (map[string]string, error) {
-	return t.batchTranslate(tags, TagCache, "标签", t.TranslateToSlug)
-}
-
-// BatchTranslateSlugs 批量翻译文章标题
-func (t *LLMTranslator) BatchTranslateSlugs(titles []string) (map[string]string, error) {
-	return t.batchTranslate(titles, SlugCache, "Slug", t.TranslateToArticleSlug)
-}
-
-// 新增：批量翻译分类
-func (t *LLMTranslator) BatchTranslateCategories(categories []string) (map[string]string, error) {
-	return t.batchTranslate(categories, CategoryCache, "分类", t.TranslateToCategorySlug)
-}
-
-// batchTranslate 通用批量翻译方法
-func (t *LLMTranslator) batchTranslate(texts []string, cacheType CacheType, typeName string, translateFunc func(string) (string, error)) (map[string]string, error) {
-	cfg := config.GetGlobalConfig()
-	startTime := time.Now()
-	result := make(map[string]string)
-
-	// 处理缓存
-	_, missingTexts := t.processCacheAndGetMissing(texts, cacheType, typeName, result)
-	if len(missingTexts) == 0 {
-		return result, nil
-	}
-
-	// 批量翻译
-	progressBar := utils.NewProgressBar(len(missingTexts))
-	newTranslationsAdded := t.translateMissingTexts(missingTexts, result, translateFunc, progressBar, cfg)
-
-	// 保存缓存
-	if newTranslationsAdded > 0 {
-		t.saveCacheAndLog(startTime)
-	}
-
-	return result, nil
-}
-
-// processCacheAndGetMissing 处理缓存并获取缺失的文本
-func (t *LLMTranslator) processCacheAndGetMissing(texts []string, cacheType CacheType, typeName string, result map[string]string) (int, []string) {
-	fmt.Printf("🔍 检查%s缓存...\n", typeName)
-
-	// 批量检查缓存
-	cachedCount := t.loadFromCache(texts, cacheType, result)
-	if cachedCount > 0 {
-		fmt.Printf("📋 从缓存获取 %d 个%s翻译\n", cachedCount, typeName)
-	}
-
-	// 获取需要翻译的文本
-	missingTexts := t.cache.GetMissingTexts(texts, "en", cacheType)
-	if len(missingTexts) == 0 {
-		fmt.Printf("✅ 所有%s都已有缓存，无需重新翻译\n", typeName)
-		return cachedCount, nil
-	}
-
-	fmt.Printf("🔄 需要翻译 %d 个新%s\n", len(missingTexts), typeName)
-	return cachedCount, missingTexts
-}
-
-// loadFromCache 从缓存加载已有翻译
-func (t *LLMTranslator) loadFromCache(texts []string, cacheType CacheType, result map[string]string) int {
-	cachedCount := 0
-	for _, text := range texts {
-		cacheKey := fmt.Sprintf("en:%s", text)
-		if translation, exists := t.cache.Get(cacheKey, cacheType); exists {
-			result[text] = translation
-			cachedCount++
-		}
-	}
-	return cachedCount
-}
-
-// translateMissingTexts 翻译缺失的文本
-func (t *LLMTranslator) translateMissingTexts(missingTexts []string, result map[string]string, translateFunc func(string) (string, error), progressBar *utils.ProgressBar, cfg *config.Config) int {
-	newTranslationsAdded := 0
-
-	for i, text := range missingTexts {
-		slug, err := translateFunc(text)
-		if err != nil {
-			// 翻译失败，跳过此项
-			utils.Error("翻译失败: %s - %v", text, err)
-			progressBar.Update(i + 1)
-			continue
-		}
-
-		// 保存翻译结果
-		newTranslationsAdded += t.saveTranslationResult(text, slug, result)
-		progressBar.Update(i + 1)
-
-		// 处理自动保存和延迟
-		t.handleAutoSaveAndDelay(newTranslationsAdded, i, len(missingTexts), cfg)
-	}
-
-	return newTranslationsAdded
-}
-
-// saveTranslationResult 保存翻译结果到缓存和结果集
-func (t *LLMTranslator) saveTranslationResult(text, translation string, result map[string]string) int {
-	cacheKey := fmt.Sprintf("en:%s", text)
-	cacheType := t.determineCacheType(text)
-	t.cache.Set(cacheKey, translation, cacheType)
-	result[text] = translation
-	return 1
-}
-
-// determineCacheType 根据文本特征确定缓存类型
-func (t *LLMTranslator) determineCacheType(text string) CacheType {
-	if len(text) <= 20 && !strings.Contains(text, "：") && !strings.Contains(text, ":") {
-		return TagCache
-	}
-	return SlugCache
-}
-
-// handleAutoSaveAndDelay 处理自动保存和延迟
-func (t *LLMTranslator) handleAutoSaveAndDelay(translationsCount, currentIndex, totalCount int, cfg *config.Config) {
-	// 自动保存
-	if translationsCount%cfg.Cache.AutoSaveCount == 0 {
-		if err := t.cache.Save(); err != nil {
-			utils.Error("中间保存缓存失败: %v", err)
-		}
-	}
-
-	// 添加延迟
-	if currentIndex < totalCount-1 {
-		time.Sleep(time.Duration(cfg.Cache.DelayMs) * time.Millisecond)
-	}
-}
-
-// saveCacheAndLog 保存缓存并记录日志
-func (t *LLMTranslator) saveCacheAndLog(startTime time.Time) {
-	if err := t.cache.Save(); err != nil {
-		utils.Error("保存缓存失败: %v", err)
-	} else {
-		utils.Info("批量翻译完成，耗时: %v", time.Since(startTime))
-	}
 }
 
 // 简化的缓存相关方法
