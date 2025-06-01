@@ -5,8 +5,9 @@
     "timeout_seconds": 30
   },
   "cache": {
-    "tag_file_name": "tag_translations_cache.json",
-    "article_file_name": "article_translations_cache.json",
+    "article_tag_file_name": "tag_translations_cache.json",
+    "article_slug_file_name": "slug_translations_cache.json",
+    "article_category_file_name": "category_translations_cache.json",
     "auto_save_count": 5,
     "delay_ms": 500,
     "expire_days": 30
