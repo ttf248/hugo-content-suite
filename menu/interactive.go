@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hugo-content-suite/models"
 	"hugo-content-suite/operations"
+	"hugo-content-suite/utils"
 	"strings"
 
 	"github.com/fatih/color"
@@ -25,7 +26,7 @@ func NewInteractiveMenu(reader *bufio.Reader, contentDir string) *InteractiveMen
 func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []models.CategoryStats, noTagArticles []models.Article) {
 	for {
 		m.displayMainMenu()
-		choice := m.getChoice("请选择功能 (0-8): ")
+		choice := utils.GetChoice(m.reader, "请选择功能 (0-8): ")
 
 		switch choice {
 		case "1":
@@ -63,12 +64,6 @@ func (m *InteractiveMenu) displayMainMenu() {
 	fmt.Println()
 }
 
-func (m *InteractiveMenu) getChoice(prompt string) string {
-	fmt.Print(prompt)
-	input, _ := m.reader.ReadString('\n')
-	return strings.TrimSpace(input)
-}
-
 func (m *InteractiveMenu) deleteArticlesByLanguage() {
 	langs, err := m.processor.ScanLanguages()
 	if err != nil {
@@ -83,7 +78,7 @@ func (m *InteractiveMenu) deleteArticlesByLanguage() {
 	for i, lang := range langs {
 		fmt.Printf("  %d. %s\n", i+1, lang)
 	}
-	choice := m.getChoice("请输入要删除的语言编号: ")
+	choice := utils.GetChoice(m.reader, "请输入要删除的语言编号: ")
 	idx := -1
 	fmt.Sscanf(choice, "%d", &idx)
 	if idx < 1 || idx > len(langs) {
@@ -91,7 +86,7 @@ func (m *InteractiveMenu) deleteArticlesByLanguage() {
 		return
 	}
 	langToDelete := langs[idx-1]
-	confirm := m.getChoice(fmt.Sprintf("确定要删除所有 [%s] 语言的文章吗？(y/N): ", langToDelete))
+	confirm := utils.GetChoice(m.reader, fmt.Sprintf("确定要删除所有 [%s] 语言的文章吗？(y/N): ", langToDelete))
 	if strings.ToLower(confirm) == "y" {
 		err := m.processor.DeleteArticlesByLanguage(langToDelete)
 		if err != nil {
