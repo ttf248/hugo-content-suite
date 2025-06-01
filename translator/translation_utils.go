@@ -71,7 +71,17 @@ func NewTranslationUtils() *TranslationUtils {
 // TestConnection 测试与LM Studio的连接
 func (t *TranslationUtils) TestConnection() error {
 	fmt.Println("正在测试与LM Studio的连接...")
-	_, err := t.makeRequest("这是一个测试请求，无需处理，直接应答就行", 30*time.Second)
+
+	cfg := config.GetGlobalConfig()
+	request := LMStudioRequest{
+		Model: cfg.LMStudio.Model,
+		Messages: []Message{
+			{Role: "user", Content: "这是一个测试请求，无需处理，直接应答就行"},
+		},
+		Stream: false,
+	}
+
+	_, err := t.sendRequest(request)
 	return err
 }
 
@@ -161,6 +171,43 @@ func (t *TranslationUtils) batchTranslateWithCache(texts []string, targetLang st
 	fmt.Printf("📦 [Batch Cache Info] %s\n", info)
 
 	return result, nil
+}
+
+// sendRequest 发送HTTP请求的通用方法
+func (t *TranslationUtils) sendRequest(request LMStudioRequest) (*LMStudioResponse, error) {
+	cfg := config.GetGlobalConfig()
+
+	jsonData, err := json.Marshal(request)
+	if err != nil {
+		return nil, fmt.Errorf("failed to serialize request: %v", err)
+	}
+
+	client := &http.Client{Timeout: time.Duration(cfg.LMStudio.Timeout) * time.Second}
+	resp, err := client.Post(cfg.LMStudio.URL, "application/json", bytes.NewBuffer(jsonData))
+	if err != nil {
+		return nil, fmt.Errorf("failed to send request: %v", err)
+	}
+	defer resp.Body.Close()
+
+	if resp.StatusCode != http.StatusOK {
+		return nil, fmt.Errorf("LM Studio returned error status: %d", resp.StatusCode)
+	}
+
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return nil, fmt.Errorf("failed to read response: %v", err)
+	}
+
+	var response LMStudioResponse
+	if err := json.Unmarshal(body, &response); err != nil {
+		return nil, fmt.Errorf("failed to parse response: %v", err)
+	}
+
+	if len(response.Choices) == 0 {
+		return nil, fmt.Errorf("no translation result received")
+	}
+
+	return &response, nil
 }
 
 func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string, error) {
@@ -265,35 +312,11 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 		FrequencyPenalty: 0.0,  // 设置为 0.0 可避免模型对词汇的重复使用进行惩罚，适合保持原文结构的翻译。
 	}
 
-	jsonData, err := json.Marshal(request)
+	response, err := t.sendRequest(request)
 	if err != nil {
-		return "", fmt.Errorf("failed to serialize request: %v", err)
+		return "", err
 	}
 
-	client := &http.Client{Timeout: time.Duration(cfg.LMStudio.Timeout) * time.Second}
-	resp, err := client.Post(cfg.LMStudio.URL, "application/json", bytes.NewBuffer(jsonData))
-	if err != nil {
-		return "", fmt.Errorf("failed to send request: %v", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("LM Studio returned error status: %d", resp.StatusCode)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", fmt.Errorf("failed to read response: %v", err)
-	}
-
-	var response LMStudioResponse
-	if err := json.Unmarshal(body, &response); err != nil {
-		return "", fmt.Errorf("failed to parse response: %v", err)
-	}
-
-	if len(response.Choices) == 0 {
-		return "", fmt.Errorf("no translation result received")
-	}
 	result := strings.TrimSpace(response.Choices[0].Message.Content)
 
 	// 兼容思考模型，移除 <think> </think> 标签之间的内容
@@ -302,49 +325,4 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 	result = strings.TrimSpace(result)
 
 	return result, nil
-}
-
-// makeRequest 统一的HTTP请求方法
-func (t *TranslationUtils) makeRequest(prompt string, timeout time.Duration) (string, error) {
-	cfg := config.GetGlobalConfig()
-
-	request := LMStudioRequest{
-		Model: cfg.LMStudio.Model,
-		Messages: []Message{
-			{Role: "user", Content: prompt},
-		},
-		Stream: false,
-	}
-
-	jsonData, err := json.Marshal(request)
-	if err != nil {
-		return "", fmt.Errorf("序列化请求失败: %v", err)
-	}
-
-	client := &http.Client{Timeout: time.Duration(cfg.LMStudio.Timeout) * time.Second}
-	resp, err := client.Post(cfg.LMStudio.URL, "application/json", bytes.NewBuffer(jsonData))
-	if err != nil {
-		return "", fmt.Errorf("发送请求失败: %v", err)
-	}
-	defer resp.Body.Close()
-
-	if resp.StatusCode != http.StatusOK {
-		return "", fmt.Errorf("LM Studio返回错误状态: %d", resp.StatusCode)
-	}
-
-	body, err := io.ReadAll(resp.Body)
-	if err != nil {
-		return "", fmt.Errorf("读取响应失败: %v", err)
-	}
-
-	var response LMStudioResponse
-	if err := json.Unmarshal(body, &response); err != nil {
-		return "", fmt.Errorf("解析响应失败: %v", err)
-	}
-
-	if len(response.Choices) == 0 {
-		return "", fmt.Errorf("没有获取到翻译结果")
-	}
-
-	return strings.TrimSpace(response.Choices[0].Message.Content), nil
 }
