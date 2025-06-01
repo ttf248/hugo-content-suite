@@ -25,7 +25,7 @@ func NewInteractiveMenu(reader *bufio.Reader, contentDir string) *InteractiveMen
 func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []models.CategoryStats, noTagArticles []models.Article) {
 	for {
 		m.displayMainMenu()
-		choice := m.getChoice("请选择功能 (0-7): ")
+		choice := m.getChoice("请选择功能 (0-8): ")
 
 		switch choice {
 		case "1":
@@ -42,6 +42,8 @@ func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []model
 			m.processor.GenerateBulkTranslationCache(tagStats, m.reader)
 		case "7":
 			m.processor.ClearTranslationCache(m.reader)
+		case "8":
+			m.deleteArticlesByLanguage()
 		case "0":
 			color.Green("感谢使用！再见！")
 			return
@@ -65,6 +67,7 @@ func (m *InteractiveMenu) displayMainMenu() {
 	fmt.Println("  2. 生成标签页面")
 	fmt.Println("  3. 生成文章Slug")
 	fmt.Println("  4. 翻译文章为多语言版本")
+	fmt.Println("  8. 删除指定语言的文章") // 新增菜单项
 	fmt.Println()
 
 	// 缓存管理模块
@@ -82,4 +85,39 @@ func (m *InteractiveMenu) getChoice(prompt string) string {
 	fmt.Print(prompt)
 	input, _ := m.reader.ReadString('\n')
 	return strings.TrimSpace(input)
+}
+
+func (m *InteractiveMenu) deleteArticlesByLanguage() {
+	langs, err := m.processor.ScanLanguages()
+	if err != nil {
+		color.Red("扫描语言失败: %v", err)
+		return
+	}
+	if len(langs) == 0 {
+		color.Red("未检测到任何语言")
+		return
+	}
+	color.Cyan("当前检测到的语言：")
+	for i, lang := range langs {
+		fmt.Printf("  %d. %s\n", i+1, lang)
+	}
+	choice := m.getChoice("请输入要删除的语言编号: ")
+	idx := -1
+	fmt.Sscanf(choice, "%d", &idx)
+	if idx < 1 || idx > len(langs) {
+		color.Red("无效选择")
+		return
+	}
+	langToDelete := langs[idx-1]
+	confirm := m.getChoice(fmt.Sprintf("确定要删除所有 [%s] 语言的文章吗？(y/N): ", langToDelete))
+	if strings.ToLower(confirm) == "y" {
+		err := m.processor.DeleteArticlesByLanguage(langToDelete)
+		if err != nil {
+			color.Red("删除失败: %v", err)
+		} else {
+			color.Green("已删除所有 [%s] 语言的文章", langToDelete)
+		}
+	} else {
+		color.Yellow("已取消删除操作")
+	}
 }
