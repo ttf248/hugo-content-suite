@@ -147,7 +147,7 @@ func (p *Processor) confirmExecution(reader *bufio.Reader, prompt string) bool {
 }
 
 func (p *Processor) ScanLanguages() ([]string, error) {
-	// 扫描 contentDir 下所有文章，收集所有语言（假设文件名格式为 xxx.{lang}.md 或目录结构为 lang/xxx.md）
+	// 扫描 contentDir 下所有文章，收集所有语言（假设文件名格式为 xxx.{lang}.md）
 	langSet := make(map[string]struct{})
 	err := filepath.Walk(p.contentDir, func(path string, info os.FileInfo, err error) error {
 		if err != nil {
@@ -156,10 +156,10 @@ func (p *Processor) ScanLanguages() ([]string, error) {
 		if info.IsDir() {
 			return nil
 		}
-		// 假设文件名格式为 xxx.{lang}.md
 		base := filepath.Base(path)
 		parts := strings.Split(base, ".")
-		if len(parts) >= 3 {
+		// 只处理以 .md 结尾的文件
+		if len(parts) >= 3 && parts[len(parts)-1] == "md" {
 			lang := parts[len(parts)-2]
 			langSet[lang] = struct{}{}
 		}
