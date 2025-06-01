@@ -6,8 +6,6 @@ import (
 	"hugo-content-suite/translator"
 	"regexp"
 	"strings"
-
-	"github.com/tmc/langchaingo/textsplitter"
 )
 
 // ParagraphMapping 段落映射信息，用于追踪拆分的段落关系
@@ -37,80 +35,6 @@ func NewContentParser() *ContentParser {
 	}
 }
 
-// ParseArticleContent 解析文章内容，分离前置数据和正文
-func (c *ContentParser) ParseArticleContent(content string) (string, string) {
-	lines := strings.Split(content, "\n")
-
-	if len(lines) < 3 || strings.TrimSpace(lines[0]) != "---" {
-		return "", content
-	}
-
-	frontMatterEnd := -1
-	for i := 1; i < len(lines); i++ {
-		if strings.TrimSpace(lines[i]) == "---" {
-			frontMatterEnd = i
-			break
-		}
-	}
-
-	if frontMatterEnd == -1 {
-		return "", content
-	}
-
-	frontMatter := strings.Join(lines[1:frontMatterEnd], "\n") // 不包含前后的 ---
-	body := strings.Join(lines[frontMatterEnd+1:], "\n")
-
-	return frontMatter, body
-}
-
-// ExtractFieldValue 提取字段值
-func (c *ContentParser) ExtractFieldValue(line, prefix string) string {
-	value := strings.TrimSpace(strings.TrimPrefix(line, prefix))
-	return strings.Trim(value, "\"'")
-}
-
-// ExtractArrayField 提取数组字段
-func (c *ContentParser) ExtractArrayField(line, prefix string) []string {
-	value := strings.TrimSpace(strings.TrimPrefix(line, prefix))
-	value = strings.Trim(value, "[]")
-
-	if value == "" {
-		return []string{}
-	}
-
-	parts := strings.Split(value, ",")
-	var result []string
-
-	for _, part := range parts {
-		part = strings.TrimSpace(part)
-		part = strings.Trim(part, "\"'")
-		if part != "" {
-			result = append(result, part)
-		}
-	}
-
-	return result
-}
-
-// FormatArrayField 格式化数组字段
-func (c *ContentParser) FormatArrayField(items []string) string {
-	if len(items) == 0 {
-		return "[]"
-	}
-
-	var quotedItems []string
-	for _, item := range items {
-		cleanItem := item
-		// 再次确保移除双引号
-		cleanItem = strings.ReplaceAll(cleanItem, "\"", "")
-		cleanItem = strings.ReplaceAll(cleanItem, "'", "")
-		cleanItem = strings.TrimSpace(cleanItem)
-		quotedItems = append(quotedItems, fmt.Sprintf("\"%s\"", cleanItem))
-	}
-
-	return fmt.Sprintf("[%s]", strings.Join(quotedItems, ", "))
-}
-
 // CombineTranslatedContent 合并翻译后的内容
 func (c *ContentParser) CombineTranslatedContent(frontMatter, body string) string {
 	if frontMatter == "" {
@@ -119,53 +43,10 @@ func (c *ContentParser) CombineTranslatedContent(frontMatter, body string) strin
 	return frontMatter + "\n\n" + body
 }
 
-// AnalyzeArticleContent 分析文章内容统计
-func (c *ContentParser) AnalyzeArticleContent(content string) (int, int) {
-	_, body := c.ParseArticleContent(content)
-
-	// 统计字数
-	wordCount := len(strings.Fields(body))
-
-	// 统计段落数
-	paragraphs := c.splitIntoParagraphs(body)
-	paragraphCount := len(paragraphs)
-
-	return wordCount, paragraphCount
-}
-
-// EstimateTranslationTime 估算翻译时间
-func (c *ContentParser) EstimateTranslationTime(paragraphCount int) string {
-	seconds := paragraphCount * 2
-
-	if seconds < 60 {
-		return fmt.Sprintf("%d秒", seconds)
-	} else if seconds < 3600 {
-		minutes := seconds / 60
-		return fmt.Sprintf("%d分钟", minutes)
-	} else {
-		hours := seconds / 3600
-		minutes := (seconds % 3600) / 60
-		return fmt.Sprintf("%d小时%d分钟", hours, minutes)
-	}
-}
-
-// splitIntoParagraphs 将文本分割成段落
-func (c *ContentParser) splitIntoParagraphs(text string) []string {
-	splitter := textsplitter.NewMarkdownTextSplitter()
-	paragraphs, err := splitter.SplitText(text)
-	if err != nil {
-		// 处理错误
-		return []string{}
-	}
-	return paragraphs
-}
-
-// ParseContentIntoParagraphsWithMapping 将内容解析为段落并保留映射关系
-func (c *ContentParser) ParseContentIntoParagraphsWithMapping(content string) (*SplitResult, error) {
-	paragraphs := c.splitIntoParagraphs(content)
-
-	// 应用段落拆分并生成映射关系
-	return c.applySplittingWithMapping(paragraphs), nil
+// ApplySplittingWithMapping 已不再需要，因为段落在scanner阶段已分割
+// 改为直接对现有段落应用拆分逻辑
+func (c *ContentParser) ApplySplittingWithMapping(paragraphs []string) *SplitResult {
+	return c.applySplittingWithMapping(paragraphs)
 }
 
 // applySplittingWithMapping 对段落列表应用拆分并生成映射关系
