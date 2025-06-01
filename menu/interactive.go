@@ -28,19 +28,13 @@ func (m *InteractiveMenu) Show(tagStats []models.TagStats, categoryStats []model
 		choice := m.getChoice("请选择功能 (0-8): ")
 
 		switch choice {
-		case "2":
+		case "1":
 			m.processor.GenerateTagPages(tagStats, m.reader)
-		case "3":
+		case "2":
 			m.processor.GenerateArticleSlugs(m.reader)
-		case "4":
+		case "3":
 			m.processor.TranslateArticles(m.reader)
-		case "5":
-			m.processor.ShowCacheStatus()
-		case "6":
-			m.processor.GenerateBulkTranslationCache(tagStats, m.reader)
-		case "7":
-			m.processor.ClearTranslationCache(m.reader)
-		case "8":
+		case "4":
 			m.deleteArticlesByLanguage()
 		case "0":
 			color.Green("感谢使用！再见！")
@@ -59,17 +53,10 @@ func (m *InteractiveMenu) displayMainMenu() {
 	color.Red("🚀 核心功能")
 	// 内容管理模块
 	color.Green("📝 内容管理")
-	fmt.Println("  2. 生成标签页面")
-	fmt.Println("  3. 生成文章Slug")
-	fmt.Println("  4. 翻译文章为多语言版本")
-	fmt.Println("  8. 删除指定语言的文章") // 新增菜单项
-	fmt.Println()
-
-	// 缓存管理模块
-	color.Magenta("💾 缓存管理")
-	fmt.Println("  5. 查看缓存状态")
-	fmt.Println("  6. 生成全量翻译缓存")
-	fmt.Println("  7. 清空翻译缓存")
+	fmt.Println("  1. 生成标签页面")
+	fmt.Println("  2. 生成文章Slug")
+	fmt.Println("  3. 翻译文章为多语言版本")
+	fmt.Println("  4. 删除指定语言的文章") // 新增菜单项
 	fmt.Println()
 
 	color.Red("  0. 退出程序")
