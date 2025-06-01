@@ -26,6 +26,23 @@ type TranslationStatus struct {
 	TotalArticles    int // 文章总数
 }
 
+// ArticleTranslationPreview 文章翻译预览信息
+type ArticleTranslationPreview struct {
+	Article      models.Article
+	TargetLang   string
+	TargetFile   string
+	Status       string // "missing", "update", "skip"
+	LanguageName string
+}
+
+// 实现 StatusLike 接口
+func (a ArticleTranslationPreview) GetStatus() string {
+	if a.Status == "missing" {
+		return "create"
+	}
+	return "update"
+}
+
 // NewArticleTranslator 创建新的文章翻译器
 func NewArticleTranslator(contentDir string) *ArticleTranslator {
 	return &ArticleTranslator{
@@ -86,6 +103,210 @@ func (a *ArticleTranslator) GetTranslationStatus() (*TranslationStatus, error) {
 		ExistingArticles: existingCount,
 		TotalArticles:    totalArticles,
 	}, nil
+}
+
+// PrepareArticleTranslations 预处理文章翻译
+func (a *ArticleTranslator) PrepareArticleTranslations() ([]ArticleTranslationPreview, int, int, error) {
+	var previews []ArticleTranslationPreview
+
+	// 测试LM Studio连接
+	fmt.Print("🔗 测试LM Studio连接... ")
+	if err := a.translationUtils.TestConnection(); err != nil {
+		fmt.Printf("❌ 失败 (%v)\n", err)
+		fmt.Println("⚠️ 无法连接AI翻译，终止操作")
+		return nil, 0, 0, fmt.Errorf("AI翻译连接失败: %v", err)
+	} else {
+		fmt.Println("✅ 成功")
+	}
+
+	// 获取所有文章，使用翻译扫描函数读取完整内容
+	articles, err := scanner.ScanArticlesForTranslation(a.contentDir)
+	if err != nil {
+		return nil, 0, 0, fmt.Errorf("扫描文章失败: %v", err)
+	}
+
+	cfg := config.GetGlobalConfig()
+	targetLanguages := cfg.Language.TargetLanguages
+
+	var validArticles []models.Article
+	for _, article := range articles {
+		if article.Title != "" {
+			validArticles = append(validArticles, article)
+		}
+	}
+
+	if len(validArticles) == 0 {
+		return previews, 0, 0, nil
+	}
+
+	fmt.Printf("📊 正在分析 %d 篇文章的翻译状态...\n", len(validArticles))
+
+	createCount := 0
+	updateCount := 0
+
+	for i, article := range validArticles {
+		fmt.Printf("  [%d/%d] 检查: %s", i+1, len(validArticles), article.Title)
+
+		articleHasMissing := false
+		articleHasExisting := false
+
+		for _, targetLang := range targetLanguages {
+			targetFile := utils.BuildTargetFilePath(article.FilePath, targetLang)
+			if targetFile == "" {
+				continue
+			}
+
+			targetLangName := cfg.Language.LanguageNames[targetLang]
+			if targetLangName == "" {
+				targetLangName = targetLang
+			}
+
+			var status string
+			if !utils.FileExists(targetFile) {
+				status = "missing"
+				articleHasMissing = true
+			} else {
+				status = "update"
+				articleHasExisting = true
+			}
+
+			preview := ArticleTranslationPreview{
+				Article:      article,
+				TargetLang:   targetLang,
+				TargetFile:   targetFile,
+				Status:       status,
+				LanguageName: targetLangName,
+			}
+			previews = append(previews, preview)
+		}
+
+		// 统计文章级别的状态
+		if articleHasMissing {
+			createCount++
+		}
+		if articleHasExisting {
+			updateCount++
+		}
+
+		statusText := ""
+		if articleHasMissing && articleHasExisting {
+			statusText = " 🔄 部分翻译"
+		} else if articleHasMissing {
+			statusText = " ✨ 需要翻译"
+		} else {
+			statusText = " ✅ 已完全翻译"
+		}
+		fmt.Printf("%s\n", statusText)
+	}
+
+	fmt.Printf("\n📈 统计结果:\n")
+	fmt.Printf("   ✨ 有缺失翻译的文章: %d 篇\n", createCount)
+	fmt.Printf("   🔄 已有翻译的文章: %d 篇\n", updateCount)
+	fmt.Printf("   📦 总计: %d 篇文章，%d 个翻译任务\n", len(validArticles), len(previews))
+
+	return previews, createCount, updateCount, nil
+}
+
+// TranslateArticlesWithMode 根据模式翻译文章
+func (a *ArticleTranslator) TranslateArticlesWithMode(targetPreviews []ArticleTranslationPreview, mode string) error {
+	fmt.Println("\n📝 文章翻译器 (模式选择)")
+	fmt.Println("===============================")
+
+	if len(targetPreviews) == 0 {
+		fmt.Printf("ℹ️  根据选择的模式 '%s'，没有需要处理的翻译任务\n", mode)
+		return nil
+	}
+
+	fmt.Printf("📊 将处理 %d 个翻译任务 (模式: %s)\n", len(targetPreviews), mode)
+
+	return a.processTargetPreviews(targetPreviews)
+}
+
+// processTargetPreviews 处理目标预览
+func (a *ArticleTranslator) processTargetPreviews(targetPreviews []ArticleTranslationPreview) error {
+
+	utils.LogOperation("开始多语言翻译", map[string]interface{}{
+		"translation_tasks": len(targetPreviews),
+		"content_dir":       a.contentDir,
+	})
+
+	// 1. 统计所有需要翻译的正文总字符数
+	totalCharsAllArticles := 0
+	for _, preview := range targetPreviews {
+		totalCharsAllArticles += preview.Article.CharCount
+	}
+
+	globalTranslatedChars := 0
+	startTime := time.Now()
+	totalSuccessCount := 0
+	totalErrorCount := 0
+
+	// 按文章分组处理翻译任务
+	articleGroups := a.groupPreviewsByArticle(targetPreviews)
+
+	for i, group := range articleGroups {
+		article := group[0].Article
+		fmt.Printf("\n📄 处理文章 (%d/%d): %s\n", i+1, len(articleGroups), article.Title)
+
+		articleSuccessCount := 0
+		articleErrorCount := 0
+
+		// 统计当前文章剩余语言数
+		remainingLangsOfCurrentArticle := len(group)
+
+		// 统计全局剩余文章数
+		remainingArticles := len(articleGroups) - i - 1
+
+		for langIndex, preview := range group {
+			fmt.Printf("  🌐 翻译为 %s (%d/%d)\n", preview.LanguageName, langIndex+1, len(group))
+			fmt.Printf("     目标文件: %s\n", preview.TargetFile)
+
+			if err := a.translateSingleArticleToLanguage(
+				preview.Article, preview.TargetFile, preview.TargetLang,
+				totalCharsAllArticles, &globalTranslatedChars, startTime,
+				remainingArticles, remainingLangsOfCurrentArticle-1,
+			); err != nil {
+				fmt.Printf("     ❌ 翻译失败: %v\n", err)
+				articleErrorCount++
+				totalErrorCount++
+			} else {
+				fmt.Printf("     ✅ 翻译完成\n")
+				articleSuccessCount++
+				totalSuccessCount++
+			}
+			remainingLangsOfCurrentArticle--
+		}
+
+		fmt.Printf("  📊 当前文章翻译结果: 成功 %d, 失败 %d\n", articleSuccessCount, articleErrorCount)
+	}
+
+	fmt.Printf("\n🎉 多语言翻译全部完成！\n")
+	fmt.Printf("- 总成功翻译: %d 个任务\n", totalSuccessCount)
+	fmt.Printf("- 总翻译失败: %d 个任务\n", totalErrorCount)
+
+	return nil
+}
+
+// groupPreviewsByArticle 按文章分组翻译预览
+func (a *ArticleTranslator) groupPreviewsByArticle(previews []ArticleTranslationPreview) [][]ArticleTranslationPreview {
+	articleMap := make(map[string][]ArticleTranslationPreview)
+	var articleOrder []string
+
+	for _, preview := range previews {
+		filePath := preview.Article.FilePath
+		if _, exists := articleMap[filePath]; !exists {
+			articleOrder = append(articleOrder, filePath)
+			articleMap[filePath] = []ArticleTranslationPreview{}
+		}
+		articleMap[filePath] = append(articleMap[filePath], preview)
+	}
+
+	var groups [][]ArticleTranslationPreview
+	for _, filePath := range articleOrder {
+		groups = append(groups, articleMap[filePath])
+	}
+
+	return groups
 }
 
 // TranslateArticles 翻译文章到多种语言
