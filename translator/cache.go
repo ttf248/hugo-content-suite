@@ -26,7 +26,7 @@ type TranslationCache struct {
 	tagCacheFile   string
 	slugCacheFile  string
 	tagCache       map[string]CacheEntry
-	articleCache   map[string]CacheEntry
+	slugCache      map[string]CacheEntry
 	expireDuration time.Duration
 }
 
@@ -36,7 +36,7 @@ func NewTranslationCache() *TranslationCache {
 		tagCacheFile:   cfg.Cache.TagFileName,
 		slugCacheFile:  cfg.Cache.ArticleFileName,
 		tagCache:       make(map[string]CacheEntry),
-		articleCache:   make(map[string]CacheEntry),
+		slugCache:      make(map[string]CacheEntry),
 		expireDuration: time.Duration(cfg.Cache.ExpireDays) * 24 * time.Hour,
 	}
 }
@@ -52,21 +52,21 @@ func (c *TranslationCache) Load() error {
 	}
 
 	// 加载文章缓存
-	if err := c.loadCacheFile(c.slugCacheFile, &c.articleCache); err != nil {
+	if err := c.loadCacheFile(c.slugCacheFile, &c.slugCache); err != nil {
 		utils.WarnWithFields("加载文章缓存失败", map[string]interface{}{
 			"file":  c.slugCacheFile,
 			"error": err.Error(),
 		})
-		c.articleCache = make(map[string]CacheEntry)
+		c.slugCache = make(map[string]CacheEntry)
 	}
 
 	utils.InfoWithFields("缓存加载完成", map[string]interface{}{
 		"tag_count":     len(c.tagCache),
-		"article_count": len(c.articleCache),
+		"article_count": len(c.slugCache),
 	})
 
 	fmt.Printf("📄 已加载缓存文件 - 标签: %d 个, 文章: %d 个\n",
-		len(c.tagCache), len(c.articleCache))
+		len(c.tagCache), len(c.slugCache))
 	return nil
 }
 
@@ -94,12 +94,12 @@ func (c *TranslationCache) Save() error {
 	}
 
 	// 保存文章缓存
-	if err := c.saveCacheFile(c.slugCacheFile, c.articleCache); err != nil {
+	if err := c.saveCacheFile(c.slugCacheFile, c.slugCache); err != nil {
 		return fmt.Errorf("保存文章缓存失败: %v", err)
 	}
 
 	fmt.Printf("💾 已保存缓存文件 - 标签: %d 个, 文章: %d 个\n",
-		len(c.tagCache), len(c.articleCache))
+		len(c.tagCache), len(c.slugCache))
 	return nil
 }
 
@@ -117,7 +117,7 @@ func (c *TranslationCache) Get(text string, cacheType CacheType) (string, bool) 
 	case TagCache:
 		cache = c.tagCache
 	case SlugCache:
-		cache = c.articleCache
+		cache = c.slugCache
 	default:
 		return "", false
 	}
@@ -147,7 +147,7 @@ func (c *TranslationCache) Set(text, translation string, cacheType CacheType) {
 	case TagCache:
 		c.tagCache[text] = entry
 	case SlugCache:
-		c.articleCache[text] = entry
+		c.slugCache[text] = entry
 	}
 }
 
@@ -181,7 +181,7 @@ func (c *TranslationCache) GetStats(cacheType CacheType) (total int, expired int
 	case TagCache:
 		cache = c.tagCache
 	case SlugCache:
-		cache = c.articleCache
+		cache = c.slugCache
 	default:
 		return 0, 0
 	}
@@ -201,8 +201,8 @@ func (c *TranslationCache) Clear(cacheType CacheType) error {
 		c.tagCache = make(map[string]CacheEntry)
 		return c.saveCacheFile(c.tagCacheFile, c.tagCache)
 	case SlugCache:
-		c.articleCache = make(map[string]CacheEntry)
-		return c.saveCacheFile(c.slugCacheFile, c.articleCache)
+		c.slugCache = make(map[string]CacheEntry)
+		return c.saveCacheFile(c.slugCacheFile, c.slugCache)
 	default:
 		return fmt.Errorf("未知的缓存类型: %v", cacheType)
 	}
@@ -210,12 +210,12 @@ func (c *TranslationCache) Clear(cacheType CacheType) error {
 
 func (c *TranslationCache) ClearAll() error {
 	c.tagCache = make(map[string]CacheEntry)
-	c.articleCache = make(map[string]CacheEntry)
+	c.slugCache = make(map[string]CacheEntry)
 
 	if err := c.saveCacheFile(c.tagCacheFile, c.tagCache); err != nil {
 		return err
 	}
-	if err := c.saveCacheFile(c.slugCacheFile, c.articleCache); err != nil {
+	if err := c.saveCacheFile(c.slugCacheFile, c.slugCache); err != nil {
 		return err
 	}
 	return nil
@@ -223,7 +223,7 @@ func (c *TranslationCache) ClearAll() error {
 
 func (c *TranslationCache) GetInfo() string {
 	tagTotal, tagExpired := c.GetStats(TagCache)
-	articleTotal, articleExpired := c.GetStats(SlugCache)
+	slugTotal, slugExpired := c.GetStats(SlugCache)
 
 	return fmt.Sprintf(`📊 缓存状态信息:
 🏷️  标签缓存:
@@ -238,5 +238,5 @@ func (c *TranslationCache) GetInfo() string {
    ⏰ 过期条目: %d 个
    ✅ 有效条目: %d 个`,
 		c.tagCacheFile, tagTotal, tagExpired, tagTotal-tagExpired,
-		c.slugCacheFile, articleTotal, articleExpired, articleTotal-articleExpired)
+		c.slugCacheFile, slugTotal, slugExpired, slugTotal-slugExpired)
 }
