@@ -1,10 +1,14 @@
 package generator
 
 import (
+	"bufio"
 	"fmt"
 	"hugo-content-suite/models"
 	"hugo-content-suite/translator"
+	"hugo-content-suite/utils"
+	"os"
 	"path/filepath"
+	"strings"
 	"time"
 )
 
@@ -28,7 +32,6 @@ func (t TagPagePreview) GetStatus() string {
 type TagPageGenerator struct {
 	contentDir       string
 	translationUtils *TranslationUtils
-	fileUtils        *FileUtils
 	slugCache        map[string]string
 }
 
@@ -37,7 +40,6 @@ func NewTagPageGenerator(contentDir string) *TagPageGenerator {
 	return &TagPageGenerator{
 		contentDir:       contentDir,
 		translationUtils: NewTranslationUtils(),
-		fileUtils:        NewFileUtils(),
 		slugCache:        make(map[string]string),
 	}
 }
@@ -55,7 +57,7 @@ func (g *TagPageGenerator) GenerateTagPagesWithMode(targetPreviews []TagPagePrev
 	fmt.Printf("📊 将处理 %d 个标签 (模式: %s)\n", len(targetPreviews), mode)
 
 	tagsDir := filepath.Join(g.contentDir, "..", "tags")
-	if err := g.fileUtils.EnsureDir(tagsDir); err != nil {
+	if err := utils.EnsureDir(tagsDir); err != nil {
 		return fmt.Errorf("❌ 创建tags目录失败: %v", err)
 	}
 
@@ -76,9 +78,9 @@ func (g *TagPageGenerator) processTargetPreviews(targetPreviews []TagPagePreview
 
 		tagDir := filepath.Join(tagsDir, preview.TagName)
 		indexFile := filepath.Join(tagDir, "_index.md")
-		content := g.fileUtils.GenerateTagContent(preview.TagName, preview.Slug)
+		content := g.GenerateTagContent(preview.TagName, preview.Slug)
 
-		if err := g.fileUtils.WriteFileContent(indexFile, content); err != nil {
+		if err := utils.WriteFileContent(indexFile, content); err != nil {
 			fmt.Printf(" ❌ 失败\n")
 			fmt.Printf("     错误: %v\n", err)
 			errorCount++
@@ -156,7 +158,7 @@ func (g *TagPageGenerator) PrepareTagPages(tagStats []models.TagStats) ([]TagPag
 		tagDir := filepath.Join(tagsDir, stat.Name)
 		indexFile := filepath.Join(tagDir, "_index.md")
 
-		if g.fileUtils.FileExists(indexFile) {
+		if utils.FileExists(indexFile) {
 			status = "update"
 			updateCount++
 			fmt.Printf(" 🔄 需要更新\n")
@@ -176,7 +178,7 @@ func (g *TagPageGenerator) PrepareTagPages(tagStats []models.TagStats) ([]TagPag
 			DirectoryPath: fmt.Sprintf("tags/%s/", stat.Name),
 			FilePath:      fmt.Sprintf("tags/%s/_index.md", stat.Name),
 			Status:        status,
-			ExistingSlug:  g.fileUtils.ExtractSlugFromFile(indexFile),
+			ExistingSlug:  g.ExtractSlugFromFile(indexFile),
 		}
 		previews = append(previews, preview)
 
@@ -189,4 +191,53 @@ func (g *TagPageGenerator) PrepareTagPages(tagStats []models.TagStats) ([]TagPag
 	fmt.Printf("   📦 总计: %d 个\n", len(previews))
 
 	return previews, createCount, updateCount
+}
+
+// GenerateTagContent 生成标签页面内容
+func (g *TagPageGenerator) GenerateTagContent(tagName, slug string) string {
+	return fmt.Sprintf(`---
+title: %s
+slug: "%s"
+---
+`, tagName, slug)
+}
+
+// ExtractSlugFromFile 从标签页面文件中提取现有的slug
+func (g *TagPageGenerator) ExtractSlugFromFile(filePath string) string {
+	if !utils.FileExists(filePath) {
+		return ""
+	}
+
+	file, err := os.Open(filePath)
+	if err != nil {
+		return ""
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	inFrontMatter := false
+
+	for scanner.Scan() {
+		line := scanner.Text()
+
+		if strings.TrimSpace(line) == "---" {
+			if !inFrontMatter {
+				inFrontMatter = true
+				continue
+			} else {
+				break
+			}
+		}
+
+		if inFrontMatter && strings.HasPrefix(strings.TrimSpace(line), "slug:") {
+			parts := strings.SplitN(line, ":", 2)
+			if len(parts) == 2 {
+				slug := strings.TrimSpace(parts[1])
+				slug = strings.Trim(slug, "\"'")
+				return slug
+			}
+		}
+	}
+
+	return ""
 }

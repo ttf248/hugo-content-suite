@@ -15,7 +15,6 @@ import (
 type ArticleTranslator struct {
 	contentDir       string
 	translationUtils *TranslationUtils
-	fileUtils        *FileUtils
 	contentParser    *ContentParser
 }
 
@@ -31,7 +30,6 @@ func NewArticleTranslator(contentDir string) *ArticleTranslator {
 	return &ArticleTranslator{
 		contentDir:       contentDir,
 		translationUtils: NewTranslationUtils(),
-		fileUtils:        NewFileUtils(),
 		contentParser:    NewContentParser(),
 	}
 }
@@ -61,12 +59,12 @@ func (a *ArticleTranslator) GetTranslationStatus() (*TranslationStatus, error) {
 
 		// 检查每种目标语言的翻译状态
 		for _, targetLang := range targetLanguages {
-			targetFile := a.fileUtils.BuildTargetFilePath(article.FilePath, targetLang)
+			targetFile := utils.BuildTargetFilePath(article.FilePath, targetLang)
 			if targetFile == "" {
 				continue
 			}
 
-			if a.fileUtils.FileExists(targetFile) {
+			if utils.FileExists(targetFile) {
 				hasExisting = true
 			} else {
 				hasMissing = true
@@ -151,7 +149,7 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 	var pendingArticleLangs []articleLang
 	for articleIdx, article := range targetArticles {
 		for langIdx, targetLang := range targetLanguages {
-			targetFile := a.fileUtils.BuildTargetFilePath(article.FilePath, targetLang)
+			targetFile := utils.BuildTargetFilePath(article.FilePath, targetLang)
 			if targetFile == "" {
 				continue
 			}
@@ -159,7 +157,7 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 			if !shouldTranslate {
 				continue
 			}
-			content, err := a.fileUtils.ReadFileContent(article.FilePath)
+			content, err := utils.ReadFileContent(article.FilePath)
 			if err != nil {
 				continue
 			}
@@ -182,7 +180,7 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 		// 统计当前文章剩余语言数
 		remainingLangsOfCurrentArticle := 0
 		for _, targetLang := range targetLanguages {
-			targetFile := a.fileUtils.BuildTargetFilePath(article.FilePath, targetLang)
+			targetFile := utils.BuildTargetFilePath(article.FilePath, targetLang)
 			if targetFile == "" {
 				continue
 			}
@@ -198,7 +196,7 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 				targetLangName = targetLang
 			}
 
-			targetFile := a.fileUtils.BuildTargetFilePath(article.FilePath, targetLang)
+			targetFile := utils.BuildTargetFilePath(article.FilePath, targetLang)
 			if targetFile == "" {
 				continue
 			}
@@ -212,7 +210,7 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 			remainingArticles := 0
 			for j := i + 1; j < len(targetArticles); j++ {
 				for _, tl := range targetLanguages {
-					tf := a.fileUtils.BuildTargetFilePath(targetArticles[j].FilePath, tl)
+					tf := utils.BuildTargetFilePath(targetArticles[j].FilePath, tl)
 					if tf == "" {
 						continue
 					}
@@ -262,7 +260,7 @@ func (a *ArticleTranslator) translateSingleArticleToLanguageWithProgress(
 	utils.Info("开始翻译文章到 %s: %s", targetLang, originalFile)
 
 	// 读取原文件
-	content, err := a.fileUtils.ReadFileContent(originalFile)
+	content, err := utils.ReadFileContent(originalFile)
 	if err != nil {
 		utils.Error("读取原文件失败: %s, 错误: %v", originalFile, err)
 		return fmt.Errorf("读取原文件失败: %v", err)
@@ -287,7 +285,7 @@ func (a *ArticleTranslator) translateSingleArticleToLanguageWithProgress(
 
 	// 合成并写入最终内容
 	finalContent := a.contentParser.CombineTranslatedContent(translatedFrontMatter, translatedBody)
-	if err := a.fileUtils.WriteFileContent(targetFile, finalContent); err != nil {
+	if err := utils.WriteFileContent(targetFile, finalContent); err != nil {
 		return fmt.Errorf("写入目标文件失败: %v", err)
 	}
 
