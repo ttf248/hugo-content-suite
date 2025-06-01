@@ -129,10 +129,8 @@ func (t *LLMTranslator) translateWithCache(text string, cacheType CacheType, pro
 	// 检查缓存 - 使用正确的缓存键格式
 	cacheKey := fmt.Sprintf("en:%s", text)
 	if cached, exists := t.cache.Get(cacheKey, cacheType); exists {
-		utils.RecordCacheHit()
 		return cached, nil
 	}
-	utils.RecordCacheMiss()
 
 	// 如果已经是英文，直接处理
 	if isEnglishOnly(text) {
@@ -338,9 +336,6 @@ func (t *LLMTranslator) loadFromCache(texts []string, cacheType CacheType, resul
 		if translation, exists := t.cache.Get(cacheKey, cacheType); exists {
 			result[text] = translation
 			cachedCount++
-			utils.RecordCacheHit()
-		} else {
-			utils.RecordCacheMiss()
 		}
 	}
 	return cachedCount
@@ -351,11 +346,8 @@ func (t *LLMTranslator) translateMissingTexts(missingTexts []string, result map[
 	newTranslationsAdded := 0
 
 	for i, text := range missingTexts {
-		translationStart := time.Now()
-
 		slug, err := translateFunc(text)
 		if err != nil {
-			utils.RecordError()
 			// 翻译失败，跳过此项
 			utils.Error("翻译失败: %s - %v", text, err)
 			progressBar.Update(i + 1)
@@ -373,7 +365,6 @@ func (t *LLMTranslator) translateMissingTexts(missingTexts []string, result map[
 		}
 		t.cache.Set(cacheKey, slug, cacheType)
 
-		utils.RecordTranslation(time.Since(translationStart))
 		result[text] = slug
 		newTranslationsAdded++
 
@@ -383,8 +374,6 @@ func (t *LLMTranslator) translateMissingTexts(missingTexts []string, result map[
 		if newTranslationsAdded%cfg.Cache.AutoSaveCount == 0 {
 			if err := t.cache.Save(); err != nil {
 				utils.Error("中间保存缓存失败: %v", err)
-			} else {
-				utils.RecordFileOperation()
 			}
 		}
 
@@ -402,7 +391,6 @@ func (t *LLMTranslator) saveCacheAndLog(startTime time.Time) {
 	if err := t.cache.Save(); err != nil {
 		utils.Error("保存缓存失败: %v", err)
 	} else {
-		utils.RecordFileOperation()
 		utils.Info("批量翻译完成，耗时: %v", time.Since(startTime))
 	}
 }
