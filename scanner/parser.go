@@ -29,11 +29,6 @@ func ScanArticlesForTranslation(dir string) ([]Article, error) {
 	return scanArticlesInternal(dir, false, true)
 }
 
-// 用于翻译模块：支持多语言扫描并读取完整内容信息
-func ScanArticlesForTranslationWithLangs(dir string, allLangs bool) ([]Article, error) {
-	return scanArticlesInternal(dir, allLangs, true)
-}
-
 // 内部统一扫描函数
 func scanArticlesInternal(dir string, allLangs bool, withContent bool) ([]Article, error) {
 	var articles []Article
