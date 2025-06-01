@@ -148,8 +148,13 @@ func (a *ArticleTranslator) translateArrayField(fieldName string, items []interf
 			if utils.ContainsChinese(strItem) {
 				fmt.Printf("%s -> ", strItem)
 
-				// 使用缓存翻译
-				translated, err := a.translationUtils.TranslateToLanguageWithCache(strItem, targetLang)
+				var translated string
+				var err error
+				if fieldName == "tags" {
+					translated, err = a.translationUtils.TranslateTag(strItem, targetLang)
+				} else {
+					translated, err = a.translationUtils.TranslateCategory(strItem, targetLang)
+				}
 				if err != nil {
 					fmt.Printf("失败 ")
 					translatedItems = append(translatedItems, item)

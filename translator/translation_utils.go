@@ -100,7 +100,7 @@ func (t *TranslationUtils) TranslateToLanguage(content, targetLang string) (stri
 	return result, nil
 }
 
-func (t *TranslationUtils) TranslateToLanguageWithCache(content, targetLang string) (string, error) {
+func (t *TranslationUtils) TranslateCategory(content, targetLang string) (string, error) {
 	result, err := t.translateWithCache(content, targetLang, kCategoryCache)
 	if err != nil {
 		return "", err
@@ -108,8 +108,16 @@ func (t *TranslationUtils) TranslateToLanguageWithCache(content, targetLang stri
 	return result, nil
 }
 
+func (t *TranslationUtils) TranslateTag(content, targetLang string) (string, error) {
+	result, err := t.translateWithCache(content, targetLang, kTagCache)
+	if err != nil {
+		return "", err
+	}
+	return result, nil
+}
+
 func (t *TranslationUtils) translateWithCache(text, targetLang string, cacheType CacheType) (string, error) {
-	fmt.Println("🤖 使用AI翻译...")
+	fmt.Println("\n🤖 使用AI翻译...")
 	cacheKey := fmt.Sprintf("%s:%s", targetLang, text)
 	if cached, found := t.cache.Get(cacheKey, cacheType); found {
 		fmt.Printf("✅ [Cache Hit] [%s] %s\n", targetLang, text)
@@ -130,7 +138,7 @@ func (t *TranslationUtils) translateWithCache(text, targetLang string, cacheType
 }
 
 func (t *TranslationUtils) batchTranslateWithCache(texts []string, targetLang string, cacheType CacheType) (map[string]string, error) {
-	fmt.Println("🤖 使用AI翻译...")
+	fmt.Println("\n🤖 使用AI翻译...")
 	result := make(map[string]string)
 	var missingTexts []string
 	hitCount := 0
