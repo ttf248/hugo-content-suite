@@ -8,14 +8,6 @@ import (
 	"time"
 )
 
-// TagPageGenerator 标签页面生成器
-type TagPageGenerator struct {
-	contentDir       string
-	translationUtils *TranslationUtils
-	fileUtils        *FileUtils
-	slugCache        map[string]string
-}
-
 // TagPagePreview 标签页面预览信息
 type TagPagePreview struct {
 	TagName       string
@@ -25,6 +17,19 @@ type TagPagePreview struct {
 	FilePath      string
 	Status        string // "create", "update"
 	ExistingSlug  string
+}
+
+// 实现 StatusLike 接口
+func (t TagPagePreview) GetStatus() string {
+	return t.Status
+}
+
+// TagPageGenerator 标签页面生成器
+type TagPageGenerator struct {
+	contentDir       string
+	translationUtils *TranslationUtils
+	fileUtils        *FileUtils
+	slugCache        map[string]string
 }
 
 // NewTagPageGenerator 创建新的标签页面生成器
@@ -38,25 +43,9 @@ func NewTagPageGenerator(contentDir string) *TagPageGenerator {
 }
 
 // GenerateTagPagesWithMode 根据模式生成标签页面文件
-func (g *TagPageGenerator) GenerateTagPagesWithMode(previews []TagPagePreview, mode string) error {
+func (g *TagPageGenerator) GenerateTagPagesWithMode(targetPreviews []TagPagePreview, mode string) error {
 	fmt.Println("\n🏷️  标签页面生成器 (模式选择)")
 	fmt.Println("===============================")
-
-	var targetPreviews []TagPagePreview
-	for _, preview := range previews {
-		switch mode {
-		case "create":
-			if preview.Status == "create" {
-				targetPreviews = append(targetPreviews, preview)
-			}
-		case "update":
-			if preview.Status == "update" {
-				targetPreviews = append(targetPreviews, preview)
-			}
-		case "all":
-			targetPreviews = append(targetPreviews, preview)
-		}
-	}
 
 	if len(targetPreviews) == 0 {
 		fmt.Printf("ℹ️  根据选择的模式 '%s'，没有需要处理的标签\n", mode)
@@ -119,7 +108,7 @@ func (g *TagPageGenerator) processTargetPreviews(targetPreviews []TagPagePreview
 }
 
 // PreviewTagPages 预览即将生成的标签页面
-func (g *TagPageGenerator) PreviewTagPages(tagStats []models.TagStats) []TagPagePreview {
+func (g *TagPageGenerator) PrepareTagPages(tagStats []models.TagStats) ([]TagPagePreview, int, int) {
 	var previews []TagPagePreview
 
 	// 测试LM Studio连接
@@ -127,7 +116,7 @@ func (g *TagPageGenerator) PreviewTagPages(tagStats []models.TagStats) []TagPage
 	if err := g.translationUtils.TestConnection(); err != nil {
 		fmt.Printf("❌ 失败 (%v)\n", err)
 		fmt.Println("⚠️  无法连接AI翻译，终止操作")
-		return previews
+		return previews, 0, 0
 	} else {
 		fmt.Println("✅ 成功")
 	}
@@ -145,7 +134,7 @@ func (g *TagPageGenerator) PreviewTagPages(tagStats []models.TagStats) []TagPage
 	slugMap, err := g.translationUtils.BatchTranslateWithCache(tagNames, "en", translator.TagCache)
 	if err != nil {
 		fmt.Printf("⚠️ 批量翻译失败: %v\n", err)
-		return previews
+		return previews, 0, 0
 	}
 
 	// 格式化所有slug
@@ -199,18 +188,5 @@ func (g *TagPageGenerator) PreviewTagPages(tagStats []models.TagStats) []TagPage
 	fmt.Printf("   🔄 需要更新: %d 个\n", updateCount)
 	fmt.Printf("   📦 总计: %d 个\n", len(previews))
 
-	return previews
-}
-
-func (p *TagPageGenerator) CountPageOperations(previews []TagPagePreview) (int, int) {
-	createCount := 0
-	updateCount := 0
-	for _, preview := range previews {
-		if preview.Status == "create" {
-			createCount++
-		} else if preview.Status == "update" {
-			updateCount++
-		}
-	}
-	return createCount, updateCount
+	return previews, createCount, updateCount
 }
