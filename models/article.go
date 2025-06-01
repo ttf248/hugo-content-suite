@@ -1,16 +1,21 @@
 package models
 
 type Article struct {
-	FilePath string
-	Title    string
-	Tags     []string
-	Category string
-	Date     string
+	FilePath   string
+	Title      string
+	Subtitle   string
+	Summary    string
+	Tags       []string
+	Categories []string
+	Date       string
+	LastMod    string
+	Featured   bool
+	Draft      bool
+	Slug       string
 	// 新增：内容信息
-	FrontMatter string // 原始前置信息
-	BodyContent string // 正文内容
-	FullContent string // 完整文件内容
-	CharCount   int    // 正文字符数
+	FrontMatter string   // 原始前置信息
+	BodyContent []string // 分段后的正文内容
+	CharCount   int      // 正文字符数
 }
 
 type TagStats struct {
