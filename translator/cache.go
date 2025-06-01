@@ -63,7 +63,7 @@ func (c *TranslationCache) Load() error {
 		"article_count": len(c.slugCache),
 	})
 
-	fmt.Printf("📄 已加载缓存文件 - 标签: %d 个, 文章: %d 个\n",
+	fmt.Printf("📄 已加载缓存文件 - 标签: %d 个, Slug: %d 个\n",
 		len(c.tagCache), len(c.slugCache))
 	return nil
 }
