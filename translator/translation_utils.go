@@ -84,6 +84,14 @@ func (t *TranslationUtils) TestConnection() error {
 	return err
 }
 
+func (t *TranslationUtils) TranslateTags(texts []string) (map[string]string, error) {
+	return t.batchTranslateWithCache(texts, "en", kTagCache)
+}
+
+func (t *TranslationUtils) TranslateArticlesSlugs(texts []string) (map[string]string, error) {
+	return t.batchTranslateWithCache(texts, "en", kSlugCache)
+}
+
 func (t *TranslationUtils) TranslateToLanguage(content, targetLang string) (string, error) {
 	result, err := t.translateWithAPI(content, targetLang)
 	if err != nil {
@@ -92,12 +100,12 @@ func (t *TranslationUtils) TranslateToLanguage(content, targetLang string) (stri
 	return result, nil
 }
 
-func (t *TranslationUtils) TranslateTags(texts []string) (map[string]string, error) {
-	return t.batchTranslateWithCache(texts, "en", kTagCache)
-}
-
-func (t *TranslationUtils) TranslateArticlesSlugs(texts []string) (map[string]string, error) {
-	return t.batchTranslateWithCache(texts, "en", kSlugCache)
+func (t *TranslationUtils) TranslateToLanguageWithCache(content, targetLang string) (string, error) {
+	result, err := t.translateWithCache(content, targetLang, kCategoryCache)
+	if err != nil {
+		return "", err
+	}
+	return result, nil
 }
 
 func (t *TranslationUtils) translateWithCache(text, targetLang string, cacheType CacheType) (string, error) {

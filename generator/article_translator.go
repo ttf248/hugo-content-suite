@@ -99,8 +99,8 @@ func (a *ArticleTranslator) TranslateArticles(mode string) error {
 		"content_dir":      a.contentDir,
 	})
 
-	// 获取所有文章
-	articles, err := scanner.ScanArticles(a.contentDir)
+	// 获取所有文章，使用新的扫描函数读取完整内容
+	articles, err := scanner.ScanArticlesForTranslation(a.contentDir)
 	if err != nil {
 		utils.ErrorWithFields("扫描文章失败", map[string]interface{}{
 			"content_dir": a.contentDir,
@@ -136,34 +136,21 @@ func (a *ArticleTranslator) TranslateArticles(mode string) error {
 
 // processArticlesByLanguage 按语言处理文章
 func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Article, targetLanguages []string, mode string) error {
-	cfg := config.GetGlobalConfig()
 	totalSuccessCount := 0
 	totalErrorCount := 0
 
-	// 1. 统计所有需要翻译的正文总字符数
+	// 1. 统计所有需要翻译的正文总字符数 - 直接使用缓存的字符数
 	totalCharsAllArticles := 0
-	type articleLang struct {
-		ArticleIdx int
-		LangIdx    int
-	}
-	var pendingArticleLangs []articleLang
-	for articleIdx, article := range targetArticles {
-		for langIdx, targetLang := range targetLanguages {
+	for _, article := range targetArticles {
+		for _, targetLang := range targetLanguages {
 			targetFile := utils.BuildTargetFilePath(article.FilePath, targetLang)
 			if targetFile == "" {
 				continue
 			}
 			shouldTranslate := a.shouldTranslateArticle(targetFile, mode)
-			if !shouldTranslate {
-				continue
+			if shouldTranslate {
+				totalCharsAllArticles += article.CharCount
 			}
-			content, err := utils.ReadFileContent(article.FilePath)
-			if err != nil {
-				continue
-			}
-			_, body := a.contentParser.ParseArticleContent(content)
-			totalCharsAllArticles += len([]rune(body))
-			pendingArticleLangs = append(pendingArticleLangs, articleLang{ArticleIdx: articleIdx, LangIdx: langIdx})
 		}
 	}
 
@@ -190,6 +177,7 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 			}
 		}
 
+		cfg := config.GetGlobalConfig()
 		for langIndex, targetLang := range targetLanguages {
 			targetLangName := cfg.Language.LanguageNames[targetLang]
 			if targetLangName == "" {
@@ -224,8 +212,8 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 			fmt.Printf("  🌐 翻译为 %s (%d/%d)\n", targetLangName, langIndex+1, len(targetLanguages))
 			fmt.Printf("     目标文件: %s\n", targetFile)
 
-			if err := a.translateSingleArticleToLanguageWithProgress(
-				article.FilePath, targetFile, targetLang,
+			if err := a.translateSingleArticleToLanguage(
+				article, targetFile, targetLang,
 				totalCharsAllArticles, &globalTranslatedChars, startTime,
 				remainingArticles, remainingLangsOfCurrentArticle-1,
 			); err != nil {
@@ -251,23 +239,16 @@ func (a *ArticleTranslator) processArticlesByLanguage(targetArticles []models.Ar
 	return nil
 }
 
-// 新增：带全局进度的单篇文章翻译
-func (a *ArticleTranslator) translateSingleArticleToLanguageWithProgress(
-	originalFile, targetFile, targetLang string,
+// translateSingleArticleToLanguage 翻译单篇文章到指定语言
+func (a *ArticleTranslator) translateSingleArticleToLanguage(
+	article models.Article, targetFile, targetLang string,
 	totalCharsAllArticles int, globalTranslatedChars *int, globalStartTime time.Time,
 	remainingArticles int, remainingLangsOfCurrentArticle int,
 ) error {
-	utils.Info("开始翻译文章到 %s: %s", targetLang, originalFile)
+	utils.Info("开始翻译文章到 %s: %s", targetLang, article.FilePath)
 
-	// 读取原文件
-	content, err := utils.ReadFileContent(originalFile)
-	if err != nil {
-		utils.Error("读取原文件失败: %s, 错误: %v", originalFile, err)
-		return fmt.Errorf("读取原文件失败: %v", err)
-	}
-
-	// 解析文章结构
-	frontMatter, bodyContent := a.contentParser.ParseArticleContent(content)
+	// 解析文章结构 - 直接使用缓存的内容
+	frontMatter, bodyContent := a.contentParser.ParseArticleContent(article.FullContent)
 
 	// 翻译前置数据和正文
 	translatedFrontMatter, err := a.translateFrontMatterToLanguage(frontMatter, targetLang)

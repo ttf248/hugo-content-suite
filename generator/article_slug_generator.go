@@ -47,7 +47,7 @@ func NewArticleSlugGenerator(contentDir string) *ArticleSlugGenerator {
 func (g *ArticleSlugGenerator) PrepareArticleSlugs() ([]ArticleSlugPreview, int, int, error) {
 	var previews []ArticleSlugPreview
 
-	// 扫描文章
+	// 扫描文章 - 使用基础扫描函数，不需要内容详情
 	articles, err := scanner.ScanArticles(g.contentDir)
 	if err != nil {
 		return nil, 0, 0, fmt.Errorf("扫描文章失败: %v", err)

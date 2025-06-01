@@ -68,15 +68,12 @@ func (a *ArticleTranslator) translateFrontMatterFields(data map[string]interface
 	translatableFields := map[string]bool{
 		"title":       true,
 		"description": true,
-		"subtitle":    true,
-		"summary":     true,
 	}
 
 	// 定义需要翻译的数组字段
 	translatableArrayFields := map[string]bool{
 		"tags":       true,
 		"categories": true,
-		"authors":    true,
 	}
 
 	for key, value := range data {
@@ -104,20 +101,6 @@ func (a *ArticleTranslator) translateFrontMatterFields(data map[string]interface
 					result[key] = value // 保持原值
 				} else {
 					result[key] = translatedArray
-				}
-			} else {
-				result[key] = value
-			}
-
-		case key == "slug":
-			// 特殊处理 slug 字段
-			if strValue, ok := value.(string); ok {
-				translatedSlug, err := a.translateSlugField(strValue, targetLang)
-				if err != nil {
-					fmt.Printf("  警告: 翻译slug失败: %v\n", err)
-					result[key] = value // 保持原值
-				} else {
-					result[key] = translatedSlug
 				}
 			} else {
 				result[key] = value
@@ -166,7 +149,7 @@ func (a *ArticleTranslator) translateArrayField(fieldName string, items []interf
 				fmt.Printf("%s -> ", strItem)
 
 				// 使用缓存翻译
-				translated, err := a.translationUtils.TranslateToLanguage(strItem, targetLang)
+				translated, err := a.translationUtils.TranslateToLanguageWithCache(strItem, targetLang)
 				if err != nil {
 					fmt.Printf("失败 ")
 					translatedItems = append(translatedItems, item)
@@ -186,27 +169,6 @@ func (a *ArticleTranslator) translateArrayField(fieldName string, items []interf
 
 	fmt.Printf("\n")
 	return translatedItems, nil
-}
-
-// translateSlugField 翻译slug字段
-func (a *ArticleTranslator) translateSlugField(slug, targetLang string) (string, error) {
-	if slug == "" || !utils.ContainsChinese(slug) {
-		return slug, nil
-	}
-
-	fmt.Printf("  slug: %s -> ", slug)
-
-	// 使用缓存翻译
-	translated, err := a.translationUtils.TranslateToLanguage(slug, targetLang)
-	if err != nil {
-		fmt.Printf("翻译失败\n")
-		return slug, err
-	}
-
-	translated = utils.FormatSlugField(translated)
-
-	fmt.Printf("%s\n", translated)
-	return translated, nil
 }
 
 // printParagraphStageReport 打印段落翻译阶段报告

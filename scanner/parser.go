@@ -12,13 +12,28 @@ import (
 // Article 类型别名，方便引用
 type Article = models.Article
 
-// 默认只扫描 index.md
+// 默认只扫描 index.md，不读取内容详情
 func ScanArticles(dir string) ([]Article, error) {
-	return ScanArticlesWithLangs(dir, false)
+	return scanArticlesInternal(dir, false, false)
 }
 
-// 支持 allLangs 参数
+// 支持 allLangs 参数，不读取内容详情
 func ScanArticlesWithLangs(dir string, allLangs bool) ([]Article, error) {
+	return scanArticlesInternal(dir, allLangs, false)
+}
+
+// 用于翻译模块：扫描并读取完整内容信息
+func ScanArticlesForTranslation(dir string) ([]Article, error) {
+	return scanArticlesInternal(dir, false, true)
+}
+
+// 用于翻译模块：支持多语言扫描并读取完整内容信息
+func ScanArticlesForTranslationWithLangs(dir string, allLangs bool) ([]Article, error) {
+	return scanArticlesInternal(dir, allLangs, true)
+}
+
+// 内部统一扫描函数
+func scanArticlesInternal(dir string, allLangs bool, withContent bool) ([]Article, error) {
 	var articles []Article
 
 	err := filepath.Walk(dir, func(path string, info os.FileInfo, err error) error {
@@ -39,7 +54,7 @@ func ScanArticlesWithLangs(dir string, allLangs bool) ([]Article, error) {
 			}
 		}
 
-		article, err := parseMarkdownFile(path)
+		article, err := parseMarkdownFile(path, withContent)
 		if err != nil {
 			return nil
 		}
@@ -54,31 +69,43 @@ func ScanArticlesWithLangs(dir string, allLangs bool) ([]Article, error) {
 	return articles, err
 }
 
-func parseMarkdownFile(filePath string) (*Article, error) {
+func parseMarkdownFile(filePath string, withContent bool) (*Article, error) {
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
 	}
 	defer file.Close()
 
+	var fullContent strings.Builder
+	var frontMatterLines []string
+	var bodyLines []string
+
 	scanner := bufio.NewScanner(file)
 	inFrontMatter := false
-	frontMatterLines := []string{}
+	frontMatterEnded := false
 
 	for scanner.Scan() {
 		line := scanner.Text()
+
+		if withContent {
+			fullContent.WriteString(line + "\n")
+		}
 
 		if strings.TrimSpace(line) == "---" {
 			if !inFrontMatter {
 				inFrontMatter = true
 				continue
 			} else {
-				break
+				frontMatterEnded = true
+				inFrontMatter = false
+				continue
 			}
 		}
 
 		if inFrontMatter {
 			frontMatterLines = append(frontMatterLines, line)
+		} else if frontMatterEnded && withContent {
+			bodyLines = append(bodyLines, line)
 		}
 	}
 
@@ -90,6 +117,7 @@ func parseMarkdownFile(filePath string) (*Article, error) {
 		FilePath: filePath,
 	}
 
+	// 解析前置信息
 	for _, line := range frontMatterLines {
 		line = strings.TrimSpace(line)
 
@@ -105,6 +133,23 @@ func parseMarkdownFile(filePath string) (*Article, error) {
 		} else if strings.HasPrefix(line, "date:") {
 			article.Date = extractValue(line)
 		}
+	}
+
+	// 如果需要内容信息，则填充相关字段
+	if withContent {
+		// 构建前置信息
+		if len(frontMatterLines) > 0 {
+			article.FrontMatter = "---\n" + strings.Join(frontMatterLines, "\n") + "\n---"
+		}
+
+		// 构建正文内容
+		article.BodyContent = strings.Join(bodyLines, "\n")
+
+		// 完整内容
+		article.FullContent = strings.TrimSuffix(fullContent.String(), "\n")
+
+		// 计算正文字符数
+		article.CharCount = len([]rune(article.BodyContent))
 	}
 
 	return article, nil
