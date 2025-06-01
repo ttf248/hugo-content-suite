@@ -4,6 +4,11 @@
     "timestamp": "2025-06-02T05:12:56.6564457+08:00",
     "type": "category"
   },
+  "en:投资": {
+    "translation": "Investment",
+    "timestamp": "2025-06-02T06:13:48.4301437+08:00",
+    "type": "category"
+  },
   "en:计算机": {
     "translation": "Computer",
     "timestamp": "2025-06-02T05:05:09.9994645+08:00",
@@ -32,6 +37,11 @@
   "ja:AI 灵感碰撞坊": {
     "translation": "AI霊感衝突坊",
     "timestamp": "2025-06-02T05:13:21.7168809+08:00",
+    "type": "category"
+  },
+  "ja:投资": {
+    "translation": "投資 (tōshi)",
+    "timestamp": "2025-06-02T06:14:17.4212874+08:00",
     "type": "category"
   },
   "ja:计算机": {

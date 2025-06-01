@@ -1224,6 +1224,11 @@
     "timestamp": "2025-05-25T22:41:51.0326056+08:00",
     "type": "tag"
   },
+  "ja:2.5G网卡": {
+    "translation": "2.5G NIC (Network Interface Card)",
+    "timestamp": "2025-06-02T06:04:27.4808279+08:00",
+    "type": "tag"
+  },
   "ja:A股": {
     "translation": "A株 (エーショウ)",
     "timestamp": "2025-06-02T05:43:56.4901197+08:00",
@@ -1234,14 +1239,34 @@
     "timestamp": "2025-06-02T05:11:32.7220954+08:00",
     "type": "tag"
   },
+  "ja:中年人": {
+    "translation": "中年人 (chūnnen-nin)",
+    "timestamp": "2025-06-02T06:12:55.2095445+08:00",
+    "type": "tag"
+  },
   "ja:主机字节序": {
     "translation": "ホストバイトオーダー",
     "timestamp": "2025-06-02T05:38:43.2837246+08:00",
     "type": "tag"
   },
+  "ja:主板": {
+    "translation": "マザーボード",
+    "timestamp": "2025-06-02T06:03:01.7497277+08:00",
+    "type": "tag"
+  },
   "ja:主题": {
     "translation": "トピック / テーマ",
     "timestamp": "2025-06-02T05:48:02.9274819+08:00",
+    "type": "tag"
+  },
+  "ja:互联网": {
+    "translation": "インターネット",
+    "timestamp": "2025-06-02T06:22:38.2948375+08:00",
+    "type": "tag"
+  },
+  "ja:人口政策": {
+    "translation": "人口政策 (Jinkōセイケン)",
+    "timestamp": "2025-06-02T06:24:18.7146738+08:00",
     "type": "tag"
   },
   "ja:人民币": {
@@ -1264,14 +1289,79 @@
     "timestamp": "2025-06-02T05:14:21.1642787+08:00",
     "type": "tag"
   },
+  "ja:估值": {
+    "translation": "評価 (hyōchi)",
+    "timestamp": "2025-06-02T06:17:45.1039838+08:00",
+    "type": "tag"
+  },
+  "ja:位操作": {
+    "translation": "ビット演算 (bitten)",
+    "timestamp": "2025-06-02T06:04:46.9696673+08:00",
+    "type": "tag"
+  },
+  "ja:共和党": {
+    "translation": "共和党 (Kyōyotō)",
+    "timestamp": "2025-06-02T06:12:38.0064906+08:00",
+    "type": "tag"
+  },
   "ja:内网穿透": {
     "translation": "イントラネット貫通",
     "timestamp": "2025-06-02T05:10:33.1316275+08:00",
     "type": "tag"
   },
+  "ja:前端": {
+    "translation": "フロントエンド",
+    "timestamp": "2025-06-02T06:24:59.9943738+08:00",
+    "type": "tag"
+  },
+  "ja:医学教育": {
+    "translation": "医学教育 (Iiginen Kyouiku)",
+    "timestamp": "2025-06-02T06:19:09.1190237+08:00",
+    "type": "tag"
+  },
+  "ja:华硕": {
+    "translation": "エイスース",
+    "timestamp": "2025-06-02T06:03:01.6583475+08:00",
+    "type": "tag"
+  },
+  "ja:协和": {
+    "translation": "協和 (Kyowa)",
+    "timestamp": "2025-06-02T06:19:08.9341364+08:00",
+    "type": "tag"
+  },
   "ja:反腐": {
     "translation": "反腐败 (Hанфуbài)",
     "timestamp": "2025-06-02T05:11:32.4691784+08:00",
+    "type": "tag"
+  },
+  "ja:台式机": {
+    "translation": "デスクトップパソコン",
+    "timestamp": "2025-06-02T06:04:27.2804923+08:00",
+    "type": "tag"
+  },
+  "ja:后端": {
+    "translation": "バックエンド",
+    "timestamp": "2025-06-02T06:25:00.0685042+08:00",
+    "type": "tag"
+  },
+  "ja:哪吒": {
+    "translation": "哪吒 (Nezha)",
+    "timestamp": "2025-06-02T06:15:34.7003524+08:00",
+    "type": "tag"
+  },
+  "ja:国内": {
+    "translation": "国内 (こくさい)",
+    "timestamp": "2025-06-02T06:01:29.9066521+08:00",
+    "type": "tag"
+  },
+  "ja:国庆": {
+    "translation": "国慶 (Guóqìng) – This refers to the National Day of China.  A more natural translation would be:\n\n国慶節 (Guóqìngjié) - National Day (holiday)",
+    "timestamp": "2025-06-02T06:15:05.9347157+08:00",
+    "type": "tag"
+  },
+  "ja:国编教师": {
+    "translation": "国民教育者 (Kokumin Kyōikuja)",
+    "timestamp": "2025-06-02T06:20:48.7564411+08:00",
     "type": "tag"
   },
   "ja:基金": {
@@ -1334,14 +1424,39 @@
     "timestamp": "2025-06-02T05:38:43.0200538+08:00",
     "type": "tag"
   },
+  "ja:小说": {
+    "translation": "小説",
+    "timestamp": "2025-06-02T06:12:54.9250221+08:00",
+    "type": "tag"
+  },
+  "ja:局域网": {
+    "translation": "ローカルエリアネットワーク (LAN)",
+    "timestamp": "2025-06-02T06:04:27.6392661+08:00",
+    "type": "tag"
+  },
   "ja:嵌入式": {
     "translation": "組み込み (ぐみこみ)",
     "timestamp": "2025-06-02T05:06:54.8967858+08:00",
     "type": "tag"
   },
+  "ja:师徒": {
+    "translation": "師徒",
+    "timestamp": "2025-06-02T06:12:55.4223668+08:00",
+    "type": "tag"
+  },
+  "ja:影院": {
+    "translation": "映画館 (Eigakan)",
+    "timestamp": "2025-06-02T06:12:23.7751397+08:00",
+    "type": "tag"
+  },
   "ja:微信小程序": {
     "translation": "WeChat Mini Programs",
     "timestamp": "2025-06-02T05:07:26.2047534+08:00",
+    "type": "tag"
+  },
+  "ja:心态": {
+    "translation": "心境 (しんけい) / 精神狀態 (せいしんとうぜい)",
+    "timestamp": "2025-06-02T06:14:18.1558448+08:00",
     "type": "tag"
   },
   "ja:心理学": {
@@ -1359,6 +1474,11 @@
     "timestamp": "2025-06-02T05:45:13.6370795+08:00",
     "type": "tag"
   },
+  "ja:投资": {
+    "translation": "投資 (tōshi)",
+    "timestamp": "2025-06-02T06:14:17.8407981+08:00",
+    "type": "tag"
+  },
   "ja:投顾": {
     "translation": "アドバイザー",
     "timestamp": "2025-06-02T05:49:22.9566662+08:00",
@@ -1374,9 +1494,39 @@
     "timestamp": "2025-06-02T05:11:02.1908947+08:00",
     "type": "tag"
   },
+  "ja:招聘数据": {
+    "translation": "採用データ",
+    "timestamp": "2025-06-02T06:20:48.8332556+08:00",
+    "type": "tag"
+  },
   "ja:排名": {
     "translation": "ランキング",
     "timestamp": "2025-06-02T05:11:03.1198112+08:00",
+    "type": "tag"
+  },
+  "ja:政府债务": {
+    "translation": "政府債務 (Seifu Chaiyū)",
+    "timestamp": "2025-06-02T06:08:45.0308358+08:00",
+    "type": "tag"
+  },
+  "ja:政治": {
+    "translation": "政治 (せいしつ - seishitsu)",
+    "timestamp": "2025-06-02T06:11:49.5309552+08:00",
+    "type": "tag"
+  },
+  "ja:政策": {
+    "translation": "政策 (せい策)",
+    "timestamp": "2025-06-02T06:15:06.4079117+08:00",
+    "type": "tag"
+  },
+  "ja:教师招聘": {
+    "translation": "教員採用 (Kyōin Saiyō)",
+    "timestamp": "2025-06-02T06:20:48.3898791+08:00",
+    "type": "tag"
+  },
+  "ja:教育政策": {
+    "translation": "教育政策 (Gakko Seisaku)",
+    "timestamp": "2025-06-02T06:20:49.0132494+08:00",
     "type": "tag"
   },
   "ja:斗鱼": {
@@ -1384,9 +1534,49 @@
     "timestamp": "2025-06-02T05:52:18.2846841+08:00",
     "type": "tag"
   },
+  "ja:春节档": {
+    "translation": "春節檔",
+    "timestamp": "2025-06-02T06:11:49.2859888+08:00",
+    "type": "tag"
+  },
+  "ja:暴涨": {
+    "translation": "急激な上昇 (きげきなしょうせい)",
+    "timestamp": "2025-06-02T06:15:06.1462574+08:00",
+    "type": "tag"
+  },
+  "ja:暴跌": {
+    "translation": "暴落 (Bōroku)",
+    "timestamp": "2025-06-02T06:15:06.2959881+08:00",
+    "type": "tag"
+  },
+  "ja:标志位": {
+    "translation": "マーキングポイント",
+    "timestamp": "2025-06-02T06:04:47.0563669+08:00",
+    "type": "tag"
+  },
+  "ja:民主党": {
+    "translation": "立憲民主党 (Rikken Minshutou)",
+    "timestamp": "2025-06-02T06:12:37.8399981+08:00",
+    "type": "tag"
+  },
+  "ja:民族自豪感": {
+    "translation": "国民的誇り (Kokumin no hokori)\n\nAlternatively, depending on the context, you could also use:\n\n*   愛国心 (Aigokushin) - Patriotism\n*   民族意識 (Minzokuishiki) - National consciousness",
+    "timestamp": "2025-06-02T06:15:35.4918135+08:00",
+    "type": "tag"
+  },
+  "ja:水墨风格": {
+    "translation": "水墨画風 (すいぼくがふう)",
+    "timestamp": "2025-06-02T06:18:32.108408+08:00",
+    "type": "tag"
+  },
   "ja:汇率": {
     "translation": "為替レート",
     "timestamp": "2025-06-02T05:43:55.9236265+08:00",
+    "type": "tag"
+  },
+  "ja:江西省": {
+    "translation": "江西省",
+    "timestamp": "2025-06-02T06:20:48.4658197+08:00",
     "type": "tag"
   },
   "ja:流量变现": {
@@ -1414,14 +1604,44 @@
     "timestamp": "2025-06-02T05:52:17.9401094+08:00",
     "type": "tag"
   },
+  "ja:父爱": {
+    "translation": "父愛 (Chichi Ai)",
+    "timestamp": "2025-06-02T06:12:55.3467025+08:00",
+    "type": "tag"
+  },
+  "ja:爽文": {
+    "translation": "サスペンス小説",
+    "timestamp": "2025-06-02T06:12:55.0268176+08:00",
+    "type": "tag"
+  },
+  "ja:特岗教师": {
+    "translation": "特別嘱託",
+    "timestamp": "2025-06-02T06:20:48.5577121+08:00",
+    "type": "tag"
+  },
+  "ja:现代货币理论": {
+    "translation": "現代貨幣理論 (Gendai Kakumei Riron)",
+    "timestamp": "2025-06-02T06:08:44.2614488+08:00",
+    "type": "tag"
+  },
   "ja:生活": {
     "translation": "生活 (Seikatsu)",
     "timestamp": "2025-06-02T05:51:34.4605093+08:00",
     "type": "tag"
   },
+  "ja:电影": {
+    "translation": "映画",
+    "timestamp": "2025-06-02T06:11:49.344512+08:00",
+    "type": "tag"
+  },
   "ja:电竞": {
     "translation": "eスポーツ (ē supōtsu)",
     "timestamp": "2025-06-02T05:52:17.7919557+08:00",
+    "type": "tag"
+  },
+  "ja:监控": {
+    "translation": "監視 (Goshi)",
+    "timestamp": "2025-06-02T06:06:27.7317696+08:00",
     "type": "tag"
   },
   "ja:监管": {
@@ -1434,6 +1654,11 @@
     "timestamp": "2025-06-02T05:11:02.9034059+08:00",
     "type": "tag"
   },
+  "ja:磁盘": {
+    "translation": "ディスク (Disukku)",
+    "timestamp": "2025-06-02T06:03:01.8863107+08:00",
+    "type": "tag"
+  },
   "ja:礼物": {
     "translation": "プレゼント (Purezento)",
     "timestamp": "2025-06-02T05:11:02.328919+08:00",
@@ -1444,9 +1669,39 @@
     "timestamp": "2025-06-02T05:44:20.579147+08:00",
     "type": "tag"
   },
+  "ja:社会": {
+    "translation": "社会 (shakai)",
+    "timestamp": "2025-06-02T06:11:49.6446578+08:00",
+    "type": "tag"
+  },
+  "ja:票价": {
+    "translation": "料金 (yōken) / 価格 (gaku)",
+    "timestamp": "2025-06-02T06:12:23.5472098+08:00",
+    "type": "tag"
+  },
   "ja:竞技游戏": {
     "translation": "eスポーツ (エスポート)",
     "timestamp": "2025-06-02T05:13:22.0459998+08:00",
+    "type": "tag"
+  },
+  "ja:系统": {
+    "translation": "システム",
+    "timestamp": "2025-06-02T06:06:27.8293191+08:00",
+    "type": "tag"
+  },
+  "ja:线上购票": {
+    "translation": "オンラインチケット購入",
+    "timestamp": "2025-06-02T06:12:23.63489+08:00",
+    "type": "tag"
+  },
+  "ja:编制": {
+    "translation": "作成 (さくせい) / 編制 (ねんせい) / 構築 (こうちゅう)\n\n(根据上下文选择最合适的词语)",
+    "timestamp": "2025-06-02T06:20:48.1939605+08:00",
+    "type": "tag"
+  },
+  "ja:编程": {
+    "translation": "プログラミング",
+    "timestamp": "2025-06-02T06:05:11.8084855+08:00",
     "type": "tag"
   },
   "ja:网络": {
@@ -1459,14 +1714,34 @@
     "timestamp": "2025-06-02T05:38:43.4396937+08:00",
     "type": "tag"
   },
+  "ja:网络通信": {
+    "translation": "ネットワーク通信",
+    "timestamp": "2025-06-02T06:13:25.5545561+08:00",
+    "type": "tag"
+  },
   "ja:美元": {
     "translation": "ドル",
     "timestamp": "2025-06-02T05:43:56.6374924+08:00",
     "type": "tag"
   },
+  "ja:美国": {
+    "translation": "アメリカ (Amerika)",
+    "timestamp": "2025-06-02T06:12:37.643073+08:00",
+    "type": "tag"
+  },
+  "ja:股市": {
+    "translation": "株式市場",
+    "timestamp": "2025-06-02T06:15:05.2673016+08:00",
+    "type": "tag"
+  },
   "ja:自定义": {
     "translation": "カスタム",
     "timestamp": "2025-06-02T05:48:02.9897042+08:00",
+    "type": "tag"
+  },
+  "ja:董袭莹": {
+    "translation": "藤咲恵",
+    "timestamp": "2025-06-02T06:19:09.1981019+08:00",
     "type": "tag"
   },
   "ja:虎牙": {
@@ -1484,6 +1759,46 @@
     "timestamp": "2025-06-02T05:50:46.8867604+08:00",
     "type": "tag"
   },
+  "ja:计划生育": {
+    "translation": "計画出産 (Keikaku shussan) / 家族計画 (Kazoku keikaku)",
+    "timestamp": "2025-06-02T06:24:18.5445193+08:00",
+    "type": "tag"
+  },
+  "ja:设计": {
+    "translation": "設計 (Seizō)",
+    "timestamp": "2025-06-02T06:18:31.8824128+08:00",
+    "type": "tag"
+  },
+  "ja:调试": {
+    "translation": "デバッグ",
+    "timestamp": "2025-06-02T06:05:30.0019373+08:00",
+    "type": "tag"
+  },
+  "ja:财富": {
+    "translation": "富 (と)",
+    "timestamp": "2025-06-02T06:14:18.2538235+08:00",
+    "type": "tag"
+  },
+  "ja:财政政策": {
+    "translation": "財政政策",
+    "timestamp": "2025-06-02T06:08:44.3639343+08:00",
+    "type": "tag"
+  },
+  "ja:货币信用": {
+    "translation": "貨幣信用",
+    "timestamp": "2025-06-02T06:08:45.3827689+08:00",
+    "type": "tag"
+  },
+  "ja:货币政策": {
+    "translation": "貨幣政策 (Kagiin seisaku)",
+    "timestamp": "2025-06-02T06:08:44.5883114+08:00",
+    "type": "tag"
+  },
+  "ja:贸易战": {
+    "translation": "貿易戦争 (Bōeki senso)",
+    "timestamp": "2025-06-02T06:22:01.8064578+08:00",
+    "type": "tag"
+  },
   "ja:资本": {
     "translation": "資本",
     "timestamp": "2025-06-02T05:52:18.420347+08:00",
@@ -1494,9 +1809,34 @@
     "timestamp": "2025-06-02T05:47:12.4567955+08:00",
     "type": "tag"
   },
+  "ja:通胀": {
+    "translation": "インフレーション (Infureishon)",
+    "timestamp": "2025-06-02T06:08:44.7977575+08:00",
+    "type": "tag"
+  },
+  "ja:通讯协议": {
+    "translation": "通信プロトコル",
+    "timestamp": "2025-06-02T06:16:36.4740928+08:00",
+    "type": "tag"
+  },
   "ja:金融": {
     "translation": "金融",
     "timestamp": "2025-06-02T05:11:32.2713081+08:00",
+    "type": "tag"
+  },
+  "ja:金融危机": {
+    "translation": "金融危機",
+    "timestamp": "2025-06-02T06:08:43.9784824+08:00",
+    "type": "tag"
+  },
+  "ja:金融泡沫": {
+    "translation": "金融バブル (Kin'yū baburu)",
+    "timestamp": "2025-06-02T06:08:45.2745204+08:00",
+    "type": "tag"
+  },
+  "ja:镜像代理": {
+    "translation": "プロキシミラー",
+    "timestamp": "2025-06-02T06:01:29.7865312+08:00",
     "type": "tag"
   },
   "ja:问题排查": {
