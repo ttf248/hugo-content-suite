@@ -126,10 +126,6 @@ func (t *TranslationUtils) translateWithCache(text, targetLang string, cacheType
 	_ = t.cache.Save()
 	fmt.Printf("✅ [Cache Set] [%s] %s\n", targetLang, text)
 
-	// 输出缓存统计信息
-	info := t.cache.GetInfo()
-	fmt.Printf("📊 [Cache Stats] %s\n", info)
-
 	return translated, err
 }
 
