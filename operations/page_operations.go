@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hugo-content-suite/generator"
 	"hugo-content-suite/models"
+	"hugo-content-suite/utils"
 
 	"github.com/fatih/color"
 )
@@ -84,7 +85,7 @@ func (p *Processor) selectPageMode(createCount, updateCount int, reader *bufio.R
 	}
 	fmt.Println("   0. 取消操作")
 
-	choice := p.getChoice(reader, "请选择: ")
+	choice := utils.GetChoice(reader, "请选择: ")
 
 	switch choice {
 	case "1":
