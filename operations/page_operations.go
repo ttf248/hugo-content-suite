@@ -21,7 +21,7 @@ func (p *Processor) GenerateTagPages(tagStats []models.TagStats, reader *bufio.R
 	pageGenerator := generator.NewTagPageGenerator(p.contentDir)
 	previews := pageGenerator.PreviewTagPages(tagStats)
 
-	createCount, updateCount := p.countPageOperations(previews)
+	createCount, updateCount := pageGenerator.CountPageOperations(previews)
 	p.displayPageStats(createCount, updateCount, len(previews))
 
 	if createCount == 0 && updateCount == 0 {
@@ -44,19 +44,6 @@ func (p *Processor) GenerateTagPages(tagStats []models.TagStats, reader *bufio.R
 	if err := pageGenerator.GenerateTagPagesWithMode(tagStats, mode); err != nil {
 		color.Red("❌ 生成失败: %v", err)
 	}
-}
-
-func (p *Processor) countPageOperations(previews []generator.TagPagePreview) (int, int) {
-	createCount := 0
-	updateCount := 0
-	for _, preview := range previews {
-		if preview.Status == "create" {
-			createCount++
-		} else if preview.Status == "update" {
-			updateCount++
-		}
-	}
-	return createCount, updateCount
 }
 
 func (p *Processor) displayPageStats(createCount, updateCount, total int) {
