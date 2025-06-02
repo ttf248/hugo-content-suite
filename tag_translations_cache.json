@@ -1239,6 +1239,16 @@
     "timestamp": "2025-06-02T05:43:56.4901197+08:00",
     "type": "tag"
   },
+  "ja:上交所": {
+    "translation": "上海証券取引所 (Shanghai Stock Exchange)",
+    "timestamp": "2025-06-02T17:23:26.036462+08:00",
+    "type": "tag"
+  },
+  "ja:中华通": {
+    "translation": "中華通",
+    "timestamp": "2025-06-02T17:23:25.8521395+08:00",
+    "type": "tag"
+  },
   "ja:中央政治局": {
     "translation": "中央政治局 (ちゅうおうせいしんきょく)",
     "timestamp": "2025-06-02T05:11:32.7220954+08:00",
@@ -1304,14 +1314,29 @@
     "timestamp": "2025-06-02T06:04:46.9696673+08:00",
     "type": "tag"
   },
+  "ja:佩洛西": {
+    "translation": "ペロシー (Perotti)",
+    "timestamp": "2025-06-02T17:28:46.9114341+08:00",
+    "type": "tag"
+  },
   "ja:共和党": {
     "translation": "共和党 (Kyōyotō)",
     "timestamp": "2025-06-02T06:12:38.0064906+08:00",
     "type": "tag"
   },
+  "ja:内存": {
+    "translation": "メモリ",
+    "timestamp": "2025-06-02T17:19:52.4227592+08:00",
+    "type": "tag"
+  },
   "ja:内网穿透": {
     "translation": "イントラネット貫通",
     "timestamp": "2025-06-02T05:10:33.1316275+08:00",
+    "type": "tag"
+  },
+  "ja:制造业": {
+    "translation": "製造業",
+    "timestamp": "2025-06-02T17:20:40.3370448+08:00",
     "type": "tag"
   },
   "ja:前端": {
@@ -1339,6 +1364,11 @@
     "timestamp": "2025-06-02T17:14:22.9990243+08:00",
     "type": "tag"
   },
+  "ja:压力测试": {
+    "translation": "負荷テスト (Yōki tesuto)",
+    "timestamp": "2025-06-02T17:21:46.3557045+08:00",
+    "type": "tag"
+  },
   "ja:反腐": {
     "translation": "反腐败 (Hанфуbài)",
     "timestamp": "2025-06-02T05:11:32.4691784+08:00",
@@ -1349,6 +1379,11 @@
     "timestamp": "2025-06-02T06:04:27.2804923+08:00",
     "type": "tag"
   },
+  "ja:台湾": {
+    "translation": "台湾 (Taiwan)",
+    "timestamp": "2025-06-02T17:28:47.0144944+08:00",
+    "type": "tag"
+  },
   "ja:后端": {
     "translation": "バックエンド",
     "timestamp": "2025-06-02T06:25:00.0685042+08:00",
@@ -1357,6 +1392,11 @@
   "ja:哪吒": {
     "translation": "哪吒 (Nezha)",
     "timestamp": "2025-06-02T06:15:34.7003524+08:00",
+    "type": "tag"
+  },
+  "ja:固收": {
+    "translation": "ストックホルム現象 (Stockholm phenomenon)",
+    "timestamp": "2025-06-02T17:24:03.0763655+08:00",
     "type": "tag"
   },
   "ja:国内": {
@@ -1372,6 +1412,11 @@
   "ja:国编教师": {
     "translation": "国民教育者 (Kokumin Kyōikuja)",
     "timestamp": "2025-06-02T06:20:48.7564411+08:00",
+    "type": "tag"
+  },
+  "ja:域名": {
+    "translation": "ドメイン",
+    "timestamp": "2025-06-02T17:19:10.2889394+08:00",
     "type": "tag"
   },
   "ja:基金": {
@@ -1399,6 +1444,11 @@
     "timestamp": "2025-06-02T05:47:11.4124821+08:00",
     "type": "tag"
   },
+  "ja:大型文件": {
+    "translation": "大規模ファイル",
+    "timestamp": "2025-06-02T17:28:13.2886184+08:00",
+    "type": "tag"
+  },
   "ja:大端存储": {
     "translation": "ロングレンジストレージ (Long Range Storage)",
     "timestamp": "2025-06-02T05:38:43.189526+08:00",
@@ -1412,6 +1462,11 @@
   "ja:婆罗门": {
     "translation": "ブラフマン",
     "timestamp": "2025-06-02T05:47:12.5450215+08:00",
+    "type": "tag"
+  },
+  "ja:字符集": {
+    "translation": "文字コード",
+    "timestamp": "2025-06-02T17:29:03.2228537+08:00",
     "type": "tag"
   },
   "ja:字节序": {
@@ -1479,6 +1534,11 @@
     "timestamp": "2025-06-02T05:47:35.1866166+08:00",
     "type": "tag"
   },
+  "ja:意义": {
+    "translation": "意味",
+    "timestamp": "2025-06-02T17:26:22.6084415+08:00",
+    "type": "tag"
+  },
   "ja:房地产": {
     "translation": "不動産",
     "timestamp": "2025-06-02T05:45:13.6370795+08:00",
@@ -1514,6 +1574,11 @@
     "timestamp": "2025-06-02T05:11:03.1198112+08:00",
     "type": "tag"
   },
+  "ja:接口文档": {
+    "translation": "APIドキュメント",
+    "timestamp": "2025-06-02T17:23:26.6960562+08:00",
+    "type": "tag"
+  },
   "ja:政府债务": {
     "translation": "政府債務 (Seifu Chaiyū)",
     "timestamp": "2025-06-02T06:08:45.0308358+08:00",
@@ -1544,6 +1609,11 @@
     "timestamp": "2025-06-02T05:52:18.2846841+08:00",
     "type": "tag"
   },
+  "ja:新东方": {
+    "translation": "新東方 (Shin Tōhō)",
+    "timestamp": "2025-06-02T17:24:47.6042117+08:00",
+    "type": "tag"
+  },
   "ja:春节档": {
     "translation": "春節檔",
     "timestamp": "2025-06-02T06:11:49.2859888+08:00",
@@ -1559,9 +1629,29 @@
     "timestamp": "2025-06-02T06:15:06.2959881+08:00",
     "type": "tag"
   },
+  "ja:期货": {
+    "translation": "先物",
+    "timestamp": "2025-06-02T17:25:30.5973401+08:00",
+    "type": "tag"
+  },
+  "ja:极客时间": {
+    "translation": "極東時間 (Kyoutou Jikan) – This is the most common and natural translation.",
+    "timestamp": "2025-06-02T17:29:21.3894257+08:00",
+    "type": "tag"
+  },
+  "ja:架构师": {
+    "translation": "アーキテクト",
+    "timestamp": "2025-06-02T17:29:21.0744928+08:00",
+    "type": "tag"
+  },
   "ja:标志位": {
     "translation": "マーキングポイント",
     "timestamp": "2025-06-02T06:04:47.0563669+08:00",
+    "type": "tag"
+  },
+  "ja:样式表": {
+    "translation": "スタイルシート",
+    "timestamp": "2025-06-02T17:28:20.4634787+08:00",
     "type": "tag"
   },
   "ja:民主党": {
@@ -1592,6 +1682,21 @@
   "ja:流量变现": {
     "translation": "トラフィック収益化 (Torakku Shuyaku-ka)",
     "timestamp": "2025-06-02T05:11:02.1045593+08:00",
+    "type": "tag"
+  },
+  "ja:深交所": {
+    "translation": "東京証券取引所 (とうきょうしょうけんとりひきよ)",
+    "timestamp": "2025-06-02T17:23:26.3012199+08:00",
+    "type": "tag"
+  },
+  "ja:混沌工程": {
+    "translation": "カオスエンジニアリング",
+    "timestamp": "2025-06-02T17:24:25.1840703+08:00",
+    "type": "tag"
+  },
+  "ja:港交所": {
+    "translation": "香港証券取引所 (Hónggū zhèngquán qìyuēsuǒ)",
+    "timestamp": "2025-06-02T17:23:25.7719976+08:00",
     "type": "tag"
   },
   "ja:游戏": {
@@ -1659,6 +1764,11 @@
     "timestamp": "2025-06-02T07:45:27.5666255+08:00",
     "type": "tag"
   },
+  "ja:盈透证券": {
+    "translation": "エイトリ証券 (Eitori Shoken)",
+    "timestamp": "2025-06-02T17:26:10.4280377+08:00",
+    "type": "tag"
+  },
   "ja:监控": {
     "translation": "監視 (Goshi)",
     "timestamp": "2025-06-02T06:06:27.7317696+08:00",
@@ -1672,6 +1782,11 @@
   "ja:直播": {
     "translation": "生放送",
     "timestamp": "2025-06-02T05:11:02.9034059+08:00",
+    "type": "tag"
+  },
+  "ja:硬件": {
+    "translation": "ハードウェア",
+    "timestamp": "2025-06-02T17:19:52.3643096+08:00",
     "type": "tag"
   },
   "ja:磁盘": {
@@ -1709,6 +1824,11 @@
     "timestamp": "2025-06-02T06:06:27.8293191+08:00",
     "type": "tag"
   },
+  "ja:纳斯达克": {
+    "translation": "ニューヨーク証券取引所 (Nyuu Yookuu Shoquun Torihajo)",
+    "timestamp": "2025-06-02T17:23:26.5977711+08:00",
+    "type": "tag"
+  },
   "ja:线上购票": {
     "translation": "オンラインチケット購入",
     "timestamp": "2025-06-02T06:12:23.63489+08:00",
@@ -1722,6 +1842,11 @@
   "ja:编程": {
     "translation": "プログラミング",
     "timestamp": "2025-06-02T06:05:11.8084855+08:00",
+    "type": "tag"
+  },
+  "ja:编辑器": {
+    "translation": "エディター",
+    "timestamp": "2025-06-02T17:28:13.2089554+08:00",
     "type": "tag"
   },
   "ja:网络": {
@@ -1752,6 +1877,11 @@
   "ja:股市": {
     "translation": "株式市場",
     "timestamp": "2025-06-02T06:15:05.2673016+08:00",
+    "type": "tag"
+  },
+  "ja:自动化测试": {
+    "translation": "自動テスト",
+    "timestamp": "2025-06-02T17:29:20.9763271+08:00",
     "type": "tag"
   },
   "ja:自定义": {
@@ -1824,9 +1954,24 @@
     "timestamp": "2025-06-02T05:52:18.420347+08:00",
     "type": "tag"
   },
+  "ja:起点": {
+    "translation": "出発点",
+    "timestamp": "2025-06-02T17:29:35.3702582+08:00",
+    "type": "tag"
+  },
   "ja:躺平": {
     "translation": "横になる",
     "timestamp": "2025-06-02T05:47:12.4567955+08:00",
+    "type": "tag"
+  },
+  "ja:迷茫": {
+    "translation": "戸惑い",
+    "timestamp": "2025-06-02T17:26:00.4144726+08:00",
+    "type": "tag"
+  },
+  "ja:追寻": {
+    "translation": "探求 (Tanka) / 追求 (Suikyuu)",
+    "timestamp": "2025-06-02T17:26:22.8593744+08:00",
     "type": "tag"
   },
   "ja:通胀": {
