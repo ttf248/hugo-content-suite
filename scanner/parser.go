@@ -2,6 +2,7 @@ package scanner
 
 import (
 	"fmt"
+	"hugo-content-suite/config"
 	"hugo-content-suite/models"
 	"io"
 	"os"
@@ -171,8 +172,12 @@ func parseMarkdownFile(filePath string, withContent bool) (*Article, error) {
 
 // splitTextIntoParagraphs 将文本分割成段落，使用 langchaingo 的 MarkdownTextSplitter
 func splitTextIntoParagraphs(text string) []string {
+	cfg := config.GetGlobalConfig()
+
 	// 创建 MarkdownTextSplitter，设置较大的 chunk 大小以保持段落完整
 	splitter := textsplitter.NewMarkdownTextSplitter(
+		textsplitter.WithChunkSize(cfg.Paragraph.MaxLength), // 设置较大的 chunk 大小
+		textsplitter.WithChunkOverlap(0),                    // 不需要重叠
 		textsplitter.WithCodeBlocks(true),
 	)
 

@@ -33,7 +33,7 @@
     ]
   },
   "paragraph": {
-    "max_length": 800,
+    "max_length": 4096,
     "enable_splitting": true,
     "split_at_sentences": true,
     "min_split_length": 200,
