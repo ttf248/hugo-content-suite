@@ -894,6 +894,11 @@
     "timestamp": "2025-05-25T22:42:00.8386262+08:00",
     "type": "tag"
   },
+  "en:浙江": {
+    "translation": "Zhejiang",
+    "timestamp": "2025-06-02T21:03:56.6704171+08:00",
+    "type": "tag"
+  },
   "en:深交所": {
     "translation": "shenzhen-stock-exchange",
     "timestamp": "2025-05-25T22:41:36.2264248+08:00",
@@ -1142,6 +1147,11 @@
   "en:财政政策": {
     "translation": "fiscal-policy",
     "timestamp": "2025-05-25T22:41:24.9197741+08:00",
+    "type": "tag"
+  },
+  "en:财经新闻": {
+    "translation": "Financial News",
+    "timestamp": "2025-06-02T21:03:56.5829584+08:00",
     "type": "tag"
   },
   "en:货币信用": {
@@ -1684,6 +1694,11 @@
     "timestamp": "2025-06-02T05:11:02.1045593+08:00",
     "type": "tag"
   },
+  "ja:浙江": {
+    "translation": "浙江 (せっこう)",
+    "timestamp": "2025-06-02T21:04:30.8583185+08:00",
+    "type": "tag"
+  },
   "ja:深交所": {
     "translation": "東京証券取引所 (とうきょうしょうけんとりひきよ)",
     "timestamp": "2025-06-02T17:23:26.3012199+08:00",
@@ -1932,6 +1947,11 @@
   "ja:财政政策": {
     "translation": "財政政策",
     "timestamp": "2025-06-02T06:08:44.3639343+08:00",
+    "type": "tag"
+  },
+  "ja:财经新闻": {
+    "translation": "経済ニュース",
+    "timestamp": "2025-06-02T21:04:30.9372644+08:00",
     "type": "tag"
   },
   "ja:货币信用": {
