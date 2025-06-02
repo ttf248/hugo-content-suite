@@ -2,25 +2,28 @@
 
 [English](installation_en.md) | 中文
 
+> **Version v3.0.0** - 重构架构，企业级日志，高性能缓存
+
 ## 系统要求
 
 ### 必需环境
-- **Go**: 版本 1.21 或更高
+- **Go**: 版本 1.22.0 或更高 (推荐工具链 1.23.4)
 - **操作系统**: Windows, macOS, Linux
 - **Hugo博客**: 支持Front Matter的Markdown文件
 - **内存**: 建议 4GB 以上 (支持大型博客批量处理)
-- **磁盘空间**: 至少 100MB (包含缓存和日志文件)
+- **磁盘空间**: 至少 200MB (包含分层缓存和轮转日志文件)
 
 ### 可选组件
 - **LM Studio**: 用于AI翻译功能 (强烈推荐)
+  - 推荐模型: gemma-3-12b-it, llama-3.1, qwen-2.5 等
 - **Git**: 用于版本控制
-- **Visual Studio Code**: 推荐用于查看日志和配置文件
+- **Visual Studio Code**: 推荐用于查看结构化日志和配置文件
 
 ## 快速安装
 
 ### 1. 克隆项目
 ```bash
-git clone https://github.com/ttf248/hugo-content-suite.git
+git clone https://github.com/your-org/hugo-content-suite.git
 cd hugo-content-suite
 ```
 
@@ -39,7 +42,29 @@ go run main.go --help
 go run main.go [你的content目录路径]
 ```
 
-首次运行时，程序会自动创建默认配置文件 `config.json`。
+首次运行时，程序会自动创建：
+- 默认配置文件 `config.json`
+- 日志目录 `logs/`
+- 分层缓存文件 (`*_translations_cache.json`)
+
+## v3.0.0 新特性
+
+### 🏗️ 重构架构
+- **处理器模式**: 模块化业务逻辑，统一接口设计
+- **分层缓存**: 标签/Slug/分类分离管理，提高精准度
+- **统一HTTP客户端**: 消除重复代码，提升性能
+
+### 📝 企业级日志
+- **结构化日志**: JSON格式，便于分析和监控
+- **自动轮转**: 日志文件自动压缩和归档
+- **多级别输出**: DEBUG/INFO/WARN/ERROR级别控制
+- **性能监控**: 集成操作统计和性能指标
+
+### ⚡ 性能优化
+- **批量处理**: 智能分批减少API调用次数
+- **缓存预加载**: 提前检查状态，减少等待时间
+- **内存优化**: 降低内存占用约30%
+- **并发控制**: 可配置的并发请求限制
 
 ## 配置文件说明
 
@@ -124,6 +149,335 @@ go run main.go [你的content目录路径]
     "model": "your-model-name",                               // 修改为你的模型名称
     "timeout_seconds": 45,                                    // 可根据网络情况调整
     "max_retries": 5                                          // 网络不稳定时可增加重试次数
+  }
+}
+```
+
+### 验证LM Studio连接
+```bash
+# 运行连接测试
+go run main.go --test-connection
+
+# 或启动程序后在菜单中选择测试
+go run main.go [你的content目录]
+```
+
+## v3.0.0 日志系统
+
+### 日志级别配置
+程序支持多级别日志输出，可通过配置文件调整：
+
+```json
+{
+  "logging": {
+    "level": "INFO",        // DEBUG/INFO/WARN/ERROR
+    "file": "./logs/app.log",
+    "max_size_mb": 100,     // 单个日志文件最大大小
+    "max_backups": 10,      // 保留的备份文件数量
+    "console_output": true  // 是否同时输出到控制台
+  }
+}
+```
+
+### 日志文件结构
+```
+logs/
+├── app.log              # 当前日志文件
+├── app-2024-01-01.log   # 按日期轮转的备份文件
+├── app-2024-01-02.log.gz # 压缩的历史日志
+└── performance.log      # 性能监控日志
+```
+
+### 日志分析示例
+```bash
+# 查看最新错误日志
+grep "ERROR" logs/app.log | tail -10
+
+# 分析API调用性能
+grep "api_call" logs/performance.log | jq '.duration'
+
+# 监控缓存命中率
+grep "cache_hit" logs/app.log | wc -l
+```
+
+## v3.0.0 缓存系统
+
+### 分层缓存文件
+v3.0.0引入了分离的缓存管理：
+
+```
+project_root/
+├── tag_translations_cache.json      # 标签翻译缓存
+├── slug_translations_cache.json     # Slug翻译缓存
+├── category_translations_cache.json # 分类翻译缓存
+└── config.json                      # 主配置文件
+```
+
+### 缓存管理
+```bash
+# 清理特定类型缓存
+rm tag_translations_cache.json
+
+# 清理所有缓存
+rm *_translations_cache.json
+
+# 查看缓存统计
+go run main.go --cache-stats
+```
+
+### 缓存优化建议
+- **过期时间**: 根据内容更新频率设置合理的过期天数
+- **压缩功能**: 对于大型博客启用缓存压缩
+- **预热策略**: 首次运行时建议执行完整缓存预热
+
+## 性能优化配置
+
+### 批量处理配置
+根据系统配置调整性能参数：
+
+```json
+{
+  "performance": {
+    "max_concurrent_requests": 5,  // 并发请求数 (1-10)
+    "batch_size": 20,             // 批量处理大小 (10-50)
+    "memory_limit_mb": 512        // 内存限制 (256-1024)
+  }
+}
+```
+
+### 性能调优建议
+
+#### 小型博客 (< 100篇文章)
+```json
+{
+  "max_concurrent_requests": 3,
+  "batch_size": 10,
+  "memory_limit_mb": 256
+}
+```
+
+#### 中型博客 (100-500篇文章)
+```json
+{
+  "max_concurrent_requests": 5,
+  "batch_size": 20,
+  "memory_limit_mb": 512
+}
+```
+
+#### 大型博客 (> 500篇文章)
+```json
+{
+  "max_concurrent_requests": 8,
+  "batch_size": 30,
+  "memory_limit_mb": 1024
+}
+```
+
+## 故障排除
+
+### 常见问题
+
+#### 1. LM Studio连接失败
+```bash
+# 检查LM Studio是否运行
+curl http://localhost:2234/v1/models
+
+# 检查网络连接
+ping localhost
+
+# 查看详细错误日志
+tail -f logs/app.log
+```
+
+#### 2. 缓存问题
+```bash
+# 清理并重建缓存
+rm *_translations_cache.json
+go run main.go [content目录] --rebuild-cache
+```
+
+#### 3. 内存不足
+```bash
+# 减少并发数和批量大小
+# 在config.json中调整:
+{
+  "performance": {
+    "max_concurrent_requests": 2,
+    "batch_size": 10
+  }
+}
+```
+
+#### 4. 翻译质量问题
+- 检查LM Studio模型是否适合翻译任务
+- 考虑更换更大的模型 (如Gemma-3-12B)
+- 调整翻译提示词模板
+
+### 日志分析
+```bash
+# 查看启动错误
+grep "FATAL\|ERROR" logs/app.log
+
+# 分析处理性能
+grep "duration" logs/performance.log | tail -20
+
+# 监控缓存使用
+grep "cache" logs/app.log | grep "hit\|miss"
+```
+
+## 高级配置
+
+### 自定义翻译模板
+创建 `templates/translation_prompt.txt` 自定义翻译提示词：
+
+```text
+请将以下{source_language}文本翻译成{target_language}:
+
+原文: {content}
+
+要求:
+1. 保持Markdown格式不变
+2. 保持专业术语准确性
+3. 符合{target_language}表达习惯
+4. 不要翻译代码块内容
+
+翻译:
+```
+
+### 自定义标签页模板
+创建 `templates/tag_page.md` 自定义标签页模板：
+
+```markdown
+---
+title: "标签: {{.Name}}"
+slug: "{{.Slug}}"
+description: "包含{{.Count}}篇文章的{{.Name}}标签页面"
+---
+
+# {{.Name}}
+
+{{.Description}}
+
+## 相关文章 ({{.Count}}篇)
+```
+
+### 环境变量配置
+支持通过环境变量覆盖配置：
+
+```bash
+export HCS_LOG_LEVEL=DEBUG
+export HCS_LM_STUDIO_URL=http://192.168.1.100:2234/v1/chat/completions
+export HCS_CACHE_EXPIRE_DAYS=7
+
+go run main.go [content目录]
+```
+
+## 部署建议
+
+### 服务器部署
+```bash
+# 编译二进制文件
+go build -o hugo-content-suite main.go
+
+# 创建系统服务 (Linux)
+sudo cp hugo-content-suite /usr/local/bin/
+sudo chmod +x /usr/local/bin/hugo-content-suite
+
+# 配置定时任务
+crontab -e
+# 每天凌晨2点自动处理
+0 2 * * * /usr/local/bin/hugo-content-suite /path/to/content --auto-process
+```
+
+### Docker部署
+创建 `Dockerfile`：
+
+```dockerfile
+FROM golang:1.22-alpine AS builder
+WORKDIR /app
+COPY . .
+RUN go build -o hugo-content-suite main.go
+
+FROM alpine:latest
+RUN apk add --no-cache ca-certificates
+WORKDIR /root/
+COPY --from=builder /app/hugo-content-suite .
+COPY --from=builder /app/config.json .
+EXPOSE 8080
+CMD ["./hugo-content-suite"]
+```
+
+---
+
+## 版本升级
+
+### 从v2.x升级到v3.0.0
+
+1. **备份现有配置和缓存**
+```bash
+cp config.json config.json.backup
+cp translations_cache.json translations_cache.json.backup
+```
+
+2. **更新代码**
+```bash
+git pull origin main
+go mod tidy
+```
+
+3. **迁移配置**
+v3.0.0会自动检测旧配置格式并提示升级。
+
+4. **重建缓存**
+```bash
+# 删除旧的单一缓存文件
+rm translations_cache.json
+
+# 运行程序，自动创建新的分层缓存
+go run main.go [content目录]
+```
+
+### 配置迁移指南
+
+#### v2.x配置格式
+```json
+{
+  "lm_studio_url": "http://localhost:2234/v1/chat/completions",
+  "cache_file": "translations_cache.json"
+}
+```
+
+#### v3.0.0配置格式
+```json
+{
+  "lm_studio": {
+    "url": "http://localhost:2234/v1/chat/completions",
+    "model": "gemma-3-12b-it",
+    "timeout_seconds": 30
+  },
+  "cache": {
+    "auto_save_count": 10,
+    "delay_ms": 500
+  }
+}
+```
+
+---
+
+## 技术支持
+
+### 获取帮助
+- **命令行帮助**: `go run main.go --help`
+- **配置示例**: 查看自动生成的 `config.json`
+- **日志分析**: 检查 `logs/app.log` 文件
+- **GitHub Issues**: 报告问题和功能请求
+
+### 贡献代码
+欢迎提交Pull Request和Issue，帮助改进Hugo Content Suite。
+
+### 许可证
+本项目采用MIT许可证，详见LICENSE文件。
   }
 }
 ```

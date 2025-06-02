@@ -3,6 +3,8 @@
 English | [中文](README.md)
 
 > 🚀 An intelligent blog management tool designed for Hugo blogs, featuring AI multilingual translation, high-performance caching, and integrated workflow automation
+> 
+> **Version v3.0.0** - Refactored architecture, optimized performance, enhanced user experience
 
 ## ✨ Key Features
 
@@ -42,90 +44,117 @@ English | [中文](README.md)
 - Multilingual article translation support
 - Complete blog management solution
 
-## 🏗️ Refactoring Highlights
+## 🏗️ v3.0.0 Refactoring Highlights
 
 ### Code Architecture Optimization
-- **Unified HTTP Client**: Eliminated code duplication, improved request processing efficiency
-- **Generic Translation Methods**: Template-based prompts supporting different translation types
-- **Hierarchical Cache Design**: Separated tag and article management for improved cache hit rates
+
+- **Unified HTTP Client**: Refactored translation module, eliminated code duplication, improved request processing efficiency
+- **Generic Translation Methods**: Template-based prompts supporting different translation types (tags, articles, categories, etc.)
+- **Hierarchical Cache Design**: Separated tag, slug, and category management for improved cache hit rates and precision
 - **Functional Design**: Composable translation processing functions, easy to extend and maintain
+- **Processor Architecture**: Modular business logic with unified interface design
 
 ### Performance Improvements
-- **Batch Processing Optimization**: Intelligent batch processing to reduce network overhead
-- **Cache Preloading**: Early cache status checking to reduce redundant queries
-- **Progress Tracking**: Real-time processing progress display for better user experience
-- **Memory Optimization**: Reduced duplicate object creation, lower memory footprint
+
+- **Batch Processing Optimization**: Intelligent batch processing to reduce network overhead and API call frequency
+- **Cache Preloading**: Early cache status checking to reduce redundant queries and wait times
+- **Progress Tracking**: Real-time processing progress display for better user experience and operation transparency
+- **Memory Optimization**: Reduced duplicate object creation, lower memory footprint and GC pressure
+- **Concurrency Control**: Reasonable concurrent request limits to avoid API limitations and resource contention
+
+### Engineering Improvements
+
+- **Enterprise Logging**: Integrated logrus and lumberjack with structured logging and automatic rotation
+- **Performance Monitoring**: Detailed statistics and performance metrics tracking
+- **Error Handling**: Intelligent retry mechanisms and graceful error recovery
+- **Configuration Management**: Enhanced configuration validation and default value handling
+- **Modular Design**: Clear separation of responsibilities and component decoupling
 
 ## 📁 Project Architecture
 
 ```
 hugo-content-suite/
-├── main.go              # Program entry point
+├── main.go              # Program entry point - Interactive menu system
 ├── config/              # Configuration management
-│   ├── config.go        # Configuration structure and loading
-│   └── validation.go    # Configuration validation
+│   └── config.go        # Configuration structure and loading logic
 ├── models/              # Data models
-│   ├── article.go       # Article model
-│   └── metadata.go      # Metadata structures
+│   └── article.go       # Article, tag, and category statistics models
 ├── scanner/             # Article scanning and parsing
-│   ├── scanner.go       # File scanner
-│   └── parser.go        # Markdown parser
+│   └── parser.go        # Markdown file parser
 ├── stats/               # Statistical analysis
-│   ├── collector.go     # Data collector
-│   └── reporter.go      # Statistics reporter
-├── translator/          # AI translation module (refactored)
-│   ├── llm_translator.go    # LLM translator (unified HTTP handling)
-│   ├── cache.go             # Hierarchical cache management
-│   └── fallback.go          # Fallback translation strategy
-├── generator/           # Content generators
-│   ├── tag_generator.go     # Tag page generator
-│   └── slug_generator.go    # Slug generator
+│   └── calculator.go    # Statistics data calculator
+├── translator/          # AI translation module (v3.0 refactored)
+│   ├── llm_translator.go    # LLM translator (unified HTTP client)
+│   ├── cache.go             # Hierarchical cache management system
+│   └── translation_utils.go # Translation utility functions
+├── generator/           # Content generators (refactored)
+│   ├── page_generator.go        # Tag and category page generator
+│   ├── article_slug_generator.go # Article slug generator
+│   ├── article_translator.go    # Article translation generator
+│   ├── field_translator.go      # Field translation processor
+│   └── content_parser.go        # Content parser
 ├── display/             # Interface display
-│   ├── table.go         # Table display
-│   └── progress.go      # Progress display
-├── menu/                # Interactive menu system
-│   ├── main_menu.go     # Main menu
-│   └── handlers.go      # Menu handlers
-├── operations/          # Business operation modules
-│   ├── batch_process.go # Batch processing
-│   └── workflow.go      # Workflow management
-├── utils/               # Utilities and logging system
-│   ├── logger.go        # Enterprise logging system
-│   ├── progress.go      # Progress bar utilities
-│   └── helpers.go       # Helper functions
+│   └── tables.go        # Table and progress display
+├── operations/          # Business operation modules (processor architecture)
+│   ├── processor.go             # Unified processor interface
+│   ├── article_operations.go    # Article operation processor
+│   ├── article_slug_operations.go # Article slug operations
+│   ├── article_del_operations.go  # Article deletion operations
+│   └── page_operations.go       # Page generation operations
+├── utils/               # Utilities and system services
+│   ├── logger.go        # Enterprise logging system (logrus+lumberjack)
+│   ├── progress.go      # Progress bar and status display
+│   ├── performance.go   # Performance monitoring and statistics
+│   └── help.go          # Help and support functions
 ├── config.json          # Main configuration file
-├── cache/               # Cache file directory
-│   ├── tag_cache.json   # Tag translation cache
-│   └── article_cache.json # Article translation cache
-├── logs/                # Log file directory
+├── *_translations_cache.json # Separated cache files
+│   ├── tag_translations_cache.json      # Tag translation cache
+│   ├── slug_translations_cache.json     # Slug translation cache
+│   └── category_translations_cache.json # Category translation cache
+├── markdown/            # Multilingual content examples
 └── docs/               # Detailed documentation
-    ├── architecture.md  # Architecture design documentation
-    ├── performance.md   # Performance optimization guide
-    └── caching.md       # Caching strategy documentation
+    ├── installation.md     # Chinese installation guide
+    ├── installation_en.md  # English installation guide
+    ├── usage.md           # Chinese usage instructions
+    └── usage_en.md        # English usage instructions
 ```
 
 ## 🎮 Main Features
 
 ### 🚀 Quick Processing
+
 - 📦 One-Click Process All (intelligent workflow automation)
 - 🔄 Batch cache warming and optimization
 
 ### 📝 Content Management
-- 🏷️ Generate tag pages (custom template support)
+
+- 🏷️ Generate tag and category pages (custom template support)
 - 📝 Generate article slugs (SEO optimization)
 - 🌐 Translate articles to multiple languages (paragraph-level translation)
+- 🔄 Article field translation (titles, descriptions, tags, etc.)
 
 ### 💾 Cache Management
-- 📊 View hierarchical cache status (tag/article separation)
+
+- 📊 View hierarchical cache status (tag/article/category separation)
 - 🚀 Generate bulk translation cache (intelligent batch processing)
 - 🗑️ Clear specific cache types (fine-grained management)
+- 📈 Cache performance monitoring and statistics
+
+### 🔧 Processor Architecture
+
+- 🎯 Modular processor design (unified interface)
+- 📋 Article operation processors (create, update, delete)
+- 🏷️ Page generation processors (tag pages, category pages)
+- 🔗 Slug operation processors (generation and management)
 
 ### Smart Features
+
 - 🤖 AI-driven context-aware translation
-- 💾 Multi-tier intelligent caching mechanism
+- 💾 Multi-tier intelligent caching mechanism (tag/slug/category)
 - 🎯 Precise content identification and processing
 - 📋 Full-chain log tracking and monitoring
 - ⚡ High-performance batch processing engine
+- 🔄 Unified HTTP client optimization
 
 ## ⚙️ Configuration
 

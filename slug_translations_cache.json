@@ -94,6 +94,11 @@
     "timestamp": "2025-05-25T22:44:23.0132473+08:00",
     "type": "article"
   },
+  "en:Git子模块递交记录丢失": {
+    "translation": "Git Submodule Merge History Lost",
+    "timestamp": "2025-06-02T16:51:49.8012053+08:00",
+    "type": "article"
+  },
   "en:Git禁用http仓库": {
     "translation": "git-disable-http-repositories",
     "timestamp": "2025-05-25T22:43:15.5263808+08:00",

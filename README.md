@@ -3,6 +3,8 @@
 [English](README_EN.md) | 中文
 
 > 🚀 一款专为Hugo博客设计的智能管理工具，支持AI多语言翻译、高性能缓存和一体化工作流
+> 
+> **版本 v3.0.0** - 重构架构，优化性能，提升用户体验
 
 ## ✨ 核心特色
 
@@ -42,90 +44,117 @@
 - 多语言文章翻译支持
 - 完整的博客管理解决方案
 
-## 🏗️ 重构优化亮点
+## 🏗️ v3.0.0 重构优化亮点
 
 ### 代码架构优化
-- **统一HTTP客户端**: 消除重复代码，提高请求处理效率
-- **通用翻译方法**: 使用模板化提示词，支持不同翻译类型
-- **分层缓存设计**: 标签和文章分离管理，提高缓存命中率
+
+- **统一HTTP客户端**: 重构翻译模块，消除重复代码，提高请求处理效率
+- **通用翻译方法**: 使用模板化提示词，支持不同翻译类型（标签、文章、分类等）
+- **分层缓存设计**: 标签、Slug、分类分离管理，提高缓存命中率和精准度
 - **函数式设计**: 可组合的翻译处理函数，易于扩展和维护
+- **处理器架构**: 模块化业务逻辑，统一接口设计
 
 ### 性能提升
-- **批量处理优化**: 智能分批处理，减少网络开销
-- **缓存预加载**: 提前检查缓存状态，减少重复查询
-- **进度追踪**: 实时显示处理进度，提升用户体验
-- **内存优化**: 减少重复对象创建，降低内存占用
+
+- **批量处理优化**: 智能分批处理，减少网络开销和API调用次数
+- **缓存预加载**: 提前检查缓存状态，减少重复查询和等待时间
+- **进度追踪**: 实时显示处理进度，提升用户体验和操作透明度
+- **内存优化**: 减少重复对象创建，降低内存占用和GC压力
+- **并发控制**: 合理的并发请求限制，避免API限制和资源竞争
+
+### 工程化改进
+
+- **企业级日志**: 集成logrus和lumberjack，支持结构化日志和自动轮转
+- **性能监控**: 详细的统计数据和性能指标追踪
+- **错误处理**: 智能重试机制和优雅的错误恢复
+- **配置管理**: 更完善的配置验证和默认值处理
+- **模块化设计**: 清晰的职责分离和组件解耦
 
 ## 📁 项目架构
 
 ```
 hugo-content-suite/
-├── main.go              # 主程序入口
+├── main.go              # 主程序入口 - 交互式菜单系统
 ├── config/              # 配置管理
-│   ├── config.go        # 配置结构和加载
-│   └── validation.go    # 配置验证
+│   └── config.go        # 配置结构和加载逻辑
 ├── models/              # 数据模型
-│   ├── article.go       # 文章模型
-│   └── metadata.go      # 元数据结构
+│   └── article.go       # 文章、标签、分类统计模型
 ├── scanner/             # 文章扫描解析
-│   ├── scanner.go       # 文件扫描器
-│   └── parser.go        # Markdown解析器
+│   └── parser.go        # Markdown文件解析器
 ├── stats/               # 统计分析
-│   ├── collector.go     # 数据收集器
-│   └── reporter.go      # 统计报告
-├── translator/          # AI翻译模块 (重构优化)
-│   ├── llm_translator.go    # LLM翻译器 (统一HTTP处理)
-│   ├── cache.go             # 分层缓存管理
-│   └── fallback.go          # 备用翻译策略
-├── generator/           # 内容生成器
-│   ├── tag_generator.go     # 标签页面生成
-│   └── slug_generator.go    # Slug生成器
+│   └── calculator.go    # 统计数据计算器
+├── translator/          # AI翻译模块 (v3.0重构)
+│   ├── llm_translator.go    # LLM翻译器 (统一HTTP客户端)
+│   ├── cache.go             # 分层缓存管理系统
+│   └── translation_utils.go # 翻译工具函数
+├── generator/           # 内容生成器 (重构优化)
+│   ├── page_generator.go        # 标签和分类页面生成
+│   ├── article_slug_generator.go # 文章Slug生成器
+│   ├── article_translator.go    # 文章翻译生成器
+│   ├── field_translator.go      # 字段翻译处理器
+│   └── content_parser.go        # 内容解析器
 ├── display/             # 界面显示
-│   ├── table.go         # 表格显示
-│   └── progress.go      # 进度显示
-├── menu/                # 交互菜单系统
-│   ├── main_menu.go     # 主菜单
-│   └── handlers.go      # 菜单处理器
-├── operations/          # 业务操作模块
-│   ├── batch_process.go # 批量处理
-│   └── workflow.go      # 工作流程
-├── utils/               # 工具函数和日志系统
-│   ├── logger.go        # 企业级日志系统
-│   ├── progress.go      # 进度条工具
-│   └── helpers.go       # 辅助函数
+│   └── tables.go        # 表格和进度显示
+├── operations/          # 业务操作模块 (处理器架构)
+│   ├── processor.go             # 统一处理器接口
+│   ├── article_operations.go    # 文章操作处理
+│   ├── article_slug_operations.go # 文章Slug操作
+│   ├── article_del_operations.go  # 文章删除操作
+│   └── page_operations.go       # 页面生成操作
+├── utils/               # 工具函数和系统服务
+│   ├── logger.go        # 企业级日志系统 (logrus+lumberjack)
+│   ├── progress.go      # 进度条和状态显示
+│   ├── performance.go   # 性能监控和统计
+│   └── help.go          # 帮助和支持功能
 ├── config.json          # 主配置文件
-├── cache/               # 缓存文件目录
-│   ├── tag_cache.json   # 标签翻译缓存
-│   └── article_cache.json # 文章翻译缓存
-├── logs/                # 日志文件目录
+├── *_translations_cache.json # 分离式缓存文件
+│   ├── tag_translations_cache.json      # 标签翻译缓存
+│   ├── slug_translations_cache.json     # Slug翻译缓存
+│   └── category_translations_cache.json # 分类翻译缓存
+├── markdown/            # 多语言内容示例
 └── docs/               # 详细文档
-    ├── architecture.md  # 架构设计文档
-    ├── performance.md   # 性能优化指南
-    └── caching.md       # 缓存策略说明
+    ├── installation.md     # 中文安装指南
+    ├── installation_en.md  # 英文安装指南
+    ├── usage.md           # 中文使用说明
+    └── usage_en.md        # 英文使用说明
 ```
 
 ## 🎮 主要功能
 
 ### 🚀 快速处理
+
 - 📦 一键处理全部 (智能工作流自动化)
 - 🔄 批量缓存预热和优化
 
 ### 📝 内容管理
-- 🏷️ 生成标签页面 (支持自定义模板)
+
+- 🏷️ 生成标签和分类页面 (支持自定义模板)
 - 📝 生成文章Slug (SEO优化)
 - 🌐 翻译文章为多语言版本 (段落级翻译)
+- 🔄 文章字段翻译 (标题、描述、标签等)
 
 ### 💾 缓存管理
-- 📊 查看分层缓存状态 (标签/文章分离)
+
+- 📊 查看分层缓存状态 (标签/文章/分类分离)
 - 🚀 生成全量翻译缓存 (智能批量处理)
 - 🗑️ 清空指定类型缓存 (精细化管理)
+- 📈 缓存性能监控和统计
+
+### 🔧 处理器架构
+
+- 🎯 模块化处理器设计 (统一接口)
+- 📋 文章操作处理器 (创建、更新、删除)
+- 🏷️ 页面生成处理器 (标签页、分类页)
+- 🔗 Slug操作处理器 (生成和管理)
 
 ### 智能特性
+
 - 🤖 AI驱动的上下文感知翻译
-- 💾 多层级智能缓存机制
+- 💾 多层级智能缓存机制 (标签/Slug/分类)
 - 🎯 精准内容识别和处理
 - 📋 全链路日志追踪和监控
 - ⚡ 高性能批量处理引擎
+- 🔄 统一HTTP客户端优化
 
 ## ⚙️ 配置说明
 
