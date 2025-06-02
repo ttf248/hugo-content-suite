@@ -664,6 +664,11 @@
     "timestamp": "2025-05-25T22:40:48.7173571+08:00",
     "type": "tag"
   },
+  "en:大模型": {
+    "translation": "Large Model",
+    "timestamp": "2025-06-02T21:32:17.1430651+08:00",
+    "type": "tag"
+  },
   "en:大端存储": {
     "translation": "big-endian",
     "timestamp": "2025-05-25T22:42:18.1851809+08:00",
@@ -1467,6 +1472,11 @@
   "ja:大型文件": {
     "translation": "大規模ファイル",
     "timestamp": "2025-06-02T17:28:13.2886184+08:00",
+    "type": "tag"
+  },
+  "ja:大模型": {
+    "translation": "大規模モデル",
+    "timestamp": "2025-06-02T21:32:41.2432663+08:00",
     "type": "tag"
   },
   "ja:大端存储": {
