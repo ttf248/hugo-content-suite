@@ -104,6 +104,11 @@
     "timestamp": "2025-05-25T22:43:15.5263808+08:00",
     "type": "article"
   },
+  "en:Go 项目查找所有没有引用的函数": {
+    "translation": "Find all functions not referenced in the Go project.",
+    "timestamp": "2025-06-02T21:13:12.841357+08:00",
+    "type": "article"
+  },
   "en:Hugo Module自定义修改主题：思路讲解": {
     "translation": "hugo-module-customizing-themes-ideas",
     "timestamp": "2025-05-25T22:43:42.8857172+08:00",

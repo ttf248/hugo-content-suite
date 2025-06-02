@@ -539,6 +539,11 @@
     "timestamp": "2025-05-25T22:41:39.9296805+08:00",
     "type": "tag"
   },
+  "en:函数": {
+    "translation": "Function",
+    "timestamp": "2025-06-02T21:13:09.6181699+08:00",
+    "type": "tag"
+  },
   "en:制造业": {
     "translation": "manufacturing",
     "timestamp": "2025-05-25T22:41:11.4388811+08:00",
@@ -1342,6 +1347,11 @@
   "ja:内网穿透": {
     "translation": "イントラネット貫通",
     "timestamp": "2025-06-02T05:10:33.1316275+08:00",
+    "type": "tag"
+  },
+  "ja:函数": {
+    "translation": "関数",
+    "timestamp": "2025-06-02T21:13:22.9184249+08:00",
     "type": "tag"
   },
   "ja:制造业": {
