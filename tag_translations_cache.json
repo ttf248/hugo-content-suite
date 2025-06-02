@@ -824,6 +824,11 @@
     "timestamp": "2025-05-25T22:41:13.5775657+08:00",
     "type": "tag"
   },
+  "en:文化传播": {
+    "translation": "Cultural Transmission",
+    "timestamp": "2025-06-02T21:55:23.7895998+08:00",
+    "type": "tag"
+  },
   "en:斗鱼": {
     "translation": "dou-yu",
     "timestamp": "2025-05-25T22:40:53.873685+08:00",
@@ -1097,6 +1102,11 @@
   "en:美国": {
     "translation": "us",
     "timestamp": "2025-05-25T22:40:24.7887915+08:00",
+    "type": "tag"
+  },
+  "en:翻译": {
+    "translation": "Translation",
+    "timestamp": "2025-06-02T21:55:23.842204+08:00",
     "type": "tag"
   },
   "en:股市": {
@@ -1634,6 +1644,11 @@
     "timestamp": "2025-06-02T06:20:49.0132494+08:00",
     "type": "tag"
   },
+  "ja:文化传播": {
+    "translation": "文化伝播 (Bunka zen'ho)",
+    "timestamp": "2025-06-02T21:55:37.6618876+08:00",
+    "type": "tag"
+  },
   "ja:斗鱼": {
     "translation": "闘魚",
     "timestamp": "2025-06-02T05:52:18.2846841+08:00",
@@ -1907,6 +1922,11 @@
   "ja:美国": {
     "translation": "アメリカ (Amerika)",
     "timestamp": "2025-06-02T06:12:37.643073+08:00",
+    "type": "tag"
+  },
+  "ja:翻译": {
+    "translation": "翻訳 (Hon'yaku)",
+    "timestamp": "2025-06-02T21:55:37.4715955+08:00",
     "type": "tag"
   },
   "ja:股市": {
