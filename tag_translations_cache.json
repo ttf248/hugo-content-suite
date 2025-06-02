@@ -1589,6 +1589,11 @@
     "timestamp": "2025-06-02T05:13:21.7832901+08:00",
     "type": "tag"
   },
+  "ja:演讲": {
+    "translation": "講演 (こうえん)",
+    "timestamp": "2025-06-02T07:45:27.6907942+08:00",
+    "type": "tag"
+  },
   "ja:炒股": {
     "translation": "株式投資 (Kaibu Tōshi)",
     "timestamp": "2025-06-02T05:49:23.3195906+08:00",
@@ -1637,6 +1642,11 @@
   "ja:电竞": {
     "translation": "eスポーツ (ē supōtsu)",
     "timestamp": "2025-06-02T05:52:17.7919557+08:00",
+    "type": "tag"
+  },
+  "ja:白岩松": {
+    "translation": "白岩松 (Hakken Matsu)",
+    "timestamp": "2025-06-02T07:45:27.5666255+08:00",
     "type": "tag"
   },
   "ja:监控": {
