@@ -3,8 +3,10 @@ package operations
 import (
 	"bufio"
 	"fmt"
+	"hugo-content-suite/generator"
 	"hugo-content-suite/utils"
 	"strings"
+	"time"
 
 	"github.com/fatih/color"
 )
@@ -111,4 +113,133 @@ func (p *Processor) selectPageMode(info string, createCount, updateCount int, re
 		color.Red("⚠️  无效选择")
 		return ""
 	}
+}
+
+// ProcessAllContent 一键处理所有内容（仅新增数据）
+func (p *Processor) ProcessAllContent(reader *bufio.Reader) {
+	if p.contentDir == "" {
+		color.Red("❌ 内容目录未设置")
+		return
+	}
+
+	color.Cyan("🚀 一键处理所有内容")
+	color.Cyan("=================")
+	fmt.Println("将依次执行以下操作（仅处理新增内容）：")
+	fmt.Println("  1. 生成标签页面")
+	fmt.Println("  2. 生成文章Slug")
+	fmt.Println("  3. 翻译文章为多语言版本")
+	fmt.Println()
+
+	startTime := time.Now()
+	var totalErrors int
+
+	// 步骤1：生成标签页面
+	color.Cyan("\n📖 步骤 1/3: 生成标签页面")
+	color.Cyan("=======================")
+	if err := p.processTagPagesAutomatically(); err != nil {
+		color.Red("❌ 标签页面生成失败: %v", err)
+		totalErrors++
+	} else {
+		color.Green("✅ 标签页面生成完成")
+	}
+
+	// 步骤2：生成文章Slug
+	color.Cyan("\n📝 步骤 2/3: 生成文章Slug")
+	color.Cyan("========================")
+	if err := p.processArticleSlugsAutomatically(); err != nil {
+		color.Red("❌ 文章Slug生成失败: %v", err)
+		totalErrors++
+	} else {
+		color.Green("✅ 文章Slug生成完成")
+	}
+
+	// 步骤3：翻译文章
+	color.Cyan("\n🌐 步骤 3/3: 翻译文章")
+	color.Cyan("==================")
+	if err := p.processArticleTranslationAutomatically(); err != nil {
+		color.Red("❌ 文章翻译失败: %v", err)
+		totalErrors++
+	} else {
+		color.Green("✅ 文章翻译完成")
+	}
+
+	// 总结
+	duration := time.Since(startTime)
+	color.Cyan("\n🎉 一键处理完成!")
+	color.Cyan("===============")
+	fmt.Printf("⏱️  总用时: %v\n", duration.Round(time.Second))
+	if totalErrors > 0 {
+		color.Yellow("⚠️  完成时遇到 %d 个错误，请检查日志", totalErrors)
+	} else {
+		color.Green("✅ 所有操作成功完成")
+	}
+}
+
+// processTagPagesAutomatically 自动处理标签页面生成
+func (p *Processor) processTagPagesAutomatically() error {
+	pageGenerator := generator.NewTagPageGenerator(p.contentDir)
+	previews, createCount, _ := pageGenerator.PrepareTagPages()
+
+	if createCount == 0 {
+		color.Green("✅ 所有标签页面都是最新的")
+		return nil
+	}
+
+	// 只处理新增的标签页面
+	targetPreviews := filterByMode(previews, "create")
+	if len(targetPreviews) == 0 {
+		color.Green("✅ 没有需要新建的标签页面")
+		return nil
+	}
+
+	color.Cyan("🚀 自动生成新标签页面...")
+	return pageGenerator.GenerateTagPagesWithMode(targetPreviews, "create")
+}
+
+// processArticleSlugsAutomatically 自动处理文章Slug生成
+func (p *Processor) processArticleSlugsAutomatically() error {
+	slugGenerator := generator.NewArticleSlugGenerator(p.contentDir)
+	previews, createCount, _, err := slugGenerator.PrepareArticleSlugs()
+	if err != nil {
+		return fmt.Errorf("分析文章slug失败: %v", err)
+	}
+
+	if createCount == 0 {
+		color.Green("✅ 所有文章slug都是最新的")
+		return nil
+	}
+
+	// 只处理缺失的slug
+	targetPreviews := filterByMode(previews, "create")
+	if len(targetPreviews) == 0 {
+		color.Green("✅ 没有需要新建的文章slug")
+		return nil
+	}
+
+	color.Cyan("🚀 自动生成新文章slug...")
+	return slugGenerator.GenerateArticleSlugsWithMode(targetPreviews, "create")
+}
+
+// processArticleTranslationAutomatically 自动处理文章翻译
+func (p *Processor) processArticleTranslationAutomatically() error {
+	articleTranslator := generator.NewArticleTranslator(p.contentDir)
+	previews, createCount, _, err := articleTranslator.PrepareArticleTranslations()
+	if err != nil {
+		return fmt.Errorf("分析文章翻译失败: %v", err)
+	}
+
+	if createCount == 0 {
+		color.Green("✅ 所有文章都已完全翻译")
+		return nil
+	}
+
+	// 只处理缺失的翻译
+	targetPreviews := filterTranslationsByMode(previews, "create")
+	if len(targetPreviews) == 0 {
+		color.Green("✅ 没有需要新建的文章翻译")
+		return nil
+	}
+
+	color.Cyan("🚀 自动翻译缺失的文章...")
+	return articleTranslator.TranslateArticlesWithMode(targetPreviews, "create")
 }

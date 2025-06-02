@@ -31,6 +31,8 @@ func (m *InteractiveMenu) Show() {
 		choice := utils.GetChoice(m.reader, "请选择功能 (0-8): ")
 
 		switch choice {
+		case "`":
+			m.processor.ProcessAllContent(m.reader)
 		case "1":
 			m.processor.GenerateTagPages(m.reader)
 		case "2":
@@ -39,6 +41,7 @@ func (m *InteractiveMenu) Show() {
 			m.processor.TranslateArticles(m.reader)
 		case "4":
 			m.processor.DeleteArticles(m.reader)
+
 		case "0":
 			color.Green("感谢使用！再见！")
 			return
@@ -52,14 +55,18 @@ func (m *InteractiveMenu) displayMainMenu() {
 	color.Cyan("\n=== Hugo 博客管理工具 ===")
 	fmt.Println()
 
-	// 主要功能模块
-	color.Red("🚀 核心功能")
+	color.Yellow("⚡ 一键操作")
+	fmt.Println("  `. 一键处理所有内容（仅新增）")
+	fmt.Println()
+
 	// 内容管理模块
 	color.Green("📝 内容管理")
 	fmt.Println("  1. 生成标签页面")
 	fmt.Println("  2. 生成文章Slug")
 	fmt.Println("  3. 翻译文章为多语言版本")
 	fmt.Println("  4. 删除指定语言的文章")
+	fmt.Println()
+
 	fmt.Println()
 
 	color.Red("  0. 退出程序")
