@@ -169,15 +169,29 @@ func parseMarkdownFile(filePath string, withContent bool) (*Article, error) {
 	return article, nil
 }
 
-// splitTextIntoParagraphs 将文本分割成段落
+// splitTextIntoParagraphs 将文本分割成段落，使用 langchaingo 的 MarkdownTextSplitter
 func splitTextIntoParagraphs(text string) []string {
-	splitter := textsplitter.NewMarkdownTextSplitter()
-	paragraphs, err := splitter.SplitText(text)
+	// 创建 MarkdownTextSplitter，设置较大的 chunk 大小以保持段落完整
+	splitter := textsplitter.NewMarkdownTextSplitter(
+		textsplitter.WithCodeBlocks(true),
+	)
+
+	// 使用 markdown splitter 分割文本
+	chunks, err := splitter.SplitText(text)
 	if err != nil {
-		// 处理错误
-		return []string{}
+		// 如果分割失败，回退到简单的段落分割
+		paragraphs := strings.Split(strings.TrimSpace(text), "\n\n")
+		var result []string
+		for _, paragraph := range paragraphs {
+			paragraph = strings.TrimSpace(paragraph)
+			if paragraph != "" {
+				result = append(result, paragraph)
+			}
+		}
+		return result
 	}
-	return paragraphs
+
+	return chunks
 }
 
 // extractTagsFromYAML 从 YAML 数据中提取标签

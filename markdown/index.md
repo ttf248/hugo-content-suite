@@ -14,6 +14,10 @@ draft: false
 slug: "auto-integration-system-switch"
 ---
 
+```bash
+测试代码块
+```
+
 - 苹果  
 - 香蕉  
 - 橙子 
