@@ -284,6 +284,11 @@
     "timestamp": "2025-05-25T22:41:36.7290499+08:00",
     "type": "tag"
   },
+  "en:histogram": {
+    "translation": "Histogram",
+    "timestamp": "2025-06-04T19:19:20.117704+08:00",
+    "type": "tag"
+  },
   "en:hkex": {
     "translation": "hkex",
     "timestamp": "2025-05-25T22:40:09.5697035+08:00",
@@ -379,6 +384,11 @@
     "timestamp": "2025-05-25T22:41:49.0275311+08:00",
     "type": "tag"
   },
+  "en:prometheus": {
+    "translation": "Prometheus",
+    "timestamp": "2025-06-04T19:19:20.1971822+08:00",
+    "type": "tag"
+  },
   "en:protobuf": {
     "translation": "protobuf",
     "timestamp": "2025-05-25T22:41:39.077075+08:00",
@@ -407,6 +417,11 @@
   "en:submodule": {
     "translation": "submodule",
     "timestamp": "2025-06-02T16:51:46.662379+08:00",
+    "type": "tag"
+  },
+  "en:summary": {
+    "translation": "Summary",
+    "timestamp": "2025-06-04T19:19:20.0549503+08:00",
     "type": "tag"
   },
   "en:trae": {
