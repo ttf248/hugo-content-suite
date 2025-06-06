@@ -309,6 +309,11 @@
     "timestamp": "2025-05-25T22:40:50.4321543+08:00",
     "type": "tag"
   },
+  "en:ip": {
+    "translation": "IP (Internet Protocol)",
+    "timestamp": "2025-06-06T18:59:52.225374+08:00",
+    "type": "tag"
+  },
   "en:jmeter": {
     "translation": "jmeter",
     "timestamp": "2025-05-25T22:40:23.3312214+08:00",
@@ -1164,6 +1169,11 @@
     "timestamp": "2025-05-25T22:42:08.7032272+08:00",
     "type": "tag"
   },
+  "en:计算机网络": {
+    "translation": "Computer Networks",
+    "timestamp": "2025-06-06T18:59:52.2973133+08:00",
+    "type": "tag"
+  },
   "en:设计": {
     "translation": "design",
     "timestamp": "2025-05-25T22:41:26.5723431+08:00",
@@ -1982,6 +1992,11 @@
   "ja:计划生育": {
     "translation": "計画出産 (Keikaku shussan) / 家族計画 (Kazoku keikaku)",
     "timestamp": "2025-06-02T06:24:18.5445193+08:00",
+    "type": "tag"
+  },
+  "ja:计算机网络": {
+    "translation": "コンピュータネットワーク",
+    "timestamp": "2025-06-06T19:00:23.0994699+08:00",
     "type": "tag"
   },
   "ja:设计": {
