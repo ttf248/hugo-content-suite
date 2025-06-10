@@ -499,6 +499,11 @@
     "timestamp": "2025-05-25T22:40:14.5690055+08:00",
     "type": "tag"
   },
+  "en:二进制兼容性": {
+    "translation": "Binary Compatibility",
+    "timestamp": "2025-06-10T17:00:21.7792783+08:00",
+    "type": "tag"
+  },
   "en:互联网": {
     "translation": "internet",
     "timestamp": "2025-05-25T22:42:05.2158809+08:00",
@@ -552,6 +557,11 @@
   "en:内存": {
     "translation": "memory",
     "timestamp": "2025-05-25T22:41:18.8155972+08:00",
+    "type": "tag"
+  },
+  "en:内存布局": {
+    "translation": "Memory Layout",
+    "timestamp": "2025-06-10T17:00:21.7098381+08:00",
     "type": "tag"
   },
   "en:内网穿透": {
@@ -747,6 +757,11 @@
   "en:师徒": {
     "translation": "shi-tu",
     "timestamp": "2025-05-25T22:42:02.2639191+08:00",
+    "type": "tag"
+  },
+  "en:年度大事件": {
+    "translation": "Year in Review / Major Events of the Year",
+    "timestamp": "2025-06-10T17:00:21.6307813+08:00",
     "type": "tag"
   },
   "en:影院": {
@@ -1169,6 +1184,11 @@
     "timestamp": "2025-05-25T22:42:08.7032272+08:00",
     "type": "tag"
   },
+  "en:计算机体系结构": {
+    "translation": "Computer Architecture",
+    "timestamp": "2025-06-10T17:00:21.452205+08:00",
+    "type": "tag"
+  },
   "en:计算机网络": {
     "translation": "Computer Networks",
     "timestamp": "2025-06-06T18:59:52.2973133+08:00",
@@ -1329,6 +1349,11 @@
     "timestamp": "2025-06-02T05:48:02.9274819+08:00",
     "type": "tag"
   },
+  "ja:二进制兼容性": {
+    "translation": "バイナリ互換性",
+    "timestamp": "2025-06-10T17:00:38.6090597+08:00",
+    "type": "tag"
+  },
   "ja:互联网": {
     "translation": "インターネット",
     "timestamp": "2025-06-02T06:22:38.2948375+08:00",
@@ -1382,6 +1407,11 @@
   "ja:内存": {
     "translation": "メモリ",
     "timestamp": "2025-06-02T17:19:52.4227592+08:00",
+    "type": "tag"
+  },
+  "ja:内存布局": {
+    "translation": "メモリ配置",
+    "timestamp": "2025-06-10T17:00:38.4907245+08:00",
     "type": "tag"
   },
   "ja:内网穿透": {
@@ -1572,6 +1602,11 @@
   "ja:师徒": {
     "translation": "師徒",
     "timestamp": "2025-06-02T06:12:55.4223668+08:00",
+    "type": "tag"
+  },
+  "ja:年度大事件": {
+    "translation": "年間の主要出来事 (ねんかんのずいこうできごと)",
+    "timestamp": "2025-06-10T17:01:18.4047932+08:00",
     "type": "tag"
   },
   "ja:影院": {
@@ -1992,6 +2027,11 @@
   "ja:计划生育": {
     "translation": "計画出産 (Keikaku shussan) / 家族計画 (Kazoku keikaku)",
     "timestamp": "2025-06-02T06:24:18.5445193+08:00",
+    "type": "tag"
+  },
+  "ja:计算机体系结构": {
+    "translation": "コンピュータアーキテクチャ",
+    "timestamp": "2025-06-10T17:00:38.7167486+08:00",
     "type": "tag"
   },
   "ja:计算机网络": {

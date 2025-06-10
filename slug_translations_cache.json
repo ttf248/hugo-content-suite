@@ -9,6 +9,11 @@
     "timestamp": "2025-05-25T22:44:27.089321+08:00",
     "type": "article"
   },
+  "en:2025 年度大事件": {
+    "translation": "2025 Major Events",
+    "timestamp": "2025-06-10T17:00:24.7192316+08:00",
+    "type": "article"
+  },
   "en:2025 春节档电影中的政治元素剖析": {
     "translation": "political-elements-in-chinese-films-spring-festival-2025",
     "timestamp": "2025-05-25T22:44:07.9071504+08:00",
@@ -332,6 +337,11 @@
   "en:关税风暴、股市暴跌": {
     "translation": "tariff-storm-stock-market-crash",
     "timestamp": "2025-05-25T22:44:21.0103466+08:00",
+    "type": "article"
+  },
+  "en:内存布局和二进制兼容性": {
+    "translation": "Memory Layout and Binary Compatibility",
+    "timestamp": "2025-06-10T17:00:24.5997434+08:00",
     "type": "article"
   },
   "en:几个不常用GIT命令汇总": {
