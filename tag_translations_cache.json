@@ -569,6 +569,11 @@
     "timestamp": "2025-05-25T22:41:39.9296805+08:00",
     "type": "tag"
   },
+  "en:出海": {
+    "translation": "Going Global / Overseas Expansion",
+    "timestamp": "2025-06-11T22:36:09.2522692+08:00",
+    "type": "tag"
+  },
   "en:函数": {
     "translation": "Function",
     "timestamp": "2025-06-02T21:13:09.6181699+08:00",
@@ -612,6 +617,11 @@
   "en:反腐": {
     "translation": "anti-corruption",
     "timestamp": "2025-05-25T22:41:30.7098565+08:00",
+    "type": "tag"
+  },
+  "en:发展方向": {
+    "translation": "Development Directions",
+    "timestamp": "2025-06-11T22:36:09.3267049+08:00",
     "type": "tag"
   },
   "en:台式机": {
@@ -694,6 +704,11 @@
     "timestamp": "2025-05-25T22:40:48.7173571+08:00",
     "type": "tag"
   },
+  "en:大学": {
+    "translation": "University",
+    "timestamp": "2025-06-11T22:36:09.4415711+08:00",
+    "type": "tag"
+  },
   "en:大模型": {
     "translation": "Large Model",
     "timestamp": "2025-06-02T21:32:17.1430651+08:00",
@@ -727,6 +742,11 @@
   "en:家庭": {
     "translation": "family",
     "timestamp": "2025-05-25T22:41:51.6682911+08:00",
+    "type": "tag"
+  },
+  "en:寝室": {
+    "translation": "Bedroom",
+    "timestamp": "2025-06-11T22:36:09.385453+08:00",
     "type": "tag"
   },
   "en:小程序": {
@@ -1419,6 +1439,11 @@
     "timestamp": "2025-06-02T05:10:33.1316275+08:00",
     "type": "tag"
   },
+  "ja:出海": {
+    "translation": "海外展開 (かいがいてんか)",
+    "timestamp": "2025-06-11T22:36:32.7648728+08:00",
+    "type": "tag"
+  },
   "ja:函数": {
     "translation": "関数",
     "timestamp": "2025-06-02T21:13:22.9184249+08:00",
@@ -1462,6 +1487,11 @@
   "ja:反腐": {
     "translation": "反腐败 (Hанфуbài)",
     "timestamp": "2025-06-02T05:11:32.4691784+08:00",
+    "type": "tag"
+  },
+  "ja:发展方向": {
+    "translation": "発展方向 (Hatten housou)",
+    "timestamp": "2025-06-11T22:36:32.9203612+08:00",
     "type": "tag"
   },
   "ja:台式机": {
@@ -1539,6 +1569,11 @@
     "timestamp": "2025-06-02T17:28:13.2886184+08:00",
     "type": "tag"
   },
+  "ja:大学": {
+    "translation": "大学 (Daigaku)",
+    "timestamp": "2025-06-11T22:36:32.4511764+08:00",
+    "type": "tag"
+  },
   "ja:大模型": {
     "translation": "大規模モデル",
     "timestamp": "2025-06-02T21:32:41.2432663+08:00",
@@ -1572,6 +1607,11 @@
   "ja:家庭": {
     "translation": "家庭 (かてい)",
     "timestamp": "2025-06-02T05:51:34.336796+08:00",
+    "type": "tag"
+  },
+  "ja:寝室": {
+    "translation": "寝室 (Nemishitsu)",
+    "timestamp": "2025-06-11T22:36:32.5952277+08:00",
     "type": "tag"
   },
   "ja:小程序": {

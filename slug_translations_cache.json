@@ -424,6 +424,11 @@
     "timestamp": "2025-05-25T22:42:50.1544503+08:00",
     "type": "article"
   },
+  "en:大学寝室四个人，十年后走了四个方向": {
+    "translation": "University dormitory, four people – ten years later, they went in four different directions.",
+    "timestamp": "2025-06-11T22:36:12.5982897+08:00",
+    "type": "article"
+  },
   "en:好久不见的股票牛市": {
     "translation": "Long time no see bull market in stocks",
     "timestamp": "2025-06-08T19:01:52.9144254+08:00",
@@ -517,6 +522,11 @@
   "en:未来的好中国一定是有好老头好老太太的中国": {
     "translation": "future-china-with-good-grandparents",
     "timestamp": "2025-05-25T22:44:36.2156696+08:00",
+    "type": "article"
+  },
+  "en:枚举值尽量不要从零开始定义": {
+    "translation": "Enumeration values should generally not be defined starting from zero.",
+    "timestamp": "2025-06-11T22:36:12.332558+08:00",
     "type": "article"
   },
   "en:标准库容器的内存分配器：allocator": {
