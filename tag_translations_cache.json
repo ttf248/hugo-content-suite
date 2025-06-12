@@ -589,6 +589,16 @@
     "timestamp": "2025-05-28T03:23:50.9713523+08:00",
     "type": "tag"
   },
+  "en:加密货币": {
+    "translation": "Cryptocurrency",
+    "timestamp": "2025-06-12T23:51:40.5752213+08:00",
+    "type": "tag"
+  },
+  "en:区块链": {
+    "translation": "Blockchain",
+    "timestamp": "2025-06-12T23:51:40.3751598+08:00",
+    "type": "tag"
+  },
   "en:医学教育": {
     "translation": "medical-education",
     "timestamp": "2025-05-25T22:40:44.4156516+08:00",
@@ -879,6 +889,11 @@
     "timestamp": "2025-05-25T22:41:13.5775657+08:00",
     "type": "tag"
   },
+  "en:数字货币": {
+    "translation": "Digital Currency",
+    "timestamp": "2025-06-12T23:51:40.3159296+08:00",
+    "type": "tag"
+  },
   "en:文化传播": {
     "translation": "Cultural Transmission",
     "timestamp": "2025-06-02T21:55:23.7895998+08:00",
@@ -1099,6 +1114,11 @@
     "timestamp": "2025-05-25T22:41:18.1787033+08:00",
     "type": "tag"
   },
+  "en:稳定币": {
+    "translation": "Stablecoin",
+    "timestamp": "2025-06-12T23:51:40.5037822+08:00",
+    "type": "tag"
+  },
   "en:竞技游戏": {
     "translation": "competitive-gaming",
     "timestamp": "2025-05-25T22:40:49.9303736+08:00",
@@ -1117,6 +1137,11 @@
   "en:线上购票": {
     "translation": "online-ticketing",
     "timestamp": "2025-05-25T22:42:10.1287587+08:00",
+    "type": "tag"
+  },
+  "en:经济学": {
+    "translation": "Economics",
+    "timestamp": "2025-06-12T23:51:40.4352332+08:00",
     "type": "tag"
   },
   "en:编制": {
@@ -1309,6 +1334,11 @@
     "timestamp": "2025-05-25T22:40:56.5110773+08:00",
     "type": "tag"
   },
+  "en:金融科技": {
+    "translation": "Fintech",
+    "timestamp": "2025-06-12T23:51:40.6459009+08:00",
+    "type": "tag"
+  },
   "en:镜像代理": {
     "translation": "mirror-proxy",
     "timestamp": "2025-05-25T22:41:12.8642467+08:00",
@@ -1457,6 +1487,16 @@
   "ja:前端": {
     "translation": "フロントエンド",
     "timestamp": "2025-06-02T06:24:59.9943738+08:00",
+    "type": "tag"
+  },
+  "ja:加密货币": {
+    "translation": "暗号資産",
+    "timestamp": "2025-06-12T23:52:01.2639582+08:00",
+    "type": "tag"
+  },
+  "ja:区块链": {
+    "translation": "ブロックチェーン",
+    "timestamp": "2025-06-12T23:52:01.3468438+08:00",
     "type": "tag"
   },
   "ja:医学教育": {
@@ -1744,6 +1784,11 @@
     "timestamp": "2025-06-02T06:20:49.0132494+08:00",
     "type": "tag"
   },
+  "ja:数字货币": {
+    "translation": "暗号通貨 (أنگyū tsūkō)",
+    "timestamp": "2025-06-12T23:52:01.1735797+08:00",
+    "type": "tag"
+  },
   "ja:文化传播": {
     "translation": "文化伝播 (Bunka zen'ho)",
     "timestamp": "2025-06-02T21:55:37.6618876+08:00",
@@ -1964,6 +2009,11 @@
     "timestamp": "2025-06-02T06:12:23.5472098+08:00",
     "type": "tag"
   },
+  "ja:稳定币": {
+    "translation": "ステーブルコイン",
+    "timestamp": "2025-06-12T23:52:00.9562532+08:00",
+    "type": "tag"
+  },
   "ja:竞技游戏": {
     "translation": "eスポーツ (エスポート)",
     "timestamp": "2025-06-02T05:13:22.0459998+08:00",
@@ -1982,6 +2032,11 @@
   "ja:线上购票": {
     "translation": "オンラインチケット購入",
     "timestamp": "2025-06-02T06:12:23.63489+08:00",
+    "type": "tag"
+  },
+  "ja:经济学": {
+    "translation": "経済学",
+    "timestamp": "2025-06-12T23:52:01.5716277+08:00",
     "type": "tag"
   },
   "ja:编制": {
@@ -2167,6 +2222,11 @@
   "ja:金融泡沫": {
     "translation": "金融バブル (Kin'yū baburu)",
     "timestamp": "2025-06-02T06:08:45.2745204+08:00",
+    "type": "tag"
+  },
+  "ja:金融科技": {
+    "translation": "フィンテック (FinTech)",
+    "timestamp": "2025-06-12T23:52:01.4978629+08:00",
     "type": "tag"
   },
   "ja:镜像代理": {
