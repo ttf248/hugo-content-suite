@@ -684,6 +684,11 @@
     "timestamp": "2025-05-25T22:40:15.7369938+08:00",
     "type": "tag"
   },
+  "en:备份": {
+    "translation": "Backup",
+    "timestamp": "2025-06-13T23:21:47.9906362+08:00",
+    "type": "tag"
+  },
   "en:复制按钮": {
     "translation": "copy-button",
     "timestamp": "2025-05-25T22:40:38.9541485+08:00",
@@ -797,6 +802,11 @@
   "en:影院": {
     "translation": "cinema-theatres",
     "timestamp": "2025-05-25T22:40:45.7701244+08:00",
+    "type": "tag"
+  },
+  "en:微信": {
+    "translation": "WeChat",
+    "timestamp": "2025-06-13T23:21:47.9371148+08:00",
     "type": "tag"
   },
   "en:微信小程序": {
@@ -1584,6 +1594,11 @@
     "timestamp": "2025-06-02T05:50:08.7131541+08:00",
     "type": "tag"
   },
+  "ja:备份": {
+    "translation": "バックアップ",
+    "timestamp": "2025-06-13T23:21:56.9481461+08:00",
+    "type": "tag"
+  },
   "ja:复制按钮": {
     "translation": "コピーボタン",
     "timestamp": "2025-06-02T05:14:21.3081173+08:00",
@@ -1692,6 +1707,11 @@
   "ja:影院": {
     "translation": "映画館 (Eigakan)",
     "timestamp": "2025-06-02T06:12:23.7751397+08:00",
+    "type": "tag"
+  },
+  "ja:微信": {
+    "translation": "WeChat (微信)",
+    "timestamp": "2025-06-13T23:21:56.8799087+08:00",
     "type": "tag"
   },
   "ja:微信小程序": {
