@@ -429,6 +429,11 @@
     "timestamp": "2025-05-25T22:42:32.8591165+08:00",
     "type": "article"
   },
+  "en:增额寿险保单解读": {
+    "translation": "Premium Whole Life Insurance Policy Interpretation",
+    "timestamp": "2025-07-09T21:17:20.464585+08:00",
+    "type": "article"
+  },
   "en:夜的命名术": {
     "translation": "nights-naming-art",
     "timestamp": "2025-05-25T22:42:50.1544503+08:00",
@@ -707,6 +712,11 @@
   "en:跨机器计算时间差": {
     "translation": "Cross-machine computation time difference",
     "timestamp": "2025-06-19T10:08:48.6997608+08:00",
+    "type": "article"
+  },
+  "en:近期大模型的一些使用经验": {
+    "translation": "Recent Usage Experiences of Large Models",
+    "timestamp": "2025-07-09T21:17:20.5929932+08:00",
     "type": "article"
   },
   "en:这个社会需要什么样的记者？": {
