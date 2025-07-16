@@ -24,6 +24,11 @@
     "timestamp": "2025-05-25T22:42:19.1859994+08:00",
     "type": "tag"
   },
+  "en:CRS": {
+    "translation": "CRS",
+    "timestamp": "2025-07-16T21:17:03.9698447+08:00",
+    "type": "tag"
+  },
   "en:CSS": {
     "translation": "css",
     "timestamp": "2025-05-25T22:42:10.6289189+08:00",
@@ -554,6 +559,11 @@
     "timestamp": "2025-05-25T22:42:11.2661788+08:00",
     "type": "tag"
   },
+  "en:保险": {
+    "translation": "Insurance",
+    "timestamp": "2025-07-16T21:17:04.0267954+08:00",
+    "type": "tag"
+  },
   "en:共和党": {
     "translation": "republican-party",
     "timestamp": "2025-05-25T22:41:29.4956919+08:00",
@@ -697,6 +707,11 @@
   "en:基金": {
     "translation": "fund",
     "timestamp": "2025-05-25T22:40:15.7369938+08:00",
+    "type": "tag"
+  },
+  "en:增额寿险": {
+    "translation": "Unit-Linked Life Insurance",
+    "timestamp": "2025-07-16T21:17:03.8447118+08:00",
     "type": "tag"
   },
   "en:备份": {
@@ -1044,6 +1059,11 @@
     "timestamp": "2025-05-25T22:41:01.7188886+08:00",
     "type": "tag"
   },
+  "en:港美股": {
+    "translation": "Hong Kong Stocks and US Stocks",
+    "timestamp": "2025-07-16T21:17:03.7427613+08:00",
+    "type": "tag"
+  },
   "en:游戏": {
     "translation": "game",
     "timestamp": "2025-05-25T22:40:03.4117524+08:00",
@@ -1157,6 +1177,11 @@
   "en:票价": {
     "translation": "ticket-price",
     "timestamp": "2025-05-25T22:41:18.1787033+08:00",
+    "type": "tag"
+  },
+  "en:税务": {
+    "translation": "Taxation",
+    "timestamp": "2025-07-16T21:17:03.9144234+08:00",
     "type": "tag"
   },
   "en:稳定币": {
@@ -1384,6 +1409,11 @@
     "timestamp": "2025-05-25T22:40:56.5110773+08:00",
     "type": "tag"
   },
+  "en:金融知识": {
+    "translation": "Financial Knowledge",
+    "timestamp": "2025-07-16T21:17:03.6086961+08:00",
+    "type": "tag"
+  },
   "en:金融科技": {
     "translation": "Fintech",
     "timestamp": "2025-06-12T23:51:40.6459009+08:00",
@@ -1497,6 +1527,11 @@
   "ja:佩洛西": {
     "translation": "ペロシー (Perotti)",
     "timestamp": "2025-06-02T17:28:46.9114341+08:00",
+    "type": "tag"
+  },
+  "ja:保险": {
+    "translation": "保険",
+    "timestamp": "2025-07-16T21:17:21.8364651+08:00",
     "type": "tag"
   },
   "ja:共和党": {
@@ -1637,6 +1672,11 @@
   "ja:基金": {
     "translation": "ファンド",
     "timestamp": "2025-06-02T05:50:08.7131541+08:00",
+    "type": "tag"
+  },
+  "ja:增额寿险": {
+    "translation": "増額生存保険 (Zōkakku Juhyōhoken)",
+    "timestamp": "2025-07-16T21:17:22.1928477+08:00",
     "type": "tag"
   },
   "ja:备份": {
@@ -1969,6 +2009,11 @@
     "timestamp": "2025-06-02T17:23:25.7719976+08:00",
     "type": "tag"
   },
+  "ja:港美股": {
+    "translation": "香港株式 / グローバル株式 (Global Stocks)",
+    "timestamp": "2025-07-16T21:18:05.2600572+08:00",
+    "type": "tag"
+  },
   "ja:游戏": {
     "translation": "ゲーム",
     "timestamp": "2025-06-02T05:13:21.7832901+08:00",
@@ -2082,6 +2127,11 @@
   "ja:票价": {
     "translation": "料金 (yōken) / 価格 (gaku)",
     "timestamp": "2025-06-02T06:12:23.5472098+08:00",
+    "type": "tag"
+  },
+  "ja:税务": {
+    "translation": "税務",
+    "timestamp": "2025-07-16T21:18:05.0819524+08:00",
     "type": "tag"
   },
   "ja:稳定币": {
@@ -2302,6 +2352,11 @@
   "ja:金融泡沫": {
     "translation": "金融バブル (Kin'yū baburu)",
     "timestamp": "2025-06-02T06:08:45.2745204+08:00",
+    "type": "tag"
+  },
+  "ja:金融知识": {
+    "translation": "金融知識",
+    "timestamp": "2025-07-16T21:17:21.9218703+08:00",
     "type": "tag"
   },
   "ja:金融科技": {
