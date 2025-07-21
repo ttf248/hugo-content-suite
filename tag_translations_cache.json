@@ -1064,6 +1064,11 @@
     "timestamp": "2025-07-16T21:17:03.7427613+08:00",
     "type": "tag"
   },
+  "en:港股": {
+    "translation": "Hong Kong Stocks",
+    "timestamp": "2025-07-21T19:23:06.4816719+08:00",
+    "type": "tag"
+  },
   "en:游戏": {
     "translation": "game",
     "timestamp": "2025-05-25T22:40:03.4117524+08:00",
@@ -1392,6 +1397,11 @@
   "en:通讯协议": {
     "translation": "communication-protocol",
     "timestamp": "2025-05-25T22:42:07.9919853+08:00",
+    "type": "tag"
+  },
+  "en:配售": {
+    "translation": "Available for sale",
+    "timestamp": "2025-07-21T19:23:06.5643511+08:00",
     "type": "tag"
   },
   "en:金融": {
@@ -2014,6 +2024,11 @@
     "timestamp": "2025-07-16T21:18:05.2600572+08:00",
     "type": "tag"
   },
+  "ja:港股": {
+    "translation": "恒生指数 (こうせいしじょ)",
+    "timestamp": "2025-07-21T19:23:51.931786+08:00",
+    "type": "tag"
+  },
   "ja:游戏": {
     "translation": "ゲーム",
     "timestamp": "2025-06-02T05:13:21.7832901+08:00",
@@ -2337,6 +2352,11 @@
   "ja:通讯协议": {
     "translation": "通信プロトコル",
     "timestamp": "2025-06-02T06:16:36.4740928+08:00",
+    "type": "tag"
+  },
+  "ja:配售": {
+    "translation": "予約受付中 (yoyaku uketsuke-chuu) - This is the most common and natural translation for \"配售\" in a sales context. It literally means “reservation available.”",
+    "timestamp": "2025-07-21T19:23:52.5169416+08:00",
     "type": "tag"
   },
   "ja:金融": {
