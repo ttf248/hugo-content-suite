@@ -419,6 +419,11 @@
     "timestamp": "2025-05-25T22:42:00.0471618+08:00",
     "type": "tag"
   },
+  "en:rwa": {
+    "translation": "RWA (Risk Weighted Assets)",
+    "timestamp": "2025-07-21T19:54:51.1003009+08:00",
+    "type": "tag"
+  },
   "en:stable-diffusion": {
     "translation": "stable-diffusion",
     "timestamp": "2025-05-25T22:41:29.9959062+08:00",
@@ -457,6 +462,11 @@
   "en:vmware": {
     "translation": "vmware",
     "timestamp": "2025-05-25T22:40:15.0692904+08:00",
+    "type": "tag"
+  },
+  "en:web3": {
+    "translation": "Web3",
+    "timestamp": "2025-07-21T19:54:50.9670329+08:00",
     "type": "tag"
   },
   "en:windows": {
