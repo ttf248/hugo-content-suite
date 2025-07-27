@@ -4,6 +4,11 @@
     "timestamp": "2025-05-25T22:42:20.8016783+08:00",
     "type": "tag"
   },
+  "en:7x24小时交易": {
+    "translation": "7x24 hour trading",
+    "timestamp": "2025-07-28T00:06:05.9897614+08:00",
+    "type": "tag"
+  },
   "en:AI": {
     "translation": "Artificial intelligence",
     "timestamp": "2025-05-28T03:23:50.758949+08:00",
@@ -549,6 +554,11 @@
     "timestamp": "2025-05-25T22:42:05.2158809+08:00",
     "type": "tag"
   },
+  "en:交收": {
+    "translation": "Same-day Delivery",
+    "timestamp": "2025-07-28T00:06:05.8689393+08:00",
+    "type": "tag"
+  },
   "en:人口政策": {
     "translation": "population-policy",
     "timestamp": "2025-05-25T22:42:15.8348548+08:00",
@@ -1084,6 +1094,11 @@
     "timestamp": "2025-05-25T22:42:34.3774862+08:00",
     "type": "tag"
   },
+  "en:清算": {
+    "translation": "Write-off",
+    "timestamp": "2025-07-28T00:06:06.0757774+08:00",
+    "type": "tag"
+  },
   "en:港交所": {
     "translation": "hkex",
     "timestamp": "2025-05-25T22:41:01.7188886+08:00",
@@ -1499,6 +1514,11 @@
     "timestamp": "2025-06-02T06:04:27.4808279+08:00",
     "type": "tag"
   },
+  "ja:7x24小时交易": {
+    "translation": "24時間7日間の取引",
+    "timestamp": "2025-07-28T00:06:33.4723185+08:00",
+    "type": "tag"
+  },
   "ja:AI 灵感碰撞坊": {
     "translation": "AI霊感衝突坊",
     "timestamp": "2025-06-02T05:13:21.7168809+08:00",
@@ -1552,6 +1572,11 @@
   "ja:互联网": {
     "translation": "インターネット",
     "timestamp": "2025-06-02T06:22:38.2948375+08:00",
+    "type": "tag"
+  },
+  "ja:交收": {
+    "translation": "コネクトポイント (Konekuto Point) / 接続点 (Setsuzokuchiten)\n\n(Note: \"交收\" can have multiple meanings depending on context.  I've provided the most common translations for a technical context like this.)",
+    "timestamp": "2025-07-28T00:06:33.3347968+08:00",
     "type": "tag"
   },
   "ja:人口政策": {
@@ -2067,6 +2092,11 @@
   "ja:混沌工程": {
     "translation": "カオスエンジニアリング",
     "timestamp": "2025-06-02T17:24:25.1840703+08:00",
+    "type": "tag"
+  },
+  "ja:清算": {
+    "translation": "清算 (Seisan)",
+    "timestamp": "2025-07-28T00:06:32.5659927+08:00",
     "type": "tag"
   },
   "ja:港交所": {
