@@ -9,6 +9,11 @@
     "timestamp": "2025-05-28T03:23:50.758949+08:00",
     "type": "tag"
   },
+  "en:AI 灵感碰撞坊": {
+    "translation": "AI Inspiration Hub",
+    "timestamp": "2025-06-02T05:12:56.6564457+08:00",
+    "type": "tag"
+  },
   "en:A股": {
     "translation": "a-stock",
     "timestamp": "2025-05-25T22:41:09.5871108+08:00",
@@ -492,6 +497,11 @@
   "en:上交所": {
     "translation": "shanghai-stock-exchange",
     "timestamp": "2025-05-25T22:40:34.9218109+08:00",
+    "type": "tag"
+  },
+  "en:个人财务": {
+    "translation": "Personal Finance",
+    "timestamp": "2025-07-28T00:02:15.4273291+08:00",
     "type": "tag"
   },
   "en:中华通": {
@@ -1309,6 +1319,11 @@
     "timestamp": "2025-05-25T22:41:22.6647049+08:00",
     "type": "tag"
   },
+  "en:营销": {
+    "translation": "Marketing",
+    "timestamp": "2025-07-28T00:02:15.3586432+08:00",
+    "type": "tag"
+  },
   "en:董袭莹": {
     "translation": "dong-xi-ying",
     "timestamp": "2025-05-25T22:41:45.4627873+08:00",
@@ -1459,6 +1474,11 @@
     "timestamp": "2025-06-12T23:51:40.6459009+08:00",
     "type": "tag"
   },
+  "en:银行": {
+    "translation": "Bank",
+    "timestamp": "2025-07-28T00:02:15.3028539+08:00",
+    "type": "tag"
+  },
   "en:镜像代理": {
     "translation": "mirror-proxy",
     "timestamp": "2025-05-25T22:41:12.8642467+08:00",
@@ -1474,14 +1494,14 @@
     "timestamp": "2025-05-25T22:41:51.0326056+08:00",
     "type": "tag"
   },
-  "en:AI 灵感碰撞坊": {
-    "translation": "AI Inspiration Hub",
-    "timestamp": "2025-06-02T05:12:56.6564457+08:00",
-    "type": "tag"
-  },
   "ja:2.5G网卡": {
     "translation": "2.5G NIC (Network Interface Card)",
     "timestamp": "2025-06-02T06:04:27.4808279+08:00",
+    "type": "tag"
+  },
+  "ja:AI 灵感碰撞坊": {
+    "translation": "AI霊感衝突坊",
+    "timestamp": "2025-06-02T05:13:21.7168809+08:00",
     "type": "tag"
   },
   "ja:A股": {
@@ -2442,11 +2462,6 @@
   "ja:降费": {
     "translation": "解約 (かい yok)",
     "timestamp": "2025-06-02T05:50:08.8515581+08:00",
-    "type": "tag"
-  },
-  "ja:AI 灵感碰撞坊": {
-    "translation": "AI霊感衝突坊",
-    "timestamp": "2025-06-02T05:13:21.7168809+08:00",
     "type": "tag"
   }
 }
