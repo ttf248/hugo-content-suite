@@ -559,6 +559,11 @@
     "timestamp": "2025-07-28T00:06:05.8689393+08:00",
     "type": "tag"
   },
+  "en:交易": {
+    "translation": "Transaction",
+    "timestamp": "2025-07-28T18:59:04.490054+08:00",
+    "type": "tag"
+  },
   "en:人口政策": {
     "translation": "population-policy",
     "timestamp": "2025-05-25T22:42:15.8348548+08:00",
@@ -1324,6 +1329,11 @@
     "timestamp": "2025-05-25T22:40:38.2400482+08:00",
     "type": "tag"
   },
+  "en:股票": {
+    "translation": "Stock",
+    "timestamp": "2025-07-28T18:59:04.5505599+08:00",
+    "type": "tag"
+  },
   "en:股票交易": {
     "translation": "Stock Trading",
     "timestamp": "2025-07-28T00:21:28.223742+08:00",
@@ -1582,6 +1592,11 @@
   "ja:交收": {
     "translation": "コネクトポイント (Konekuto Point)",
     "timestamp": "2025-07-28T00:06:33.3347968+08:00",
+    "type": "tag"
+  },
+  "ja:交易": {
+    "translation": "取引 (とりひき)",
+    "timestamp": "2025-07-28T18:59:32.7789917+08:00",
     "type": "tag"
   },
   "ja:人口政策": {
@@ -2327,6 +2342,11 @@
   "ja:股市": {
     "translation": "株式市場",
     "timestamp": "2025-06-02T06:15:05.2673016+08:00",
+    "type": "tag"
+  },
+  "ja:股票": {
+    "translation": "株式",
+    "timestamp": "2025-07-28T18:59:32.6547766+08:00",
     "type": "tag"
   },
   "ja:股票交易": {
