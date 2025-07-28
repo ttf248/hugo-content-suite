@@ -1324,6 +1324,11 @@
     "timestamp": "2025-05-25T22:40:38.2400482+08:00",
     "type": "tag"
   },
+  "en:股票交易": {
+    "translation": "Stock Trading",
+    "timestamp": "2025-07-28T00:21:28.223742+08:00",
+    "type": "tag"
+  },
   "en:自动化测试": {
     "translation": "automation-testing",
     "timestamp": "2025-05-25T22:41:16.0410057+08:00",
@@ -1575,7 +1580,7 @@
     "type": "tag"
   },
   "ja:交收": {
-    "translation": "コネクトポイント (Konekuto Point) / 接続点 (Setsuzokuchiten)\n\n(Note: \"交收\" can have multiple meanings depending on context.  I've provided the most common translations for a technical context like this.)",
+    "translation": "コネクトポイント (Konekuto Point)",
     "timestamp": "2025-07-28T00:06:33.3347968+08:00",
     "type": "tag"
   },
@@ -2322,6 +2327,11 @@
   "ja:股市": {
     "translation": "株式市場",
     "timestamp": "2025-06-02T06:15:05.2673016+08:00",
+    "type": "tag"
+  },
+  "ja:股票交易": {
+    "translation": "株式取引",
+    "timestamp": "2025-07-28T00:21:53.9926257+08:00",
     "type": "tag"
   },
   "ja:自动化测试": {
