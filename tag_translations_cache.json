@@ -599,6 +599,11 @@
     "timestamp": "2025-05-25T22:41:17.4667253+08:00",
     "type": "tag"
   },
+  "en:佣金": {
+    "translation": "Commission",
+    "timestamp": "2025-08-13T21:53:54.6924439+08:00",
+    "type": "tag"
+  },
   "en:佩洛西": {
     "translation": "pelosi",
     "timestamp": "2025-05-25T22:42:11.2661788+08:00",
@@ -869,6 +874,11 @@
     "timestamp": "2025-05-25T22:41:12.152149+08:00",
     "type": "tag"
   },
+  "en:市场竞争": {
+    "translation": "Market Competition",
+    "timestamp": "2025-08-13T21:53:54.7705856+08:00",
+    "type": "tag"
+  },
   "en:师徒": {
     "translation": "shi-tu",
     "timestamp": "2025-05-25T22:42:02.2639191+08:00",
@@ -942,6 +952,11 @@
   "en:招聘数据": {
     "translation": "recruitment-data",
     "timestamp": "2025-05-25T22:40:41.0009984+08:00",
+    "type": "tag"
+  },
+  "en:指数": {
+    "translation": "Exponent",
+    "timestamp": "2025-08-13T21:53:54.8344412+08:00",
     "type": "tag"
   },
   "en:排名": {
@@ -1164,6 +1179,11 @@
     "timestamp": "2025-05-25T22:41:24.2045017+08:00",
     "type": "tag"
   },
+  "en:现货": {
+    "translation": "Spot",
+    "timestamp": "2025-08-13T21:53:54.902472+08:00",
+    "type": "tag"
+  },
   "en:生活": {
     "translation": "life-style",
     "timestamp": "2025-05-25T22:40:33.3786007+08:00",
@@ -1352,6 +1372,11 @@
   "en:自定义": {
     "translation": "customized",
     "timestamp": "2025-05-25T22:41:22.6647049+08:00",
+    "type": "tag"
+  },
+  "en:自由化": {
+    "translation": "Liberalization",
+    "timestamp": "2025-08-13T21:53:54.6259463+08:00",
     "type": "tag"
   },
   "en:营销": {
@@ -1639,6 +1664,11 @@
     "timestamp": "2025-06-02T06:04:46.9696673+08:00",
     "type": "tag"
   },
+  "ja:佣金": {
+    "translation": "手数料 (しゅりょう)",
+    "timestamp": "2025-08-13T21:54:16.2862366+08:00",
+    "type": "tag"
+  },
   "ja:佩洛西": {
     "translation": "ペロシー (Perotti)",
     "timestamp": "2025-06-02T17:28:46.9114341+08:00",
@@ -1892,6 +1922,11 @@
   "ja:嵌入式": {
     "translation": "組み込み (ぐみこみ)",
     "timestamp": "2025-06-02T05:06:54.8967858+08:00",
+    "type": "tag"
+  },
+  "ja:市场竞争": {
+    "translation": "市場競争 (Shijō sozo)",
+    "timestamp": "2025-08-13T21:54:16.6643739+08:00",
     "type": "tag"
   },
   "ja:师徒": {
@@ -2367,6 +2402,11 @@
   "ja:自定义": {
     "translation": "カスタム",
     "timestamp": "2025-06-02T05:48:02.9897042+08:00",
+    "type": "tag"
+  },
+  "ja:自由化": {
+    "translation": "自由化 (Jiyuhka)",
+    "timestamp": "2025-08-13T21:54:16.473169+08:00",
     "type": "tag"
   },
   "ja:董袭莹": {
