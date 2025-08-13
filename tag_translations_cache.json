@@ -709,6 +709,11 @@
     "timestamp": "2025-05-25T22:40:42.3509271+08:00",
     "type": "tag"
   },
+  "en:合拆股": {
+    "translation": "Reverse Stock Split",
+    "timestamp": "2025-08-13T22:12:27.8788917+08:00",
+    "type": "tag"
+  },
   "en:后端": {
     "translation": "Backend",
     "timestamp": "2025-05-28T03:23:50.1657478+08:00",
@@ -1772,6 +1777,11 @@
   "ja:台湾": {
     "translation": "台湾 (Taiwan)",
     "timestamp": "2025-06-02T17:28:47.0144944+08:00",
+    "type": "tag"
+  },
+  "ja:合拆股": {
+    "translation": "株式分割・株式併合",
+    "timestamp": "2025-08-13T22:12:52.4785851+08:00",
     "type": "tag"
   },
   "ja:后端": {
