@@ -839,6 +839,11 @@
     "timestamp": "2025-05-25T22:41:23.3793985+08:00",
     "type": "tag"
   },
+  "en:字节": {
+    "translation": "Byte",
+    "timestamp": "2025-08-14T22:01:16.797049+08:00",
+    "type": "tag"
+  },
   "en:字节序": {
     "translation": "byte-order",
     "timestamp": "2025-05-25T22:40:17.0924023+08:00",
@@ -1892,6 +1897,11 @@
   "ja:字符集": {
     "translation": "文字コード",
     "timestamp": "2025-06-02T17:29:03.2228537+08:00",
+    "type": "tag"
+  },
+  "ja:字节": {
+    "translation": "バイト (baaito)",
+    "timestamp": "2025-08-14T22:01:34.229914+08:00",
     "type": "tag"
   },
   "ja:字节序": {
