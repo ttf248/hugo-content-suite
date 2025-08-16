@@ -684,6 +684,11 @@
     "timestamp": "2025-05-25T22:40:04.7325514+08:00",
     "type": "tag"
   },
+  "en:卸载": {
+    "translation": "Uninstall",
+    "timestamp": "2025-08-16T18:05:48.6585075+08:00",
+    "type": "tag"
+  },
   "en:压力测试": {
     "translation": "stress-testing",
     "timestamp": "2025-05-25T22:41:54.2298909+08:00",
@@ -732,6 +737,11 @@
   "en:固收": {
     "translation": "fixed-income",
     "timestamp": "2025-05-25T22:40:36.8121354+08:00",
+    "type": "tag"
+  },
+  "en:国产": {
+    "translation": "Domestic",
+    "timestamp": "2025-08-16T18:05:48.7699042+08:00",
     "type": "tag"
   },
   "en:国内": {
@@ -1102,6 +1112,11 @@
   "en:注意力": {
     "translation": "Attention",
     "timestamp": "2025-06-20T00:19:58.8968494+08:00",
+    "type": "tag"
+  },
+  "en:流氓": {
+    "translation": "Scrambler",
+    "timestamp": "2025-08-16T18:05:48.5980749+08:00",
     "type": "tag"
   },
   "en:流量变现": {
@@ -1484,6 +1499,11 @@
     "timestamp": "2025-05-25T22:40:32.6639267+08:00",
     "type": "tag"
   },
+  "en:软件": {
+    "translation": "Software",
+    "timestamp": "2025-08-16T18:05:48.7133369+08:00",
+    "type": "tag"
+  },
   "en:远程桌面": {
     "translation": "Remote Desktop",
     "timestamp": "2025-07-21T23:59:37.2031887+08:00",
@@ -1759,6 +1779,11 @@
     "timestamp": "2025-06-02T17:14:22.9990243+08:00",
     "type": "tag"
   },
+  "ja:卸载": {
+    "translation": "負荷分散 (Roodo bansen)",
+    "timestamp": "2025-08-16T18:05:58.9576844+08:00",
+    "type": "tag"
+  },
   "ja:压力测试": {
     "translation": "負荷テスト (Yōki tesuto)",
     "timestamp": "2025-06-02T17:21:46.3557045+08:00",
@@ -1802,6 +1827,11 @@
   "ja:固收": {
     "translation": "ストックホルム現象 (Stockholm phenomenon)",
     "timestamp": "2025-06-02T17:24:03.0763655+08:00",
+    "type": "tag"
+  },
+  "ja:国产": {
+    "translation": "国産",
+    "timestamp": "2025-08-16T18:05:59.0241259+08:00",
     "type": "tag"
   },
   "ja:国内": {
@@ -2152,6 +2182,11 @@
   "ja:注意力": {
     "translation": "注意 (ちゅうい) / アテンション",
     "timestamp": "2025-06-20T00:20:20.5105702+08:00",
+    "type": "tag"
+  },
+  "ja:流氓": {
+    "translation": "悪魔 (akumashi) – This is the most common and appropriate translation, conveying the sense of a \"rogue\" or \"scoundrel.\"\n\nAlternatively, depending on context, you could use:\n\n*   詐欺師 (sagi shi) - Swindler\n*   無法者 (fubasha) - Outlaw/Bandit",
+    "timestamp": "2025-08-16T18:06:00.1056552+08:00",
     "type": "tag"
   },
   "ja:流量变现": {
@@ -2517,6 +2552,11 @@
   "ja:躺平": {
     "translation": "横になる",
     "timestamp": "2025-06-02T05:47:12.4567955+08:00",
+    "type": "tag"
+  },
+  "ja:软件": {
+    "translation": "ソフトウェア",
+    "timestamp": "2025-08-16T18:05:58.8040546+08:00",
     "type": "tag"
   },
   "ja:远程桌面": {
