@@ -504,6 +504,16 @@
     "timestamp": "2025-05-25T22:40:34.9218109+08:00",
     "type": "tag"
   },
+  "en:世界观": {
+    "translation": "Worldview",
+    "timestamp": "2025-08-22T13:36:35.3390598+08:00",
+    "type": "tag"
+  },
+  "en:个人成长": {
+    "translation": "Personal Growth",
+    "timestamp": "2025-08-22T13:36:35.4127299+08:00",
+    "type": "tag"
+  },
   "en:个人财务": {
     "translation": "Personal Finance",
     "timestamp": "2025-07-28T00:02:15.4273291+08:00",
@@ -577,6 +587,11 @@
   "en:人生": {
     "translation": "life-lessons",
     "timestamp": "2025-05-25T22:40:02.2462875+08:00",
+    "type": "tag"
+  },
+  "en:人生感悟": {
+    "translation": "Life Reflections",
+    "timestamp": "2025-08-22T13:36:35.560643+08:00",
     "type": "tag"
   },
   "en:代码区域": {
@@ -737,6 +752,11 @@
   "en:固收": {
     "translation": "fixed-income",
     "timestamp": "2025-05-25T22:40:36.8121354+08:00",
+    "type": "tag"
+  },
+  "en:固收+": {
+    "translation": "Fixed Plus",
+    "timestamp": "2025-08-22T13:36:35.2669766+08:00",
     "type": "tag"
   },
   "en:国产": {
@@ -1399,6 +1419,11 @@
     "timestamp": "2025-05-25T22:41:22.6647049+08:00",
     "type": "tag"
   },
+  "en:自我认知": {
+    "translation": "Self-awareness",
+    "timestamp": "2025-08-22T13:36:35.4957511+08:00",
+    "type": "tag"
+  },
   "en:自由化": {
     "translation": "Liberalization",
     "timestamp": "2025-08-13T21:53:54.6259463+08:00",
@@ -1609,6 +1634,16 @@
     "timestamp": "2025-06-02T17:23:26.036462+08:00",
     "type": "tag"
   },
+  "ja:世界观": {
+    "translation": "世界観",
+    "timestamp": "2025-08-22T13:36:47.1451232+08:00",
+    "type": "tag"
+  },
+  "ja:个人成长": {
+    "translation": "自己成長 (Jiko Seishou)",
+    "timestamp": "2025-08-22T13:36:47.469029+08:00",
+    "type": "tag"
+  },
   "ja:中华通": {
     "translation": "中華通",
     "timestamp": "2025-06-02T17:23:25.8521395+08:00",
@@ -1672,6 +1707,11 @@
   "ja:人生": {
     "translation": "人生 (じんせい / jinsei)",
     "timestamp": "2025-06-02T05:04:52.657416+08:00",
+    "type": "tag"
+  },
+  "ja:人生感悟": {
+    "translation": "人生の洞察",
+    "timestamp": "2025-08-22T13:36:47.2674191+08:00",
     "type": "tag"
   },
   "ja:代码区域": {
@@ -1827,6 +1867,11 @@
   "ja:固收": {
     "translation": "ストックホルム現象 (Stockholm phenomenon)",
     "timestamp": "2025-06-02T17:24:03.0763655+08:00",
+    "type": "tag"
+  },
+  "ja:固收+": {
+    "translation": "固定費＋",
+    "timestamp": "2025-08-22T13:36:47.5720064+08:00",
     "type": "tag"
   },
   "ja:国产": {
@@ -2457,6 +2502,11 @@
   "ja:自定义": {
     "translation": "カスタム",
     "timestamp": "2025-06-02T05:48:02.9897042+08:00",
+    "type": "tag"
+  },
+  "ja:自我认知": {
+    "translation": "自己認識 (じこにれつ)",
+    "timestamp": "2025-08-22T13:36:47.7652358+08:00",
     "type": "tag"
   },
   "ja:自由化": {
