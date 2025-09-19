@@ -69,6 +69,16 @@
     "timestamp": "2025-05-25T22:43:15.5263808+08:00",
     "type": "tag"
   },
+  "en:HAProxy": {
+    "translation": "HAProxy",
+    "timestamp": "2025-09-19T09:53:50.75012+08:00",
+    "type": "tag"
+  },
+  "en:Keepalived": {
+    "translation": "Keepalived",
+    "timestamp": "2025-09-19T09:53:51.094627+08:00",
+    "type": "tag"
+  },
   "en:Linux": {
     "translation": "linux",
     "timestamp": "2025-05-25T22:41:45.964524+08:00",
@@ -1499,6 +1509,11 @@
     "timestamp": "2025-05-25T22:42:04.5787143+08:00",
     "type": "tag"
   },
+  "en:负载均衡": {
+    "translation": "Load Balancing",
+    "timestamp": "2025-09-19T09:53:50.8736084+08:00",
+    "type": "tag"
+  },
   "en:财富": {
     "translation": "wealth",
     "timestamp": "2025-05-25T22:42:16.4702326+08:00",
@@ -1552,6 +1567,11 @@
   "en:软件": {
     "translation": "Software",
     "timestamp": "2025-08-16T18:05:48.7133369+08:00",
+    "type": "tag"
+  },
+  "en:运维": {
+    "translation": "Operations \u0026 Maintenance (O\u0026M)",
+    "timestamp": "2025-09-19T09:53:51.0116795+08:00",
     "type": "tag"
   },
   "en:远程桌面": {
@@ -1637,6 +1657,16 @@
   "en:降费": {
     "translation": "reduce-costs",
     "timestamp": "2025-05-25T22:41:51.0326056+08:00",
+    "type": "tag"
+  },
+  "en:集群": {
+    "translation": "Cluster",
+    "timestamp": "2025-09-19T09:53:50.8056807+08:00",
+    "type": "tag"
+  },
+  "en:高可用": {
+    "translation": "High Availability",
+    "timestamp": "2025-09-19T09:53:50.6839674+08:00",
     "type": "tag"
   },
   "ja:2.5G网卡": {

@@ -129,6 +129,11 @@
     "timestamp": "2025-05-25T22:43:42.8857172+08:00",
     "type": "article"
   },
+  "en:Keepalived+HAProxy 搭建高可用负载均衡": {
+    "translation": "Keepalived + HAProxy for High Availability Load Balancing",
+    "timestamp": "2025-09-19T09:54:03.3805388+08:00",
+    "type": "article"
+  },
   "en:Linux搭建Jmeter压测环境": {
     "translation": "linux-setup-jmeter-testing-environment",
     "timestamp": "2025-05-25T22:42:30.1344584+08:00",
