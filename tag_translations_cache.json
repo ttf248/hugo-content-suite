@@ -1029,6 +1029,11 @@
     "timestamp": "2025-05-25T22:40:21.1427677+08:00",
     "type": "tag"
   },
+  "en:改名风波": {
+    "translation": "Name Storm/Scandal",
+    "timestamp": "2025-09-19T10:20:41.5018166+08:00",
+    "type": "tag"
+  },
   "en:政府债务": {
     "translation": "government-debt",
     "timestamp": "2025-05-25T22:41:21.4878118+08:00",
@@ -2177,6 +2182,11 @@
   "ja:接口文档": {
     "translation": "APIドキュメント",
     "timestamp": "2025-06-02T17:23:26.6960562+08:00",
+    "type": "tag"
+  },
+  "ja:改名风波": {
+    "translation": "名前騒動 (Namae sōdō)",
+    "timestamp": "2025-09-19T10:21:02.3080905+08:00",
     "type": "tag"
   },
   "ja:政府债务": {
