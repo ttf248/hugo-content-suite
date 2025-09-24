@@ -49,6 +49,11 @@
     "timestamp": "2025-05-25T22:43:43.385762+08:00",
     "type": "tag"
   },
+  "en:DDR5": {
+    "translation": "DDR5",
+    "timestamp": "2025-09-24T21:51:10.8793651+08:00",
+    "type": "tag"
+  },
   "en:ETF": {
     "translation": "etf",
     "timestamp": "2025-05-25T22:42:18.6858618+08:00",
@@ -667,6 +672,11 @@
   "en:内存布局": {
     "translation": "Memory Layout",
     "timestamp": "2025-06-10T17:00:21.7098381+08:00",
+    "type": "tag"
+  },
+  "en:内存频率": {
+    "translation": "Memory Frequency",
+    "timestamp": "2025-09-24T21:51:10.946579+08:00",
     "type": "tag"
   },
   "en:内网穿透": {
@@ -1842,6 +1852,11 @@
   "ja:内存布局": {
     "translation": "メモリ配置",
     "timestamp": "2025-06-10T17:00:38.4907245+08:00",
+    "type": "tag"
+  },
+  "ja:内存频率": {
+    "translation": "メモリ周波数",
+    "timestamp": "2025-09-24T21:51:36.5138281+08:00",
     "type": "tag"
   },
   "ja:内网穿透": {
