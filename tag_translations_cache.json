@@ -89,6 +89,11 @@
     "timestamp": "2025-05-25T22:40:19.707046+08:00",
     "type": "tag"
   },
+  "en:MBR": {
+    "translation": "MBR",
+    "timestamp": "2025-09-24T21:44:17.3974716+08:00",
+    "type": "tag"
+  },
   "en:Nginx": {
     "translation": "nginx",
     "timestamp": "2025-05-25T22:42:16.9709118+08:00",
@@ -117,6 +122,11 @@
   "en:TCP": {
     "translation": "tcp",
     "timestamp": "2025-05-25T22:40:28.0463974+08:00",
+    "type": "tag"
+  },
+  "en:UEFI": {
+    "translation": "UEFI",
+    "timestamp": "2025-09-24T21:44:17.4635981+08:00",
     "type": "tag"
   },
   "en:WPF": {

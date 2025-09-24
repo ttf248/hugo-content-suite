@@ -439,6 +439,11 @@
     "timestamp": "2025-05-25T22:43:56.1075286+08:00",
     "type": "article"
   },
+  "en:台式机引导加载失败": {
+    "translation": "Desktop Boot Loader Failure",
+    "timestamp": "2025-09-24T21:44:21.1490799+08:00",
+    "type": "article"
+  },
   "en:合并 PullRequest 到 Fork 的仓库": {
     "translation": "merge-pullrequest-to-forked-repo",
     "timestamp": "2025-05-25T22:44:25.4415038+08:00",
