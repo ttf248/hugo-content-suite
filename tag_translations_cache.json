@@ -599,6 +599,11 @@
     "timestamp": "2025-07-28T18:59:04.490054+08:00",
     "type": "tag"
   },
+  "en:产品力": {
+    "translation": "Product Sense",
+    "timestamp": "2025-09-26T20:37:52.396475+08:00",
+    "type": "tag"
+  },
   "en:人口政策": {
     "translation": "population-policy",
     "timestamp": "2025-05-25T22:42:15.8348548+08:00",
@@ -717,6 +722,11 @@
   "en:医学教育": {
     "translation": "medical-education",
     "timestamp": "2025-05-25T22:40:44.4156516+08:00",
+    "type": "tag"
+  },
+  "en:华为": {
+    "translation": "Huawei",
+    "timestamp": "2025-09-26T20:37:52.2106828+08:00",
     "type": "tag"
   },
   "en:华硕": {
@@ -1007,6 +1017,11 @@
   "en:房地产": {
     "translation": "real-estate",
     "timestamp": "2025-05-25T22:41:47.8896057+08:00",
+    "type": "tag"
+  },
+  "en:手机": {
+    "translation": "Mobile phone",
+    "timestamp": "2025-09-26T20:37:52.1558973+08:00",
     "type": "tag"
   },
   "en:投资": {
@@ -1484,9 +1499,19 @@
     "timestamp": "2025-08-13T21:53:54.6259463+08:00",
     "type": "tag"
   },
+  "en:苹果": {
+    "translation": "Apple",
+    "timestamp": "2025-09-26T20:37:52.2635412+08:00",
+    "type": "tag"
+  },
   "en:营销": {
     "translation": "Marketing",
     "timestamp": "2025-07-28T00:02:15.3586432+08:00",
+    "type": "tag"
+  },
+  "en:营销力": {
+    "translation": "Marketing prowess",
+    "timestamp": "2025-09-26T20:37:52.3305687+08:00",
     "type": "tag"
   },
   "en:董袭莹": {
@@ -1779,6 +1804,11 @@
     "timestamp": "2025-07-28T18:59:32.7789917+08:00",
     "type": "tag"
   },
+  "ja:产品力": {
+    "translation": "製品力",
+    "timestamp": "2025-09-26T20:38:03.8416438+08:00",
+    "type": "tag"
+  },
   "ja:人口政策": {
     "translation": "人口政策 (Jinkōセイケン)",
     "timestamp": "2025-06-02T06:24:18.7146738+08:00",
@@ -1897,6 +1927,11 @@
   "ja:医学教育": {
     "translation": "医学教育 (Iiginen Kyouiku)",
     "timestamp": "2025-06-02T06:19:09.1190237+08:00",
+    "type": "tag"
+  },
+  "ja:华为": {
+    "translation": "華為 (Huawei)",
+    "timestamp": "2025-09-26T20:38:04.0992633+08:00",
     "type": "tag"
   },
   "ja:华硕": {
@@ -2172,6 +2207,11 @@
   "ja:房地产": {
     "translation": "不動産",
     "timestamp": "2025-06-02T05:45:13.6370795+08:00",
+    "type": "tag"
+  },
+  "ja:手机": {
+    "translation": "スマートフォン",
+    "timestamp": "2025-09-26T20:38:04.1548958+08:00",
     "type": "tag"
   },
   "ja:投资": {
@@ -2627,6 +2667,16 @@
   "ja:自由化": {
     "translation": "自由化 (Jiyuhka)",
     "timestamp": "2025-08-13T21:54:16.473169+08:00",
+    "type": "tag"
+  },
+  "ja:苹果": {
+    "translation": "アップル",
+    "timestamp": "2025-09-26T20:38:03.9937313+08:00",
+    "type": "tag"
+  },
+  "ja:营销力": {
+    "translation": "マーケティング力",
+    "timestamp": "2025-09-26T20:38:03.9272044+08:00",
     "type": "tag"
   },
   "ja:董袭莹": {
