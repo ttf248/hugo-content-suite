@@ -49,6 +49,11 @@
     "timestamp": "2025-05-25T22:43:56.9985185+08:00",
     "type": "article"
   },
+  "en:C++23 引入的新特性 enumerate 和 ranges": {
+    "translation": "C++23 introduces new features enumerate and ranges",
+    "timestamp": "2025-10-09T19:28:17.7639182+08:00",
+    "type": "article"
+  },
   "en:C++中lambd表达式参数生命周期": {
     "translation": "cpp-lambda-parameter-lifetime",
     "timestamp": "2025-05-25T22:43:38.6553458+08:00",
