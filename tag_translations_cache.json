@@ -689,6 +689,11 @@
     "timestamp": "2025-05-25T22:41:39.9296805+08:00",
     "type": "tag"
   },
+  "en:减肥": {
+    "translation": "Weight Loss",
+    "timestamp": "2025-10-11T12:02:04.6592756+08:00",
+    "type": "tag"
+  },
   "en:出海": {
     "translation": "Going Global / Overseas Expansion",
     "timestamp": "2025-06-11T22:36:09.2522692+08:00",
@@ -1469,6 +1474,11 @@
     "timestamp": "2025-06-02T21:55:23.842204+08:00",
     "type": "tag"
   },
+  "en:肌肉酸痛": {
+    "translation": "Muscle Soreness",
+    "timestamp": "2025-10-11T12:02:04.584267+08:00",
+    "type": "tag"
+  },
   "en:股市": {
     "translation": "stock-market",
     "timestamp": "2025-05-25T22:40:38.2400482+08:00",
@@ -1699,6 +1709,11 @@
     "timestamp": "2025-07-28T00:02:15.3028539+08:00",
     "type": "tag"
   },
+  "en:锻炼": {
+    "translation": "Exercise",
+    "timestamp": "2025-10-11T12:02:04.7151311+08:00",
+    "type": "tag"
+  },
   "en:镜像代理": {
     "translation": "mirror-proxy",
     "timestamp": "2025-05-25T22:41:12.8642467+08:00",
@@ -1902,6 +1917,11 @@
   "ja:内网穿透": {
     "translation": "イントラネット貫通",
     "timestamp": "2025-06-02T05:10:33.1316275+08:00",
+    "type": "tag"
+  },
+  "ja:减肥": {
+    "translation": "ダイエット",
+    "timestamp": "2025-10-11T12:02:19.4579966+08:00",
     "type": "tag"
   },
   "ja:出海": {
@@ -2649,6 +2669,11 @@
     "timestamp": "2025-06-02T21:55:37.4715955+08:00",
     "type": "tag"
   },
+  "ja:肌肉酸痛": {
+    "translation": "筋肉痛 (きんようとう)",
+    "timestamp": "2025-10-11T12:02:20.1832152+08:00",
+    "type": "tag"
+  },
   "ja:股市": {
     "translation": "株式市場",
     "timestamp": "2025-06-02T06:15:05.2673016+08:00",
@@ -2862,6 +2887,11 @@
   "ja:金融科技": {
     "translation": "フィンテック (FinTech)",
     "timestamp": "2025-06-12T23:52:01.4978629+08:00",
+    "type": "tag"
+  },
+  "ja:锻炼": {
+    "translation": "運動 (undō) / トレーニング (toreiningu) - *Both are acceptable, with “undō” being more general and “toreiningu” specifically referring to training.*",
+    "timestamp": "2025-10-11T12:02:20.0179487+08:00",
     "type": "tag"
   },
   "ja:镜像代理": {
