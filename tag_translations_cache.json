@@ -624,6 +624,11 @@
     "timestamp": "2025-08-22T13:36:35.560643+08:00",
     "type": "tag"
   },
+  "en:仓位": {
+    "translation": "Position / Layout",
+    "timestamp": "2025-10-12T01:54:28.628009+08:00",
+    "type": "tag"
+  },
   "en:代码区域": {
     "translation": "code-area",
     "timestamp": "2025-05-25T22:41:10.3030313+08:00",
@@ -1259,6 +1264,11 @@
     "timestamp": "2025-05-25T22:40:00.5312431+08:00",
     "type": "tag"
   },
+  "en:灰犀牛": {
+    "translation": "Rhino",
+    "timestamp": "2025-10-12T01:54:28.7815401+08:00",
+    "type": "tag"
+  },
   "en:炒股": {
     "translation": "stock-trading",
     "timestamp": "2025-05-25T22:40:05.4540807+08:00",
@@ -1744,6 +1754,11 @@
     "timestamp": "2025-09-19T09:53:50.6839674+08:00",
     "type": "tag"
   },
+  "en:黑天鹅": {
+    "translation": "Black Swan",
+    "timestamp": "2025-10-12T01:54:28.7067044+08:00",
+    "type": "tag"
+  },
   "ja:2.5G网卡": {
     "translation": "2.5G NIC (Network Interface Card)",
     "timestamp": "2025-06-02T06:04:27.4808279+08:00",
@@ -1852,6 +1867,11 @@
   "ja:人生感悟": {
     "translation": "人生の洞察",
     "timestamp": "2025-08-22T13:36:47.2674191+08:00",
+    "type": "tag"
+  },
+  "ja:仓位": {
+    "translation": "配置 (かいし)",
+    "timestamp": "2025-10-12T01:56:31.7858111+08:00",
     "type": "tag"
   },
   "ja:代码区域": {
@@ -2464,6 +2484,11 @@
     "timestamp": "2025-06-02T07:45:27.6907942+08:00",
     "type": "tag"
   },
+  "ja:灰犀牛": {
+    "translation": "グレイオフィス (Greyphos)",
+    "timestamp": "2025-10-12T01:56:32.1062701+08:00",
+    "type": "tag"
+  },
   "ja:炒股": {
     "translation": "株式投資 (Kaibu Tōshi)",
     "timestamp": "2025-06-02T05:49:23.3195906+08:00",
@@ -2922,6 +2947,11 @@
   "ja:高可用": {
     "translation": "高可用性 (Kōyūyō)",
     "timestamp": "2025-09-19T09:55:48.6168848+08:00",
+    "type": "tag"
+  },
+  "ja:黑天鹅": {
+    "translation": "ブラックスワン (Burakusuan)",
+    "timestamp": "2025-10-12T01:56:31.9419634+08:00",
     "type": "tag"
   }
 }
