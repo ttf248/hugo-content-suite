@@ -874,6 +874,11 @@
     "timestamp": "2025-07-09T21:17:17.1976643+08:00",
     "type": "tag"
   },
+  "en:复盘记录": {
+    "translation": "Review Log",
+    "timestamp": "2025-10-13T19:10:53.7502578+08:00",
+    "type": "tag"
+  },
   "en:外汇": {
     "translation": "forex",
     "timestamp": "2025-05-25T22:40:11.4197976+08:00",
@@ -1569,6 +1574,11 @@
     "timestamp": "2025-05-25T22:41:57.3696956+08:00",
     "type": "tag"
   },
+  "en:补仓": {
+    "translation": "Add to Position / Cover Short (depending on context – both are common translations)",
+    "timestamp": "2025-10-13T19:10:53.9878295+08:00",
+    "type": "tag"
+  },
   "en:计划生育": {
     "translation": "family-planning",
     "timestamp": "2025-05-25T22:42:08.7032272+08:00",
@@ -1722,6 +1732,11 @@
   "en:金融科技": {
     "translation": "Fintech",
     "timestamp": "2025-06-12T23:51:40.6459009+08:00",
+    "type": "tag"
+  },
+  "en:铁律": {
+    "translation": "Iron Law",
+    "timestamp": "2025-10-13T19:10:53.683179+08:00",
     "type": "tag"
   },
   "en:银行": {
@@ -2122,6 +2137,11 @@
   "ja:复制按钮": {
     "translation": "コピーボタン",
     "timestamp": "2025-06-02T05:14:21.3081173+08:00",
+    "type": "tag"
+  },
+  "ja:复盘记录": {
+    "translation": "振り返り記録",
+    "timestamp": "2025-10-13T19:11:08.265125+08:00",
     "type": "tag"
   },
   "ja:外汇": {
@@ -2789,6 +2809,11 @@
     "timestamp": "2025-06-02T05:50:46.8867604+08:00",
     "type": "tag"
   },
+  "ja:补仓": {
+    "translation": "追加買い付け",
+    "timestamp": "2025-10-13T19:11:08.3468418+08:00",
+    "type": "tag"
+  },
   "ja:计划生育": {
     "translation": "計画出産 (Keikaku shussan) / 家族計画 (Kazoku keikaku)",
     "timestamp": "2025-06-02T06:24:18.5445193+08:00",
@@ -2937,6 +2962,11 @@
   "ja:金融科技": {
     "translation": "フィンテック (FinTech)",
     "timestamp": "2025-06-12T23:52:01.4978629+08:00",
+    "type": "tag"
+  },
+  "ja:铁律": {
+    "translation": "鉄則 (てっそく)",
+    "timestamp": "2025-10-13T19:11:08.4933453+08:00",
     "type": "tag"
   },
   "ja:锻炼": {
