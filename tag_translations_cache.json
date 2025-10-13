@@ -1024,6 +1024,11 @@
     "timestamp": "2025-05-25T22:40:27.5455937+08:00",
     "type": "tag"
   },
+  "en:情绪": {
+    "translation": "Emotion",
+    "timestamp": "2025-10-13T18:51:19.2681158+08:00",
+    "type": "tag"
+  },
   "en:意义": {
     "translation": "",
     "timestamp": "2025-05-25T22:41:25.9735813+08:00",
@@ -1414,6 +1419,11 @@
     "timestamp": "2025-05-25T22:41:38.0764089+08:00",
     "type": "tag"
   },
+  "en:纪律性": {
+    "translation": "Discipline",
+    "timestamp": "2025-10-13T18:51:19.3441395+08:00",
+    "type": "tag"
+  },
   "en:纳斯达克": {
     "translation": "nasdaq",
     "timestamp": "2025-05-25T22:40:26.1869048+08:00",
@@ -1747,6 +1757,11 @@
   "en:集群": {
     "translation": "Cluster",
     "timestamp": "2025-09-19T09:53:50.8056807+08:00",
+    "type": "tag"
+  },
+  "en:雷军": {
+    "translation": "Lei Jun",
+    "timestamp": "2025-10-13T18:51:19.208428+08:00",
     "type": "tag"
   },
   "en:高可用": {
@@ -2254,6 +2269,11 @@
     "timestamp": "2025-06-02T05:47:35.1866166+08:00",
     "type": "tag"
   },
+  "ja:情绪": {
+    "translation": "感情",
+    "timestamp": "2025-10-13T18:51:45.2188743+08:00",
+    "type": "tag"
+  },
   "ja:意义": {
     "translation": "意味",
     "timestamp": "2025-06-02T17:26:22.6084415+08:00",
@@ -2624,6 +2644,11 @@
     "timestamp": "2025-06-02T06:06:27.8293191+08:00",
     "type": "tag"
   },
+  "ja:纪律性": {
+    "translation": "規律 (Kiritsu)",
+    "timestamp": "2025-10-13T18:51:45.3488718+08:00",
+    "type": "tag"
+  },
   "ja:纳斯达克": {
     "translation": "ニューヨーク証券取引所 (Nyuu Yookuu Shoquun Torihajo)",
     "timestamp": "2025-06-02T17:23:26.5977711+08:00",
@@ -2942,6 +2967,11 @@
   "ja:集群": {
     "translation": "クラスタリング",
     "timestamp": "2025-09-19T09:55:48.6985413+08:00",
+    "type": "tag"
+  },
+  "ja:雷军": {
+    "translation": "雷軍 (Léi Jūn)",
+    "timestamp": "2025-10-13T18:51:45.4931027+08:00",
     "type": "tag"
   },
   "ja:高可用": {
