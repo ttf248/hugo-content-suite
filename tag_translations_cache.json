@@ -669,6 +669,11 @@
     "timestamp": "2025-09-18T19:31:56.9371271+08:00",
     "type": "tag"
   },
+  "en:光猫": {
+    "translation": "Light Cat",
+    "timestamp": "2025-10-15T18:59:13.1976131+08:00",
+    "type": "tag"
+  },
   "en:共和党": {
     "translation": "republican-party",
     "timestamp": "2025-05-25T22:41:29.4956919+08:00",
@@ -1329,6 +1334,11 @@
     "timestamp": "2025-05-25T22:40:33.3786007+08:00",
     "type": "tag"
   },
+  "en:电信": {
+    "translation": "Telecommunications",
+    "timestamp": "2025-10-15T18:59:13.3189043+08:00",
+    "type": "tag"
+  },
   "en:电影": {
     "translation": "movie",
     "timestamp": "2025-05-25T22:40:16.3495138+08:00",
@@ -1467,6 +1477,11 @@
   "en:网络字节序": {
     "translation": "network-byte-order",
     "timestamp": "2025-05-25T22:40:52.3692323+08:00",
+    "type": "tag"
+  },
+  "en:网络故障": {
+    "translation": "Network Failure",
+    "timestamp": "2025-10-15T18:59:13.1246589+08:00",
     "type": "tag"
   },
   "en:网络通信": {
@@ -1709,6 +1724,11 @@
     "timestamp": "2025-07-21T19:23:06.5643511+08:00",
     "type": "tag"
   },
+  "en:重启": {
+    "translation": "Restart",
+    "timestamp": "2025-10-15T18:59:13.2524807+08:00",
+    "type": "tag"
+  },
   "en:金融": {
     "translation": "financial",
     "timestamp": "2025-05-25T22:40:47.5062693+08:00",
@@ -1942,6 +1962,11 @@
   "ja:债券": {
     "translation": "債券 (seitoken)",
     "timestamp": "2025-09-18T19:32:11.2286314+08:00",
+    "type": "tag"
+  },
+  "ja:光猫": {
+    "translation": "光猫 (Hikikone)",
+    "timestamp": "2025-10-15T18:59:25.8622151+08:00",
     "type": "tag"
   },
   "ja:共和党": {
@@ -2574,6 +2599,11 @@
     "timestamp": "2025-06-02T05:51:34.4605093+08:00",
     "type": "tag"
   },
+  "ja:电信": {
+    "translation": "通信",
+    "timestamp": "2025-10-15T18:59:25.9209581+08:00",
+    "type": "tag"
+  },
   "ja:电影": {
     "translation": "映画",
     "timestamp": "2025-06-02T06:11:49.344512+08:00",
@@ -2707,6 +2737,11 @@
   "ja:网络字节序": {
     "translation": "ネットワークバイト順 (Network byte order)",
     "timestamp": "2025-06-02T05:38:43.4396937+08:00",
+    "type": "tag"
+  },
+  "ja:网络故障": {
+    "translation": "ネットワーク障害",
+    "timestamp": "2025-10-15T18:59:24.9637539+08:00",
     "type": "tag"
   },
   "ja:网络通信": {
@@ -2937,6 +2972,11 @@
   "ja:配售": {
     "translation": "予約受付中 (yoyaku uketsuke-chuu)",
     "timestamp": "2025-07-21T19:23:52.5169416+08:00",
+    "type": "tag"
+  },
+  "ja:重启": {
+    "translation": "再起動",
+    "timestamp": "2025-10-15T18:59:25.9980615+08:00",
     "type": "tag"
   },
   "ja:金融": {
