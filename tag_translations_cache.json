@@ -79,6 +79,11 @@
     "timestamp": "2025-09-19T09:53:50.75012+08:00",
     "type": "tag"
   },
+  "en:IPO": {
+    "translation": "Initial Public Offering",
+    "timestamp": "2025-10-15T19:32:40.7972343+08:00",
+    "type": "tag"
+  },
   "en:Keepalived": {
     "translation": "Keepalived",
     "timestamp": "2025-09-19T09:53:51.094627+08:00",
@@ -527,6 +532,11 @@
   "en:上交所": {
     "translation": "shanghai-stock-exchange",
     "timestamp": "2025-05-25T22:40:34.9218109+08:00",
+    "type": "tag"
+  },
+  "en:专有名词": {
+    "translation": "Proper Nouns",
+    "timestamp": "2025-10-15T19:32:40.9406683+08:00",
     "type": "tag"
   },
   "en:世界观": {
@@ -1154,6 +1164,11 @@
     "timestamp": "2025-05-25T22:40:08.5687741+08:00",
     "type": "tag"
   },
+  "en:暗盘": {
+    "translation": "Dark Web",
+    "timestamp": "2025-10-15T19:32:40.862609+08:00",
+    "type": "tag"
+  },
   "en:暴涨": {
     "translation": "spike-surge",
     "timestamp": "2025-05-25T22:40:37.5280964+08:00",
@@ -1434,6 +1449,11 @@
     "timestamp": "2025-05-25T22:41:38.0764089+08:00",
     "type": "tag"
   },
+  "en:系统梳理": {
+    "translation": "Systematic Review",
+    "timestamp": "2025-10-15T19:32:41.0214377+08:00",
+    "type": "tag"
+  },
   "en:纪律性": {
     "translation": "Discipline",
     "timestamp": "2025-10-13T18:51:19.3441395+08:00",
@@ -1592,6 +1612,11 @@
   "en:补仓": {
     "translation": "Add to Position / Cover Short (depending on context – both are common translations)",
     "timestamp": "2025-10-13T19:10:53.9878295+08:00",
+    "type": "tag"
+  },
+  "en:解释": {
+    "translation": "Explanation",
+    "timestamp": "2025-10-15T19:32:41.0733723+08:00",
     "type": "tag"
   },
   "en:计划生育": {
@@ -1832,6 +1857,11 @@
   "ja:上交所": {
     "translation": "上海証券取引所 (Shanghai Stock Exchange)",
     "timestamp": "2025-06-02T17:23:26.036462+08:00",
+    "type": "tag"
+  },
+  "ja:专有名词": {
+    "translation": "専門用語",
+    "timestamp": "2025-10-15T19:33:12.8205652+08:00",
     "type": "tag"
   },
   "ja:世界观": {
@@ -2424,6 +2454,11 @@
     "timestamp": "2025-06-02T06:11:49.2859888+08:00",
     "type": "tag"
   },
+  "ja:暗盘": {
+    "translation": "暗号化ドライブ (En goda)",
+    "timestamp": "2025-10-15T19:33:12.7586466+08:00",
+    "type": "tag"
+  },
   "ja:暴涨": {
     "translation": "急激な上昇 (きげきなしょうせい)",
     "timestamp": "2025-06-02T06:15:06.1462574+08:00",
@@ -2694,6 +2729,11 @@
     "timestamp": "2025-06-02T06:06:27.8293191+08:00",
     "type": "tag"
   },
+  "ja:系统梳理": {
+    "translation": "システム整理 (Shisutemu seiri)",
+    "timestamp": "2025-10-15T19:33:12.9907969+08:00",
+    "type": "tag"
+  },
   "ja:纪律性": {
     "translation": "規律 (Kiritsu)",
     "timestamp": "2025-10-13T18:51:45.3488718+08:00",
@@ -2847,6 +2887,11 @@
   "ja:补仓": {
     "translation": "追加買い付け",
     "timestamp": "2025-10-13T19:11:08.3468418+08:00",
+    "type": "tag"
+  },
+  "ja:解释": {
+    "translation": "説明 (Setsumei)",
+    "timestamp": "2025-10-15T19:33:13.1149112+08:00",
     "type": "tag"
   },
   "ja:计划生育": {
