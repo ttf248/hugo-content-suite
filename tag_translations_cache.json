@@ -89,6 +89,11 @@
     "timestamp": "2025-09-19T09:53:51.094627+08:00",
     "type": "tag"
   },
+  "en:LOC": {
+    "translation": "LOC (Location Code)",
+    "timestamp": "2025-10-15T19:56:34.417707+08:00",
+    "type": "tag"
+  },
   "en:Linux": {
     "translation": "linux",
     "timestamp": "2025-05-25T22:41:45.964524+08:00",
@@ -102,6 +107,11 @@
   "en:MBR": {
     "translation": "MBR",
     "timestamp": "2025-09-24T21:44:17.3974716+08:00",
+    "type": "tag"
+  },
+  "en:MOC": {
+    "translation": "MOC",
+    "timestamp": "2025-10-15T19:56:34.3077908+08:00",
     "type": "tag"
   },
   "en:Nginx": {
@@ -1102,6 +1112,11 @@
   "en:接口文档": {
     "translation": "api-documentation",
     "timestamp": "2025-05-25T22:40:21.1427677+08:00",
+    "type": "tag"
+  },
+  "en:收盘价交易": {
+    "translation": "Closing Price Trading",
+    "timestamp": "2025-10-15T19:56:34.2426207+08:00",
     "type": "tag"
   },
   "en:改名风波": {
@@ -2397,6 +2412,11 @@
   "ja:接口文档": {
     "translation": "APIドキュメント",
     "timestamp": "2025-06-02T17:23:26.6960562+08:00",
+    "type": "tag"
+  },
+  "ja:收盘价交易": {
+    "translation": "クローズエンド取引",
+    "timestamp": "2025-10-15T19:56:58.4006286+08:00",
     "type": "tag"
   },
   "ja:改名风波": {
