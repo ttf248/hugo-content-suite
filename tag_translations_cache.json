@@ -1179,6 +1179,11 @@
     "timestamp": "2025-05-25T22:40:08.5687741+08:00",
     "type": "tag"
   },
+  "en:显示器": {
+    "translation": "Monitor",
+    "timestamp": "2025-10-28T21:19:22.7362085+08:00",
+    "type": "tag"
+  },
   "en:暗盘": {
     "translation": "Dark Web",
     "timestamp": "2025-10-15T19:32:40.862609+08:00",
@@ -1849,6 +1854,11 @@
     "timestamp": "2025-10-12T01:54:28.7067044+08:00",
     "type": "tag"
   },
+  "en:黑屏": {
+    "translation": "Black Screen",
+    "timestamp": "2025-10-28T21:19:22.6757635+08:00",
+    "type": "tag"
+  },
   "ja:2.5G网卡": {
     "translation": "2.5G NIC (Network Interface Card)",
     "timestamp": "2025-06-02T06:04:27.4808279+08:00",
@@ -2472,6 +2482,11 @@
   "ja:春节档": {
     "translation": "春節檔",
     "timestamp": "2025-06-02T06:11:49.2859888+08:00",
+    "type": "tag"
+  },
+  "ja:显示器": {
+    "translation": "ディスプレイ",
+    "timestamp": "2025-10-28T21:19:31.0039038+08:00",
     "type": "tag"
   },
   "ja:暗盘": {
@@ -3117,6 +3132,11 @@
   "ja:黑天鹅": {
     "translation": "ブラックスワン (Burakusuan)",
     "timestamp": "2025-10-12T01:56:31.9419634+08:00",
+    "type": "tag"
+  },
+  "ja:黑屏": {
+    "translation": "黒画面 (Kurogamae)",
+    "timestamp": "2025-10-28T21:19:31.1570217+08:00",
     "type": "tag"
   }
 }
