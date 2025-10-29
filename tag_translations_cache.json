@@ -4,6 +4,11 @@
     "timestamp": "2025-05-25T22:42:20.8016783+08:00",
     "type": "tag"
   },
+  "en:25H2 版本": {
+    "translation": "25H2 Version",
+    "timestamp": "2025-10-28T22:41:45.2458551+08:00",
+    "type": "tag"
+  },
   "en:7x24小时交易": {
     "translation": "7x24 hour trading",
     "timestamp": "2025-07-28T00:06:05.9897614+08:00",
@@ -84,6 +89,11 @@
     "timestamp": "2025-10-15T19:32:40.7972343+08:00",
     "type": "tag"
   },
+  "en:KB5054156": {
+    "translation": "KB5054156",
+    "timestamp": "2025-10-28T22:41:45.4585756+08:00",
+    "type": "tag"
+  },
   "en:Keepalived": {
     "translation": "Keepalived",
     "timestamp": "2025-09-19T09:53:51.094627+08:00",
@@ -157,6 +167,11 @@
   "en:WPF学习资料": {
     "translation": "wpf-learning-resources",
     "timestamp": "2025-05-25T22:43:09.3805753+08:00",
+    "type": "tag"
+  },
+  "en:Windows 11": {
+    "translation": "Windows 11",
+    "timestamp": "2025-10-28T22:41:45.0334866+08:00",
     "type": "tag"
   },
   "en:WizTree": {
@@ -824,6 +839,11 @@
     "timestamp": "2025-05-28T03:23:50.1657478+08:00",
     "type": "tag"
   },
+  "en:启用包": {
+    "translation": "Enable Package",
+    "timestamp": "2025-10-28T22:41:45.316599+08:00",
+    "type": "tag"
+  },
   "en:哪吒": {
     "translation": "nezha",
     "timestamp": "2025-05-25T22:40:28.720925+08:00",
@@ -1469,6 +1489,11 @@
     "timestamp": "2025-05-25T22:41:38.0764089+08:00",
     "type": "tag"
   },
+  "en:系统功能更新": {
+    "translation": "System Function Update",
+    "timestamp": "2025-10-28T22:41:45.1293056+08:00",
+    "type": "tag"
+  },
   "en:系统梳理": {
     "translation": "Systematic Review",
     "timestamp": "2025-10-15T19:32:41.0214377+08:00",
@@ -1864,6 +1889,11 @@
     "timestamp": "2025-06-02T06:04:27.4808279+08:00",
     "type": "tag"
   },
+  "ja:25H2 版本": {
+    "translation": "25H2 バージョン",
+    "timestamp": "2025-10-28T22:42:05.2572909+08:00",
+    "type": "tag"
+  },
   "ja:7x24小时交易": {
     "translation": "24時間7日間の取引",
     "timestamp": "2025-07-28T00:06:33.4723185+08:00",
@@ -2152,6 +2182,11 @@
   "ja:后端": {
     "translation": "バックエンド",
     "timestamp": "2025-06-02T06:25:00.0685042+08:00",
+    "type": "tag"
+  },
+  "ja:启用包": {
+    "translation": "パッケージを有効にする",
+    "timestamp": "2025-10-28T22:42:05.0340243+08:00",
     "type": "tag"
   },
   "ja:哪吒": {
@@ -2762,6 +2797,11 @@
   "ja:系统": {
     "translation": "システム",
     "timestamp": "2025-06-02T06:06:27.8293191+08:00",
+    "type": "tag"
+  },
+  "ja:系统功能更新": {
+    "translation": "システム機能アップデート",
+    "timestamp": "2025-10-28T22:42:05.124055+08:00",
     "type": "tag"
   },
   "ja:系统梳理": {

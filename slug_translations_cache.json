@@ -134,6 +134,11 @@
     "timestamp": "2025-05-25T22:43:42.8857172+08:00",
     "type": "article"
   },
+  "en:KB5054156：Windows 11 版本 25H2 功能更新（启用包使用指南）": {
+    "translation": "KB5054156: Windows 11 version 25H2 Feature Update (Package Deployment Guide)",
+    "timestamp": "2025-10-28T22:41:49.8575104+08:00",
+    "type": "article"
+  },
   "en:Keepalived+HAProxy 搭建高可用负载均衡": {
     "translation": "Keepalived + HAProxy for High Availability Load Balancing",
     "timestamp": "2025-09-19T09:54:03.3805388+08:00",
