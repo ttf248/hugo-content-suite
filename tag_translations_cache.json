@@ -1619,6 +1619,11 @@
     "timestamp": "2025-08-13T21:53:54.6259463+08:00",
     "type": "tag"
   },
+  "en:英雄联盟": {
+    "translation": "League of Legends",
+    "timestamp": "2025-10-31T19:44:13.6846586+08:00",
+    "type": "tag"
+  },
   "en:苹果": {
     "translation": "Apple",
     "timestamp": "2025-09-26T20:37:52.2635412+08:00",
@@ -2927,6 +2932,11 @@
   "ja:自由化": {
     "translation": "自由化 (Jiyuhka)",
     "timestamp": "2025-08-13T21:54:16.473169+08:00",
+    "type": "tag"
+  },
+  "ja:英雄联盟": {
+    "translation": "LOL",
+    "timestamp": "2025-10-31T19:44:31.0188676+08:00",
     "type": "tag"
   },
   "ja:苹果": {
