@@ -1794,6 +1794,11 @@
     "timestamp": "2025-05-25T22:42:07.9919853+08:00",
     "type": "tag"
   },
+  "en:遗憾": {
+    "translation": "Regret",
+    "timestamp": "2025-11-01T14:18:11.9454075+08:00",
+    "type": "tag"
+  },
   "en:配售": {
     "translation": "Available for sale",
     "timestamp": "2025-07-21T19:23:06.5643511+08:00",
@@ -1872,6 +1877,11 @@
   "en:雷军": {
     "translation": "Lei Jun",
     "timestamp": "2025-10-13T18:51:19.208428+08:00",
+    "type": "tag"
+  },
+  "en:青春": {
+    "translation": "Youth",
+    "timestamp": "2025-11-01T14:18:11.8553785+08:00",
     "type": "tag"
   },
   "en:高可用": {
@@ -3099,6 +3109,11 @@
     "timestamp": "2025-06-02T06:16:36.4740928+08:00",
     "type": "tag"
   },
+  "ja:遗憾": {
+    "translation": "後悔 (こうかい)",
+    "timestamp": "2025-11-01T14:18:31.3930527+08:00",
+    "type": "tag"
+  },
   "ja:配售": {
     "translation": "予約受付中 (yoyaku uketsuke-chuu)",
     "timestamp": "2025-07-21T19:23:52.5169416+08:00",
@@ -3172,6 +3187,11 @@
   "ja:雷军": {
     "translation": "雷軍 (Léi Jūn)",
     "timestamp": "2025-10-13T18:51:45.4931027+08:00",
+    "type": "tag"
+  },
+  "ja:青春": {
+    "translation": "青春 (Seishun)",
+    "timestamp": "2025-11-01T14:18:31.5318003+08:00",
     "type": "tag"
   },
   "ja:高可用": {
