@@ -104,6 +104,11 @@
     "timestamp": "2025-10-15T19:56:34.417707+08:00",
     "type": "tag"
   },
+  "en:LPL": {
+    "translation": "LPL",
+    "timestamp": "2025-11-03T05:05:26.0680124+08:00",
+    "type": "tag"
+  },
   "en:Linux": {
     "translation": "linux",
     "timestamp": "2025-05-25T22:41:45.964524+08:00",
@@ -707,6 +712,11 @@
   "en:光猫": {
     "translation": "Light Cat",
     "timestamp": "2025-10-15T18:59:13.1976131+08:00",
+    "type": "tag"
+  },
+  "en:全华班": {
+    "translation": "Full Chinese Team",
+    "timestamp": "2025-11-03T05:05:25.9960674+08:00",
     "type": "tag"
   },
   "en:共和党": {
@@ -1394,6 +1404,11 @@
     "timestamp": "2025-10-15T18:59:13.3189043+08:00",
     "type": "tag"
   },
+  "en:电子竞技": {
+    "translation": "Esports",
+    "timestamp": "2025-11-03T05:05:25.9104719+08:00",
+    "type": "tag"
+  },
   "en:电影": {
     "translation": "movie",
     "timestamp": "2025-05-25T22:40:16.3495138+08:00",
@@ -1884,6 +1899,16 @@
     "timestamp": "2025-11-01T14:18:11.8553785+08:00",
     "type": "tag"
   },
+  "en:韩国": {
+    "translation": "South Korea",
+    "timestamp": "2025-11-03T05:05:26.2424388+08:00",
+    "type": "tag"
+  },
+  "en:韩援": {
+    "translation": "Korean Support/Assistance",
+    "timestamp": "2025-11-03T05:05:26.1723128+08:00",
+    "type": "tag"
+  },
   "en:高可用": {
     "translation": "High Availability",
     "timestamp": "2025-09-19T09:53:50.6839674+08:00",
@@ -2067,6 +2092,11 @@
   "ja:光猫": {
     "translation": "光猫 (Hikikone)",
     "timestamp": "2025-10-15T18:59:25.8622151+08:00",
+    "type": "tag"
+  },
+  "ja:全华班": {
+    "translation": "全華班 (Zen'ika Ban)",
+    "timestamp": "2025-11-03T05:06:00.0913324+08:00",
     "type": "tag"
   },
   "ja:共和党": {
@@ -2724,6 +2754,11 @@
     "timestamp": "2025-10-15T18:59:25.9209581+08:00",
     "type": "tag"
   },
+  "ja:电子竞技": {
+    "translation": "eスポーツ (ēsupōtsu)",
+    "timestamp": "2025-11-03T05:06:00.2531175+08:00",
+    "type": "tag"
+  },
   "ja:电影": {
     "translation": "映画",
     "timestamp": "2025-06-02T06:11:49.344512+08:00",
@@ -3192,6 +3227,16 @@
   "ja:青春": {
     "translation": "青春 (Seishun)",
     "timestamp": "2025-11-01T14:18:31.5318003+08:00",
+    "type": "tag"
+  },
+  "ja:韩国": {
+    "translation": "韓国",
+    "timestamp": "2025-11-03T05:05:59.3057686+08:00",
+    "type": "tag"
+  },
+  "ja:韩援": {
+    "translation": "韓国語 (韓国人)",
+    "timestamp": "2025-11-03T05:05:59.4273646+08:00",
     "type": "tag"
   },
   "ja:高可用": {
