@@ -24,6 +24,11 @@
     "timestamp": "2025-06-02T05:12:56.6564457+08:00",
     "type": "tag"
   },
+  "en:AI泡沫": {
+    "translation": "AI Bubble",
+    "timestamp": "2025-11-03T23:05:46.3149861+08:00",
+    "type": "tag"
+  },
   "en:A股": {
     "translation": "a-stock",
     "timestamp": "2025-05-25T22:41:09.5871108+08:00",
@@ -132,6 +137,11 @@
   "en:Nginx": {
     "translation": "nginx",
     "timestamp": "2025-05-25T22:42:16.9709118+08:00",
+    "type": "tag"
+  },
+  "en:OpenAI": {
+    "translation": "OpenAI",
+    "timestamp": "2025-11-03T23:05:46.5333454+08:00",
     "type": "tag"
   },
   "en:Prompt 工程师": {
@@ -1044,6 +1054,11 @@
     "timestamp": "2025-08-13T21:53:54.7705856+08:00",
     "type": "tag"
   },
+  "en:市场集中度": {
+    "translation": "Market Concentration",
+    "timestamp": "2025-11-03T23:05:46.3848271+08:00",
+    "type": "tag"
+  },
   "en:师徒": {
     "translation": "shi-tu",
     "timestamp": "2025-05-25T22:42:02.2639191+08:00",
@@ -1102,6 +1117,11 @@
   "en:手机": {
     "translation": "Mobile phone",
     "timestamp": "2025-09-26T20:37:52.1558973+08:00",
+    "type": "tag"
+  },
+  "en:技术创新": {
+    "translation": "Technological Innovation",
+    "timestamp": "2025-11-03T23:05:46.627499+08:00",
     "type": "tag"
   },
   "en:投资": {
@@ -1634,6 +1654,11 @@
     "timestamp": "2025-08-13T21:53:54.6259463+08:00",
     "type": "tag"
   },
+  "en:英伟达": {
+    "translation": "NVIDIA",
+    "timestamp": "2025-11-03T23:05:46.4582764+08:00",
+    "type": "tag"
+  },
   "en:英雄联盟": {
     "translation": "League of Legends",
     "timestamp": "2025-10-31T19:44:13.6846586+08:00",
@@ -1942,6 +1967,11 @@
   "ja:AI 灵感碰撞坊": {
     "translation": "AI霊感衝突坊",
     "timestamp": "2025-06-02T05:13:21.7168809+08:00",
+    "type": "tag"
+  },
+  "ja:AI泡沫": {
+    "translation": "AIバブル (AIBaburu)",
+    "timestamp": "2025-11-03T23:06:21.9866915+08:00",
     "type": "tag"
   },
   "ja:A股": {
@@ -2409,6 +2439,11 @@
     "timestamp": "2025-08-13T21:54:16.6643739+08:00",
     "type": "tag"
   },
+  "ja:市场集中度": {
+    "translation": "市場集中度",
+    "timestamp": "2025-11-03T23:06:21.8245468+08:00",
+    "type": "tag"
+  },
   "ja:师徒": {
     "translation": "師徒",
     "timestamp": "2025-06-02T06:12:55.4223668+08:00",
@@ -2467,6 +2502,11 @@
   "ja:手机": {
     "translation": "スマートフォン",
     "timestamp": "2025-09-26T20:38:04.1548958+08:00",
+    "type": "tag"
+  },
+  "ja:技术创新": {
+    "translation": "技術革新 (Gijutsu ketsu hin)",
+    "timestamp": "2025-11-03T23:06:22.2545357+08:00",
     "type": "tag"
   },
   "ja:投资": {
@@ -2977,6 +3017,11 @@
   "ja:自由化": {
     "translation": "自由化 (Jiyuhka)",
     "timestamp": "2025-08-13T21:54:16.473169+08:00",
+    "type": "tag"
+  },
+  "ja:英伟达": {
+    "translation": "NVIDIA",
+    "timestamp": "2025-11-03T23:06:22.0673624+08:00",
     "type": "tag"
   },
   "ja:英雄联盟": {
