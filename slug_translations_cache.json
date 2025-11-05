@@ -134,6 +134,11 @@
     "timestamp": "2025-05-25T22:43:42.8857172+08:00",
     "type": "article"
   },
+  "en:Index": {
+    "translation": "Index",
+    "timestamp": "2025-11-05T15:18:48.1193155+08:00",
+    "type": "article"
+  },
   "en:KB5054156：Windows 11 版本 25H2 功能更新（启用包使用指南）": {
     "translation": "KB5054156: Windows 11 version 25H2 Feature Update (Package Deployment Guide)",
     "timestamp": "2025-10-28T22:41:49.8575104+08:00",
@@ -497,6 +502,11 @@
   "en:国庆前后股市的“冰火两重天”：暴涨与暴跌的戏剧性转折": {
     "translation": "stock-market-rollercoaster-ahead-of-national-day",
     "timestamp": "2025-05-25T22:44:14.5956321+08:00",
+    "type": "article"
+  },
+  "en:基于命令行的AI编码交互": {
+    "translation": "Command-line AI Coding Interaction",
+    "timestamp": "2025-11-05T15:20:07.1754852+08:00",
     "type": "article"
   },
   "en:基金和固收理财": {
