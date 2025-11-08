@@ -684,6 +684,11 @@
     "timestamp": "2025-05-25T22:44:36.2156696+08:00",
     "type": "article"
   },
+  "en:本地开发之痛：为何 `nul` 文件删不掉？一个“复合型”文件系统难题的破解之道": {
+    "translation": "Local Development Pain: Why Can't You Delete `nul` Files? A Solution to the “Composite” File System Problem",
+    "timestamp": "2025-11-08T16:40:51.3205815+08:00",
+    "type": "article"
+  },
   "en:枚举值尽量不要从零开始定义": {
     "translation": "Enumeration values should generally not be defined starting from zero.",
     "timestamp": "2025-06-11T22:36:12.332558+08:00",

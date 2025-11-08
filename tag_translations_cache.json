@@ -1219,6 +1219,11 @@
     "timestamp": "2025-07-09T21:17:17.3894919+08:00",
     "type": "tag"
   },
+  "en:文件系统": {
+    "translation": "File System",
+    "timestamp": "2025-11-08T16:40:46.6154709+08:00",
+    "type": "tag"
+  },
   "en:文化传播": {
     "translation": "Cultural Transmission",
     "timestamp": "2025-06-02T21:55:23.7895998+08:00",
@@ -2592,6 +2597,11 @@
   "ja:数字货币": {
     "translation": "暗号通貨 (أنگyū tsūkō)",
     "timestamp": "2025-06-12T23:52:01.1735797+08:00",
+    "type": "tag"
+  },
+  "ja:文件系统": {
+    "translation": "ファイルシステム",
+    "timestamp": "2025-11-08T16:41:13.1947716+08:00",
     "type": "tag"
   },
   "ja:文化传播": {
