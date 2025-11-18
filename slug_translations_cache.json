@@ -644,6 +644,11 @@
     "timestamp": "2025-05-25T22:43:54.4749913+08:00",
     "type": "article"
   },
+  "en:搞懂 MySQL 间隙锁：从原理到金融级选型": {
+    "translation": "Understanding MySQL Gaps Locks: From Principles to Enterprise-Grade Selection",
+    "timestamp": "2025-11-18T22:33:01.5804354+08:00",
+    "type": "article"
+  },
   "en:数字货币基础概念": {
     "translation": "Digital Currency Fundamentals",
     "timestamp": "2025-07-21T19:36:21.0273283+08:00",

@@ -1294,6 +1294,11 @@
     "timestamp": "2025-05-25T22:41:56.1565168+08:00",
     "type": "tag"
   },
+  "en:死锁": {
+    "translation": "Deadlock",
+    "timestamp": "2025-11-18T22:32:57.2574891+08:00",
+    "type": "tag"
+  },
   "en:民主党": {
     "translation": "democratic-party",
     "timestamp": "2025-05-25T22:41:05.4851434+08:00",
@@ -2687,6 +2692,11 @@
   "ja:样式表": {
     "translation": "スタイルシート",
     "timestamp": "2025-06-02T17:28:20.4634787+08:00",
+    "type": "tag"
+  },
+  "ja:死锁": {
+    "translation": "死鎖",
+    "timestamp": "2025-11-18T22:33:19.6035316+08:00",
     "type": "tag"
   },
   "ja:民主党": {
