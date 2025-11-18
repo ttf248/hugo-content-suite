@@ -1439,6 +1439,11 @@
     "timestamp": "2025-10-15T18:59:13.3189043+08:00",
     "type": "tag"
   },
+  "en:电商税": {
+    "translation": "E-commerce Tax",
+    "timestamp": "2025-11-18T22:04:16.9177053+08:00",
+    "type": "tag"
+  },
   "en:电子竞技": {
     "translation": "Esports",
     "timestamp": "2025-11-03T05:05:25.9104719+08:00",
@@ -1762,6 +1767,11 @@
   "en:财富": {
     "translation": "wealth",
     "timestamp": "2025-05-25T22:42:16.4702326+08:00",
+    "type": "tag"
+  },
+  "en:财报": {
+    "translation": "Financial Statements",
+    "timestamp": "2025-11-18T22:04:16.9916264+08:00",
     "type": "tag"
   },
   "en:财政政策": {
@@ -2814,6 +2824,11 @@
     "timestamp": "2025-10-15T18:59:25.9209581+08:00",
     "type": "tag"
   },
+  "ja:电商税": {
+    "translation": "EC税 (イーシーセー)",
+    "timestamp": "2025-11-18T22:05:00.3498892+08:00",
+    "type": "tag"
+  },
   "ja:电子竞技": {
     "translation": "eスポーツ (ēsupōtsu)",
     "timestamp": "2025-11-03T05:06:00.2531175+08:00",
@@ -3127,6 +3142,11 @@
   "ja:财富": {
     "translation": "富 (と)",
     "timestamp": "2025-06-02T06:14:18.2538235+08:00",
+    "type": "tag"
+  },
+  "ja:财报": {
+    "translation": "財務諸表",
+    "timestamp": "2025-11-18T22:05:00.1941933+08:00",
     "type": "tag"
   },
   "ja:财政政策": {
