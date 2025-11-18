@@ -1849,6 +1849,11 @@
     "timestamp": "2025-05-25T22:41:59.5464475+08:00",
     "type": "tag"
   },
+  "en:通义千问": {
+    "translation": "Universal Questioning",
+    "timestamp": "2025-11-18T22:16:54.7615251+08:00",
+    "type": "tag"
+  },
   "en:通胀": {
     "translation": "inflation",
     "timestamp": "2025-05-25T22:41:02.3551212+08:00",
@@ -3217,6 +3222,11 @@
   "ja:追寻": {
     "translation": "探求 (Tanka) / 追求 (Suikyuu)",
     "timestamp": "2025-06-02T17:26:22.8593744+08:00",
+    "type": "tag"
+  },
+  "ja:通义千问": {
+    "translation": "汎用質問応答 (はんようしつもんおう)",
+    "timestamp": "2025-11-18T22:17:08.6137016+08:00",
     "type": "tag"
   },
   "ja:通胀": {
