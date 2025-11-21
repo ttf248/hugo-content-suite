@@ -344,6 +344,11 @@
     "timestamp": "2025-05-25T22:41:34.0986912+08:00",
     "type": "tag"
   },
+  "en:gemini": {
+    "translation": "Gemini",
+    "timestamp": "2025-11-22T00:33:34.0514163+08:00",
+    "type": "tag"
+  },
   "en:git": {
     "translation": "git",
     "timestamp": "2025-05-25T22:40:02.7472348+08:00",
@@ -377,6 +382,11 @@
   "en:golang": {
     "translation": "golang",
     "timestamp": "2025-05-25T22:41:40.4303068+08:00",
+    "type": "tag"
+  },
+  "en:google": {
+    "translation": "Google",
+    "timestamp": "2025-11-22T00:33:33.9797691+08:00",
     "type": "tag"
   },
   "en:gpt": {
