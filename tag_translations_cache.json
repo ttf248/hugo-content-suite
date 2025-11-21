@@ -1899,6 +1899,11 @@
     "timestamp": "2025-10-15T18:59:13.2524807+08:00",
     "type": "tag"
   },
+  "en:量化": {
+    "translation": "Quantization",
+    "timestamp": "2025-11-22T00:45:55.0037371+08:00",
+    "type": "tag"
+  },
   "en:金融": {
     "translation": "financial",
     "timestamp": "2025-05-25T22:40:47.5062693+08:00",
@@ -3277,6 +3282,11 @@
   "ja:重启": {
     "translation": "再起動",
     "timestamp": "2025-10-15T18:59:25.9980615+08:00",
+    "type": "tag"
+  },
+  "ja:量化": {
+    "translation": "量子化 (Kyūka)",
+    "timestamp": "2025-11-22T00:46:13.3756431+08:00",
     "type": "tag"
   },
   "ja:金融": {
