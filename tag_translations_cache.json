@@ -1784,6 +1784,11 @@
     "timestamp": "2025-05-25T22:42:04.5787143+08:00",
     "type": "tag"
   },
+  "en:谷歌": {
+    "translation": "Google",
+    "timestamp": "2025-12-03T22:45:50.468276+08:00",
+    "type": "tag"
+  },
   "en:负载均衡": {
     "translation": "Load Balancing",
     "timestamp": "2025-09-19T09:53:50.8736084+08:00",
@@ -3177,6 +3182,11 @@
   "ja:调试": {
     "translation": "デバッグ",
     "timestamp": "2025-06-02T06:05:30.0019373+08:00",
+    "type": "tag"
+  },
+  "ja:谷歌": {
+    "translation": "Google",
+    "timestamp": "2025-12-03T22:46:01.5013706+08:00",
     "type": "tag"
   },
   "ja:负载均衡": {
