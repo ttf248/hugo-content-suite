@@ -1564,6 +1564,11 @@
     "timestamp": "2025-08-01T19:11:55.715779+08:00",
     "type": "tag"
   },
+  "en:精度": {
+    "translation": "Accuracy",
+    "timestamp": "2025-12-04T22:06:28.1152995+08:00",
+    "type": "tag"
+  },
   "en:系统": {
     "translation": "system",
     "timestamp": "2025-05-25T22:41:38.0764089+08:00",
@@ -2967,6 +2972,11 @@
   "ja:竞技游戏": {
     "translation": "eスポーツ (エスポート)",
     "timestamp": "2025-06-02T05:13:22.0459998+08:00",
+    "type": "tag"
+  },
+  "ja:精度": {
+    "translation": "精度",
+    "timestamp": "2025-12-04T22:06:47.9498696+08:00",
     "type": "tag"
   },
   "ja:系统": {

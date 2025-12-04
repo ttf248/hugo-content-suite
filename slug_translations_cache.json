@@ -24,6 +24,11 @@
     "timestamp": "2025-05-25T22:44:33.012837+08:00",
     "type": "article"
   },
+  "en:AI 变“笨”了吗？揭秘参数精度与推理成本的博弈": {
+    "translation": "Is AI Getting “Dumber”? Uncovering the Game Between Parameter Precision and Inference Costs",
+    "timestamp": "2025-12-04T22:06:32.8429847+08:00",
+    "type": "article"
+  },
   "en:AI发展两年：有点类似Docker发布前的状态": {
     "translation": "ai-development-two-years-like-docker-pre-release",
     "timestamp": "2025-05-25T22:44:16.9790528+08:00",
@@ -527,6 +532,11 @@
   "en:后台服务TCP通讯异常排查": {
     "translation": "backend-service-tcp-communication-troubleshooting",
     "timestamp": "2025-05-25T22:44:12.5719272+08:00",
+    "type": "article"
+  },
+  "en:回测中的“复权”详解与数据获取": {
+    "translation": "Backtesting “Replication” Explained and Data Acquisition",
+    "timestamp": "2025-12-04T22:06:32.5953685+08:00",
     "type": "article"
   },
   "en:回测数据去哪里找？": {
