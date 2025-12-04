@@ -489,6 +489,11 @@
     "timestamp": "2025-05-28T03:23:51.1832094+08:00",
     "type": "tag"
   },
+  "en:passkey": {
+    "translation": "Passkey",
+    "timestamp": "2025-12-04T22:25:58.6237684+08:00",
+    "type": "tag"
+  },
   "en:pdb": {
     "translation": "pdb",
     "timestamp": "2025-05-25T22:41:52.170097+08:00",
@@ -1042,6 +1047,11 @@
   "en:家庭": {
     "translation": "family",
     "timestamp": "2025-05-25T22:41:51.6682911+08:00",
+    "type": "tag"
+  },
+  "en:密码": {
+    "translation": "Password",
+    "timestamp": "2025-12-04T22:25:58.680638+08:00",
     "type": "tag"
   },
   "en:寝室": {
@@ -2472,6 +2482,11 @@
   "ja:家庭": {
     "translation": "家庭 (かてい)",
     "timestamp": "2025-06-02T05:51:34.336796+08:00",
+    "type": "tag"
+  },
+  "ja:密码": {
+    "translation": "暗号",
+    "timestamp": "2025-12-04T22:26:27.9272046+08:00",
     "type": "tag"
   },
   "ja:寝室": {
