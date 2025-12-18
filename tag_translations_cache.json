@@ -939,6 +939,11 @@
     "timestamp": "2025-05-25T22:40:55.7983265+08:00",
     "type": "tag"
   },
+  "en:国资": {
+    "translation": "State-owned Enterprise (SOE) / State-Owned Capital Group (SOCG)",
+    "timestamp": "2025-12-18T22:10:31.2124623+08:00",
+    "type": "tag"
+  },
   "en:国运": {
     "translation": "National Interest",
     "timestamp": "2025-06-20T00:19:58.8386987+08:00",
@@ -1292,6 +1297,11 @@
   "en:暴跌": {
     "translation": "stock-crash",
     "timestamp": "2025-05-25T22:40:59.7914067+08:00",
+    "type": "tag"
+  },
+  "en:暴雷": {
+    "translation": "Fail to meet expectations / Surprise (in a negative way)",
+    "timestamp": "2025-12-18T22:10:31.405788+08:00",
     "type": "tag"
   },
   "en:期权": {
@@ -2384,6 +2394,11 @@
     "timestamp": "2025-06-02T06:20:48.7564411+08:00",
     "type": "tag"
   },
+  "ja:国资": {
+    "translation": "国有企業",
+    "timestamp": "2025-12-18T22:11:04.2996218+08:00",
+    "type": "tag"
+  },
   "ja:国运": {
     "translation": "国家運 (kokunō)",
     "timestamp": "2025-06-20T00:20:20.6492363+08:00",
@@ -2717,6 +2732,11 @@
   "ja:暴跌": {
     "translation": "暴落 (Bōroku)",
     "timestamp": "2025-06-02T06:15:06.2959881+08:00",
+    "type": "tag"
+  },
+  "ja:暴雷": {
+    "translation": "落雷",
+    "timestamp": "2025-12-18T22:11:04.4169637+08:00",
     "type": "tag"
   },
   "ja:期权": {
