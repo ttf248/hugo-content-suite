@@ -619,6 +619,11 @@
     "timestamp": "2025-08-22T13:36:35.3390598+08:00",
     "type": "tag"
   },
+  "en:个人养老金": {
+    "translation": "Personal Pension",
+    "timestamp": "2025-12-19T00:32:30.9329544+08:00",
+    "type": "tag"
+  },
   "en:个人成长": {
     "translation": "Personal Growth",
     "timestamp": "2025-08-22T13:36:35.4127299+08:00",
@@ -802,6 +807,11 @@
   "en:函数": {
     "translation": "Function",
     "timestamp": "2025-06-02T21:13:09.6181699+08:00",
+    "type": "tag"
+  },
+  "en:利益": {
+    "translation": "Benefit",
+    "timestamp": "2025-12-19T00:32:30.857759+08:00",
     "type": "tag"
   },
   "en:制造业": {
@@ -1109,6 +1119,11 @@
     "timestamp": "2025-05-25T22:42:02.2639191+08:00",
     "type": "tag"
   },
+  "en:平台": {
+    "translation": "Platform",
+    "timestamp": "2025-12-19T00:32:30.9867476+08:00",
+    "type": "tag"
+  },
   "en:年度大事件": {
     "translation": "Year in Review / Major Events of the Year",
     "timestamp": "2025-06-10T17:00:21.6307813+08:00",
@@ -1207,6 +1222,11 @@
   "en:接口文档": {
     "translation": "api-documentation",
     "timestamp": "2025-05-25T22:40:21.1427677+08:00",
+    "type": "tag"
+  },
+  "en:支付宝": {
+    "translation": "Alipay",
+    "timestamp": "2025-12-19T00:32:31.0512655+08:00",
     "type": "tag"
   },
   "en:收盘价交易": {
@@ -2089,6 +2109,11 @@
     "timestamp": "2025-08-22T13:36:47.1451232+08:00",
     "type": "tag"
   },
+  "ja:个人养老金": {
+    "translation": "個人年金",
+    "timestamp": "2025-12-19T00:32:49.0533213+08:00",
+    "type": "tag"
+  },
   "ja:个人成长": {
     "translation": "自己成長 (Jiko Seishou)",
     "timestamp": "2025-08-22T13:36:47.469029+08:00",
@@ -2262,6 +2287,11 @@
   "ja:函数": {
     "translation": "関数",
     "timestamp": "2025-06-02T21:13:22.9184249+08:00",
+    "type": "tag"
+  },
+  "ja:利益": {
+    "translation": "利益 (Rieai)",
+    "timestamp": "2025-12-19T00:32:49.2673632+08:00",
     "type": "tag"
   },
   "ja:制造业": {
@@ -2554,6 +2584,11 @@
     "timestamp": "2025-06-02T06:12:55.4223668+08:00",
     "type": "tag"
   },
+  "ja:平台": {
+    "translation": "プラットフォーム",
+    "timestamp": "2025-12-19T00:32:49.1276159+08:00",
+    "type": "tag"
+  },
   "ja:年度大事件": {
     "translation": "年間の主要出来事 (ねんかんのずいこうできごと)",
     "timestamp": "2025-06-10T17:01:18.4047932+08:00",
@@ -2647,6 +2682,11 @@
   "ja:接口文档": {
     "translation": "APIドキュメント",
     "timestamp": "2025-06-02T17:23:26.6960562+08:00",
+    "type": "tag"
+  },
+  "ja:支付宝": {
+    "translation": "アリペイ (Ālipèi)",
+    "timestamp": "2025-12-19T00:32:48.9665757+08:00",
     "type": "tag"
   },
   "ja:收盘价交易": {
