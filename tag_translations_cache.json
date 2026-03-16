@@ -2599,6 +2599,11 @@
     "timestamp": "2025-08-16T18:05:48.5980749+08:00",
     "type": "tag"
   },
+  "en:流程": {
+    "translation": "Process",
+    "timestamp": "2026-03-16T21:08:18.387681+08:00",
+    "type": "tag"
+  },
   "en:流量变现": {
     "translation": "traffic-monetization",
     "timestamp": "2025-05-25T22:42:00.8386262+08:00",
@@ -3367,6 +3372,11 @@
   "en:补仓": {
     "translation": "Add to Position / Cover Short (depending on context – both are common translations)",
     "timestamp": "2025-10-13T19:10:53.9878295+08:00",
+    "type": "tag"
+  },
+  "en:规范": {
+    "translation": "Specification / Standard / Norm",
+    "timestamp": "2026-03-16T21:08:18.3245311+08:00",
     "type": "tag"
   },
   "en:视频下载": {
@@ -4694,6 +4704,11 @@
     "timestamp": "2025-08-16T18:06:00.1056552+08:00",
     "type": "tag"
   },
+  "ja:流程": {
+    "translation": "プロセス",
+    "timestamp": "2026-03-16T21:08:38.977462+08:00",
+    "type": "tag"
+  },
   "ja:流量变现": {
     "translation": "トラフィック収益化 (Torakku Shuyaku-ka)",
     "timestamp": "2025-06-02T05:11:02.1045593+08:00",
@@ -5087,6 +5102,11 @@
   "ja:补仓": {
     "translation": "追加買い付け",
     "timestamp": "2025-10-13T19:11:08.3468418+08:00",
+    "type": "tag"
+  },
+  "ja:规范": {
+    "translation": "規範 (Koubou)",
+    "timestamp": "2026-03-16T21:08:39.1190365+08:00",
     "type": "tag"
   },
   "ja:解释": {
