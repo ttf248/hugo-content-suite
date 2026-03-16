@@ -819,6 +819,11 @@
     "timestamp": "2025-05-25T22:43:52.2282879+08:00",
     "type": "article"
   },
+  "en:深度解析 C++ 中 `static lambda` 引发的内存空转与缓存污染": {
+    "translation": "Deep Dive into Memory Corruption and Cache Pollution caused by `static lambdas` in C++",
+    "timestamp": "2026-03-16T20:39:43.2402382+08:00",
+    "type": "article"
+  },
   "en:混沌工程": {
     "translation": "chaos-engineering",
     "timestamp": "2025-05-25T22:42:34.3774862+08:00",
@@ -1089,7 +1094,7 @@
     "timestamp": "2025-05-25T22:43:46.7949791+08:00",
     "type": "article"
   },
-  "en:💻 电脑黑屏故障排查记录": {
+  "en:💻 电脑黑屏问题排查记录": {
     "translation": "💻 Computer Black Screen Troubleshooting Log",
     "timestamp": "2025-10-28T21:19:26.8740702+08:00",
     "type": "article"
