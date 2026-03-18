@@ -2984,6 +2984,11 @@
     "timestamp": "2025-08-01T19:11:55.715779+08:00",
     "type": "tag"
   },
+  "en:算力": {
+    "translation": "Computing Power",
+    "timestamp": "2026-03-18T13:38:53.4888802+08:00",
+    "type": "tag"
+  },
   "en:精度": {
     "translation": "Accuracy",
     "timestamp": "2025-12-04T22:06:28.1152995+08:00",
@@ -3282,6 +3287,11 @@
   "en:舆情分析": {
     "translation": "Sentiment Analysis",
     "timestamp": "2026-03-16T20:22:22.732234+08:00",
+    "type": "tag"
+  },
+  "en:芯片": {
+    "translation": "Chip",
+    "timestamp": "2026-03-18T13:38:53.5594345+08:00",
     "type": "tag"
   },
   "en:英伟达": {
@@ -4914,6 +4924,11 @@
     "timestamp": "2025-06-02T05:13:22.0459998+08:00",
     "type": "tag"
   },
+  "ja:算力": {
+    "translation": "演算能力 (えんのうのうりょく)",
+    "timestamp": "2026-03-18T13:39:19.1724172+08:00",
+    "type": "tag"
+  },
   "ja:精度": {
     "translation": "精度",
     "timestamp": "2025-12-04T22:06:47.9498696+08:00",
@@ -5057,6 +5072,11 @@
   "ja:自由化": {
     "translation": "自由化 (Jiyuhka)",
     "timestamp": "2025-08-13T21:54:16.473169+08:00",
+    "type": "tag"
+  },
+  "ja:芯片": {
+    "translation": "チップ",
+    "timestamp": "2026-03-18T13:39:19.2791607+08:00",
     "type": "tag"
   },
   "ja:英伟达": {
