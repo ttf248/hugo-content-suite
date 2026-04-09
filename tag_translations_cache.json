@@ -1109,6 +1109,11 @@
     "timestamp": "2026-03-16T20:22:09.1023723+08:00",
     "type": "tag"
   },
+  "en:vscode": {
+    "translation": "VS Code",
+    "timestamp": "2026-04-09T19:20:39.5472438+08:00",
+    "type": "tag"
+  },
   "en:web3": {
     "translation": "Web3",
     "timestamp": "2025-07-21T19:54:50.9670329+08:00",
