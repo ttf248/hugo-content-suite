@@ -9,7 +9,6 @@ import (
 	"path/filepath"
 	"strings"
 
-	"github.com/tmc/langchaingo/textsplitter"
 	"gopkg.in/yaml.v3"
 )
 
@@ -170,33 +169,58 @@ func parseMarkdownFile(filePath string, withContent bool) (*Article, error) {
 	return article, nil
 }
 
-// splitTextIntoParagraphs 将文本分割成段落，使用 langchaingo 的 MarkdownTextSplitter
+// splitTextIntoParagraphs 将文本分割成 Markdown 块。
+// 翻译阶段必须保留空行边界；否则列表、标题、普通段落会被合并成一个翻译请求，
+// 模型返回后容易生成 Hugo/Goldmark 无法正确解析的 Markdown。
 func splitTextIntoParagraphs(text string) []string {
-	cfg := config.GetGlobalConfig()
+	var result []string
+	var current []string
+	inFence := false
 
-	// 创建 MarkdownTextSplitter，设置较大的 chunk 大小以保持段落完整
-	splitter := textsplitter.NewMarkdownTextSplitter(
-		textsplitter.WithChunkSize(cfg.Paragraph.MaxLength), // 设置较大的 chunk 大小
-		textsplitter.WithChunkOverlap(0),                    // 不需要重叠
-		textsplitter.WithCodeBlocks(true),
-	)
-
-	// 使用 markdown splitter 分割文本
-	chunks, err := splitter.SplitText(text)
-	if err != nil {
-		// 如果分割失败，回退到简单的段落分割
-		paragraphs := strings.Split(strings.TrimSpace(text), "\n\n")
-		var result []string
-		for _, paragraph := range paragraphs {
-			paragraph = strings.TrimSpace(paragraph)
-			if paragraph != "" {
-				result = append(result, paragraph)
-			}
+	flush := func() {
+		if len(current) == 0 {
+			return
 		}
+		block := strings.TrimSpace(strings.Join(current, "\n"))
+		if block != "" {
+			result = append(result, block)
+		}
+		current = nil
+	}
+
+	normalized := strings.ReplaceAll(text, "\r\n", "\n")
+	for _, line := range strings.Split(normalized, "\n") {
+		trimmed := strings.TrimSpace(line)
+
+		if strings.HasPrefix(trimmed, "```") || strings.HasPrefix(trimmed, "~~~") {
+			current = append(current, line)
+			inFence = !inFence
+			if !inFence {
+				flush()
+			}
+			continue
+		}
+
+		if inFence {
+			current = append(current, line)
+			continue
+		}
+
+		if trimmed == "" {
+			flush()
+			continue
+		}
+
+		current = append(current, line)
+	}
+	flush()
+
+	cfg := config.GetGlobalConfig()
+	if !cfg.Paragraph.EnableSplitting {
 		return result
 	}
 
-	return chunks
+	return result
 }
 
 // extractTagsFromYAML 从 YAML 数据中提取标签

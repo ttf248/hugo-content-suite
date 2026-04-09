@@ -231,6 +231,9 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 	请执行以下任务：
 	1. 将用户提供的中文内容准确翻译为指定语言
 	2. 保持原文档的markdown格式结构不变
+	3. 保持原文的空行、换行、标题层级、列表、引用块、表格、代码围栏和缩进结构
+	4. 原样保留所有 Hugo shortcode / 模板语法，例如 {{< relref "/post/xxx" >}}、{{% xxx %}}、{{ ... }}
+	5. 不要翻译 shortcode 内部内容，不要把 shortcode 里的 ASCII 双引号替换成 “ ” 等智能引号
 
 	仅输出翻译的内容`
 
@@ -329,6 +332,16 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 	thinkRegex := regexp.MustCompile(`(?s)<think>.*?</think>`)
 	result = thinkRegex.ReplaceAllString(result, "")
 	result = strings.TrimSpace(result)
+	result = normalizeHugoShortcodeQuotes(result)
 
 	return result, nil
+}
+
+func normalizeHugoShortcodeQuotes(content string) string {
+	shortcodeRegex := regexp.MustCompile(`\{\{[<%][\s\S]*?[%>]}}`)
+	return shortcodeRegex.ReplaceAllStringFunc(content, func(shortcode string) string {
+		shortcode = strings.ReplaceAll(shortcode, "“", `"`)
+		shortcode = strings.ReplaceAll(shortcode, "”", `"`)
+		return shortcode
+	})
 }
