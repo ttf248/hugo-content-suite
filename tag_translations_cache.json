@@ -14,6 +14,11 @@
     "timestamp": "2025-10-28T22:41:45.2458551+08:00",
     "type": "tag"
   },
+  "en:3060": {
+    "translation": "3060",
+    "timestamp": "2026-04-09T15:00:01.5800097+08:00",
+    "type": "tag"
+  },
   "en:315晚会": {
     "translation": "315 Party",
     "timestamp": "2026-03-16T20:22:00.8880715+08:00",
@@ -94,6 +99,11 @@
     "timestamp": "2025-05-25T22:43:15.5263808+08:00",
     "type": "tag"
   },
+  "en:Google": {
+    "translation": "Google",
+    "timestamp": "2026-04-09T14:59:59.5342108+08:00",
+    "type": "tag"
+  },
   "en:HAProxy": {
     "translation": "HAProxy",
     "timestamp": "2025-09-19T09:53:50.75012+08:00",
@@ -142,6 +152,11 @@
   "en:MOC": {
     "translation": "MOC",
     "timestamp": "2025-10-15T19:56:34.3077908+08:00",
+    "type": "tag"
+  },
+  "en:Mac": {
+    "translation": "Mac",
+    "timestamp": "2026-04-09T15:00:02.8907978+08:00",
     "type": "tag"
   },
   "en:Nginx": {
@@ -259,6 +274,11 @@
     "timestamp": "2026-03-16T20:22:10.2263632+08:00",
     "type": "tag"
   },
+  "en:apache": {
+    "translation": "apache",
+    "timestamp": "2026-04-09T15:00:03.4169702+08:00",
+    "type": "tag"
+  },
   "en:api": {
     "translation": "API",
     "timestamp": "2026-03-16T20:22:19.8425111+08:00",
@@ -297,6 +317,16 @@
   "en:blog": {
     "translation": "blog",
     "timestamp": "2025-05-25T22:41:34.599289+08:00",
+    "type": "tag"
+  },
+  "en:blog-style-suite": {
+    "translation": "blog-style-suite",
+    "timestamp": "2026-04-09T15:00:00.1357758+08:00",
+    "type": "tag"
+  },
+  "en:blog-writer": {
+    "translation": "blog-writer",
+    "timestamp": "2026-04-09T15:00:00.8836764+08:00",
     "type": "tag"
   },
   "en:button": {
@@ -594,6 +624,11 @@
     "timestamp": "2025-05-25T22:41:36.7290499+08:00",
     "type": "tag"
   },
+  "en:gpt-5.4": {
+    "translation": "gpt-5.4",
+    "timestamp": "2026-04-09T15:00:02.548508+08:00",
+    "type": "tag"
+  },
   "en:gpu": {
     "translation": "GPU",
     "timestamp": "2026-03-16T20:22:16.1574904+08:00",
@@ -744,6 +779,11 @@
     "timestamp": "2025-05-25T22:41:08.0486742+08:00",
     "type": "tag"
   },
+  "en:mcp": {
+    "translation": "mcp",
+    "timestamp": "2026-04-09T15:00:02.7323412+08:00",
+    "type": "tag"
+  },
   "en:mcu": {
     "translation": "MCU (Microcontroller Unit)",
     "timestamp": "2026-03-16T20:22:19.7801758+08:00",
@@ -752,6 +792,11 @@
   "en:mermaid": {
     "translation": "mermaid",
     "timestamp": "2025-05-25T22:41:32.385441+08:00",
+    "type": "tag"
+  },
+  "en:minimax": {
+    "translation": "minimax",
+    "timestamp": "2026-04-09T14:59:59.7211864+08:00",
     "type": "tag"
   },
   "en:mpstat": {
@@ -792,6 +837,11 @@
   "en:ollama": {
     "translation": "ollama",
     "timestamp": "2025-05-25T22:40:46.8693002+08:00",
+    "type": "tag"
+  },
+  "en:openai": {
+    "translation": "openai",
+    "timestamp": "2026-04-09T15:00:04.1383238+08:00",
     "type": "tag"
   },
   "en:p2p": {
@@ -864,6 +914,11 @@
     "timestamp": "2025-05-25T22:42:02.7643573+08:00",
     "type": "tag"
   },
+  "en:qwen": {
+    "translation": "qwen",
+    "timestamp": "2026-04-09T15:00:00.6796807+08:00",
+    "type": "tag"
+  },
   "en:rdp": {
     "translation": "Remote Desktop Protocol",
     "timestamp": "2025-07-21T23:59:37.1270826+08:00",
@@ -902,6 +957,11 @@
   "en:sd-wan": {
     "translation": "SD-WAN",
     "timestamp": "2026-03-16T20:22:07.3215292+08:00",
+    "type": "tag"
+  },
+  "en:skill": {
+    "translation": "skill",
+    "timestamp": "2026-04-09T15:00:00.3101945+08:00",
     "type": "tag"
   },
   "en:soc": {
@@ -977,6 +1037,11 @@
   "en:tcpdump": {
     "translation": "tcpdump",
     "timestamp": "2025-06-19T10:08:45.6177551+08:00",
+    "type": "tag"
+  },
+  "en:token": {
+    "translation": "token",
+    "timestamp": "2026-04-09T15:00:03.5861353+08:00",
     "type": "tag"
   },
   "en:trae": {
@@ -1404,6 +1469,11 @@
     "timestamp": "2026-03-16T20:22:18.4411754+08:00",
     "type": "tag"
   },
+  "en:元宝": {
+    "translation": "Yuanbao",
+    "timestamp": "2026-04-09T15:00:01.0877662+08:00",
+    "type": "tag"
+  },
   "en:光猫": {
     "translation": "Light Cat",
     "timestamp": "2025-10-15T18:59:13.1976131+08:00",
@@ -1554,6 +1624,11 @@
     "timestamp": "2026-03-16T20:22:11.0217815+08:00",
     "type": "tag"
   },
+  "en:千问": {
+    "translation": "Qwen",
+    "timestamp": "2026-04-09T15:00:02.132377+08:00",
+    "type": "tag"
+  },
   "en:华为": {
     "translation": "Huawei",
     "timestamp": "2025-09-26T20:37:52.2106828+08:00",
@@ -1694,6 +1769,11 @@
     "timestamp": "2026-03-16T20:22:03.8080176+08:00",
     "type": "tag"
   },
+  "en:商业化": {
+    "translation": "Commercialization",
+    "timestamp": "2026-04-09T15:00:02.3196156+08:00",
+    "type": "tag"
+  },
   "en:商业模式": {
     "translation": "Business Model",
     "timestamp": "2026-03-16T20:22:06.2282571+08:00",
@@ -1767,6 +1847,11 @@
   "en:城市变迁": {
     "translation": "Urban Transformation",
     "timestamp": "2026-03-16T20:22:07.589348+08:00",
+    "type": "tag"
+  },
+  "en:城市观察": {
+    "translation": "Urban Observation",
+    "timestamp": "2026-04-09T15:00:01.951513+08:00",
     "type": "tag"
   },
   "en:域名": {
@@ -1852,6 +1937,11 @@
   "en:大学": {
     "translation": "University",
     "timestamp": "2025-06-11T22:36:09.4415711+08:00",
+    "type": "tag"
+  },
+  "en:大学城": {
+    "translation": "University Town",
+    "timestamp": "2026-04-09T15:00:01.767438+08:00",
     "type": "tag"
   },
   "en:大文件处理": {
@@ -2022,6 +2112,11 @@
   "en:嵌入式": {
     "translation": "embedded-systems",
     "timestamp": "2025-05-25T22:41:12.152149+08:00",
+    "type": "tag"
+  },
+  "en:工作流": {
+    "translation": "Workflow",
+    "timestamp": "2026-04-09T14:59:59.3646122+08:00",
     "type": "tag"
   },
   "en:工具": {
@@ -2439,9 +2534,19 @@
     "timestamp": "2026-03-16T20:22:05.365666+08:00",
     "type": "tag"
   },
+  "en:春节": {
+    "translation": "Chinese New Year",
+    "timestamp": "2026-04-09T15:00:03.7845679+08:00",
+    "type": "tag"
+  },
   "en:春节档": {
     "translation": "spring-festival-season",
     "timestamp": "2025-05-25T22:40:08.5687741+08:00",
+    "type": "tag"
+  },
+  "en:显存": {
+    "translation": "VRAM (Video Random Access Memory)",
+    "timestamp": "2026-04-09T15:00:01.3628562+08:00",
     "type": "tag"
   },
   "en:显示器": {
@@ -2479,6 +2584,11 @@
     "timestamp": "2025-05-25T22:40:45.0531959+08:00",
     "type": "tag"
   },
+  "en:本地模型": {
+    "translation": "Local Model",
+    "timestamp": "2026-04-09T14:59:59.9063848+08:00",
+    "type": "tag"
+  },
   "en:机械硬盘": {
     "translation": "Hard Disk Drive (HDD)",
     "timestamp": "2026-03-16T20:22:05.5084797+08:00",
@@ -2494,6 +2604,11 @@
     "timestamp": "2026-03-16T20:22:11.2710201+08:00",
     "type": "tag"
   },
+  "en:松江": {
+    "translation": "Songjiang",
+    "timestamp": "2026-04-09T15:00:04.3260552+08:00",
+    "type": "tag"
+  },
   "en:极客时间": {
     "translation": "geek-time",
     "timestamp": "2025-05-25T22:41:16.7552034+08:00",
@@ -2502,6 +2617,11 @@
   "en:架构师": {
     "translation": "architect",
     "timestamp": "2025-05-25T22:41:06.0838864+08:00",
+    "type": "tag"
+  },
+  "en:架构设计": {
+    "translation": "Architecture Design",
+    "timestamp": "2026-04-09T15:00:00.496125+08:00",
     "type": "tag"
   },
   "en:标志位": {
@@ -3589,6 +3709,11 @@
     "timestamp": "2025-08-16T18:05:48.7133369+08:00",
     "type": "tag"
   },
+  "en:软件工程": {
+    "translation": "Software Engineering",
+    "timestamp": "2026-04-09T15:00:03.9712544+08:00",
+    "type": "tag"
+  },
   "en:运维": {
     "translation": "Operations \u0026 Maintenance (O\u0026M)",
     "timestamp": "2025-09-19T09:53:51.0116795+08:00",
@@ -3627,6 +3752,11 @@
   "en:逆向工程": {
     "translation": "Reverse Engineering",
     "timestamp": "2026-03-16T20:22:01.5423542+08:00",
+    "type": "tag"
+  },
+  "en:选题": {
+    "translation": "Topic Selection",
+    "timestamp": "2026-04-09T15:00:03.0752727+08:00",
     "type": "tag"
   },
   "en:通义千问": {
@@ -3814,6 +3944,11 @@
     "timestamp": "2025-09-19T09:53:50.8056807+08:00",
     "type": "tag"
   },
+  "en:零售": {
+    "translation": "Retail",
+    "timestamp": "2026-04-09T15:00:03.246487+08:00",
+    "type": "tag"
+  },
   "en:雷军": {
     "translation": "Lei Jun",
     "timestamp": "2025-10-13T18:51:19.208428+08:00",
@@ -3937,6 +4072,11 @@
   "ja:上交所": {
     "translation": "上海証券取引所 (Shanghai Stock Exchange)",
     "timestamp": "2025-06-02T17:23:26.036462+08:00",
+    "type": "tag"
+  },
+  "ja:上海": {
+    "translation": "上海",
+    "timestamp": "2026-04-09T15:21:22.1547927+08:00",
     "type": "tag"
   },
   "ja:专有名词": {
@@ -4089,6 +4229,11 @@
     "timestamp": "2025-09-18T19:32:11.2286314+08:00",
     "type": "tag"
   },
+  "ja:元宝": {
+    "translation": "元宝",
+    "timestamp": "2026-04-09T15:13:37.6178135+08:00",
+    "type": "tag"
+  },
   "ja:光猫": {
     "translation": "光猫 (Hikikone)",
     "timestamp": "2025-10-15T18:59:25.8622151+08:00",
@@ -4169,6 +4314,11 @@
     "timestamp": "2025-06-02T06:19:09.1190237+08:00",
     "type": "tag"
   },
+  "ja:千问": {
+    "translation": "千問",
+    "timestamp": "2026-04-09T15:13:37.8173642+08:00",
+    "type": "tag"
+  },
   "ja:华为": {
     "translation": "華為 (Huawei)",
     "timestamp": "2025-09-26T20:38:04.0992633+08:00",
@@ -4244,6 +4394,11 @@
     "timestamp": "2025-06-02T06:15:34.7003524+08:00",
     "type": "tag"
   },
+  "ja:商业化": {
+    "translation": "商業化",
+    "timestamp": "2026-04-09T15:13:37.1568838+08:00",
+    "type": "tag"
+  },
   "ja:固收": {
     "translation": "ストックホルム現象 (Stockholm phenomenon)",
     "timestamp": "2025-06-02T17:24:03.0763655+08:00",
@@ -4282,6 +4437,11 @@
   "ja:国运": {
     "translation": "国家運 (kokunō)",
     "timestamp": "2025-06-20T00:20:20.6492363+08:00",
+    "type": "tag"
+  },
+  "ja:城市观察": {
+    "translation": "都市観察",
+    "timestamp": "2026-04-09T15:21:22.4635191+08:00",
     "type": "tag"
   },
   "ja:域名": {
@@ -4337,6 +4497,11 @@
   "ja:大学": {
     "translation": "大学 (Daigaku)",
     "timestamp": "2025-06-11T22:36:32.4511764+08:00",
+    "type": "tag"
+  },
+  "ja:大学城": {
+    "translation": "大学街",
+    "timestamp": "2026-04-09T15:21:22.8754255+08:00",
     "type": "tag"
   },
   "ja:大模型": {
@@ -4417,6 +4582,11 @@
   "ja:嵌入式": {
     "translation": "組み込み (ぐみこみ)",
     "timestamp": "2025-06-02T05:06:54.8967858+08:00",
+    "type": "tag"
+  },
+  "ja:工作流": {
+    "translation": "ワークフロー",
+    "timestamp": "2026-04-09T15:02:37.3828513+08:00",
     "type": "tag"
   },
   "ja:市场竞争": {
@@ -4614,9 +4784,19 @@
     "timestamp": "2026-03-16T20:22:46.5908557+08:00",
     "type": "tag"
   },
+  "ja:春节": {
+    "translation": "春節",
+    "timestamp": "2026-04-09T15:13:37.3883307+08:00",
+    "type": "tag"
+  },
   "ja:春节档": {
     "translation": "春節檔",
     "timestamp": "2025-06-02T06:11:49.2859888+08:00",
+    "type": "tag"
+  },
+  "ja:显存": {
+    "translation": "VRAM",
+    "timestamp": "2026-04-09T15:18:08.7488909+08:00",
     "type": "tag"
   },
   "ja:显示器": {
@@ -4654,6 +4834,16 @@
     "timestamp": "2025-06-02T17:25:30.5973401+08:00",
     "type": "tag"
   },
+  "ja:本地模型": {
+    "translation": "ローカルモデル",
+    "timestamp": "2026-04-09T15:06:41.3008468+08:00",
+    "type": "tag"
+  },
+  "ja:松江": {
+    "translation": "松江",
+    "timestamp": "2026-04-09T15:21:21.9661158+08:00",
+    "type": "tag"
+  },
   "ja:极客时间": {
     "translation": "極東時間 (Kyoutou Jikan)",
     "timestamp": "2025-06-02T17:29:21.3894257+08:00",
@@ -4662,6 +4852,11 @@
   "ja:架构师": {
     "translation": "アーキテクト",
     "timestamp": "2025-06-02T17:29:21.0744928+08:00",
+    "type": "tag"
+  },
+  "ja:架构设计": {
+    "translation": "アーキテクチャ設計",
+    "timestamp": "2026-04-09T15:22:48.1984842+08:00",
     "type": "tag"
   },
   "ja:标志位": {
@@ -5234,6 +5429,11 @@
     "timestamp": "2025-08-16T18:05:58.8040546+08:00",
     "type": "tag"
   },
+  "ja:软件工程": {
+    "translation": "ソフトウェア工学",
+    "timestamp": "2026-04-09T15:22:47.9358817+08:00",
+    "type": "tag"
+  },
   "ja:运维": {
     "translation": "運用 (Un'yō)",
     "timestamp": "2025-09-19T09:55:48.8315131+08:00",
@@ -5252,6 +5452,11 @@
   "ja:追寻": {
     "translation": "探求 (Tanka) / 追求 (Suikyuu)",
     "timestamp": "2025-06-02T17:26:22.8593744+08:00",
+    "type": "tag"
+  },
+  "ja:选题": {
+    "translation": "テーマ選定",
+    "timestamp": "2026-04-09T15:02:37.6252331+08:00",
     "type": "tag"
   },
   "ja:通义千问": {
@@ -5347,6 +5552,11 @@
   "ja:集群": {
     "translation": "クラスタリング",
     "timestamp": "2025-09-19T09:55:48.6985413+08:00",
+    "type": "tag"
+  },
+  "ja:零售": {
+    "translation": "小売",
+    "timestamp": "2026-04-09T15:21:22.663592+08:00",
     "type": "tag"
   },
   "ja:雷军": {

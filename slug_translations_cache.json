@@ -24,9 +24,29 @@
     "timestamp": "2025-05-25T22:44:33.012837+08:00",
     "type": "article"
   },
+  "en:AI 写博客这件事，后来还是得做成工程（一）": {
+    "translation": "AI Writing a Blog: The Next Steps Towards Engineering (Part 1)",
+    "timestamp": "2026-04-09T15:00:12.923032+08:00",
+    "type": "article"
+  },
+  "en:AI 写博客这件事，后来还是得做成工程（三）": {
+    "translation": "Writing an AI blog post, this will eventually have to be turned into engineering (Part 3)",
+    "timestamp": "2026-04-09T15:00:13.3729711+08:00",
+    "type": "article"
+  },
+  "en:AI 写博客这件事，后来还是得做成工程（二）": {
+    "translation": "Making the \"AI writes blog\" thing into an engineering project later (Part II)",
+    "timestamp": "2026-04-09T15:00:13.7862799+08:00",
+    "type": "article"
+  },
   "en:AI 变“笨”了吗？揭秘参数精度与推理成本的博弈": {
     "translation": "Is AI Getting “Dumber”? Uncovering the Game Between Parameter Precision and Inference Costs",
     "timestamp": "2025-12-04T22:06:32.8429847+08:00",
+    "type": "article"
+  },
+  "en:AI 时代，光把人拉进 App 已经不够了": {
+    "translation": "In the era of AI, just getting people into an app is no longer enough.",
+    "timestamp": "2026-04-09T15:00:14.1910361+08:00",
     "type": "article"
   },
   "en:AI发展两年：有点类似Docker发布前的状态": {
@@ -92,6 +112,11 @@
   "en:Cloudflare 突发全球网络故障，X、ChatGPT 等知名网站瘫痪，盘前股价受挫": {
     "translation": "Cloudflare experienced a global network outage, causing websites like X (formerly Twitter) and ChatGPT to crash. The stock price suffered a setback ahead of the market open.",
     "timestamp": "2025-11-18T22:45:35.0653764+08:00",
+    "type": "article"
+  },
+  "en:Codex 默认 medium，我后来还是切到 high": {
+    "translation": "Codex defaults to medium, but I later switched to high.",
+    "timestamp": "2026-04-09T15:00:14.5479146+08:00",
     "type": "article"
   },
   "en:Cursor AI 编程 IDE 试用": {
@@ -217,6 +242,11 @@
   "en:Redhat 和 Centos 生命周期": {
     "translation": "redhat-centos-lifecycle",
     "timestamp": "2025-05-25T22:42:29.1409378+08:00",
+    "type": "article"
+  },
+  "en:Skill 不是新提示词，它是给 agent 配工种手册": {
+    "translation": "Skill is not a new prompt, it is the job manual for the agent.",
+    "timestamp": "2026-04-09T15:00:12.2309531+08:00",
     "type": "article"
   },
   "en:Stable-diffusion-从零安装的恩怨情仇": {
@@ -424,6 +454,11 @@
     "timestamp": "2025-11-27T01:22:59.4300599+08:00",
     "type": "article"
   },
+  "en:低价 API 中转站的终局：三月份的大模型体验与不可能三角": {
+    "translation": "The End of Low-Cost API Gateways: Large Model Experiences and the Impossible Triangle in March",
+    "timestamp": "2026-04-09T15:00:11.3331273+08:00",
+    "type": "article"
+  },
   "en:佩洛西访问台湾": {
     "translation": "pelosi-visits-taiwan",
     "timestamp": "2025-05-25T22:42:46.7091005+08:00",
@@ -594,6 +629,11 @@
     "timestamp": "2025-10-17T20:08:08.8212088+08:00",
     "type": "article"
   },
+  "en:复盘近两年 AI 文章后，我觉得接下来该写这 8 个选题": {
+    "translation": "After reviewing AI articles from the past two years, I think I should write on these 8 topics next.",
+    "timestamp": "2026-04-09T15:00:11.8267256+08:00",
+    "type": "article"
+  },
   "en:夜的命名术": {
     "translation": "nights-naming-art",
     "timestamp": "2025-05-25T22:42:50.1544503+08:00",
@@ -652,6 +692,11 @@
   "en:异地局域网ZeroTier": {
     "translation": "zero-tier-remote-lan",
     "timestamp": "2025-05-25T22:43:06.4760736+08:00",
+    "type": "article"
+  },
+  "en:弱模型别硬上强活": {
+    "translation": "Don't force weak models onto hard tasks.",
+    "timestamp": "2026-04-09T15:00:12.5427394+08:00",
     "type": "article"
   },
   "en:当你想搞钱的时候": {
@@ -722,6 +767,11 @@
   "en:数字货币的清算与交收：揭秘7x24小时不间断交易的背后机制": {
     "translation": "Over-the-Counter (OTC) Clearing and Settlement of Digital Currencies: Unveiling the Mechanisms Behind 7x24 Continuous Trading",
     "timestamp": "2025-07-28T00:06:09.6487031+08:00",
+    "type": "article"
+  },
+  "en:文件夹分层再套 namespace，这事到底叫什么": {
+    "translation": "What is this process of layering folders and then wrapping them in a namespace called?",
+    "timestamp": "2026-04-09T15:00:16.4150996+08:00",
     "type": "article"
   },
   "en:新安装的千兆入户光纤，为何测速仅达百兆？": {
@@ -1004,6 +1054,21 @@
     "timestamp": "2025-12-04T22:26:03.2678047+08:00",
     "type": "article"
   },
+  "en:谷歌这次把 Gemma 4 放开了（一）": {
+    "translation": "Google has released Gemma 4 this time (Part 1)",
+    "timestamp": "2026-04-09T15:00:14.9007871+08:00",
+    "type": "article"
+  },
+  "en:谷歌这次把 Gemma 4 放开了（三）": {
+    "translation": "Google has released Gemma 4 this time (III)",
+    "timestamp": "2026-04-09T15:00:15.2194329+08:00",
+    "type": "article"
+  },
+  "en:谷歌这次把 Gemma 4 放开了（二）": {
+    "translation": "Google released Gemma 4 this time (Part II)",
+    "timestamp": "2026-04-09T15:00:15.544257+08:00",
+    "type": "article"
+  },
   "en:贸易战突然按下暂停键": {
     "translation": "trade-war-pauses",
     "timestamp": "2025-05-25T22:44:27.9453522+08:00",
@@ -1092,6 +1157,11 @@
   "en:降费了，降费了，国内超大型ETF批量降费了": {
     "translation": "etf-fees-cut-china",
     "timestamp": "2025-05-25T22:43:45.7232753+08:00",
+    "type": "article"
+  },
+  "en:零食很忙开到松江大学城，不是偶然": {
+    "translation": "The snack store is very busy and opened in Songjiang University Town, it's not an accident.",
+    "timestamp": "2026-04-09T15:00:16.0150624+08:00",
     "type": "article"
   },
   "en:面包屑导航": {
