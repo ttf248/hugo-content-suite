@@ -2059,6 +2059,11 @@
     "timestamp": "2026-03-16T20:22:21.7726176+08:00",
     "type": "tag"
   },
+  "en:宽带": {
+    "translation": "Broadband",
+    "timestamp": "2026-04-16T02:02:03.8724891+08:00",
+    "type": "tag"
+  },
   "en:密码": {
     "translation": "Password",
     "timestamp": "2025-12-04T22:25:58.680638+08:00",
@@ -3349,6 +3354,11 @@
     "timestamp": "2026-03-16T20:22:09.3208089+08:00",
     "type": "tag"
   },
+  "en:联通": {
+    "translation": "Unicom",
+    "timestamp": "2026-04-16T02:02:03.7445286+08:00",
+    "type": "tag"
+  },
   "en:肌肉酸痛": {
     "translation": "Muscle Soreness",
     "timestamp": "2025-10-11T12:02:04.584267+08:00",
@@ -4554,6 +4564,11 @@
     "timestamp": "2025-06-02T05:51:34.336796+08:00",
     "type": "tag"
   },
+  "ja:宽带": {
+    "translation": "ブロードバンド",
+    "timestamp": "2026-04-16T02:02:41.9134862+08:00",
+    "type": "tag"
+  },
   "ja:密码": {
     "translation": "暗号",
     "timestamp": "2025-12-04T22:26:27.9272046+08:00",
@@ -5237,6 +5252,11 @@
   "ja:翻译": {
     "translation": "翻訳 (Hon'yaku)",
     "timestamp": "2025-06-02T21:55:37.4715955+08:00",
+    "type": "tag"
+  },
+  "ja:联通": {
+    "translation": "ユニコム",
+    "timestamp": "2026-04-16T02:02:42.0515294+08:00",
     "type": "tag"
   },
   "ja:肌肉酸痛": {
