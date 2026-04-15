@@ -24,6 +24,11 @@
     "timestamp": "2025-05-25T22:44:33.012837+08:00",
     "type": "article"
   },
+  "en:AI 写 Demo 很快，返工也是真的快": {
+    "translation": "AI writes demos quickly, and revisions are also really fast.",
+    "timestamp": "2026-04-16T01:43:38.696582+08:00",
+    "type": "article"
+  },
   "en:AI 写博客这件事，后来还是得做成工程（一）": {
     "translation": "AI Writing a Blog: The Next Steps Towards Engineering (Part 1)",
     "timestamp": "2026-04-09T15:00:12.923032+08:00",
@@ -744,6 +749,11 @@
     "timestamp": "2025-05-25T22:43:10.4983048+08:00",
     "type": "article"
   },
+  "en:把 Hermes 当成 OpenClaw 替代品，可能一开始就看偏了": {
+    "translation": "Treating Hermes as a replacement for OpenClaw might be biased from the start.",
+    "timestamp": "2026-04-16T01:43:39.0492714+08:00",
+    "type": "article"
+  },
   "en:投资赚钱这事，急不来，着急了也没用": {
     "translation": "investing-takes-time",
     "timestamp": "2025-05-25T22:44:13.4285951+08:00",
@@ -827,6 +837,11 @@
   "en:枚举值尽量不要从零开始定义": {
     "translation": "Enumeration values should generally not be defined starting from zero.",
     "timestamp": "2025-06-11T22:36:12.332558+08:00",
+    "type": "article"
+  },
+  "en:架构一换，Hermes 和 OpenClaw 的 token 就不是一个吃法": {
+    "translation": "Changing the architecture, Hermes and OpenClaw's tokens are not consumed in the same way.",
+    "timestamp": "2026-04-16T01:43:39.4386344+08:00",
     "type": "article"
   },
   "en:标准库容器的内存分配器：allocator": {
