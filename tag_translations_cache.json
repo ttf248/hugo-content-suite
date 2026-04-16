@@ -3354,6 +3354,11 @@
     "timestamp": "2026-03-16T20:22:09.3208089+08:00",
     "type": "tag"
   },
+  "en:职场": {
+    "translation": "Workplace",
+    "timestamp": "2026-04-16T02:35:09.2946967+08:00",
+    "type": "tag"
+  },
   "en:联通": {
     "translation": "Unicom",
     "timestamp": "2026-04-16T02:02:03.7445286+08:00",
@@ -3522,6 +3527,11 @@
   "en:补仓": {
     "translation": "Add to Position / Cover Short (depending on context – both are common translations)",
     "timestamp": "2025-10-13T19:10:53.9878295+08:00",
+    "type": "tag"
+  },
+  "en:裁员": {
+    "translation": "Layoffs",
+    "timestamp": "2026-04-16T02:35:09.4159288+08:00",
     "type": "tag"
   },
   "en:规范": {
@@ -5254,6 +5264,11 @@
     "timestamp": "2025-06-02T21:55:37.4715955+08:00",
     "type": "tag"
   },
+  "ja:职场": {
+    "translation": "職場",
+    "timestamp": "2026-04-16T02:36:22.9735896+08:00",
+    "type": "tag"
+  },
   "ja:联通": {
     "translation": "ユニコム",
     "timestamp": "2026-04-16T02:02:42.0515294+08:00",
@@ -5347,6 +5362,11 @@
   "ja:补仓": {
     "translation": "追加買い付け",
     "timestamp": "2025-10-13T19:11:08.3468418+08:00",
+    "type": "tag"
+  },
+  "ja:裁员": {
+    "translation": "人員削減",
+    "timestamp": "2026-04-16T02:36:22.8081176+08:00",
     "type": "tag"
   },
   "ja:规范": {
