@@ -44,6 +44,11 @@
     "timestamp": "2025-11-03T23:05:46.3149861+08:00",
     "type": "tag"
   },
+  "en:Anthropic": {
+    "translation": "Anthropic",
+    "timestamp": "2026-04-16T21:17:57.6448075+08:00",
+    "type": "tag"
+  },
   "en:A股": {
     "translation": "a-stock",
     "timestamp": "2025-05-25T22:41:09.5871108+08:00",
@@ -5222,6 +5227,11 @@
   "ja:网络字节序": {
     "translation": "ネットワークバイト順 (Network byte order)",
     "timestamp": "2025-06-02T05:38:43.4396937+08:00",
+    "type": "tag"
+  },
+  "ja:网络安全": {
+    "translation": "サイバーセキュリティ",
+    "timestamp": "2026-04-16T21:18:44.6164149+08:00",
     "type": "tag"
   },
   "ja:网络故障": {

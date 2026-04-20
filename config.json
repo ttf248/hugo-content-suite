@@ -1,7 +1,7 @@
 {
   "lm_studio": {
     "url": "http://localhost:1234/v1/chat/completions",
-    "model": "google/gemma-4-e4b-it",
+    "model": "google/gemma-4-e4b",
     "timeout_seconds": 30
   },
   "cache": {
