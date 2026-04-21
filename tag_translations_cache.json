@@ -1264,6 +1264,11 @@
     "timestamp": "2025-05-25T22:41:03.1434674+08:00",
     "type": "tag"
   },
+  "en:中年焦虑": {
+    "translation": "Midlife Anxiety",
+    "timestamp": "2026-04-22T02:08:53.0242183+08:00",
+    "type": "tag"
+  },
   "en:中美贸易战": {
     "translation": "us-china-trade-war",
     "timestamp": "2025-05-25T22:42:28.3030904+08:00",
@@ -2199,6 +2204,11 @@
     "timestamp": "2026-03-16T20:22:21.3361922+08:00",
     "type": "tag"
   },
+  "en:异地夫妻": {
+    "translation": "Long-distance couple",
+    "timestamp": "2026-04-22T02:08:52.7159578+08:00",
+    "type": "tag"
+  },
   "en:异步编程": {
     "translation": "Asynchronous Programming",
     "timestamp": "2026-03-16T20:22:10.5215828+08:00",
@@ -2237,6 +2247,11 @@
   "en:心态": {
     "translation": "mindset",
     "timestamp": "2025-05-25T22:40:41.675296+08:00",
+    "type": "tag"
+  },
+  "en:心源性猝死": {
+    "translation": "Sudden Cardiac Death",
+    "timestamp": "2026-04-22T02:08:52.8723451+08:00",
     "type": "tag"
   },
   "en:心理学": {
@@ -2979,6 +2994,11 @@
     "timestamp": "2025-05-25T22:39:59.2570229+08:00",
     "type": "tag"
   },
+  "en:白酒": {
+    "translation": "Baijiu",
+    "timestamp": "2026-04-22T01:25:48.8795354+08:00",
+    "type": "tag"
+  },
   "en:盈透证券": {
     "translation": "interactive-brokers",
     "timestamp": "2025-05-25T22:41:37.4421527+08:00",
@@ -3684,6 +3704,11 @@
     "timestamp": "2025-05-25T22:41:53.517399+08:00",
     "type": "tag"
   },
+  "en:贵州茅台": {
+    "translation": "Kweichow Maotai",
+    "timestamp": "2026-04-22T01:25:49.1231801+08:00",
+    "type": "tag"
+  },
   "en:贸易战": {
     "translation": "trade-war",
     "timestamp": "2025-05-25T22:40:18.4944147+08:00",
@@ -4149,6 +4174,11 @@
     "timestamp": "2025-06-02T06:12:55.2095445+08:00",
     "type": "tag"
   },
+  "ja:中年焦虑": {
+    "translation": "中年危機（ちゅうねんきき）/ 中年の不安",
+    "timestamp": "2026-04-22T02:15:19.5672519+08:00",
+    "type": "tag"
+  },
   "ja:主机字节序": {
     "translation": "ホストバイトオーダー",
     "timestamp": "2025-06-02T05:38:43.2837246+08:00",
@@ -4434,6 +4464,11 @@
     "timestamp": "2026-04-09T15:13:37.1568838+08:00",
     "type": "tag"
   },
+  "ja:回测": {
+    "translation": "バックテスト",
+    "timestamp": "2026-04-22T01:46:03.6234591+08:00",
+    "type": "tag"
+  },
   "ja:固收": {
     "translation": "ストックホルム現象 (Stockholm phenomenon)",
     "timestamp": "2025-06-02T17:24:03.0763655+08:00",
@@ -4502,6 +4537,11 @@
   "ja:复制按钮": {
     "translation": "コピーボタン",
     "timestamp": "2025-06-02T05:14:21.3081173+08:00",
+    "type": "tag"
+  },
+  "ja:复权": {
+    "translation": "権利調整 (けんりちょうせい) / クローバック (Klobacku - 文脈による)\n\n*注：文脈によって適切な訳語が異なります。金融や株式の文脈で「権利落ち」に関連する場合は、「権利調整」が一般的です。*",
+    "timestamp": "2026-04-22T01:46:04.8169919+08:00",
     "type": "tag"
   },
   "ja:复盘记录": {
@@ -4654,6 +4694,11 @@
     "timestamp": "2025-06-10T17:01:18.4047932+08:00",
     "type": "tag"
   },
+  "ja:异地夫妻": {
+    "translation": "遠距離夫婦",
+    "timestamp": "2026-04-22T02:15:19.1938991+08:00",
+    "type": "tag"
+  },
   "ja:影院": {
     "translation": "映画館 (Eigakan)",
     "timestamp": "2025-06-02T06:12:23.7751397+08:00",
@@ -4672,6 +4717,11 @@
   "ja:心态": {
     "translation": "心境 (しんけい) / 精神狀態 (せいしんとうぜい)",
     "timestamp": "2025-06-02T06:14:18.1558448+08:00",
+    "type": "tag"
+  },
+  "ja:心源性猝死": {
+    "translation": "心原性突然死",
+    "timestamp": "2026-04-22T02:15:18.9836116+08:00",
     "type": "tag"
   },
   "ja:心理学": {
@@ -5094,6 +5144,11 @@
     "timestamp": "2025-06-02T07:45:27.5666255+08:00",
     "type": "tag"
   },
+  "ja:白酒": {
+    "translation": "白酒",
+    "timestamp": "2026-04-22T01:30:45.2046807+08:00",
+    "type": "tag"
+  },
   "ja:盈透证券": {
     "translation": "エイトリ証券 (Eitori Shoken)",
     "timestamp": "2025-06-02T17:26:10.4280377+08:00",
@@ -5457,6 +5512,11 @@
   "ja:货币政策": {
     "translation": "貨幣政策 (Kagiin seisaku)",
     "timestamp": "2025-06-02T06:08:44.5883114+08:00",
+    "type": "tag"
+  },
+  "ja:贵州茅台": {
+    "translation": "貴州茅台",
+    "timestamp": "2026-04-22T01:30:45.0715434+08:00",
     "type": "tag"
   },
   "ja:贸易战": {
