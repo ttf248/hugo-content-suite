@@ -84,6 +84,11 @@
     "timestamp": "2025-05-25T22:43:43.385762+08:00",
     "type": "tag"
   },
+  "en:ChatGPT": {
+    "translation": "ChatGPT",
+    "timestamp": "2026-04-25T03:24:36.5127849+08:00",
+    "type": "tag"
+  },
   "en:DDR5": {
     "translation": "DDR5",
     "timestamp": "2025-09-24T21:51:10.8793651+08:00",
@@ -1857,6 +1862,11 @@
   "en:国际关系": {
     "translation": "International Relations",
     "timestamp": "2026-03-16T20:22:17.6306705+08:00",
+    "type": "tag"
+  },
+  "en:图像生成": {
+    "translation": "Image Generation",
+    "timestamp": "2026-04-25T03:24:36.8377347+08:00",
     "type": "tag"
   },
   "en:在线教育": {
@@ -4507,6 +4517,11 @@
   "ja:国运": {
     "translation": "国家運 (kokunō)",
     "timestamp": "2025-06-20T00:20:20.6492363+08:00",
+    "type": "tag"
+  },
+  "ja:图像生成": {
+    "translation": "画像生成",
+    "timestamp": "2026-04-25T03:49:16.2811077+08:00",
     "type": "tag"
   },
   "ja:城市观察": {
