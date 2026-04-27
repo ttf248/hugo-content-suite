@@ -24,6 +24,11 @@
     "timestamp": "2025-05-25T22:44:33.012837+08:00",
     "type": "article"
   },
+  "en:AI 会写代码了，新人靠什么练级": {
+    "translation": "AI can write code, what should newcomers focus on to level up?",
+    "timestamp": "2026-04-28T01:13:00.6076849+08:00",
+    "type": "article"
+  },
   "en:AI 写 Demo 很快，返工也是真的快": {
     "translation": "AI writes demos quickly, and revisions are also really fast.",
     "timestamp": "2026-04-16T01:43:38.696582+08:00",
@@ -342,6 +347,11 @@
   "en:pstack排查进程假死": {
     "translation": "pstack-troubleshooting-process-hangs",
     "timestamp": "2025-05-25T22:43:23.3649485+08:00",
+    "type": "article"
+  },
+  "en:token 更少，为什么 GPT-5.5 在 Codex 里反而更贵了": {
+    "translation": "With fewer tokens, why is GPT-5.5 actually more expensive in Codex?",
+    "timestamp": "2026-04-28T01:13:10.2631491+08:00",
     "type": "article"
   },
   "en:visual studio 加载“不配套”的 pdb 文件": {
@@ -789,6 +799,11 @@
     "timestamp": "2025-12-19T00:32:35.7120645+08:00",
     "type": "article"
   },
+  "en:支付宝买 006327，到底按哪天净值算": {
+    "translation": "When purchasing 006327 via Alipay, what day's net asset value (NAV) should it be calculated based on?",
+    "timestamp": "2026-04-28T01:13:19.9984971+08:00",
+    "type": "article"
+  },
   "en:数字货币基础概念": {
     "translation": "Digital Currency Fundamentals",
     "timestamp": "2025-07-21T19:36:21.0273283+08:00",
@@ -982,6 +997,11 @@
   "en:电脑组装那些事": {
     "translation": "computer-assembly",
     "timestamp": "2025-05-25T22:42:27.4180865+08:00",
+    "type": "article"
+  },
+  "en:番茄小说很热闹，可我还是更想看老派玄幻": {
+    "translation": "The webnovels on Tomato Novel are very popular/lively, but I still prefer reading old-school fantasy (Xuanhuan).",
+    "timestamp": "2026-04-28T01:13:30.2965867+08:00",
     "type": "article"
   },
   "en:盈透证券股票代码特殊格式说明": {

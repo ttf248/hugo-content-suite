@@ -89,6 +89,11 @@
     "timestamp": "2026-04-25T03:24:36.5127849+08:00",
     "type": "tag"
   },
+  "en:Codex": {
+    "translation": "Codex",
+    "timestamp": "2026-04-28T01:12:52.7938659+08:00",
+    "type": "tag"
+  },
   "en:DDR5": {
     "translation": "DDR5",
     "timestamp": "2025-09-24T21:51:10.8793651+08:00",
@@ -192,6 +197,11 @@
   "en:PuTTY": {
     "translation": "PuTTY",
     "timestamp": "2026-03-16T20:22:08.1900102+08:00",
+    "type": "tag"
+  },
+  "en:QDII": {
+    "translation": "QDII",
+    "timestamp": "2026-04-28T01:12:52.3428667+08:00",
     "type": "tag"
   },
   "en:SU7": {
@@ -2304,6 +2314,11 @@
     "timestamp": "2025-05-25T22:41:25.9735813+08:00",
     "type": "tag"
   },
+  "en:成本观察": {
+    "translation": "Cost Observation",
+    "timestamp": "2026-04-28T01:12:52.5163291+08:00",
+    "type": "tag"
+  },
   "en:成长": {
     "translation": "Growth",
     "timestamp": "2026-03-16T20:21:53.4165256+08:00",
@@ -2984,6 +2999,11 @@
     "timestamp": "2026-03-16T20:22:11.5504421+08:00",
     "type": "tag"
   },
+  "en:番茄小说": {
+    "translation": "Tomato Novel",
+    "timestamp": "2026-04-28T01:12:52.6555428+08:00",
+    "type": "tag"
+  },
   "en:疫情": {
     "translation": "Pandemic",
     "timestamp": "2026-03-16T20:21:55.8130531+08:00",
@@ -3114,6 +3134,11 @@
     "timestamp": "2026-03-16T20:22:04.9129423+08:00",
     "type": "tag"
   },
+  "en:神墓": {
+    "translation": "Divine Tomb",
+    "timestamp": "2026-04-28T01:12:53.3118851+08:00",
+    "type": "tag"
+  },
   "en:票价": {
     "translation": "ticket-price",
     "timestamp": "2025-05-25T22:41:18.1787033+08:00",
@@ -3122,6 +3147,11 @@
   "en:移动应用": {
     "translation": "Mobile App",
     "timestamp": "2026-03-16T20:22:07.7454407+08:00",
+    "type": "tag"
+  },
+  "en:程序员": {
+    "translation": "Programmer",
+    "timestamp": "2026-04-28T01:12:52.9484575+08:00",
     "type": "tag"
   },
   "en:程序员成长": {
@@ -3264,6 +3294,11 @@
     "timestamp": "2025-05-25T22:41:58.0820049+08:00",
     "type": "tag"
   },
+  "en:网文": {
+    "translation": "Web Novel (or Online Fiction)",
+    "timestamp": "2026-04-28T01:12:53.1676421+08:00",
+    "type": "tag"
+  },
   "en:网站优化": {
     "translation": "Website Optimization",
     "timestamp": "2026-03-16T20:22:24.9804756+08:00",
@@ -3377,6 +3412,11 @@
   "en:职业发展": {
     "translation": "Career Development",
     "timestamp": "2026-03-16T20:21:53.8700881+08:00",
+    "type": "tag"
+  },
+  "en:职业思考": {
+    "translation": "Career Reflection",
+    "timestamp": "2026-04-28T01:12:53.4464094+08:00",
     "type": "tag"
   },
   "en:职业素养": {
@@ -3782,6 +3822,11 @@
   "en:软件工程": {
     "translation": "Software Engineering",
     "timestamp": "2026-04-09T15:00:03.9712544+08:00",
+    "type": "tag"
+  },
+  "en:软件开发": {
+    "translation": "Software Development",
+    "timestamp": "2026-04-28T01:12:44.2337204+08:00",
     "type": "tag"
   },
   "en:运维": {
@@ -4764,6 +4809,11 @@
     "timestamp": "2025-06-02T17:26:22.6084415+08:00",
     "type": "tag"
   },
+  "ja:成本观察": {
+    "translation": "コスト観察",
+    "timestamp": "2026-04-28T01:33:54.7165438+08:00",
+    "type": "tag"
+  },
   "ja:房地产": {
     "translation": "不動産",
     "timestamp": "2025-06-02T05:45:13.6370795+08:00",
@@ -5149,6 +5199,11 @@
     "timestamp": "2025-06-02T05:52:17.7919557+08:00",
     "type": "tag"
   },
+  "ja:番茄小说": {
+    "translation": "トマトリノベル (または、トマト小説)",
+    "timestamp": "2026-04-28T02:03:50.4499126+08:00",
+    "type": "tag"
+  },
   "ja:登录失败": {
     "translation": "ログイン失敗 (login himitsu)",
     "timestamp": "2025-07-21T23:59:47.9155915+08:00",
@@ -5209,9 +5264,19 @@
     "timestamp": "2025-06-02T06:11:49.6446578+08:00",
     "type": "tag"
   },
+  "ja:神墓": {
+    "translation": "神墓",
+    "timestamp": "2026-04-28T02:03:56.5131956+08:00",
+    "type": "tag"
+  },
   "ja:票价": {
     "translation": "料金 (yōken) / 価格 (gaku)",
     "timestamp": "2025-06-02T06:12:23.5472098+08:00",
+    "type": "tag"
+  },
+  "ja:程序员": {
+    "translation": "プログラマー",
+    "timestamp": "2026-04-28T01:20:07.9911486+08:00",
     "type": "tag"
   },
   "ja:税务": {
@@ -5289,6 +5354,11 @@
     "timestamp": "2025-06-02T17:28:13.2089554+08:00",
     "type": "tag"
   },
+  "ja:网文": {
+    "translation": "ネット小説",
+    "timestamp": "2026-04-28T02:03:50.6182491+08:00",
+    "type": "tag"
+  },
   "ja:网络": {
     "translation": "ネットワーク",
     "timestamp": "2025-06-02T05:07:09.9619195+08:00",
@@ -5342,6 +5412,11 @@
   "ja:翻译": {
     "translation": "翻訳 (Hon'yaku)",
     "timestamp": "2025-06-02T21:55:37.4715955+08:00",
+    "type": "tag"
+  },
+  "ja:职业思考": {
+    "translation": "キャリア思考",
+    "timestamp": "2026-04-28T01:20:08.1768257+08:00",
     "type": "tag"
   },
   "ja:职场": {
@@ -5567,6 +5642,11 @@
   "ja:软件工程": {
     "translation": "ソフトウェア工学",
     "timestamp": "2026-04-09T15:22:47.9358817+08:00",
+    "type": "tag"
+  },
+  "ja:软件开发": {
+    "translation": "ソフトウェア開発",
+    "timestamp": "2026-04-28T01:20:08.3492411+08:00",
     "type": "tag"
   },
   "ja:运维": {
