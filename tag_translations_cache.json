@@ -1339,6 +1339,11 @@
     "timestamp": "2026-03-16T20:22:09.5538035+08:00",
     "type": "tag"
   },
+  "en:五粮液": {
+    "translation": "Wuliangye",
+    "timestamp": "2026-05-04T14:38:00.8126885+08:00",
+    "type": "tag"
+  },
   "en:交收": {
     "translation": "Same-day Delivery",
     "timestamp": "2025-07-28T00:06:05.8689393+08:00",
@@ -1577,6 +1582,11 @@
   "en:内存频率": {
     "translation": "Memory Frequency",
     "timestamp": "2025-09-24T21:51:10.946579+08:00",
+    "type": "tag"
+  },
+  "en:内容产业": {
+    "translation": "Content Industry",
+    "timestamp": "2026-05-04T14:38:00.3000551+08:00",
     "type": "tag"
   },
   "en:内网穿透": {
@@ -2242,6 +2252,11 @@
   "en:引用赋值": {
     "translation": "Pass by Reference",
     "timestamp": "2026-03-16T20:22:13.1442217+08:00",
+    "type": "tag"
+  },
+  "en:影视": {
+    "translation": "Film and Television",
+    "timestamp": "2026-05-04T14:38:00.157016+08:00",
     "type": "tag"
   },
   "en:影院": {
@@ -3057,6 +3072,11 @@
   "en:知乎": {
     "translation": "Zhihu",
     "timestamp": "2026-03-16T20:22:23.9357571+08:00",
+    "type": "tag"
+  },
+  "en:短剧": {
+    "translation": "Short Drama / Short Series",
+    "timestamp": "2026-05-04T14:38:00.4720686+08:00",
     "type": "tag"
   },
   "en:硬件": {
@@ -3954,6 +3974,11 @@
     "timestamp": "2025-07-16T21:17:03.6086961+08:00",
     "type": "tag"
   },
+  "en:金融知识库": {
+    "translation": "Financial Knowledge Base",
+    "timestamp": "2026-05-04T14:38:00.6279789+08:00",
+    "type": "tag"
+  },
   "en:金融科技": {
     "translation": "Fintech",
     "timestamp": "2025-06-12T23:51:40.6459009+08:00",
@@ -4384,6 +4409,11 @@
     "timestamp": "2025-09-24T21:51:36.5138281+08:00",
     "type": "tag"
   },
+  "ja:内容产业": {
+    "translation": "コンテンツ産業",
+    "timestamp": "2026-05-04T14:41:02.2778722+08:00",
+    "type": "tag"
+  },
   "ja:内网穿透": {
     "translation": "イントラネット貫通",
     "timestamp": "2025-06-02T05:10:33.1316275+08:00",
@@ -4757,6 +4787,11 @@
   "ja:异地夫妻": {
     "translation": "遠距離夫婦",
     "timestamp": "2026-04-22T02:15:19.1938991+08:00",
+    "type": "tag"
+  },
+  "ja:影视": {
+    "translation": "映画・映像作品",
+    "timestamp": "2026-05-04T14:41:02.1086469+08:00",
     "type": "tag"
   },
   "ja:影院": {
@@ -5237,6 +5272,11 @@
   "ja:直播": {
     "translation": "生放送",
     "timestamp": "2025-06-02T05:11:02.9034059+08:00",
+    "type": "tag"
+  },
+  "ja:短剧": {
+    "translation": "短編劇",
+    "timestamp": "2026-05-04T14:41:01.8755554+08:00",
     "type": "tag"
   },
   "ja:硬件": {
