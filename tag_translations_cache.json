@@ -1334,9 +1334,19 @@
     "timestamp": "2025-05-25T22:42:05.2158809+08:00",
     "type": "tag"
   },
+  "en:互联网巨头": {
+    "translation": "Internet Giant",
+    "timestamp": "2026-05-12T03:12:09.4734285+08:00",
+    "type": "tag"
+  },
   "en:互联网梗": {
     "translation": "Internet Meme",
     "timestamp": "2026-03-16T20:22:09.5538035+08:00",
+    "type": "tag"
+  },
+  "en:五一档": {
+    "translation": "May Day Package/Set (or May Labor Day)",
+    "timestamp": "2026-05-12T03:12:09.1941174+08:00",
     "type": "tag"
   },
   "en:五粮液": {
@@ -1649,6 +1659,11 @@
     "timestamp": "2025-05-25T22:41:11.4388811+08:00",
     "type": "tag"
   },
+  "en:券商": {
+    "translation": "Brokerage Firm / Broker",
+    "timestamp": "2026-05-12T03:12:09.6439754+08:00",
+    "type": "tag"
+  },
   "en:前端": {
     "translation": "Frontend",
     "timestamp": "2025-05-28T03:23:50.9713523+08:00",
@@ -1682,6 +1697,11 @@
   "en:千问": {
     "translation": "Qwen",
     "timestamp": "2026-04-09T15:00:02.132377+08:00",
+    "type": "tag"
+  },
+  "en:半导体": {
+    "translation": "Semiconductor",
+    "timestamp": "2026-05-12T03:12:08.6627044+08:00",
     "type": "tag"
   },
   "en:华为": {
@@ -2079,6 +2099,11 @@
     "timestamp": "2025-05-25T22:40:17.0924023+08:00",
     "type": "tag"
   },
+  "en:存储": {
+    "translation": "Storage",
+    "timestamp": "2026-05-12T03:12:08.8987763+08:00",
+    "type": "tag"
+  },
   "en:安全": {
     "translation": "Security",
     "timestamp": "2026-03-16T20:22:00.4473186+08:00",
@@ -2127,6 +2152,11 @@
   "en:密码重置": {
     "translation": "Password Reset",
     "timestamp": "2026-03-16T20:22:05.883031+08:00",
+    "type": "tag"
+  },
+  "en:富途证券": {
+    "translation": "Futu Securities",
+    "timestamp": "2026-05-12T03:12:09.9556681+08:00",
     "type": "tag"
   },
   "en:寝室": {
@@ -2342,6 +2372,11 @@
   "en:意义": {
     "translation": "",
     "timestamp": "2025-05-25T22:41:25.9735813+08:00",
+    "type": "tag"
+  },
+  "en:成本价": {
+    "translation": "Cost Price",
+    "timestamp": "2026-05-12T03:12:10.3251405+08:00",
     "type": "tag"
   },
   "en:成本观察": {
@@ -2839,6 +2874,11 @@
     "timestamp": "2025-06-02T21:03:56.6704171+08:00",
     "type": "tag"
   },
+  "en:消费": {
+    "translation": "Consumption",
+    "timestamp": "2026-05-12T03:12:10.2012408+08:00",
+    "type": "tag"
+  },
   "en:消费心理": {
     "translation": "Consumer Psychology",
     "timestamp": "2026-03-16T20:22:09.9764893+08:00",
@@ -3019,6 +3059,11 @@
     "timestamp": "2025-05-25T22:40:16.3495138+08:00",
     "type": "tag"
   },
+  "en:电影票房": {
+    "translation": "Movie Box Office",
+    "timestamp": "2026-05-12T03:12:10.0927107+08:00",
+    "type": "tag"
+  },
   "en:电竞": {
     "translation": "esports",
     "timestamp": "2025-05-25T22:40:34.055619+08:00",
@@ -3092,6 +3137,11 @@
   "en:直播平台": {
     "translation": "Live Streaming Platform",
     "timestamp": "2026-03-16T20:21:58.7348049+08:00",
+    "type": "tag"
+  },
+  "en:相册": {
+    "translation": "Album",
+    "timestamp": "2026-05-12T03:12:08.7877227+08:00",
     "type": "tag"
   },
   "en:知乎": {
@@ -3814,6 +3864,11 @@
     "timestamp": "2026-03-16T20:22:14.8459142+08:00",
     "type": "tag"
   },
+  "en:资料管理": {
+    "translation": "Document Management",
+    "timestamp": "2026-05-12T03:12:09.3324976+08:00",
+    "type": "tag"
+  },
   "en:资本": {
     "translation": "capital",
     "timestamp": "2025-05-25T22:41:42.2436141+08:00",
@@ -4139,6 +4194,11 @@
     "timestamp": "2025-11-03T05:05:26.2424388+08:00",
     "type": "tag"
   },
+  "en:韩国股市": {
+    "translation": "Korean Stock Market",
+    "timestamp": "2026-05-12T03:12:09.800813+08:00",
+    "type": "tag"
+  },
   "en:韩援": {
     "translation": "Korean Support/Assistance",
     "timestamp": "2025-11-03T05:05:26.1723128+08:00",
@@ -4309,9 +4369,19 @@
     "timestamp": "2025-06-02T06:22:38.2948375+08:00",
     "type": "tag"
   },
+  "ja:互联网巨头": {
+    "translation": "インターネットの巨大企業",
+    "timestamp": "2026-05-12T04:17:57.069168+08:00",
+    "type": "tag"
+  },
   "ja:互联网梗": {
     "translation": "インターネットスラング",
     "timestamp": "2026-03-16T20:23:11.9674408+08:00",
+    "type": "tag"
+  },
+  "ja:五一档": {
+    "translation": "ゴールデンウィーク",
+    "timestamp": "2026-05-12T03:17:19.8944073+08:00",
     "type": "tag"
   },
   "ja:五粮液": {
@@ -4484,6 +4554,11 @@
     "timestamp": "2025-06-02T17:20:40.3370448+08:00",
     "type": "tag"
   },
+  "ja:券商": {
+    "translation": "証券会社",
+    "timestamp": "2026-05-12T04:00:29.1108711+08:00",
+    "type": "tag"
+  },
   "ja:前端": {
     "translation": "フロントエンド",
     "timestamp": "2025-06-02T06:24:59.9943738+08:00",
@@ -4507,6 +4582,11 @@
   "ja:千问": {
     "translation": "千問",
     "timestamp": "2026-04-09T15:13:37.8173642+08:00",
+    "type": "tag"
+  },
+  "ja:半导体": {
+    "translation": "半導体",
+    "timestamp": "2026-05-12T03:41:32.0649671+08:00",
     "type": "tag"
   },
   "ja:华为": {
@@ -4749,6 +4829,11 @@
     "timestamp": "2025-06-02T05:05:21.1446577+08:00",
     "type": "tag"
   },
+  "ja:存储": {
+    "translation": "ストレージ",
+    "timestamp": "2026-05-12T04:35:42.471283+08:00",
+    "type": "tag"
+  },
   "ja:家庭": {
     "translation": "家庭 (かてい)",
     "timestamp": "2025-06-02T05:51:34.336796+08:00",
@@ -4762,6 +4847,11 @@
   "ja:密码": {
     "translation": "暗号",
     "timestamp": "2025-12-04T22:26:27.9272046+08:00",
+    "type": "tag"
+  },
+  "ja:富途证券": {
+    "translation": "富途証券",
+    "timestamp": "2026-05-12T04:00:28.9560255+08:00",
     "type": "tag"
   },
   "ja:寝室": {
@@ -4887,6 +4977,11 @@
   "ja:意义": {
     "translation": "意味",
     "timestamp": "2025-06-02T17:26:22.6084415+08:00",
+    "type": "tag"
+  },
+  "ja:成本价": {
+    "translation": "原価",
+    "timestamp": "2026-05-12T04:00:29.2513917+08:00",
     "type": "tag"
   },
   "ja:成本观察": {
@@ -5169,6 +5264,11 @@
     "timestamp": "2025-06-02T21:04:30.8583185+08:00",
     "type": "tag"
   },
+  "ja:消费": {
+    "translation": "消費",
+    "timestamp": "2026-05-12T03:17:20.3395609+08:00",
+    "type": "tag"
+  },
   "ja:深交所": {
     "translation": "東京証券取引所 (とうきょうしょうけんとりひきよ)",
     "timestamp": "2025-06-02T17:23:26.3012199+08:00",
@@ -5284,6 +5384,11 @@
     "timestamp": "2025-06-02T06:11:49.344512+08:00",
     "type": "tag"
   },
+  "ja:电影票房": {
+    "translation": "映画の興行収入",
+    "timestamp": "2026-05-12T03:17:20.1839049+08:00",
+    "type": "tag"
+  },
   "ja:电竞": {
     "translation": "eスポーツ (ē supōtsu)",
     "timestamp": "2025-06-02T05:52:17.7919557+08:00",
@@ -5327,6 +5432,11 @@
   "ja:直播": {
     "translation": "生放送",
     "timestamp": "2025-06-02T05:11:02.9034059+08:00",
+    "type": "tag"
+  },
+  "ja:相册": {
+    "translation": "アルバム",
+    "timestamp": "2026-05-12T03:27:02.5270135+08:00",
     "type": "tag"
   },
   "ja:短剧": {
@@ -5709,6 +5819,11 @@
     "timestamp": "2025-06-02T06:22:01.8064578+08:00",
     "type": "tag"
   },
+  "ja:资料管理": {
+    "translation": "資料管理",
+    "timestamp": "2026-05-12T03:27:02.3897331+08:00",
+    "type": "tag"
+  },
   "ja:资本": {
     "translation": "資本",
     "timestamp": "2025-06-02T05:52:18.420347+08:00",
@@ -5887,6 +6002,11 @@
   "ja:韩国": {
     "translation": "韓国",
     "timestamp": "2025-11-03T05:05:59.3057686+08:00",
+    "type": "tag"
+  },
+  "ja:韩国股市": {
+    "translation": "韓国株式市場",
+    "timestamp": "2026-05-12T04:35:42.6112717+08:00",
     "type": "tag"
   },
   "ja:韩援": {

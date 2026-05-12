@@ -24,6 +24,11 @@
     "timestamp": "2025-05-25T22:44:33.012837+08:00",
     "type": "article"
   },
+  "en:512GB 手机已经不算大了": {
+    "translation": "512GB for a phone is already quite large/enough.",
+    "timestamp": "2026-05-12T03:12:32.6591635+08:00",
+    "type": "article"
+  },
   "en:AI 会写代码了，新人靠什么练级": {
     "translation": "AI can write code, what should newcomers focus on to level up?",
     "timestamp": "2026-04-28T01:13:00.6076849+08:00",
@@ -57,6 +62,11 @@
   "en:AI 时代，光把人拉进 App 已经不够了": {
     "translation": "In the era of AI, just getting people into an app is no longer enough.",
     "timestamp": "2026-04-09T15:00:14.1910361+08:00",
+    "type": "article"
+  },
+  "en:AI 股票涨到天上以后": {
+    "translation": "After AI stocks soared to the sky",
+    "timestamp": "2026-05-12T03:12:32.8896297+08:00",
     "type": "article"
   },
   "en:AI发展两年：有点类似Docker发布前的状态": {
@@ -434,6 +444,11 @@
     "timestamp": "2025-05-25T22:43:11.4703596+08:00",
     "type": "article"
   },
+  "en:五一档塌的不是票房，是信任": {
+    "translation": "What collapsed during the May 1st run wasn't the box office; it was trust.",
+    "timestamp": "2026-05-12T03:12:26.0754752+08:00",
+    "type": "article"
+  },
   "en:五粮液为什么要掀桌子": {
     "translation": "Why is Wuliangye making such a fuss/stir?",
     "timestamp": "2026-05-04T14:38:21.8336992+08:00",
@@ -689,6 +704,11 @@
     "timestamp": "2025-06-11T22:36:12.5982897+08:00",
     "type": "article"
   },
+  "en:大模型这件事，确实把互联网巨头拉进了同一个斗兽场": {
+    "translation": "The issue of large models has truly drawn all internet giants into the same arena/battleground.",
+    "timestamp": "2026-05-12T03:12:40.1332889+08:00",
+    "type": "article"
+  },
   "en:好久不见的股票牛市": {
     "translation": "Long time no see bull market in stocks",
     "timestamp": "2025-06-08T19:01:52.9144254+08:00",
@@ -712,6 +732,11 @@
   "en:宽基指数定投：券商ETF、恒生科技指数": {
     "translation": "broad-based-index-etf-investing",
     "timestamp": "2025-05-25T22:44:20.0437185+08:00",
+    "type": "article"
+  },
+  "en:富途证券成本价算法，香港券商和国内券商默认是哪种": {
+    "translation": "Futu Securities cost price algorithm, which type do Hong Kong and domestic brokers default to?",
+    "timestamp": "2026-05-12T03:12:33.2736271+08:00",
     "type": "article"
   },
   "en:小米的“新老交替”与电车板块的防守战": {
@@ -1192,6 +1217,11 @@
   "en:这个社会需要什么样的记者？": {
     "translation": "what-kind-of-journalists-does-society-need",
     "timestamp": "2025-05-25T22:44:34.1660499+08:00",
+    "type": "article"
+  },
+  "en:这轮半导体周期，终点大概率不在 2026 年": {
+    "translation": "The semiconductor cycle this round is unlikely to end in 2026.",
+    "timestamp": "2026-05-12T03:12:40.5054941+08:00",
     "type": "article"
   },
   "en:这轮模型大战，已经卷到价格和芯片上了": {
