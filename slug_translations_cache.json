@@ -134,6 +134,11 @@
     "timestamp": "2026-04-25T03:25:02.7977921+08:00",
     "type": "article"
   },
+  "en:ChatGPT 发布之后，英伟达数据中心显卡怎么迭代": {
+    "translation": "How have NVIDIA's data center GPUs iterated since the release of ChatGPT?",
+    "timestamp": "2026-05-21T10:51:44.6369226+08:00",
+    "type": "article"
+  },
   "en:Claude4发布，尝试开发：hugo标签、超链接翻译助手": {
     "translation": "claude-4-release-hugo-tags-hyperlink-translation-assistant",
     "timestamp": "2025-05-25T22:44:30.1859095+08:00",
@@ -574,6 +579,11 @@
     "timestamp": "2025-05-25T22:43:26.7918285+08:00",
     "type": "article"
   },
+  "en:半导体周期看股价不够，海力士的财报更像风向标": {
+    "translation": "Relying solely on stock prices to gauge the semiconductor cycle is insufficient; SK Hynix's earnings report is a better indicator/barometer.",
+    "timestamp": "2026-05-21T10:51:39.2165414+08:00",
+    "type": "article"
+  },
   "en:华为被卡死，小米却能找台积电": {
     "translation": "Huawei is blocked, but Xiaomi can find TSMC",
     "timestamp": "2026-05-04T15:19:01.5796899+08:00",
@@ -782,6 +792,11 @@
   "en:微信小程序背景和开发环境": {
     "translation": "wechat-mini-program-background-and-development-environment",
     "timestamp": "2025-05-25T22:43:01.8751073+08:00",
+    "type": "article"
+  },
+  "en:恒生科技为什么没跟着A股创新高": {
+    "translation": "Why did the Hang Seng Tech Index not keep pace with the record highs of A-shares?",
+    "timestamp": "2026-05-21T10:51:51.7010193+08:00",
     "type": "article"
   },
   "en:我们穷极一生追寻的是什么": {
@@ -1024,6 +1039,11 @@
     "timestamp": "2025-06-02T21:03:59.8698971+08:00",
     "type": "article"
   },
+  "en:特朗普再度访华：这次中美元首会晤，先求稳，再谈交易": {
+    "translation": "Trump Visits China Again: This China-US Leaders' Meeting Prioritizes Stability Before Discussing Transactions",
+    "timestamp": "2026-05-21T10:51:39.6221901+08:00",
+    "type": "article"
+  },
   "en:现代货币理论是全球经济体的未来吗?": {
     "translation": "modern-monetary-theory-future-global-economy",
     "timestamp": "2025-05-25T22:44:02.091371+08:00",
@@ -1102,6 +1122,11 @@
   "en:罗技耳机驱动安装失败": {
     "translation": "logitech-headphone-driver-installation-failure",
     "timestamp": "2025-05-25T22:43:36.4280707+08:00",
+    "type": "article"
+  },
+  "en:美债收益率 4.5%，买入后到底能拿到什么？": {
+    "translation": "US Treasury Yield at 4.5%, What Can You Actually Get After Buying?",
+    "timestamp": "2026-05-21T10:51:52.0590913+08:00",
     "type": "article"
   },
   "en:美国斩杀线": {
