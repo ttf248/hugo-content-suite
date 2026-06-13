@@ -39,9 +39,19 @@
     "timestamp": "2025-06-02T05:12:56.6564457+08:00",
     "type": "tag"
   },
+  "en:AIGC": {
+    "translation": "AIGC",
+    "timestamp": "2026-06-14T04:32:52.1693138+08:00",
+    "type": "tag"
+  },
   "en:AI泡沫": {
     "translation": "AI Bubble",
     "timestamp": "2025-11-03T23:05:46.3149861+08:00",
+    "type": "tag"
+  },
+  "en:AI股票": {
+    "translation": "AI Stocks",
+    "timestamp": "2026-06-14T04:32:51.8802787+08:00",
     "type": "tag"
   },
   "en:Anthropic": {
@@ -87,6 +97,11 @@
   "en:ChatGPT": {
     "translation": "ChatGPT",
     "timestamp": "2026-04-25T03:24:36.5127849+08:00",
+    "type": "tag"
+  },
+  "en:Claude Code": {
+    "translation": "Claude Code",
+    "timestamp": "2026-06-14T04:32:51.1415606+08:00",
     "type": "tag"
   },
   "en:Codex": {
@@ -267,6 +282,11 @@
   "en:academic": {
     "translation": "academic",
     "timestamp": "2025-05-25T22:41:46.4651935+08:00",
+    "type": "tag"
+  },
+  "en:agent": {
+    "translation": "agent",
+    "timestamp": "2026-06-14T04:32:51.5704566+08:00",
     "type": "tag"
   },
   "en:ai": {
@@ -2179,6 +2199,11 @@
     "timestamp": "2026-03-16T20:22:05.883031+08:00",
     "type": "tag"
   },
+  "en:富途": {
+    "translation": "Futu",
+    "timestamp": "2026-06-14T04:32:50.7687644+08:00",
+    "type": "tag"
+  },
   "en:富途证券": {
     "translation": "Futu Securities",
     "timestamp": "2026-05-12T03:12:09.9556681+08:00",
@@ -2442,6 +2467,11 @@
   "en:技术创新": {
     "translation": "Technological Innovation",
     "timestamp": "2025-11-03T23:05:46.627499+08:00",
+    "type": "tag"
+  },
+  "en:投融资": {
+    "translation": "Investment and Finance (or Fundraising/Financing, depending on context)",
+    "timestamp": "2026-06-14T04:32:51.4601752+08:00",
     "type": "tag"
   },
   "en:投资": {
@@ -2867,6 +2897,11 @@
   "en:沪深300": {
     "translation": "Shanghai Composite Index (SSE Star)**",
     "timestamp": "2026-03-16T20:22:17.0064943+08:00",
+    "type": "tag"
+  },
+  "en:沪深港通": {
+    "translation": "Shanghai-Shenzhen-Hong Kong Stock Connect",
+    "timestamp": "2026-06-14T04:32:51.0177894+08:00",
     "type": "tag"
   },
   "en:沪港通": {
@@ -3534,6 +3569,11 @@
     "timestamp": "2025-06-02T21:55:23.842204+08:00",
     "type": "tag"
   },
+  "en:老虎证券": {
+    "translation": "Tiger Securities",
+    "timestamp": "2026-06-14T04:32:52.0177538+08:00",
+    "type": "tag"
+  },
   "en:老龄化社会": {
     "translation": "Aging Society",
     "timestamp": "2026-03-16T20:22:18.8489333+08:00",
@@ -3944,6 +3984,11 @@
     "timestamp": "2026-03-16T20:22:23.7638963+08:00",
     "type": "tag"
   },
+  "en:跨境监管": {
+    "translation": "Cross-border Regulation",
+    "timestamp": "2026-06-14T04:32:50.6280367+08:00",
+    "type": "tag"
+  },
   "en:跨平台": {
     "translation": "Cross-platform",
     "timestamp": "2026-03-16T20:22:09.8128071+08:00",
@@ -4154,6 +4199,11 @@
     "timestamp": "2025-05-25T22:41:12.8642467+08:00",
     "type": "tag"
   },
+  "en:长桥": {
+    "translation": "Changqiao",
+    "timestamp": "2026-06-14T04:32:51.7388862+08:00",
+    "type": "tag"
+  },
   "en:问题排查": {
     "translation": "troubleshooting",
     "timestamp": "2025-05-25T22:39:56.1753069+08:00",
@@ -4327,6 +4377,11 @@
   "ja:AI泡沫": {
     "translation": "AIバブル (AIBaburu)",
     "timestamp": "2025-11-03T23:06:21.9866915+08:00",
+    "type": "tag"
+  },
+  "ja:AI股票": {
+    "translation": "AI株",
+    "timestamp": "2026-06-14T06:28:49.2817564+08:00",
     "type": "tag"
   },
   "ja:A股": {
@@ -4919,6 +4974,11 @@
     "timestamp": "2025-12-04T22:26:27.9272046+08:00",
     "type": "tag"
   },
+  "ja:富途": {
+    "translation": "富途",
+    "timestamp": "2026-06-14T05:11:01.5053138+08:00",
+    "type": "tag"
+  },
   "ja:富途证券": {
     "translation": "富途証券",
     "timestamp": "2026-05-12T04:00:28.9560255+08:00",
@@ -5074,6 +5134,11 @@
     "timestamp": "2025-11-03T23:06:22.2545357+08:00",
     "type": "tag"
   },
+  "ja:投融资": {
+    "translation": "投資・資金調達",
+    "timestamp": "2026-06-14T06:14:41.0729595+08:00",
+    "type": "tag"
+  },
   "ja:投资": {
     "translation": "投資 (tōshi)",
     "timestamp": "2025-06-02T06:14:17.8407981+08:00",
@@ -5097,6 +5162,11 @@
   "ja:招聘数据": {
     "translation": "採用データ",
     "timestamp": "2025-06-02T06:20:48.8332556+08:00",
+    "type": "tag"
+  },
+  "ja:指数基金": {
+    "translation": "エクイティファンド",
+    "timestamp": "2026-06-14T04:55:00.9727473+08:00",
     "type": "tag"
   },
   "ja:排名": {
@@ -5317,6 +5387,11 @@
   "ja:江西省": {
     "translation": "江西省",
     "timestamp": "2025-06-02T06:20:48.4658197+08:00",
+    "type": "tag"
+  },
+  "ja:沪深港通": {
+    "translation": "滬深港通",
+    "timestamp": "2026-06-14T05:37:01.3251514+08:00",
     "type": "tag"
   },
   "ja:注意力": {
@@ -5709,6 +5784,11 @@
     "timestamp": "2025-06-02T21:55:37.4715955+08:00",
     "type": "tag"
   },
+  "ja:老虎证券": {
+    "translation": "トラ柄証券",
+    "timestamp": "2026-06-14T05:11:01.6930049+08:00",
+    "type": "tag"
+  },
   "ja:职业思考": {
     "translation": "キャリア思考",
     "timestamp": "2026-04-28T01:20:08.1768257+08:00",
@@ -5929,6 +6009,11 @@
     "timestamp": "2025-06-02T17:29:35.3702582+08:00",
     "type": "tag"
   },
+  "ja:跨境监管": {
+    "translation": "クロスボーダー規制",
+    "timestamp": "2026-06-14T05:11:01.8833801+08:00",
+    "type": "tag"
+  },
   "ja:躺平": {
     "translation": "横になる",
     "timestamp": "2025-06-02T05:47:12.4567955+08:00",
@@ -6052,6 +6137,11 @@
   "ja:镜像代理": {
     "translation": "プロキシミラー",
     "timestamp": "2025-06-02T06:01:29.7865312+08:00",
+    "type": "tag"
+  },
+  "ja:长桥": {
+    "translation": "チャンチャオ",
+    "timestamp": "2026-06-14T05:23:49.6253212+08:00",
     "type": "tag"
   },
   "ja:问题排查": {
