@@ -39,6 +39,11 @@
     "timestamp": "2025-06-02T05:12:56.6564457+08:00",
     "type": "tag"
   },
+  "en:AI 编程": {
+    "translation": "AI Programming",
+    "timestamp": "2026-07-15T07:48:33.876528+08:00",
+    "type": "tag"
+  },
   "en:AIGC": {
     "translation": "AIGC",
     "timestamp": "2026-06-14T04:32:52.1693138+08:00",
@@ -47,6 +52,11 @@
   "en:AI泡沫": {
     "translation": "AI Bubble",
     "timestamp": "2025-11-03T23:05:46.3149861+08:00",
+    "type": "tag"
+  },
+  "en:AI编程": {
+    "translation": "AI Programming",
+    "timestamp": "2026-07-15T07:48:23.9144055+08:00",
     "type": "tag"
   },
   "en:AI股票": {
@@ -67,6 +77,11 @@
   "en:C++": {
     "translation": "C++",
     "timestamp": "2026-04-16T01:43:32.174828+08:00",
+    "type": "tag"
+  },
+  "en:CAS": {
+    "translation": "CAS",
+    "timestamp": "2026-07-15T07:48:28.2760905+08:00",
     "type": "tag"
   },
   "en:CCTV": {
@@ -114,6 +129,11 @@
     "timestamp": "2025-09-24T21:51:10.8793651+08:00",
     "type": "tag"
   },
+  "en:Docker": {
+    "translation": "Docker",
+    "timestamp": "2026-07-15T07:48:21.8008374+08:00",
+    "type": "tag"
+  },
   "en:ETF": {
     "translation": "etf",
     "timestamp": "2025-05-25T22:42:18.6858618+08:00",
@@ -144,6 +164,11 @@
     "timestamp": "2025-09-19T09:53:50.75012+08:00",
     "type": "tag"
   },
+  "en:Hermes": {
+    "translation": "Hermes",
+    "timestamp": "2026-07-15T07:48:25.1563509+08:00",
+    "type": "tag"
+  },
   "en:IPO": {
     "translation": "Initial Public Offering",
     "timestamp": "2025-10-15T19:32:40.7972343+08:00",
@@ -157,6 +182,11 @@
   "en:Keepalived": {
     "translation": "Keepalived",
     "timestamp": "2025-09-19T09:53:51.094627+08:00",
+    "type": "tag"
+  },
+  "en:LLM": {
+    "translation": "LLM",
+    "timestamp": "2026-07-15T07:48:27.2424706+08:00",
     "type": "tag"
   },
   "en:LOC": {
@@ -194,6 +224,21 @@
     "timestamp": "2026-04-09T15:00:02.8907978+08:00",
     "type": "tag"
   },
+  "en:Mihomo": {
+    "translation": "Mihomo",
+    "timestamp": "2026-07-15T07:48:22.8403779+08:00",
+    "type": "tag"
+  },
+  "en:MiniMax": {
+    "translation": "MiniMax",
+    "timestamp": "2026-07-15T07:48:20.731312+08:00",
+    "type": "tag"
+  },
+  "en:Multica": {
+    "translation": "Multica",
+    "timestamp": "2026-07-15T07:48:35.9500057+08:00",
+    "type": "tag"
+  },
   "en:Nginx": {
     "translation": "nginx",
     "timestamp": "2025-05-25T22:42:16.9709118+08:00",
@@ -224,6 +269,11 @@
     "timestamp": "2026-03-16T20:22:01.401837+08:00",
     "type": "tag"
   },
+  "en:SearXNG": {
+    "translation": "SearXNG",
+    "timestamp": "2026-07-15T07:48:32.9264108+08:00",
+    "type": "tag"
+  },
   "en:SpaceSniffer": {
     "translation": "spacesniffer",
     "timestamp": "2025-05-25T22:41:10.8036893+08:00",
@@ -252,6 +302,11 @@
   "en:UEFI": {
     "translation": "UEFI",
     "timestamp": "2025-09-24T21:44:17.4635981+08:00",
+    "type": "tag"
+  },
+  "en:UI设计": {
+    "translation": "UI Design",
+    "timestamp": "2026-07-15T07:48:29.4703184+08:00",
     "type": "tag"
   },
   "en:WPF": {
@@ -2274,6 +2329,11 @@
     "timestamp": "2026-03-16T20:21:53.3539149+08:00",
     "type": "tag"
   },
+  "en:市场微观结构": {
+    "translation": "Market Microstructure",
+    "timestamp": "2026-07-15T07:48:26.1752792+08:00",
+    "type": "tag"
+  },
   "en:市场竞争": {
     "translation": "Market Competition",
     "timestamp": "2025-08-13T21:53:54.7705856+08:00",
@@ -2322,6 +2382,11 @@
   "en:开源": {
     "translation": "Open Source",
     "timestamp": "2026-03-16T20:22:05.3025141+08:00",
+    "type": "tag"
+  },
+  "en:开源模型": {
+    "translation": "Open Source Models",
+    "timestamp": "2026-07-15T07:48:34.8949654+08:00",
     "type": "tag"
   },
   "en:开源生态": {
@@ -2569,6 +2634,11 @@
     "timestamp": "2025-10-15T19:56:34.2426207+08:00",
     "type": "tag"
   },
+  "en:收盘竞价": {
+    "translation": "Closing Auction",
+    "timestamp": "2026-07-15T07:48:30.4608452+08:00",
+    "type": "tag"
+  },
   "en:改名风波": {
     "translation": "Name Storm/Scandal",
     "timestamp": "2025-09-19T10:20:41.5018166+08:00",
@@ -2752,6 +2822,11 @@
   "en:显示器": {
     "translation": "Monitor",
     "timestamp": "2025-10-28T21:19:22.7362085+08:00",
+    "type": "tag"
+  },
+  "en:智谱": {
+    "translation": "Zhipu",
+    "timestamp": "2026-07-15T07:48:31.7797649+08:00",
     "type": "tag"
   },
   "en:暗盘": {
