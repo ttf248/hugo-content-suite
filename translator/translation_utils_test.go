@@ -17,13 +17,21 @@ func testConfig(dir, url string) *config.Config {
 	}
 }
 
-func TestTranslateToLanguageUsesInjectedHTTPClient(t *testing.T) {
+func TestOpenAIRequestUsesSelectedModelInsteadOfLegacyConfig(t *testing.T) {
+	const selectedModel = "selected-model"
 	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.URL.Path != "/v1/chat/completions" {
+			http.NotFound(w, r)
+			return
+		}
 		w.Header().Set("Content-Type", "application/json")
 		_, _ = w.Write([]byte(`{"choices":[{"message":{"content":"Hello"}}]}`))
 	}))
 	defer server.Close()
-	translator := NewTranslationUtilsWithConfig(testConfig(t.TempDir(), server.URL), server.Client())
+	cfg := testConfig(t.TempDir(), "") // 模拟新配置已不再填写 legacy lm_studio。
+	cfg.ActiveModel = "selected"
+	cfg.Models = []config.LLMConfig{{Name: "selected", APIType: "openai_chat", URL: server.URL + "/v1/chat/completions", Model: selectedModel, Timeout: 1}}
+	translator := NewTranslationUtilsWithConfig(cfg, server.Client())
 	got, err := translator.TranslateToLanguage("你好", "en")
 	if err != nil || got != "Hello" {
 		t.Fatalf("翻译结果=%q, err=%v", got, err)

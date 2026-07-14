@@ -221,7 +221,7 @@ func (t *TranslationUtils) sendRequest(request LMStudioRequest, system string) (
 		return "", fmt.Errorf("序列化请求失败: %w", err)
 	}
 
-	resp, err := t.client.Post(t.cfg.LMStudio.URL, "application/json", bytes.NewBuffer(jsonData))
+	resp, err := t.client.Post(t.llm.URL, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return "", fmt.Errorf("发送请求失败: %w", err)
 	}
@@ -383,7 +383,7 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 	})
 
 	request := LMStudioRequest{
-		Model:            t.cfg.LMStudio.Model,
+		Model:            t.llm.Model,
 		Messages:         messages,
 		Stream:           false,
 		Temperature:      0.0,  // 设置为 0.0 可使输出更确定，适合需要精确翻译的场景。
