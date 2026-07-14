@@ -16,6 +16,15 @@ go run .
 go run . ..\..\content\post
 ```
 
+保留默认交互菜单的同时，可用以下 CLI 模式直接执行“仅新增的一键处理”：
+
+```powershell
+go run . --process-new
+go run . --process-new ..\..\content\post
+```
+
+VS Code 可选择 `Hugo Content Suite: 增量一键处理` 调试配置，以当前本地配置启动同一流程。
+
 程序读取同目录的 `config.local.json`，并以受跟踪的 `config.example.json` 为基础合并本地覆盖项。所有相对路径均相对于本地配置文件解析；缓存和日志默认写入 `paths.runtime_dir`，该运行目录不纳入版本控制。
 
 `models` 可配置多组模型，`active_model` 指定启动默认项。菜单 `5` 可在本次运行中切换，菜单 `6` 测试当前选择。MiniMax 优先读取本地配置的 `api_key`，并兼容 `api_key_env` 指向的环境变量回退；`config.local.json` 已被 Git 忽略，绝不提交真实密钥。

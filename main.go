@@ -19,6 +19,28 @@ type InteractiveMenu struct {
 	cfg       *config.Config
 }
 
+const processNewFlag = "--process-new"
+
+// parseStartupMode 保持既有的“位置参数为内容目录”行为，同时提供无需交互的增量处理入口。
+func parseStartupMode(args []string) (runProcessNew bool, contentDirOverride string, err error) {
+	if len(args) == 0 {
+		return false, "", nil
+	}
+	if args[0] != processNewFlag {
+		if len(args) > 1 {
+			return false, "", fmt.Errorf("内容目录只能指定一次")
+		}
+		return false, args[0], nil
+	}
+	if len(args) > 2 {
+		return false, "", fmt.Errorf("%s 最多接受一个内容目录参数", processNewFlag)
+	}
+	if len(args) == 2 {
+		return true, args[1], nil
+	}
+	return true, "", nil
+}
+
 func NewInteractiveMenu(reader *bufio.Reader, contentDir string, cfg *config.Config) *InteractiveMenu {
 	return &InteractiveMenu{
 		reader:    reader,
@@ -141,18 +163,26 @@ func main() {
 		utils.Close()
 	}()
 
+	runProcessNew, contentDirOverride, err := parseStartupMode(os.Args[1:])
+	if err != nil {
+		log.Fatal("命令行参数错误:", err)
+	}
+
 	contentDir := cfg.Paths.DefaultContentDir
-	if len(os.Args) > 1 {
-		contentDir = os.Args[1]
+	if contentDirOverride != "" {
+		contentDir = contentDirOverride
 		utils.InfoWithFields("使用命令行参数指定目录", map[string]interface{}{
 			"content_dir": contentDir,
 		})
 	}
 
-	// 扫描文章
 	fmt.Printf("📂 内容目录: %s\n", contentDir)
+	if runProcessNew {
+		operations.NewProcessor(contentDir).ProcessAllContent(bufio.NewReader(os.Stdin))
+		return
+	}
 
-	// 启动交互式菜单
+	// 未传入 CLI 标志时维持原有交互菜单。
 	reader := bufio.NewReader(os.Stdin)
 	interactiveMenu := NewInteractiveMenu(reader, contentDir, cfg)
 	interactiveMenu.Show()

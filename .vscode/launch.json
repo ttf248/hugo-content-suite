@@ -11,6 +11,16 @@
             "mode": "debug",
             "program": "${workspaceFolder}/main.go",
             "console": "integratedTerminal"
+        },
+        {
+            "name": "Hugo Content Suite: 增量一键处理",
+            "type": "go",
+            "request": "launch",
+            "mode": "debug",
+            "program": "${workspaceFolder}",
+            "args": ["--process-new"],
+            "cwd": "${workspaceFolder}",
+            "console": "integratedTerminal"
         }
     ]
 }
