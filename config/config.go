@@ -9,6 +9,8 @@ import (
 
 type Config struct {
 	LMStudio    LMStudioConfig    `json:"lm_studio"`
+	Models      []LLMConfig       `json:"models"`
+	ActiveModel string            `json:"active_model"`
 	Cache       CacheConfig       `json:"cache"`
 	Display     DisplayConfig     `json:"display"`
 	Paths       PathsConfig       `json:"paths"`
@@ -16,6 +18,18 @@ type Config struct {
 	Paragraph   ParagraphConfig   `json:"paragraph"`
 	Logging     LoggingConfig     `json:"logging"`
 	Language    LanguageConfig    `json:"language"`
+}
+
+// LLMConfig 描述一个可选择的模型服务。api_key 应只用于本地未跟踪配置；
+// 常规使用请设置 api_key_env 指向的环境变量，避免密钥进入版本控制。
+type LLMConfig struct {
+	Name      string `json:"name"`
+	APIType   string `json:"api_type"` // openai_chat 或 anthropic_messages
+	URL       string `json:"url"`
+	Model     string `json:"model"`
+	APIKey    string `json:"api_key"`
+	APIKeyEnv string `json:"api_key_env"`
+	Timeout   int    `json:"timeout_seconds"`
 }
 
 type LMStudioConfig struct {
@@ -70,6 +84,8 @@ type LanguageConfig struct {
 }
 
 var defaultConfig = Config{
+	ActiveModel: "local-lm-studio",
+	Models:      []LLMConfig{{Name: "local-lm-studio", APIType: "openai_chat", URL: "http://localhost:2234/v1/chat/completions", Model: "google/gemma-3-4b", Timeout: 30}},
 	LMStudio: LMStudioConfig{
 		URL:     "http://localhost:2234/v1/chat/completions",
 		Model:   "google/gemma-3-4b",
@@ -125,6 +141,49 @@ var defaultConfig = Config{
 			"hi": "Hindi",
 		},
 	},
+}
+
+func (c *Config) SelectedModel() (LLMConfig, error) {
+	if len(c.Models) == 0 {
+		return LLMConfig{Name: "legacy-lm-studio", APIType: "openai_chat", URL: c.LMStudio.URL, Model: c.LMStudio.Model, Timeout: c.LMStudio.Timeout}, nil
+	}
+	for _, model := range c.Models {
+		if model.Name == c.ActiveModel {
+			if model.URL == "" || model.Model == "" {
+				return LLMConfig{}, fmt.Errorf("模型 %s 缺少 url 或 model", model.Name)
+			}
+			if model.APIType != "openai_chat" && model.APIType != "anthropic_messages" {
+				return LLMConfig{}, fmt.Errorf("模型 %s 的 api_type 不受支持: %s", model.Name, model.APIType)
+			}
+			if model.Timeout <= 0 {
+				model.Timeout = 30
+			}
+			return model, nil
+		}
+	}
+	return LLMConfig{}, fmt.Errorf("active_model %q 不存在", c.ActiveModel)
+}
+
+func (c *Config) SelectModel(name string) error {
+	previous := c.ActiveModel
+	c.ActiveModel = name
+	if _, err := c.SelectedModel(); err != nil {
+		c.ActiveModel = previous
+		return err
+	}
+	return nil
+}
+
+func (m LLMConfig) ResolveAPIKey() (string, error) {
+	if m.APIKey != "" {
+		return m.APIKey, nil
+	}
+	if m.APIKeyEnv != "" {
+		if key := os.Getenv(m.APIKeyEnv); key != "" {
+			return key, nil
+		}
+	}
+	return "", fmt.Errorf("模型 %s 未配置密钥；请设置环境变量 %s 或在本地未跟踪配置中填写 api_key", m.Name, m.APIKeyEnv)
 }
 
 // LoadConfig 从指定文件读取配置。读取配置不应产生文件写入，避免一次拼写错误
@@ -185,6 +244,8 @@ func (c *Config) ResolvePaths(baseDir string) error {
 
 // GetGlobalConfig 获取全局配置实例
 var globalConfig *Config
+
+func SetGlobalConfig(cfg *Config) { globalConfig = cfg }
 
 func GetGlobalConfig() *Config {
 	if globalConfig == nil {

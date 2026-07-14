@@ -50,11 +50,26 @@ type Usage struct {
 	TotalTokens      int `json:"total_tokens"`
 }
 
+type anthropicRequest struct {
+	Model     string    `json:"model"`
+	MaxTokens int       `json:"max_tokens"`
+	System    string    `json:"system"`
+	Messages  []Message `json:"messages"`
+}
+
+type anthropicResponse struct {
+	Content []struct {
+		Type string `json:"type"`
+		Text string `json:"text"`
+	} `json:"content"`
+}
+
 // TranslationUtils 翻译工具
 type TranslationUtils struct {
 	cache  *TranslationCache
 	cfg    *config.Config
 	client *http.Client
+	llm    config.LLMConfig
 }
 
 // NewTranslationUtils 创建翻译工具实例
@@ -64,16 +79,21 @@ func NewTranslationUtils() *TranslationUtils {
 
 // NewTranslationUtilsWithConfig 为菜单之外的调用方提供可测试的翻译边界。
 func NewTranslationUtilsWithConfig(cfg *config.Config, client *http.Client) *TranslationUtils {
+	llm, err := cfg.SelectedModel()
+	if err != nil {
+		panic(fmt.Sprintf("无效模型配置: %v", err))
+	}
 	cache := NewTranslationCacheWithConfig(cfg)
 	cache.Load() // 加载缓存
 	if client == nil {
-		client = &http.Client{Timeout: time.Duration(cfg.LMStudio.Timeout) * time.Second}
+		client = &http.Client{Timeout: time.Duration(llm.Timeout) * time.Second}
 	}
 
 	return &TranslationUtils{
 		cache:  cache,
 		cfg:    cfg,
 		client: client,
+		llm:    llm,
 	}
 }
 
@@ -82,14 +102,14 @@ func (t *TranslationUtils) TestConnection() error {
 	fmt.Println("正在测试与LM Studio的连接...")
 
 	request := LMStudioRequest{
-		Model: t.cfg.LMStudio.Model,
+		Model: t.llm.Model,
 		Messages: []Message{
 			{Role: "user", Content: "这是一个测试请求，无需处理，直接应答就行"},
 		},
 		Stream: false,
 	}
 
-	_, err := t.sendRequest(request)
+	_, err := t.sendRequest(request, "请简短确认服务可用。")
 	return err
 }
 
@@ -192,37 +212,81 @@ func (t *TranslationUtils) batchTranslateWithCache(texts []string, targetLang st
 }
 
 // sendRequest 发送HTTP请求的通用方法
-func (t *TranslationUtils) sendRequest(request LMStudioRequest) (*LMStudioResponse, error) {
+func (t *TranslationUtils) sendRequest(request LMStudioRequest, system string) (string, error) {
+	if t.llm.APIType == "anthropic_messages" {
+		return t.sendAnthropicRequest(request, system)
+	}
 	jsonData, err := json.Marshal(request)
 	if err != nil {
-		return nil, fmt.Errorf("failed to serialize request: %v", err)
+		return "", fmt.Errorf("序列化请求失败: %w", err)
 	}
 
 	resp, err := t.client.Post(t.cfg.LMStudio.URL, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
-		return nil, fmt.Errorf("failed to send request: %v", err)
+		return "", fmt.Errorf("发送请求失败: %w", err)
 	}
 	defer resp.Body.Close()
 
 	if resp.StatusCode != http.StatusOK {
-		return nil, fmt.Errorf("LM Studio returned error status: %d", resp.StatusCode)
+		return "", fmt.Errorf("模型服务返回 HTTP %d", resp.StatusCode)
 	}
 
 	body, err := io.ReadAll(resp.Body)
 	if err != nil {
-		return nil, fmt.Errorf("failed to read response: %v", err)
+		return "", fmt.Errorf("读取响应失败: %w", err)
 	}
 
 	var response LMStudioResponse
 	if err := json.Unmarshal(body, &response); err != nil {
-		return nil, fmt.Errorf("failed to parse response: %v", err)
+		return "", fmt.Errorf("解析响应失败: %w", err)
 	}
 
 	if len(response.Choices) == 0 {
-		return nil, fmt.Errorf("no translation result received")
+		return "", fmt.Errorf("模型未返回翻译内容")
 	}
 
-	return &response, nil
+	return response.Choices[0].Message.Content, nil
+}
+
+func (t *TranslationUtils) sendAnthropicRequest(request LMStudioRequest, system string) (string, error) {
+	key, err := t.llm.ResolveAPIKey()
+	if err != nil {
+		return "", err
+	}
+	payload := anthropicRequest{Model: t.llm.Model, MaxTokens: request.MaxTokens, System: system, Messages: request.Messages}
+	data, err := json.Marshal(payload)
+	if err != nil {
+		return "", fmt.Errorf("序列化 Anthropic 请求失败: %w", err)
+	}
+	req, err := http.NewRequest(http.MethodPost, t.llm.URL, bytes.NewReader(data))
+	if err != nil {
+		return "", err
+	}
+	req.Header.Set("Content-Type", "application/json")
+	req.Header.Set("x-api-key", key)
+	req.Header.Set("anthropic-version", "2023-06-01")
+	resp, err := t.client.Do(req)
+	if err != nil {
+		return "", fmt.Errorf("发送 Anthropic 请求失败: %w", err)
+	}
+	defer resp.Body.Close()
+	body, err := io.ReadAll(resp.Body)
+	if err != nil {
+		return "", err
+	}
+	if resp.StatusCode < 200 || resp.StatusCode >= 300 {
+		return "", fmt.Errorf("Anthropic 服务返回 HTTP %d: %s", resp.StatusCode, strings.TrimSpace(string(body)))
+	}
+	var result anthropicResponse
+	if err := json.Unmarshal(body, &result); err != nil {
+		return "", fmt.Errorf("解析 Anthropic 响应失败: %w", err)
+	}
+	for _, block := range result.Content {
+		if block.Type == "text" && strings.TrimSpace(block.Text) != "" {
+			return block.Text, nil
+		}
+	}
+	return "", fmt.Errorf("Anthropic 服务未返回文本内容")
 }
 
 func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string, error) {
@@ -329,12 +393,12 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 		FrequencyPenalty: 0.0,  // 设置为 0.0 可避免模型对词汇的重复使用进行惩罚，适合保持原文结构的翻译。
 	}
 
-	response, err := t.sendRequest(request)
+	response, err := t.sendRequest(request, systemContent)
 	if err != nil {
 		return "", err
 	}
 
-	result := strings.TrimSpace(response.Choices[0].Message.Content)
+	result := strings.TrimSpace(response)
 
 	// 兼容思考模型，移除 <think> </think> 标签之间的内容
 	thinkRegex := regexp.MustCompile(`(?s)<think>.*?</think>`)

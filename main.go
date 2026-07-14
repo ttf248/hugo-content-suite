@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"hugo-content-suite/config"
 	"hugo-content-suite/operations"
+	"hugo-content-suite/translator"
 	"hugo-content-suite/utils"
 	"log"
 	"os"
@@ -15,19 +16,21 @@ import (
 type InteractiveMenu struct {
 	reader    *bufio.Reader
 	processor *operations.Processor
+	cfg       *config.Config
 }
 
-func NewInteractiveMenu(reader *bufio.Reader, contentDir string) *InteractiveMenu {
+func NewInteractiveMenu(reader *bufio.Reader, contentDir string, cfg *config.Config) *InteractiveMenu {
 	return &InteractiveMenu{
 		reader:    reader,
 		processor: operations.NewProcessor(contentDir),
+		cfg:       cfg,
 	}
 }
 
 func (m *InteractiveMenu) Show() {
 	for {
 		m.displayMainMenu()
-		choice := utils.GetChoice(m.reader, "请选择功能 (0-4): ")
+		choice := utils.GetChoice(m.reader, "请选择功能 (0-6): ")
 
 		switch choice {
 		case ".":
@@ -40,6 +43,14 @@ func (m *InteractiveMenu) Show() {
 			m.processor.TranslateArticles(m.reader)
 		case "4":
 			m.processor.DeleteArticles(m.reader)
+		case "5":
+			m.selectModel()
+		case "6":
+			if err := translator.NewTranslationUtils().TestConnection(); err != nil {
+				color.Red("模型连接失败: %v", err)
+			} else {
+				color.Green("模型连接成功: %s", m.cfg.ActiveModel)
+			}
 
 		case "0":
 			color.Green("感谢使用！再见！")
@@ -64,6 +75,8 @@ func (m *InteractiveMenu) displayMainMenu() {
 	fmt.Println("  2. 生成文章Slug")
 	fmt.Println("  3. 翻译文章为多语言版本")
 	fmt.Println("  4. 删除指定语言的文章")
+	fmt.Println("  5. 选择翻译模型")
+	fmt.Println("  6. 测试当前翻译模型")
 	fmt.Println()
 
 	fmt.Println()
@@ -72,12 +85,30 @@ func (m *InteractiveMenu) displayMainMenu() {
 	fmt.Println()
 }
 
+func (m *InteractiveMenu) selectModel() {
+	fmt.Println("\n可用翻译模型：")
+	for i, model := range m.cfg.Models {
+		fmt.Printf("  %d. %s%s\n", i+1, model.Name, map[bool]string{true: "（当前）", false: ""}[model.Name == m.cfg.ActiveModel])
+	}
+	choice := utils.GetChoice(m.reader, "选择模型编号（0 取消）: ")
+	var index int
+	if _, err := fmt.Sscanf(choice, "%d", &index); err != nil || index < 1 || index > len(m.cfg.Models) {
+		return
+	}
+	if err := m.cfg.SelectModel(m.cfg.Models[index-1].Name); err != nil {
+		color.Red("切换模型失败: %v", err)
+		return
+	}
+	color.Green("当前翻译模型: %s", m.cfg.ActiveModel)
+}
+
 func main() {
 	// 加载配置
 	cfg, err := config.LoadConfig("config.json")
 	if err != nil {
 		log.Fatal("配置加载失败:", err)
 	}
+	config.SetGlobalConfig(cfg)
 
 	// 从配置读取日志等级并初始化日志
 	logLevel := utils.INFO // 默认等级
@@ -123,6 +154,6 @@ func main() {
 
 	// 启动交互式菜单
 	reader := bufio.NewReader(os.Stdin)
-	interactiveMenu := NewInteractiveMenu(reader, contentDir)
+	interactiveMenu := NewInteractiveMenu(reader, contentDir, cfg)
 	interactiveMenu.Show()
 }

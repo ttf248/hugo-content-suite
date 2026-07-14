@@ -33,3 +33,19 @@ func TestLoadConfigDoesNotCreateMissingFile(t *testing.T) {
 		t.Fatalf("LoadConfig 不应创建配置文件，stat err=%v", err)
 	}
 }
+
+func TestSelectedModelAndSwitch(t *testing.T) {
+	cfg := &Config{ActiveModel: "local", Models: []LLMConfig{{Name: "local", APIType: "openai_chat", URL: "http://localhost", Model: "local-model"}, {Name: "remote", APIType: "anthropic_messages", URL: "https://example.test/v1/messages", Model: "remote-model"}}}
+	if model, err := cfg.SelectedModel(); err != nil || model.Name != "local" {
+		t.Fatalf("默认模型错误: %#v, %v", model, err)
+	}
+	if err := cfg.SelectModel("remote"); err != nil {
+		t.Fatal(err)
+	}
+	if model, _ := cfg.SelectedModel(); model.APIType != "anthropic_messages" {
+		t.Fatalf("切换失败: %#v", model)
+	}
+	if err := cfg.SelectModel("missing"); err == nil || cfg.ActiveModel != "remote" {
+		t.Fatal("非法切换应保留原选择")
+	}
+}

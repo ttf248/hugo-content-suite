@@ -41,3 +41,23 @@ func TestFailedTranslationIsNotCached(t *testing.T) {
 		t.Fatal("失败翻译不得写入缓存")
 	}
 }
+
+func TestAnthropicRequestUsesAPIKeyEnvAndHeaders(t *testing.T) {
+	t.Setenv("MINIMAX_API_KEY", "test-key")
+	server := httptest.NewServer(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Header.Get("x-api-key") != "test-key" || r.Header.Get("anthropic-version") != "2023-06-01" {
+			http.Error(w, "headers", http.StatusUnauthorized)
+			return
+		}
+		_, _ = w.Write([]byte(`{"content":[{"type":"text","text":"Hello"}]}`))
+	}))
+	defer server.Close()
+	cfg := testConfig(t.TempDir(), server.URL)
+	cfg.ActiveModel = "minimax"
+	cfg.Models = []config.LLMConfig{{Name: "minimax", APIType: "anthropic_messages", URL: server.URL, Model: "MiniMax-M2.5", APIKeyEnv: "MINIMAX_API_KEY", Timeout: 1}}
+	translator := NewTranslationUtilsWithConfig(cfg, server.Client())
+	got, err := translator.TranslateToLanguage("你好", "en")
+	if err != nil || got != "Hello" {
+		t.Fatalf("Anthropic 翻译=%q, err=%v", got, err)
+	}
+}
