@@ -18,7 +18,8 @@
   },
   "paths": {
     "default_content_dir": "../../content/post",
-    "tags_dir": "../tags"
+    "tags_dir": "../tags",
+    "runtime_dir": ".hugo-content-suite"
   },
   "translation": {
     "retry_attempts": 2,

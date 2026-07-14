@@ -7,6 +7,7 @@ import (
 	"os"
 	"path/filepath"
 	"sort"
+	"strconv"
 	"strings"
 
 	"github.com/fatih/color"
@@ -47,24 +48,22 @@ func (p *Processor) DeleteArticles(reader *bufio.Reader) {
 	for i, lang := range langs {
 		fmt.Printf("  %d. %s\n", i+1, lang)
 	}
-	choice := ""
-	fmt.Print("请输入要删除的语言编号: ")
-	fmt.Fscanln(reader, &choice)
-	idx := -1
-	fmt.Sscanf(choice, "%d", &idx)
+	choice := strings.TrimSpace(readChoice(reader, "请输入要删除的语言编号: "))
+	idx, err := strconv.Atoi(choice)
+	if err != nil {
+		idx = -1
+	}
 	if idx < 1 || idx > len(langs) {
 		color.Red("无效选择")
 		return
 	}
 	langToDelete := langs[idx-1]
-	fmt.Printf("确定要删除所有 [%s] 语言的文章吗？(y/N): ", langToDelete)
-	confirm, _ := reader.ReadString('\n')
-	if strings.ToLower(strings.TrimSpace(confirm)) == "y" {
-		err := p.deleteArticlesByLanguage(langToDelete)
+	if strings.TrimSpace(readChoice(reader, fmt.Sprintf("输入语言代码 %s 以确认删除: ", langToDelete))) == langToDelete {
+		count, err := p.deleteArticlesByLanguage(langToDelete)
 		if err != nil {
 			color.Red("删除失败: %v", err)
 		} else {
-			color.Green("已删除所有 [%s] 语言的文章", langToDelete)
+			color.Green("已删除 %d 个 [%s] 译文文件", count, langToDelete)
 		}
 	} else {
 		color.Yellow("已取消删除操作")
@@ -82,10 +81,16 @@ func extractLangFromPath(path string) string {
 	return parts[len(parts)-2]
 }
 
-func (p *Processor) deleteArticlesByLanguage(lang string) error {
+func readChoice(reader *bufio.Reader, prompt string) string {
+	fmt.Print(prompt)
+	value, _ := reader.ReadString('\n')
+	return value
+}
+
+func (p *Processor) deleteArticlesByLanguage(lang string) (int, error) {
 	articles, err := scanner.ScanArticlesWithLangs(p.contentDir, true)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
 	var toDelete []string
@@ -96,17 +101,17 @@ func (p *Processor) deleteArticlesByLanguage(lang string) error {
 	}
 
 	if len(toDelete) == 0 {
-		return fmt.Errorf("未找到语言为 [%s] 的文章", lang)
+		return 0, fmt.Errorf("未找到语言为 [%s] 的文章", lang)
 	}
 
 	for _, file := range toDelete {
 		err := removeFile(file)
 		if err != nil {
-			return fmt.Errorf("删除文件 %s 失败: %v", file, err)
+			return 0, fmt.Errorf("删除文件 %s 失败: %v", file, err)
 		}
 	}
 
-	return nil
+	return len(toDelete), nil
 }
 
 // removeFile 封装 os.Remove，便于后续扩展

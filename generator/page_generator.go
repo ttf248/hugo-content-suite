@@ -3,6 +3,7 @@ package generator
 import (
 	"bufio"
 	"fmt"
+	"hugo-content-suite/config"
 	"hugo-content-suite/models"
 	"hugo-content-suite/scanner"
 	"hugo-content-suite/translator"
@@ -58,7 +59,7 @@ func (g *TagPageGenerator) GenerateTagPagesWithMode(targetPreviews []TagPagePrev
 
 	fmt.Printf("📊 将处理 %d 个标签 (模式: %s)\n", len(targetPreviews), mode)
 
-	tagsDir := filepath.Join(g.contentDir, "..", "tags")
+	tagsDir := config.GetGlobalConfig().Paths.TagsDir
 	if err := utils.EnsureDir(tagsDir); err != nil {
 		return fmt.Errorf("❌ 创建tags目录失败: %v", err)
 	}
@@ -192,7 +193,7 @@ func (g *TagPageGenerator) PrepareTagPages() ([]TagPagePreview, int, int) {
 		var status string
 
 		// 检查标签目录是否已存在
-		tagsDir := filepath.Join(g.contentDir, "..", "tags")
+		tagsDir := config.GetGlobalConfig().Paths.TagsDir
 		tagDir := filepath.Join(tagsDir, stat.Name)
 		indexFile := filepath.Join(tagDir, "_index.md")
 

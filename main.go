@@ -27,10 +27,10 @@ func NewInteractiveMenu(reader *bufio.Reader, contentDir string) *InteractiveMen
 func (m *InteractiveMenu) Show() {
 	for {
 		m.displayMainMenu()
-		choice := utils.GetChoice(m.reader, "请选择功能 (0-8): ")
+		choice := utils.GetChoice(m.reader, "请选择功能 (0-4): ")
 
 		switch choice {
-		case "`":
+		case ".":
 			m.processor.ProcessAllContent(m.reader)
 		case "1":
 			m.processor.GenerateTagPages(m.reader)
@@ -55,7 +55,7 @@ func (m *InteractiveMenu) displayMainMenu() {
 	fmt.Println()
 
 	color.Yellow("⚡ 一键操作")
-	fmt.Println("  `. 一键处理所有内容（仅新增）")
+	fmt.Println("  .  一键处理所有内容（仅新增）")
 	fmt.Println()
 
 	// 内容管理模块
