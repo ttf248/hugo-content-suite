@@ -5,7 +5,6 @@ import (
 	"fmt"
 	"hugo-content-suite/config"
 	"hugo-content-suite/operations"
-	"hugo-content-suite/scanner"
 	"hugo-content-suite/utils"
 	"log"
 	"os"
@@ -75,7 +74,7 @@ func (m *InteractiveMenu) displayMainMenu() {
 
 func main() {
 	// 加载配置
-	cfg, err := config.LoadConfig()
+	cfg, err := config.LoadConfig("config.json")
 	if err != nil {
 		log.Fatal("配置加载失败:", err)
 	}
@@ -120,21 +119,7 @@ func main() {
 	}
 
 	// 扫描文章
-	absContentDir, err := utils.GetAbsolutePath(contentDir)
-	if err != nil {
-		log.Fatal("无法转换为绝对路径:", err)
-	}
-	fmt.Printf("📂 扫描目录: %s\n", absContentDir)
-
-	articles, err := scanner.ScanArticles(absContentDir)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	if len(articles) == 0 {
-		fmt.Println("未找到任何文章")
-		return
-	}
+	fmt.Printf("📂 内容目录: %s\n", contentDir)
 
 	// 启动交互式菜单
 	reader := bufio.NewReader(os.Stdin)

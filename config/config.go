@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"os"
+	"path/filepath"
 )
 
 type Config struct {
@@ -40,6 +41,7 @@ type DisplayConfig struct {
 type PathsConfig struct {
 	DefaultContentDir string `json:"default_content_dir"`
 	TagsDir           string `json:"tags_dir"`
+	RuntimeDir        string `json:"runtime_dir"`
 }
 
 type TranslationConfig struct {
@@ -88,6 +90,7 @@ var defaultConfig = Config{
 	Paths: PathsConfig{
 		DefaultContentDir: "../../content/post",
 		TagsDir:           "../tags",
+		RuntimeDir:        ".hugo-content-suite",
 	}, Translation: TranslationConfig{
 		RetryAttempts:  2,
 		DelayBetweenMs: 0,
@@ -124,17 +127,12 @@ var defaultConfig = Config{
 	},
 }
 
-func LoadConfig() (*Config, error) {
-	configPath := "config.json"
-
-	// 如果配置文件不存在，创建默认配置
-	if _, err := os.Stat(configPath); os.IsNotExist(err) {
-		return createDefaultConfig(configPath)
-	}
-
+// LoadConfig 从指定文件读取配置。读取配置不应产生文件写入，避免一次拼写错误
+// 在任意工作目录留下看似有效、实则未被用户确认的默认配置。
+func LoadConfig(configPath string) (*Config, error) {
 	data, err := os.ReadFile(configPath)
 	if err != nil {
-		return nil, fmt.Errorf("读取配置文件失败: %v", err)
+		return nil, fmt.Errorf("读取配置文件 %s 失败: %w", configPath, err)
 	}
 
 	var config Config
@@ -142,21 +140,47 @@ func LoadConfig() (*Config, error) {
 		return nil, fmt.Errorf("解析配置文件失败: %v", err)
 	}
 
+	if err := config.ResolvePaths(filepath.Dir(configPath)); err != nil {
+		return nil, err
+	}
 	return &config, nil
 }
 
-func createDefaultConfig(configPath string) (*Config, error) {
-	data, err := json.MarshalIndent(defaultConfig, "", "  ")
+// ResolvePaths 将所有项目路径固定到配置文件所在目录，避免依赖启动时的工作目录。
+func (c *Config) ResolvePaths(baseDir string) error {
+	resolve := func(path string) (string, error) {
+		if path == "" {
+			return "", nil
+		}
+		if filepath.IsAbs(path) {
+			return filepath.Clean(path), nil
+		}
+		return filepath.Abs(filepath.Join(baseDir, path))
+	}
+	var err error
+	if c.Paths.DefaultContentDir, err = resolve(c.Paths.DefaultContentDir); err != nil {
+		return err
+	}
+	if c.Paths.TagsDir, err = resolve(c.Paths.TagsDir); err != nil {
+		return err
+	}
+	if c.Paths.RuntimeDir, err = resolve(c.Paths.RuntimeDir); err != nil {
+		return err
+	}
+	if c.Paths.RuntimeDir == "" {
+		return fmt.Errorf("paths.runtime_dir 不能为空")
+	}
+	c.Logging.File, err = resolve(filepath.Join(c.Paths.RuntimeDir, c.Logging.File))
 	if err != nil {
-		return nil, fmt.Errorf("序列化默认配置失败: %v", err)
+		return err
 	}
-
-	if err := os.WriteFile(configPath, data, 0644); err != nil {
-		return nil, fmt.Errorf("创建默认配置文件失败: %v", err)
+	for _, name := range []*string{&c.Cache.TagFileName, &c.Cache.ArticleFileName, &c.Cache.CategoryFileName} {
+		*name, err = resolve(filepath.Join(c.Paths.RuntimeDir, *name))
+		if err != nil {
+			return err
+		}
 	}
-
-	fmt.Println("✅ 已创建默认配置文件: config.json")
-	return &defaultConfig, nil
+	return nil
 }
 
 // GetGlobalConfig 获取全局配置实例
@@ -164,7 +188,7 @@ var globalConfig *Config
 
 func GetGlobalConfig() *Config {
 	if globalConfig == nil {
-		config, err := LoadConfig()
+		config, err := LoadConfig("config.json")
 		if err != nil {
 			fmt.Printf("⚠️ 加载配置失败，使用默认配置: %v\n", err)
 			globalConfig = &defaultConfig

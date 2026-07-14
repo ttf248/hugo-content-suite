@@ -2,7 +2,6 @@ package scanner
 
 import (
 	"fmt"
-	"hugo-content-suite/config"
 	"hugo-content-suite/models"
 	"io"
 	"os"
@@ -54,7 +53,7 @@ func scanArticlesInternal(dir string, allLangs bool, withContent bool) ([]Articl
 
 		article, err := parseMarkdownFile(path, withContent)
 		if err != nil {
-			return nil
+			return fmt.Errorf("解析文章 %s: %w", path, err)
 		}
 
 		if article != nil {
@@ -127,9 +126,7 @@ func parseMarkdownFile(filePath string, withContent bool) (*Article, error) {
 		// 解析 YAML 前置数据
 		var frontMatter FrontMatter
 		if err := yaml.Unmarshal([]byte(frontMatterContent), &frontMatter); err != nil {
-			fmt.Printf("❌ YAML解析错误: %s\n", err)
-			fmt.Printf("📄 文章路径: %s\n", filePath)
-			os.Exit(1)
+			return nil, fmt.Errorf("YAML front matter 无效: %w", err)
 		}
 		article.Title = frontMatter.Title
 		article.Subtitle = frontMatter.Subtitle
@@ -214,11 +211,6 @@ func splitTextIntoParagraphs(text string) []string {
 		current = append(current, line)
 	}
 	flush()
-
-	cfg := config.GetGlobalConfig()
-	if !cfg.Paragraph.EnableSplitting {
-		return result
-	}
 
 	return result
 }
