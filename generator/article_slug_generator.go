@@ -1,14 +1,12 @@
 package generator
 
 import (
-	"bufio"
 	"fmt"
 	"hugo-content-suite/models"
 	"hugo-content-suite/scanner"
 	"hugo-content-suite/translator"
 	"hugo-content-suite/utils"
 	"os"
-	"regexp"
 	"strings"
 )
 
@@ -32,7 +30,10 @@ func (a ArticleSlugPreview) GetStatus() string {
 	if a.Status == "missing" {
 		return "create"
 	}
-	return "update"
+	if a.Status == "update" {
+		return "update"
+	}
+	return "skip"
 }
 
 // NewArticleSlugGenerator 创建新的文章slug生成器
@@ -197,88 +198,73 @@ func (g *ArticleSlugGenerator) processTargetPreviews(targetPreviews []ArticleSlu
 
 // extractSlugFromFile 从文件中提取现有的slug
 func (g *ArticleSlugGenerator) extractSlugFromFile(filePath string) string {
-	file, err := os.Open(filePath)
+	content, err := os.ReadFile(filePath)
 	if err != nil {
 		return ""
 	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	inFrontMatter := false
-
-	for scanner.Scan() {
-		line := scanner.Text()
-
-		if strings.TrimSpace(line) == "---" {
-			if !inFrontMatter {
-				inFrontMatter = true
-				continue
-			} else {
-				break
-			}
-		}
-
-		if inFrontMatter && strings.HasPrefix(strings.TrimSpace(line), "slug:") {
-			parts := strings.SplitN(line, ":", 2)
-			if len(parts) == 2 {
-				slug := strings.TrimSpace(parts[1])
-				slug = strings.Trim(slug, "\"'")
-				return slug
-			}
-		}
+	_, value, found, err := slugLineRange(string(content))
+	if err != nil || !found {
+		return ""
 	}
-
-	return ""
+	return value
 }
 
 // addSlugToFile 向文件添加slug字段
 func (g *ArticleSlugGenerator) addSlugToFile(filePath, slug string) error {
-	content, err := os.ReadFile(filePath)
-	if err != nil {
-		return err
-	}
-
-	lines := strings.Split(string(content), "\n")
-	var newLines []string
-	inFrontMatter := false
-	frontMatterEnd := -1
-
-	for i, line := range lines {
-		if strings.TrimSpace(line) == "---" {
-			if !inFrontMatter {
-				inFrontMatter = true
-			} else {
-				frontMatterEnd = i
-				break
-			}
-		}
-	}
-
-	if frontMatterEnd == -1 {
-		return fmt.Errorf("找不到front matter结束标记")
-	}
-
-	// 在front matter结束前添加slug
-	for i, line := range lines {
-		newLines = append(newLines, line)
-		if i == frontMatterEnd-1 {
-			newLines = append(newLines, fmt.Sprintf("slug: \"%s\"", slug))
-		}
-	}
-
-	return os.WriteFile(filePath, []byte(strings.Join(newLines, "\n")), 0644)
+	return writeSlug(filePath, slug)
 }
 
 // updateSlugInFile 更新文件中的slug字段
 func (g *ArticleSlugGenerator) updateSlugInFile(filePath, oldSlug, newSlug string) error {
+	return writeSlug(filePath, newSlug)
+}
+
+// writeSlug 只在 YAML front matter 范围内更新 slug，避免正文示例中的同名字段被替换。
+func writeSlug(filePath, slug string) error {
 	content, err := os.ReadFile(filePath)
 	if err != nil {
 		return err
 	}
+	lines := strings.Split(string(content), "\n")
+	end, _, found, err := slugLineRange(string(content))
+	if err != nil {
+		return err
+	}
+	if found {
+		for i := 1; i < end; i++ {
+			if strings.HasPrefix(strings.TrimSpace(lines[i]), "slug:") {
+				lines[i] = fmt.Sprintf("slug: %q", slug)
+				break
+			}
+		}
+	} else {
+		lines = append(lines[:end], append([]string{fmt.Sprintf("slug: %q", slug)}, lines[end:]...)...)
+	}
+	info, err := os.Stat(filePath)
+	if err != nil {
+		return err
+	}
+	return os.WriteFile(filePath, []byte(strings.Join(lines, "\n")), info.Mode())
+}
 
-	// 使用正则表达式替换slug
-	slugPattern := regexp.MustCompile(`slug:\s*["']?` + regexp.QuoteMeta(oldSlug) + `["']?`)
-	newContent := slugPattern.ReplaceAllString(string(content), fmt.Sprintf("slug: \"%s\"", newSlug))
-
-	return os.WriteFile(filePath, []byte(newContent), 0644)
+// slugLineRange 返回 front matter 结束行、slug 值及其存在状态。
+func slugLineRange(content string) (int, string, bool, error) {
+	lines := strings.Split(content, "\n")
+	if len(lines) == 0 || strings.TrimSpace(lines[0]) != "---" {
+		return 0, "", false, fmt.Errorf("找不到 front matter 起始标记")
+	}
+	for i := 1; i < len(lines); i++ {
+		if strings.TrimSpace(lines[i]) == "---" {
+			return i, "", false, nil
+		}
+		if strings.HasPrefix(strings.TrimSpace(lines[i]), "slug:") {
+			value := strings.Trim(strings.TrimSpace(strings.TrimPrefix(strings.TrimSpace(lines[i]), "slug:")), "\"'")
+			for j := i + 1; j < len(lines); j++ {
+				if strings.TrimSpace(lines[j]) == "---" {
+					return j, value, true, nil
+				}
+			}
+		}
+	}
+	return 0, "", false, fmt.Errorf("找不到 front matter 结束标记")
 }

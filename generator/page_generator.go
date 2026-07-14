@@ -196,14 +196,18 @@ func (g *TagPageGenerator) PrepareTagPages() ([]TagPagePreview, int, int) {
 		tagDir := filepath.Join(tagsDir, stat.Name)
 		indexFile := filepath.Join(tagDir, "_index.md")
 
-		if utils.FileExists(indexFile) {
+		existingSlug := g.ExtractSlugFromFile(indexFile)
+		if !utils.FileExists(indexFile) {
+			status = "create"
+			createCount++
+			fmt.Printf(" ✨ 需要新建\n")
+		} else if existingSlug != slugMap[stat.Name] {
 			status = "update"
 			updateCount++
 			fmt.Printf(" 🔄 需要更新\n")
 		} else {
-			status = "create"
-			createCount++
-			fmt.Printf(" ✨ 需要新建\n")
+			status = "skip"
+			fmt.Printf(" ✅ 已是最新\n")
 		}
 
 		// 生成slug（从映射中获取）
@@ -216,7 +220,7 @@ func (g *TagPageGenerator) PrepareTagPages() ([]TagPagePreview, int, int) {
 			DirectoryPath: fmt.Sprintf("tags/%s/", stat.Name),
 			FilePath:      fmt.Sprintf("tags/%s/_index.md", stat.Name),
 			Status:        status,
-			ExistingSlug:  g.ExtractSlugFromFile(indexFile),
+			ExistingSlug:  existingSlug,
 		}
 		previews = append(previews, preview)
 

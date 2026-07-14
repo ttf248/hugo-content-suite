@@ -51,7 +51,9 @@ func filterByMode[T StatusLike](items []T, mode string) []T {
 				result = append(result, item)
 			}
 		case ModeAll:
-			result = append(result, item)
+			if item.GetStatus() == ModeCreate || item.GetStatus() == ModeUpdate {
+				result = append(result, item)
+			}
 		}
 	}
 	return result
