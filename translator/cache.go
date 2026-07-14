@@ -6,6 +6,7 @@ import (
 	"hugo-content-suite/config"
 	"hugo-content-suite/utils"
 	"os"
+	"path/filepath"
 	"time"
 )
 
@@ -33,7 +34,10 @@ type TranslationCache struct {
 }
 
 func NewTranslationCache() *TranslationCache {
-	cfg := config.GetGlobalConfig()
+	return NewTranslationCacheWithConfig(config.GetGlobalConfig())
+}
+
+func NewTranslationCacheWithConfig(cfg *config.Config) *TranslationCache {
 	return &TranslationCache{
 		tagCacheFile:      cfg.Cache.TagFileName,
 		slugCacheFile:     cfg.Cache.ArticleFileName,
@@ -126,7 +130,30 @@ func (c *TranslationCache) saveCacheFile(filename string, cache map[string]Cache
 	if err != nil {
 		return err
 	}
-	return os.WriteFile(filename, data, 0644)
+	if err := os.MkdirAll(filepath.Dir(filename), 0o755); err != nil {
+		return err
+	}
+	tmp, err := os.CreateTemp(filepath.Dir(filename), ".cache-*.tmp")
+	if err != nil {
+		return err
+	}
+	tmpName := tmp.Name()
+	defer os.Remove(tmpName)
+	if _, err := tmp.Write(data); err != nil {
+		tmp.Close()
+		return err
+	}
+	if err := tmp.Close(); err != nil {
+		return err
+	}
+	// Rename keeps a malformed/partial write from replacing an existing cache.
+	if err := os.Rename(tmpName, filename); err != nil {
+		if removeErr := os.Remove(filename); removeErr != nil && !os.IsNotExist(removeErr) {
+			return err
+		}
+		return os.Rename(tmpName, filename)
+	}
+	return nil
 }
 
 func (c *TranslationCache) Get(text string, cacheType CacheType) (string, bool) {

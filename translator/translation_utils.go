@@ -52,18 +52,28 @@ type Usage struct {
 
 // TranslationUtils 翻译工具
 type TranslationUtils struct {
-	translator *LLMTranslator
-	cache      *TranslationCache
+	cache  *TranslationCache
+	cfg    *config.Config
+	client *http.Client
 }
 
 // NewTranslationUtils 创建翻译工具实例
 func NewTranslationUtils() *TranslationUtils {
-	cache := NewTranslationCache()
+	return NewTranslationUtilsWithConfig(config.GetGlobalConfig(), nil)
+}
+
+// NewTranslationUtilsWithConfig 为菜单之外的调用方提供可测试的翻译边界。
+func NewTranslationUtilsWithConfig(cfg *config.Config, client *http.Client) *TranslationUtils {
+	cache := NewTranslationCacheWithConfig(cfg)
 	cache.Load() // 加载缓存
+	if client == nil {
+		client = &http.Client{Timeout: time.Duration(cfg.LMStudio.Timeout) * time.Second}
+	}
 
 	return &TranslationUtils{
-		translator: NewLLMTranslator(),
-		cache:      cache,
+		cache:  cache,
+		cfg:    cfg,
+		client: client,
 	}
 }
 
@@ -71,9 +81,8 @@ func NewTranslationUtils() *TranslationUtils {
 func (t *TranslationUtils) TestConnection() error {
 	fmt.Println("正在测试与LM Studio的连接...")
 
-	cfg := config.GetGlobalConfig()
 	request := LMStudioRequest{
-		Model: cfg.LMStudio.Model,
+		Model: t.cfg.LMStudio.Model,
 		Messages: []Message{
 			{Role: "user", Content: "这是一个测试请求，无需处理，直接应答就行"},
 		},
@@ -128,7 +137,7 @@ func (t *TranslationUtils) translateWithCache(text, targetLang string, cacheType
 	translated, err := t.translateWithAPI(text, targetLang)
 	if err != nil {
 		fmt.Printf("❌ [API Error] [%s] %s: %v\n", targetLang, text, err)
-		translated = text // fallback to original text on error
+		return "", err
 	}
 	t.cache.Set(cacheKey, translated, cacheType)
 	_ = t.cache.Save()
@@ -159,7 +168,7 @@ func (t *TranslationUtils) batchTranslateWithCache(texts []string, targetLang st
 		translated, err := t.translateWithAPI(text, targetLang)
 		if err != nil {
 			fmt.Printf("❌ [Batch API Error] [%s] %s: %v\n", targetLang, text, err)
-			translated = text
+			return nil, err
 		}
 		result[text] = translated
 		cacheKey := fmt.Sprintf("%s:%s", targetLang, text)
@@ -172,7 +181,10 @@ func (t *TranslationUtils) batchTranslateWithCache(texts []string, targetLang st
 	}
 
 	total := len(texts)
-	hitRate := float64(hitCount) / float64(total) * 100
+	hitRate := 0.0
+	if total > 0 {
+		hitRate = float64(hitCount) / float64(total) * 100
+	}
 
 	fmt.Printf("📊 [Batch Cache Stats] 命中率: %.2f%% (%d/%d)\n", hitRate, hitCount, total)
 
@@ -181,15 +193,12 @@ func (t *TranslationUtils) batchTranslateWithCache(texts []string, targetLang st
 
 // sendRequest 发送HTTP请求的通用方法
 func (t *TranslationUtils) sendRequest(request LMStudioRequest) (*LMStudioResponse, error) {
-	cfg := config.GetGlobalConfig()
-
 	jsonData, err := json.Marshal(request)
 	if err != nil {
 		return nil, fmt.Errorf("failed to serialize request: %v", err)
 	}
 
-	client := &http.Client{Timeout: time.Duration(cfg.LMStudio.Timeout) * time.Second}
-	resp, err := client.Post(cfg.LMStudio.URL, "application/json", bytes.NewBuffer(jsonData))
+	resp, err := t.client.Post(t.cfg.LMStudio.URL, "application/json", bytes.NewBuffer(jsonData))
 	if err != nil {
 		return nil, fmt.Errorf("failed to send request: %v", err)
 	}
@@ -217,8 +226,7 @@ func (t *TranslationUtils) sendRequest(request LMStudioRequest) (*LMStudioRespon
 }
 
 func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string, error) {
-	cfg := config.GetGlobalConfig()
-	targetLangName := cfg.Language.LanguageNames[targetLang]
+	targetLangName := t.cfg.Language.LanguageNames[targetLang]
 
 	if targetLangName == "" {
 		targetLangName = targetLang
@@ -311,7 +319,7 @@ func (t *TranslationUtils) translateWithAPI(content, targetLang string) (string,
 	})
 
 	request := LMStudioRequest{
-		Model:            cfg.LMStudio.Model,
+		Model:            t.cfg.LMStudio.Model,
 		Messages:         messages,
 		Stream:           false,
 		Temperature:      0.0,  // 设置为 0.0 可使输出更确定，适合需要精确翻译的场景。
