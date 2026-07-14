@@ -20,8 +20,8 @@ type Config struct {
 	Language    LanguageConfig    `json:"language"`
 }
 
-// LLMConfig 描述一个可选择的模型服务。api_key 应只用于本地未跟踪配置；
-// 常规使用请设置 api_key_env 指向的环境变量，避免密钥进入版本控制。
+// LLMConfig 描述一个可选择的模型服务。api_key 用于本地未跟踪配置；
+// api_key_env 是旧配置和自动化环境的兼容回退。
 type LLMConfig struct {
 	Name      string `json:"name"`
 	APIType   string `json:"api_type"` // openai_chat 或 anthropic_messages
@@ -183,7 +183,7 @@ func (m LLMConfig) ResolveAPIKey() (string, error) {
 			return key, nil
 		}
 	}
-	return "", fmt.Errorf("模型 %s 未配置密钥；请设置环境变量 %s 或在本地未跟踪配置中填写 api_key", m.Name, m.APIKeyEnv)
+	return "", fmt.Errorf("模型 %s 未配置密钥；请在 config.local.json 填写 api_key 或设置环境变量 %s", m.Name, m.APIKeyEnv)
 }
 
 // LoadConfig 从指定文件读取配置。读取配置不应产生文件写入，避免一次拼写错误
@@ -192,6 +192,17 @@ func LoadConfig(configPath string) (*Config, error) {
 	data, err := os.ReadFile(configPath)
 	if err != nil {
 		return nil, fmt.Errorf("读取配置文件 %s 失败: %w", configPath, err)
+	}
+	if filepath.Base(configPath) == "config.local.json" {
+		examplePath := filepath.Join(filepath.Dir(configPath), "config.example.json")
+		exampleData, err := os.ReadFile(examplePath)
+		if err != nil {
+			return nil, fmt.Errorf("读取示例配置 %s 失败: %w", examplePath, err)
+		}
+		data, err = mergeJSONObjects(exampleData, data)
+		if err != nil {
+			return nil, fmt.Errorf("合并本地配置失败: %w", err)
+		}
 	}
 
 	var config Config
@@ -203,6 +214,32 @@ func LoadConfig(configPath string) (*Config, error) {
 		return nil, err
 	}
 	return &config, nil
+}
+
+// mergeJSONObjects 允许 config.local.json 仅覆盖示例配置中的必要字段，
+// 凭据无需与通用配置、路径和缓存参数重复维护。
+func mergeJSONObjects(baseData, overrideData []byte) ([]byte, error) {
+	var base, override map[string]interface{}
+	if err := json.Unmarshal(baseData, &base); err != nil {
+		return nil, err
+	}
+	if err := json.Unmarshal(overrideData, &override); err != nil {
+		return nil, err
+	}
+	mergeJSONObject(base, override)
+	return json.Marshal(base)
+}
+
+func mergeJSONObject(base, override map[string]interface{}) {
+	for key, value := range override {
+		if child, ok := value.(map[string]interface{}); ok {
+			if existing, ok := base[key].(map[string]interface{}); ok {
+				mergeJSONObject(existing, child)
+				continue
+			}
+		}
+		base[key] = value
+	}
 }
 
 // ResolvePaths 将所有项目路径固定到配置文件所在目录，避免依赖启动时的工作目录。
@@ -249,7 +286,7 @@ func SetGlobalConfig(cfg *Config) { globalConfig = cfg }
 
 func GetGlobalConfig() *Config {
 	if globalConfig == nil {
-		config, err := LoadConfig("config.json")
+		config, err := LoadConfig("config.local.json")
 		if err != nil {
 			fmt.Printf("⚠️ 加载配置失败，使用默认配置: %v\n", err)
 			globalConfig = &defaultConfig

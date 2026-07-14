@@ -16,9 +16,9 @@ go run .
 go run . ..\..\content\post
 ```
 
-程序读取同目录的 `config.json`。所有相对路径均相对此配置文件解析；缓存和日志默认写入 `paths.runtime_dir`，该运行目录不纳入版本控制。
+程序读取同目录的 `config.local.json`，并以受跟踪的 `config.example.json` 为基础合并本地覆盖项。所有相对路径均相对于本地配置文件解析；缓存和日志默认写入 `paths.runtime_dir`，该运行目录不纳入版本控制。
 
-`models` 可配置多组模型，`active_model` 指定启动默认项。菜单 `5` 可在本次运行中切换，菜单 `6` 测试当前选择。密钥应放在模型 `api_key_env` 指向的环境变量中，例如 `$env:MINIMAX_API_KEY = "你的密钥"`；不要把真实密钥提交到 `api_key` 字段。
+`models` 可配置多组模型，`active_model` 指定启动默认项。菜单 `5` 可在本次运行中切换，菜单 `6` 测试当前选择。MiniMax 优先读取本地配置的 `api_key`，并兼容 `api_key_env` 指向的环境变量回退；`config.local.json` 已被 Git 忽略，绝不提交真实密钥。
 
 ## 菜单能力
 

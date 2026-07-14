@@ -104,7 +104,7 @@ func (m *InteractiveMenu) selectModel() {
 
 func main() {
 	// 加载配置
-	cfg, err := config.LoadConfig("config.json")
+	cfg, err := config.LoadConfig("config.local.json")
 	if err != nil {
 		log.Fatal("配置加载失败:", err)
 	}

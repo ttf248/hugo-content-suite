@@ -49,3 +49,25 @@ func TestSelectedModelAndSwitch(t *testing.T) {
 		t.Fatal("非法切换应保留原选择")
 	}
 }
+
+func TestLoadLocalConfigMergesExample(t *testing.T) {
+	dir := t.TempDir()
+	example := `{"paths":{"default_content_dir":"content/post","tags_dir":"content/tags","runtime_dir":"runtime"},"cache":{"article_tag_file_name":"tags.json","article_slug_file_name":"slugs.json","article_category_file_name":"categories.json"},"logging":{"file":"suite.log"},"active_model":"base","models":[{"name":"base","api_type":"openai_chat","url":"http://example","model":"base"}]}`
+	local := `{"active_model":"remote","models":[{"name":"remote","api_type":"anthropic_messages","url":"https://example.test/messages","model":"remote","api_key":"local-key"}]}`
+	if err := os.WriteFile(filepath.Join(dir, "config.example.json"), []byte(example), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	if err := os.WriteFile(filepath.Join(dir, "config.local.json"), []byte(local), 0o600); err != nil {
+		t.Fatal(err)
+	}
+	cfg, err := LoadConfig(filepath.Join(dir, "config.local.json"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	if model, err := cfg.SelectedModel(); err != nil || model.APIKey != "local-key" {
+		t.Fatalf("本地模型覆盖失败: %#v, %v", model, err)
+	}
+	if cfg.Paths.RuntimeDir != filepath.Join(dir, "runtime") {
+		t.Fatalf("示例路径未保留: %s", cfg.Paths.RuntimeDir)
+	}
+}
