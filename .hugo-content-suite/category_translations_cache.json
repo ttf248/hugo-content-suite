@@ -4,6 +4,11 @@
     "timestamp": "2025-06-02T05:12:56.6564457+08:00",
     "type": "category"
   },
+  "en:市场与投资": {
+    "translation": "Market and Investment",
+    "timestamp": "2026-07-15T08:07:08.5337214+08:00",
+    "type": "category"
+  },
   "en:投资": {
     "translation": "Investment",
     "timestamp": "2025-06-02T06:13:48.4301437+08:00",
@@ -37,6 +42,11 @@
   "ja:AI 灵感碰撞坊": {
     "translation": "AI霊感衝突坊",
     "timestamp": "2025-06-02T05:13:21.7168809+08:00",
+    "type": "category"
+  },
+  "ja:市场与投资": {
+    "translation": "市場と投資",
+    "timestamp": "2026-07-15T08:08:03.6752283+08:00",
     "type": "category"
   },
   "ja:投资": {

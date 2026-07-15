@@ -19,6 +19,11 @@
     "timestamp": "2025-05-25T22:44:07.9071504+08:00",
     "type": "article"
   },
+  "en:2026 年度大事件": {
+    "translation": "Major Events of 2026",
+    "timestamp": "2026-07-15T07:50:09.9214277+08:00",
+    "type": "article"
+  },
   "en:20年后的中国足球会怎么样？": {
     "translation": "china-football-in-20-years",
     "timestamp": "2025-05-25T22:44:33.012837+08:00",
@@ -29,6 +34,11 @@
     "timestamp": "2026-05-12T03:12:32.6591635+08:00",
     "type": "article"
   },
+  "en:512GB 手机已经是很多人的资料库底线": {
+    "translation": "A 512GB phone has become the storage baseline for many people.",
+    "timestamp": "2026-07-15T07:49:45.0947884+08:00",
+    "type": "article"
+  },
   "en:512GB 手机，已经成了很多人的资料库底线": {
     "translation": "A 512GB phone has become the baseline storage capacity for many people's data/files.",
     "timestamp": "2026-06-14T04:35:11.9287985+08:00",
@@ -37,6 +47,11 @@
   "en:A 股半导体再冲高，产业逻辑不能买成拥挤交易": {
     "translation": "A rally/surge in A-share semiconductors must be driven by industry logic, not merely a crowded trade.",
     "timestamp": "2026-06-14T04:35:50.0479037+08:00",
+    "type": "article"
+  },
+  "en:A 股半导体再冲高：产业逻辑和拥挤交易": {
+    "translation": "A-Share Semiconductors Surge Again: Industry Logic and Crowded Trading",
+    "timestamp": "2026-07-15T07:49:55.9322313+08:00",
     "type": "article"
   },
   "en:AI 会写代码了，新人靠什么练级": {
@@ -89,9 +104,24 @@
     "timestamp": "2025-12-04T22:06:32.8429847+08:00",
     "type": "article"
   },
+  "en:AI 大事件": {
+    "translation": "AI Major Events",
+    "timestamp": "2026-07-15T07:50:10.9239776+08:00",
+    "type": "article"
+  },
+  "en:AI 开支牛走到解禁口": {
+    "translation": "The AI Spending Bull Has Reached the Unlocking Point",
+    "timestamp": "2026-07-15T07:50:02.134466+08:00",
+    "type": "article"
+  },
   "en:AI 时代，光把人拉进 App 已经不够了": {
     "translation": "In the era of AI, just getting people into an app is no longer enough.",
     "timestamp": "2026-04-09T15:00:14.1910361+08:00",
+    "type": "article"
+  },
+  "en:AI 股票回撤之后：拥挤交易怎么散": {
+    "translation": "AI Stocks After the Pullback: How Crowded Trades Unwind",
+    "timestamp": "2026-07-15T07:49:57.11827+08:00",
     "type": "article"
   },
   "en:AI 股票回撤后，先看拥挤交易怎么散": {
@@ -102,6 +132,11 @@
   "en:AI 股票涨到天上以后": {
     "translation": "After AI stocks soared to the sky",
     "timestamp": "2026-05-12T03:12:32.8896297+08:00",
+    "type": "article"
+  },
+  "en:AI 股票第一轮大涨押注的是什么": {
+    "translation": "What was the bet behind the first round of the AI stock rally?",
+    "timestamp": "2026-07-15T07:49:46.2323782+08:00",
     "type": "article"
   },
   "en:AI 股票第一轮大涨，市场押注的是硬确定性": {
@@ -179,6 +214,11 @@
     "timestamp": "2026-04-25T03:25:02.7977921+08:00",
     "type": "article"
   },
+  "en:ChatGPT 之后英伟达 GPU 的两条路线": {
+    "translation": "Two Paths for NVIDIA GPUs After ChatGPT",
+    "timestamp": "2026-07-15T07:49:52.260239+08:00",
+    "type": "article"
+  },
   "en:ChatGPT 之后，英伟达数据中心 GPU 分成两条路线": {
     "translation": "Following ChatGPT, Nvidia's data center GPUs have split into two tracks.",
     "timestamp": "2026-06-14T04:35:34.7493479+08:00",
@@ -202,6 +242,11 @@
   "en:Codex goal 把完成标准交给任务本身": {
     "translation": "Codex goal assigns the completion standard to the task itself",
     "timestamp": "2026-06-14T04:35:57.0490853+08:00",
+    "type": "article"
+  },
+  "en:Codex 写界面扑街之后，让 ChatGPT 画 UI": {
+    "translation": "After Codex fails at writing the interface, let ChatGPT draw the UI",
+    "timestamp": "2026-07-15T07:49:59.6075142+08:00",
     "type": "article"
   },
   "en:Codex 推理档位，我把 high 当成日常默认": {
@@ -294,6 +339,11 @@
     "timestamp": "2026-06-14T04:34:13.8826262+08:00",
     "type": "article"
   },
+  "en:Hermes 搜索不稳：SearXNG 出站交给 Mihomo": {
+    "translation": "Hermes Search Unstable: Outbound Handed Over to Mihomo",
+    "timestamp": "2026-07-15T07:50:03.5002679+08:00",
+    "type": "article"
+  },
   "en:Hugo Module自定义修改主题：思路讲解": {
     "translation": "hugo-module-customizing-themes-ideas",
     "timestamp": "2025-05-25T22:43:42.8857172+08:00",
@@ -332,6 +382,11 @@
   "en:Linux系统跑分测试": {
     "translation": "linux-system-benchmark-test",
     "timestamp": "2025-05-25T22:43:16.417066+08:00",
+    "type": "article"
+  },
+  "en:Loop engineering 把人挪到检查点": {
+    "translation": "Loop engineering moves people to checkpoints",
+    "timestamp": "2026-07-15T07:50:00.7013022+08:00",
     "type": "article"
   },
   "en:PowerShell 7 与持久化设置命令行预测视图": {
@@ -534,6 +589,11 @@
     "timestamp": "2026-06-14T04:35:29.318328+08:00",
     "type": "article"
   },
+  "en:中美元首会晤：谁更需要稳定": {
+    "translation": "China-US Presidential Meeting: Who Needs Stability More",
+    "timestamp": "2026-07-15T07:49:50.9312758+08:00",
+    "type": "article"
+  },
   "en:中美贸易战": {
     "translation": "us-china-trade-war",
     "timestamp": "2025-05-25T22:42:28.3030904+08:00",
@@ -562,6 +622,11 @@
   "en:五一档塌的不是票房，是信任": {
     "translation": "What collapsed during the May 1st run wasn't the box office; it was trust.",
     "timestamp": "2026-05-12T03:12:26.0754752+08:00",
+    "type": "article"
+  },
+  "en:五一档票房塌了以后": {
+    "translation": "After the May Day box office collapsed",
+    "timestamp": "2026-07-15T07:49:43.7482298+08:00",
     "type": "article"
   },
   "en:五一档票房塌了，观众不再替烂片兜底": {
@@ -799,6 +864,11 @@
     "timestamp": "2026-04-22T01:39:30.094935+08:00",
     "type": "article"
   },
+  "en:围绕收盘价的成交：A 股盘后固定价格交易、MOC 与 CAS": {
+    "translation": "Trading Around the Closing Price: After-Hours Fixed-Price Trading for A-Shares, MOC, and CAS",
+    "timestamp": "2026-07-15T07:50:07.305593+08:00",
+    "type": "article"
+  },
   "en:国庆前后股市的“冰火两重天”：暴涨与暴跌的戏剧性转折": {
     "translation": "stock-market-rollercoaster-ahead-of-national-day",
     "timestamp": "2025-05-25T22:44:14.5956321+08:00",
@@ -899,6 +969,11 @@
     "timestamp": "2025-05-25T22:44:20.0437185+08:00",
     "type": "article"
   },
+  "en:富途成本价变低之后": {
+    "translation": "After the cost price of Futu decreases",
+    "timestamp": "2026-07-15T07:49:47.2882625+08:00",
+    "type": "article"
+  },
   "en:富途成本价变低，卖出收益可能摊回去了": {
     "translation": "Since Futu's cost basis has dropped, realized gains from selling might be reduced/absorbed.",
     "timestamp": "2026-06-14T04:35:19.9674974+08:00",
@@ -912,6 +987,11 @@
   "en:小米的“新老交替”与电车板块的防守战": {
     "translation": "XiaoMi’s “New and Old Replacement” and defensive battle with the electric vehicle sector",
     "timestamp": "2026-03-16T20:22:31.4869392+08:00",
+    "type": "article"
+  },
+  "en:小米跌回硬件账本：存储涨、补贴跑、AI 还在烧": {
+    "translation": "Xiaomi Falls Back to Its Hardware Ledger: Storage Costs Rise, Subsidies Fade, and AI Is Still Burning Cash",
+    "timestamp": "2026-07-15T07:49:58.5142632+08:00",
     "type": "article"
   },
   "en:小米跌回硬件账本：存储涨价、汽车补贴和 AI 烧钱同时进场": {
@@ -932,6 +1012,11 @@
   "en:嵌入式入门篇1-专业名词": {
     "translation": "embedded-entry-professional-terms",
     "timestamp": "2025-05-25T22:42:59.7848492+08:00",
+    "type": "article"
+  },
+  "en:库存比股价更早给信号": {
+    "translation": "Inventory signals come earlier than stock prices",
+    "timestamp": "2026-07-15T07:49:48.3506842+08:00",
     "type": "article"
   },
   "en:异地局域网ZeroTier": {
@@ -962,6 +1047,11 @@
   "en:恒生科技为什么没跟着A股创新高": {
     "translation": "Why did the Hang Seng Tech Index not keep pace with the record highs of A-shares?",
     "timestamp": "2026-05-21T10:51:51.7010193+08:00",
+    "type": "article"
+  },
+  "en:恒生科技落后 A 股的真正变量": {
+    "translation": "The Real Variable Behind Hang Seng Tech Lagging Behind A-Shares",
+    "timestamp": "2026-07-15T07:49:53.3953084+08:00",
     "type": "article"
   },
   "en:恒生科技落后 A 股，核心变量在中概风险": {
@@ -1169,6 +1259,11 @@
     "timestamp": "2026-06-14T04:35:28.9364815+08:00",
     "type": "article"
   },
+  "en:海力士财报：低谷才是下一轮筹码": {
+    "translation": "SK Hynix Earnings Report: The Trough Is the Bet for the Next Round",
+    "timestamp": "2026-07-15T07:49:49.4374123+08:00",
+    "type": "article"
+  },
   "en:淀粉肠和路边小摊: 资本的新闻影响力": {
     "translation": "sausages-and-street-vendors-capital-news-influence",
     "timestamp": "2025-05-25T22:43:30.0059118+08:00",
@@ -1299,6 +1394,11 @@
     "timestamp": "2026-06-14T04:34:55.0180722+08:00",
     "type": "article"
   },
+  "en:短剧拍僵尸和灵兽：预算表先变了": {
+    "translation": "Short Drama Filming Zombies and Spiritual Beasts: The Budget Sheet Changes First",
+    "timestamp": "2026-07-15T07:49:42.6691361+08:00",
+    "type": "article"
+  },
   "en:破茧而出：从小米17的更名，看华为与小米的高端博弈": {
     "translation": "Breaking Through the Cocoon: Examining Huawei and Xiaomi’s High-End Rivalry Following Xiaomi 17’s Renaming",
     "timestamp": "2025-09-19T10:20:45.3509507+08:00",
@@ -1324,6 +1424,11 @@
     "timestamp": "2025-12-03T22:45:54.9594117+08:00",
     "type": "article"
   },
+  "en:给编码模型几个代码锚点": {
+    "translation": "Give coding models a few code anchors",
+    "timestamp": "2026-07-15T07:50:04.5764613+08:00",
+    "type": "article"
+  },
   "en:编译器、回调函数、性能测试": {
     "translation": "compiler-callback-performance-testing",
     "timestamp": "2025-05-25T22:42:56.055301+08:00",
@@ -1342,6 +1447,11 @@
   "en:美债 4.5% 收益率，对应的是一串现金流": {
     "translation": "The 4.5% yield on US Treasuries corresponds to a series of cash flows.",
     "timestamp": "2026-06-14T04:35:41.3950739+08:00",
+    "type": "article"
+  },
+  "en:美债 4.5%：一串现金流怎么拆": {
+    "translation": "US Treasuries at 4.5%: How to Break Down a String of Cash Flows",
+    "timestamp": "2026-07-15T07:49:54.8634656+08:00",
     "type": "article"
   },
   "en:美债收益率 4.5%，买入后到底能拿到什么？": {
@@ -1402,6 +1512,11 @@
   "en:茅台净利润首降，白酒和地产周期一起露面": {
     "translation": "MAOTAI's net profit falls for the first time; Baijiu and real estate cycles appear together.",
     "timestamp": "2026-06-14T04:34:15.0267982+08:00",
+    "type": "article"
+  },
+  "en:解禁和融资消息同日出现 智谱与 MiniMax 被怎样重新定价": {
+    "translation": "Re-locking Ban and Funding News Appear on the Same Day — How Zhipu and MiniMax Were Re-priced",
+    "timestamp": "2026-07-15T07:50:06.0722042+08:00",
     "type": "article"
   },
   "en:计划生育政策的多维影响：从社会结构到经济政治的深层变革": {
