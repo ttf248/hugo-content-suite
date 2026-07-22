@@ -1184,6 +1184,11 @@
     "timestamp": "2026-03-16T20:22:14.5341652+08:00",
     "type": "tag"
   },
+  "en:vibe coding": {
+    "translation": "Vibe Coding",
+    "timestamp": "2026-07-22T20:08:50.5307896+08:00",
+    "type": "tag"
+  },
   "en:visual studio": {
     "translation": "visual-studio",
     "timestamp": "2025-05-25T22:40:10.0700725+08:00",
@@ -2049,6 +2054,11 @@
     "timestamp": "2025-05-25T22:40:15.7369938+08:00",
     "type": "tag"
   },
+  "en:基金定投": {
+    "translation": "Regular Fixed Investment in Funds",
+    "timestamp": "2026-07-22T20:08:57.8694315+08:00",
+    "type": "tag"
+  },
   "en:基金投资": {
     "translation": "Fund Investing",
     "timestamp": "2026-03-16T20:22:17.8174202+08:00",
@@ -2369,6 +2379,16 @@
     "timestamp": "2026-03-16T20:21:54.7888292+08:00",
     "type": "tag"
   },
+  "en:幸福感": {
+    "translation": "Happiness",
+    "timestamp": "2026-07-22T20:08:56.7041145+08:00",
+    "type": "tag"
+  },
+  "en:废宅": {
+    "translation": "Shut-in",
+    "timestamp": "2026-07-22T20:08:54.4075045+08:00",
+    "type": "tag"
+  },
   "en:开发效率": {
     "translation": "Development Efficiency",
     "timestamp": "2026-03-16T20:21:56.1720934+08:00",
@@ -2489,6 +2509,11 @@
     "timestamp": "2025-05-25T22:41:25.9735813+08:00",
     "type": "tag"
   },
+  "en:成本": {
+    "translation": "Cost",
+    "timestamp": "2026-07-22T20:08:52.9647953+08:00",
+    "type": "tag"
+  },
   "en:成本价": {
     "translation": "Cost Price",
     "timestamp": "2026-05-12T03:12:10.3251405+08:00",
@@ -2602,6 +2627,11 @@
   "en:接口测试": {
     "translation": "Interface Testing",
     "timestamp": "2026-03-16T20:22:12.6620047+08:00",
+    "type": "tag"
+  },
+  "en:推理": {
+    "translation": "Reasoning",
+    "timestamp": "2026-07-22T20:08:51.6946986+08:00",
     "type": "tag"
   },
   "en:推荐算法": {
@@ -2792,6 +2822,11 @@
   "en:时事": {
     "translation": "Current Affairs",
     "timestamp": "2026-03-16T20:22:12.2554289+08:00",
+    "type": "tag"
+  },
+  "en:时代观察": {
+    "translation": "Era Observation",
+    "timestamp": "2026-07-22T20:08:55.531066+08:00",
     "type": "tag"
   },
   "en:时政": {
@@ -4949,6 +4984,11 @@
     "timestamp": "2025-06-02T05:50:08.7131541+08:00",
     "type": "tag"
   },
+  "ja:基金定投": {
+    "translation": "投資信託の定期積立",
+    "timestamp": "2026-07-22T20:12:07.2491901+08:00",
+    "type": "tag"
+  },
   "ja:增额寿险": {
     "translation": "増額生存保険 (Zōkakku Juhyōhoken)",
     "timestamp": "2025-07-16T21:17:22.1928477+08:00",
@@ -5154,6 +5194,16 @@
     "timestamp": "2026-07-15T08:10:21.8097174+08:00",
     "type": "tag"
   },
+  "ja:幸福感": {
+    "translation": "幸福感",
+    "timestamp": "2026-07-22T20:14:43.0782205+08:00",
+    "type": "tag"
+  },
+  "ja:废宅": {
+    "translation": "引きこもり",
+    "timestamp": "2026-07-22T20:14:42.0909032+08:00",
+    "type": "tag"
+  },
   "ja:开源模型": {
     "translation": "オープンソースモデル",
     "timestamp": "2026-07-15T08:22:46.8562136+08:00",
@@ -5217,6 +5267,11 @@
   "ja:意义": {
     "translation": "意味",
     "timestamp": "2025-06-02T17:26:22.6084415+08:00",
+    "type": "tag"
+  },
+  "ja:成本": {
+    "translation": "コスト",
+    "timestamp": "2026-07-22T20:10:09.7460318+08:00",
     "type": "tag"
   },
   "ja:成本价": {
@@ -5287,6 +5342,11 @@
   "ja:接口文档": {
     "translation": "APIドキュメント",
     "timestamp": "2025-06-02T17:23:26.6960562+08:00",
+    "type": "tag"
+  },
+  "ja:推理": {
+    "translation": "推論",
+    "timestamp": "2026-07-22T20:10:06.4888014+08:00",
     "type": "tag"
   },
   "ja:支付宝": {
@@ -5387,6 +5447,11 @@
   "ja:无人机": {
     "translation": "ドローン",
     "timestamp": "2026-05-04T15:32:59.9641867+08:00",
+    "type": "tag"
+  },
+  "ja:时代观察": {
+    "translation": "時代観察",
+    "timestamp": "2026-07-22T20:14:38.1839389+08:00",
     "type": "tag"
   },
   "ja:春节": {
@@ -5642,6 +5707,11 @@
   "ja:生活": {
     "translation": "生活 (Seikatsu)",
     "timestamp": "2025-06-02T05:51:34.4605093+08:00",
+    "type": "tag"
+  },
+  "ja:生活方式": {
+    "translation": "ライフスタイル",
+    "timestamp": "2026-07-22T20:14:40.8492395+08:00",
     "type": "tag"
   },
   "ja:电信": {
@@ -6112,6 +6182,11 @@
   "ja:贸易战": {
     "translation": "貿易戦争 (Bōeki senso)",
     "timestamp": "2025-06-02T06:22:01.8064578+08:00",
+    "type": "tag"
+  },
+  "ja:资产配置": {
+    "translation": "資産配分",
+    "timestamp": "2026-07-22T20:12:08.3747326+08:00",
     "type": "tag"
   },
   "ja:资料管理": {
