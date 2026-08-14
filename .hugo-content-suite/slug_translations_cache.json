@@ -174,6 +174,11 @@
     "timestamp": "2025-05-25T22:43:56.9985185+08:00",
     "type": "article"
   },
+  "en:C++ 单例：一行 static 背后的初始化保证": {
+    "translation": "C++ Singleton: Initialization Guarantees Behind the `static` Keyword",
+    "timestamp": "2026-08-14T18:10:23.8352932+08:00",
+    "type": "article"
+  },
   "en:C++23 引入的新特性 enumerate 和 ranges": {
     "translation": "C++23 introduces new features enumerate and ranges",
     "timestamp": "2025-10-09T19:28:17.7639182+08:00",
@@ -277,6 +282,11 @@
   "en:GPT-5.5 在 Codex 里更贵，问题不只在 token 数": {
     "translation": "GPT-5.5 is more expensive in Codex; the problem is not only the token count.",
     "timestamp": "2026-06-14T04:34:42.2719525+08:00",
+    "type": "article"
+  },
+  "en:GPT-5.6 降价后，国内外最新大模型 API 到底差多少钱": {
+    "translation": "How Much Do Domestic and International Latest Large Model APIs Actually Differ After GPT-5.6 Price Reduction",
+    "timestamp": "2026-08-14T18:10:27.3494515+08:00",
     "type": "article"
   },
   "en:Gemini CLI 安装部署，谷歌追上来了": {
@@ -709,6 +719,11 @@
     "timestamp": "2026-07-22T20:09:19.5443009+08:00",
     "type": "article"
   },
+  "en:低利率能把债务化掉吗：从人民币、日本到金融抑制": {
+    "translation": "Can Low Interest Rates Dissolve Debt: From RMB, Japan to Financial Repression",
+    "timestamp": "2026-08-14T18:10:24.9159053+08:00",
+    "type": "article"
+  },
   "en:低成本模型该接的活：重复、脏活和边界清楚的任务": {
     "translation": "Tasks suitable for low-cost models: repetitive, tedious (or menial), and well-defined tasks",
     "timestamp": "2026-06-14T04:33:13.4005409+08:00",
@@ -847,6 +862,11 @@
   "en:台式机引导加载失败": {
     "translation": "Desktop Boot Loader Failure",
     "timestamp": "2025-09-24T21:44:21.1490799+08:00",
+    "type": "article"
+  },
+  "en:台风天去南京，走进一座城市的地下": {
+    "translation": "Heading to Nanjing on a Typhoon Day, Descending into the Underground of a City",
+    "timestamp": "2026-08-14T18:10:29.6861089+08:00",
     "type": "article"
   },
   "en:合并 PullRequest 到 Fork 的仓库": {
@@ -1029,6 +1049,11 @@
     "timestamp": "2026-07-22T20:09:20.8898793+08:00",
     "type": "article"
   },
+  "en:广域网线路的 2ms：交易所是在“给量化加速带减速”吗？": {
+    "translation": "2ms WAN Connection: Is the Exchange \"Putting the Brakes on Quantitative Trading\"?",
+    "timestamp": "2026-08-14T18:10:28.5575542+08:00",
+    "type": "article"
+  },
   "en:库存比股价更早给信号": {
     "translation": "Inventory signals come earlier than stock prices",
     "timestamp": "2026-07-15T07:49:48.3506842+08:00",
@@ -1087,6 +1112,11 @@
   "en:所有AI的馈赠，早已在暗中标好了价格": {
     "translation": "All the gifts of AI have already been marked up with prices in the shadows.",
     "timestamp": "2025-10-10T19:29:57.5446244+08:00",
+    "type": "article"
+  },
+  "en:扩产已经在路上，为什么内存还不会马上便宜": {
+    "translation": "Expansion Is Already Underway, So Why Won't Memory Get Cheaper Anytime Soon",
+    "timestamp": "2026-08-14T18:10:30.9134178+08:00",
     "type": "article"
   },
   "en:批量修改SqlServer数据库磁盘文件权限": {
@@ -1712,6 +1742,11 @@
   "en:香港交易所，虚拟货币发展史": {
     "translation": "hong-kong-exchange-virtual-currency-history",
     "timestamp": "2025-05-25T22:43:46.7949791+08:00",
+    "type": "article"
+  },
+  "en:香港券商不会一起重估，而会重新分层": {
+    "translation": "Hong Kong brokers will not be revalued together, but will be re-tiered",
+    "timestamp": "2026-08-14T18:10:32.0523635+08:00",
     "type": "article"
   },
   "en:💻 电脑黑屏问题排查记录": {

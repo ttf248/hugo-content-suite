@@ -64,6 +64,11 @@
     "timestamp": "2026-06-14T04:32:51.8802787+08:00",
     "type": "tag"
   },
+  "en:API 定价": {
+    "translation": "API Pricing",
+    "timestamp": "2026-08-14T18:09:46.6110309+08:00",
+    "type": "tag"
+  },
   "en:Anthropic": {
     "translation": "Anthropic",
     "timestamp": "2026-04-16T21:17:57.6448075+08:00",
@@ -77,6 +82,16 @@
   "en:C++": {
     "translation": "C++",
     "timestamp": "2026-04-16T01:43:32.174828+08:00",
+    "type": "tag"
+  },
+  "en:C++11": {
+    "translation": "C++11",
+    "timestamp": "2026-08-14T18:09:23.0324027+08:00",
+    "type": "tag"
+  },
+  "en:C++98": {
+    "translation": "C++98",
+    "timestamp": "2026-08-14T18:09:33.2802746+08:00",
     "type": "tag"
   },
   "en:CAS": {
@@ -114,6 +129,11 @@
     "timestamp": "2026-04-25T03:24:36.5127849+08:00",
     "type": "tag"
   },
+  "en:Claude": {
+    "translation": "Claude",
+    "timestamp": "2026-08-14T18:09:25.926816+08:00",
+    "type": "tag"
+  },
   "en:Claude Code": {
     "translation": "Claude Code",
     "timestamp": "2026-06-14T04:32:51.1415606+08:00",
@@ -127,6 +147,16 @@
   "en:DDR5": {
     "translation": "DDR5",
     "timestamp": "2025-09-24T21:51:10.8793651+08:00",
+    "type": "tag"
+  },
+  "en:DRAM": {
+    "translation": "DRAM",
+    "timestamp": "2026-08-14T18:09:37.0450011+08:00",
+    "type": "tag"
+  },
+  "en:DeepSeek": {
+    "translation": "DeepSeek",
+    "timestamp": "2026-08-14T18:10:12.0046716+08:00",
     "type": "tag"
   },
   "en:Docker": {
@@ -149,6 +179,16 @@
     "timestamp": "2025-05-25T22:41:19.3158344+08:00",
     "type": "tag"
   },
+  "en:GPT-5.6": {
+    "translation": "GPT-5.6",
+    "timestamp": "2026-08-14T18:09:51.4580151+08:00",
+    "type": "tag"
+  },
+  "en:Gemini": {
+    "translation": "Gemini",
+    "timestamp": "2026-08-14T18:09:49.9580451+08:00",
+    "type": "tag"
+  },
   "en:Git禁用http仓库": {
     "translation": "git-disable-http-repositories",
     "timestamp": "2025-05-25T22:43:15.5263808+08:00",
@@ -162,6 +202,11 @@
   "en:HAProxy": {
     "translation": "HAProxy",
     "timestamp": "2025-09-19T09:53:50.75012+08:00",
+    "type": "tag"
+  },
+  "en:HBM": {
+    "translation": "HBM",
+    "timestamp": "2026-08-14T18:09:44.4086322+08:00",
     "type": "tag"
   },
   "en:Hermes": {
@@ -239,6 +284,11 @@
     "timestamp": "2026-07-15T07:48:35.9500057+08:00",
     "type": "tag"
   },
+  "en:NAND Flash": {
+    "translation": "NAND Flash",
+    "timestamp": "2026-08-14T18:09:18.719522+08:00",
+    "type": "tag"
+  },
   "en:Nginx": {
     "translation": "nginx",
     "timestamp": "2025-05-25T22:42:16.9709118+08:00",
@@ -262,6 +312,16 @@
   "en:QDII": {
     "translation": "QDII",
     "timestamp": "2026-04-28T01:12:52.3428667+08:00",
+    "type": "tag"
+  },
+  "en:Qwen": {
+    "translation": "Qwen",
+    "timestamp": "2026-08-14T18:09:39.325102+08:00",
+    "type": "tag"
+  },
+  "en:SK海力士": {
+    "translation": "SK hynix",
+    "timestamp": "2026-08-14T18:09:40.7983927+08:00",
     "type": "tag"
   },
   "en:SU7": {
@@ -1094,6 +1154,11 @@
     "timestamp": "2025-05-25T22:41:29.9959062+08:00",
     "type": "tag"
   },
+  "en:static": {
+    "translation": "static",
+    "timestamp": "2026-08-14T18:10:09.7711695+08:00",
+    "type": "tag"
+  },
   "en:staticcheck": {
     "translation": "staticcheck",
     "timestamp": "2026-03-16T20:22:05.1628321+08:00",
@@ -1284,6 +1349,11 @@
     "timestamp": "2025-12-02T19:13:33.7138172+08:00",
     "type": "tag"
   },
+  "en:三星电子": {
+    "translation": "Samsung Electronics",
+    "timestamp": "2026-08-14T18:09:23.9951308+08:00",
+    "type": "tag"
+  },
   "en:上交所": {
     "translation": "shanghai-stock-exchange",
     "timestamp": "2025-05-25T22:40:34.9218109+08:00",
@@ -1459,6 +1529,11 @@
     "timestamp": "2025-07-28T18:59:04.490054+08:00",
     "type": "tag"
   },
+  "en:交易所": {
+    "translation": "Exchange",
+    "timestamp": "2026-08-14T18:09:24.9563901+08:00",
+    "type": "tag"
+  },
   "en:产品力": {
     "translation": "Product Sense",
     "timestamp": "2025-09-26T20:37:52.396475+08:00",
@@ -1564,6 +1639,11 @@
     "timestamp": "2025-05-25T22:41:17.4667253+08:00",
     "type": "tag"
   },
+  "en:低利率": {
+    "translation": "Low Interest Rate",
+    "timestamp": "2026-08-14T18:09:43.4429815+08:00",
+    "type": "tag"
+  },
   "en:低空经济": {
     "translation": "Low-Altitude Economy",
     "timestamp": "2026-05-04T15:18:54.2265526+08:00",
@@ -1652,6 +1732,11 @@
   "en:共和党": {
     "translation": "republican-party",
     "timestamp": "2025-05-25T22:41:29.4956919+08:00",
+    "type": "tag"
+  },
+  "en:共址": {
+    "translation": "Colocation",
+    "timestamp": "2026-08-14T18:10:02.7609482+08:00",
     "type": "tag"
   },
   "en:内存": {
@@ -1824,6 +1909,16 @@
     "timestamp": "2026-03-16T20:22:03.9485223+08:00",
     "type": "tag"
   },
+  "en:单例": {
+    "translation": "Singleton",
+    "timestamp": "2026-08-14T18:09:59.6402324+08:00",
+    "type": "tag"
+  },
+  "en:南京": {
+    "translation": "Nanjing",
+    "timestamp": "2026-08-14T18:10:10.7605378+08:00",
+    "type": "tag"
+  },
   "en:博客": {
     "translation": "blog",
     "timestamp": "2025-05-25T22:40:04.7325514+08:00",
@@ -1909,6 +2004,11 @@
     "timestamp": "2026-03-16T20:22:24.218727+08:00",
     "type": "tag"
   },
+  "en:台积电": {
+    "translation": "TSMC",
+    "timestamp": "2026-08-14T18:10:00.832443+08:00",
+    "type": "tag"
+  },
   "en:合拆股": {
     "translation": "Reverse Stock Split",
     "timestamp": "2025-08-13T22:12:27.8788917+08:00",
@@ -1989,6 +2089,11 @@
     "timestamp": "2025-05-25T22:41:27.9587288+08:00",
     "type": "tag"
   },
+  "en:国泰君安国际": {
+    "translation": "Guotai Junan International",
+    "timestamp": "2026-08-14T18:09:22.002344+08:00",
+    "type": "tag"
+  },
   "en:国编教师": {
     "translation": "national-teacher",
     "timestamp": "2025-05-25T22:40:55.7983265+08:00",
@@ -2024,6 +2129,11 @@
     "timestamp": "2026-03-16T20:22:14.7676808+08:00",
     "type": "tag"
   },
+  "en:地方债": {
+    "translation": "Local Government Debt",
+    "timestamp": "2026-08-14T18:10:01.7717585+08:00",
+    "type": "tag"
+  },
   "en:地缘政治": {
     "translation": "Geopolitics",
     "timestamp": "2026-05-21T10:51:19.2811618+08:00",
@@ -2032,6 +2142,11 @@
   "en:城市变迁": {
     "translation": "Urban Transformation",
     "timestamp": "2026-03-16T20:22:07.589348+08:00",
+    "type": "tag"
+  },
+  "en:城市漫游": {
+    "translation": "City Roaming",
+    "timestamp": "2026-08-14T18:09:45.6302488+08:00",
     "type": "tag"
   },
   "en:城市观察": {
@@ -2234,6 +2349,11 @@
     "timestamp": "2026-03-16T20:22:10.3043535+08:00",
     "type": "tag"
   },
+  "en:实际利率": {
+    "translation": "Real Interest Rate",
+    "timestamp": "2026-08-14T18:09:56.0972669+08:00",
+    "type": "tag"
+  },
   "en:家庭": {
     "translation": "family",
     "timestamp": "2025-05-25T22:41:51.6682911+08:00",
@@ -2384,6 +2504,11 @@
     "timestamp": "2026-07-22T20:08:56.7041145+08:00",
     "type": "tag"
   },
+  "en:广域网": {
+    "translation": "Wide Area Network",
+    "timestamp": "2026-08-14T18:09:36.0534898+08:00",
+    "type": "tag"
+  },
   "en:废宅": {
     "translation": "Shut-in",
     "timestamp": "2026-07-22T20:08:54.4075045+08:00",
@@ -2457,6 +2582,11 @@
   "en:微服务": {
     "translation": "Microservices",
     "timestamp": "2026-03-16T20:22:08.5257843+08:00",
+    "type": "tag"
+  },
+  "en:德基广场": {
+    "translation": "Deji Plaza",
+    "timestamp": "2026-08-14T18:09:20.9616183+08:00",
     "type": "tag"
   },
   "en:心态": {
@@ -2804,6 +2934,11 @@
     "timestamp": "2026-03-16T20:22:08.4476991+08:00",
     "type": "tag"
   },
+  "en:新街口": {
+    "translation": "Xinjiekou",
+    "timestamp": "2026-08-14T18:09:34.9781355+08:00",
+    "type": "tag"
+  },
   "en:新闻": {
     "translation": "News",
     "timestamp": "2026-03-16T20:22:04.5567146+08:00",
@@ -2817,6 +2952,11 @@
   "en:无人机": {
     "translation": "Drone",
     "timestamp": "2026-05-04T15:18:54.4898511+08:00",
+    "type": "tag"
+  },
+  "en:日本经济": {
+    "translation": "Japanese Economy",
+    "timestamp": "2026-08-14T18:09:48.0129646+08:00",
     "type": "tag"
   },
   "en:时事": {
@@ -3062,6 +3202,11 @@
   "en:消费心理": {
     "translation": "Consumer Psychology",
     "timestamp": "2026-03-16T20:22:09.9764893+08:00",
+    "type": "tag"
+  },
+  "en:消费电子": {
+    "translation": "Consumer Electronics",
+    "timestamp": "2026-08-14T18:10:13.0808293+08:00",
     "type": "tag"
   },
   "en:淀粉肠事件": {
@@ -3514,6 +3659,11 @@
     "timestamp": "2025-05-25T22:42:10.1287587+08:00",
     "type": "tag"
   },
+  "en:线程安全": {
+    "translation": "Thread Safety",
+    "timestamp": "2026-08-14T18:09:38.3901664+08:00",
+    "type": "tag"
+  },
   "en:终端": {
     "translation": "Terminal",
     "timestamp": "2026-03-16T20:22:01.1062253+08:00",
@@ -3654,6 +3804,11 @@
     "timestamp": "2026-03-16T20:22:02.4628109+08:00",
     "type": "tag"
   },
+  "en:美光": {
+    "translation": "Micron",
+    "timestamp": "2026-08-14T18:09:53.854825+08:00",
+    "type": "tag"
+  },
   "en:美团": {
     "translation": "Meituan",
     "timestamp": "2025-09-18T19:31:56.8843436+08:00",
@@ -3677,6 +3832,11 @@
   "en:翻译": {
     "translation": "Translation",
     "timestamp": "2025-06-02T21:55:23.842204+08:00",
+    "type": "tag"
+  },
+  "en:耀才证券": {
+    "translation": "Yao Cai Securities",
+    "timestamp": "2026-08-14T18:09:20.0318832+08:00",
     "type": "tag"
   },
   "en:老虎证券": {
@@ -3864,6 +4024,11 @@
     "timestamp": "2025-05-25T22:41:57.3696956+08:00",
     "type": "tag"
   },
+  "en:蚂蚁集团": {
+    "translation": "Ant Group",
+    "timestamp": "2026-08-14T18:10:14.0532574+08:00",
+    "type": "tag"
+  },
   "en:融资": {
     "translation": "Financing",
     "timestamp": "2026-03-16T20:22:06.7756287+08:00",
@@ -3957,6 +4122,11 @@
   "en:设计": {
     "translation": "design",
     "timestamp": "2025-05-25T22:41:26.5723431+08:00",
+    "type": "tag"
+  },
+  "en:证券估值": {
+    "translation": "Securities Valuation",
+    "timestamp": "2026-08-14T18:09:58.6769171+08:00",
     "type": "tag"
   },
   "en:证券咨询": {
@@ -4219,6 +4389,11 @@
     "timestamp": "2025-11-22T00:45:55.0037371+08:00",
     "type": "tag"
   },
+  "en:量化交易": {
+    "translation": "Quantitative Trading",
+    "timestamp": "2026-08-14T18:09:49.0036056+08:00",
+    "type": "tag"
+  },
   "en:金融": {
     "translation": "financial",
     "timestamp": "2025-05-25T22:40:47.5062693+08:00",
@@ -4232,6 +4407,11 @@
   "en:金融反腐": {
     "translation": "Financial Anti-Corruption",
     "timestamp": "2026-03-16T20:22:00.0442216+08:00",
+    "type": "tag"
+  },
+  "en:金融抑制": {
+    "translation": "Financial Repression",
+    "timestamp": "2026-08-14T18:10:04.0517992+08:00",
     "type": "tag"
   },
   "en:金融政策": {
@@ -4312,6 +4492,11 @@
   "en:长桥": {
     "translation": "Changqiao",
     "timestamp": "2026-06-14T04:32:51.7388862+08:00",
+    "type": "tag"
+  },
+  "en:长沙国金中心": {
+    "translation": "Changsha IFS (International Finance Square)",
+    "timestamp": "2026-08-14T18:09:52.4736558+08:00",
     "type": "tag"
   },
   "en:问题排查": {
@@ -4434,6 +4619,11 @@
     "timestamp": "2026-03-16T20:22:21.0840032+08:00",
     "type": "tag"
   },
+  "en:香港券商": {
+    "translation": "Hong Kong Brokerage",
+    "timestamp": "2026-08-14T18:09:17.4926268+08:00",
+    "type": "tag"
+  },
   "en:驱动安装失败": {
     "translation": "Installation failed",
     "timestamp": "2026-03-16T20:22:12.8163469+08:00",
@@ -4452,6 +4642,11 @@
   "en:高可用": {
     "translation": "High Availability",
     "timestamp": "2025-09-19T09:53:50.6839674+08:00",
+    "type": "tag"
+  },
+  "en:高频交易": {
+    "translation": "High-Frequency Trading",
+    "timestamp": "2026-08-14T18:09:55.0514592+08:00",
     "type": "tag"
   },
   "en:黑天鹅": {
@@ -4504,9 +4699,19 @@
     "timestamp": "2026-06-14T06:28:49.2817564+08:00",
     "type": "tag"
   },
+  "ja:API 定价": {
+    "translation": "API 価格",
+    "timestamp": "2026-08-14T18:18:42.6456937+08:00",
+    "type": "tag"
+  },
   "ja:A股": {
     "translation": "A株 (エーショウ)",
     "timestamp": "2025-06-02T05:43:56.4901197+08:00",
+    "type": "tag"
+  },
+  "ja:SK海力士": {
+    "translation": "SKハイニックス",
+    "timestamp": "2026-08-14T18:27:13.9428894+08:00",
     "type": "tag"
   },
   "ja:UI设计": {
@@ -4517,6 +4722,11 @@
   "ja:万科": {
     "translation": "万科 (Bank of America)",
     "timestamp": "2025-12-02T19:14:04.5122387+08:00",
+    "type": "tag"
+  },
+  "ja:三星电子": {
+    "translation": "サムスン電子",
+    "timestamp": "2026-08-14T18:27:11.8781622+08:00",
     "type": "tag"
   },
   "ja:上交所": {
@@ -4639,6 +4849,11 @@
     "timestamp": "2025-07-28T18:59:32.7789917+08:00",
     "type": "tag"
   },
+  "ja:交易所": {
+    "translation": "取引所",
+    "timestamp": "2026-08-14T18:21:49.6157939+08:00",
+    "type": "tag"
+  },
   "ja:产品力": {
     "translation": "製品力",
     "timestamp": "2025-09-26T20:38:03.8416438+08:00",
@@ -4694,6 +4909,11 @@
     "timestamp": "2025-06-02T06:04:46.9696673+08:00",
     "type": "tag"
   },
+  "ja:低利率": {
+    "translation": "低金利",
+    "timestamp": "2026-08-14T18:15:46.0722017+08:00",
+    "type": "tag"
+  },
   "ja:低空经济": {
     "translation": "低空経済",
     "timestamp": "2026-05-04T15:33:00.3457668+08:00",
@@ -4737,6 +4957,11 @@
   "ja:共和党": {
     "translation": "共和党 (Kyōyotō)",
     "timestamp": "2025-06-02T06:12:38.0064906+08:00",
+    "type": "tag"
+  },
+  "ja:共址": {
+    "translation": "コロケーション",
+    "timestamp": "2026-08-14T18:21:50.6408493+08:00",
     "type": "tag"
   },
   "ja:内存": {
@@ -4849,6 +5074,16 @@
     "timestamp": "2025-06-02T06:19:08.9341364+08:00",
     "type": "tag"
   },
+  "ja:单例": {
+    "translation": "シングルトン",
+    "timestamp": "2026-08-14T18:12:11.643978+08:00",
+    "type": "tag"
+  },
+  "ja:南京": {
+    "translation": "南京",
+    "timestamp": "2026-08-14T18:24:36.2227223+08:00",
+    "type": "tag"
+  },
   "ja:博客": {
     "translation": "ブログ",
     "timestamp": "2025-06-02T17:14:22.9990243+08:00",
@@ -4882,6 +5117,11 @@
   "ja:台湾": {
     "translation": "台湾 (Taiwan)",
     "timestamp": "2025-06-02T17:28:47.0144944+08:00",
+    "type": "tag"
+  },
+  "ja:台积电": {
+    "translation": "TSMC（台湾積体電路製造）",
+    "timestamp": "2026-08-14T18:27:10.796265+08:00",
     "type": "tag"
   },
   "ja:合拆股": {
@@ -4939,6 +5179,11 @@
     "timestamp": "2025-06-02T06:15:05.9347157+08:00",
     "type": "tag"
   },
+  "ja:国泰君安国际": {
+    "translation": "国泰君安国際",
+    "timestamp": "2026-08-14T18:31:18.1012049+08:00",
+    "type": "tag"
+  },
   "ja:国编教师": {
     "translation": "国民教育者 (Kokumin Kyōikuja)",
     "timestamp": "2025-06-02T06:20:48.7564411+08:00",
@@ -4964,9 +5209,19 @@
     "timestamp": "2026-04-25T03:49:16.2811077+08:00",
     "type": "tag"
   },
+  "ja:地方债": {
+    "translation": "地方債",
+    "timestamp": "2026-08-14T18:15:47.3174437+08:00",
+    "type": "tag"
+  },
   "ja:地缘政治": {
     "translation": "地政学",
     "timestamp": "2026-05-21T11:18:32.7401717+08:00",
+    "type": "tag"
+  },
+  "ja:城市漫游": {
+    "translation": "シティウォーク",
+    "timestamp": "2026-08-14T18:24:40.387524+08:00",
     "type": "tag"
   },
   "ja:城市观察": {
@@ -5094,6 +5349,11 @@
     "timestamp": "2026-05-12T04:35:42.471283+08:00",
     "type": "tag"
   },
+  "ja:实际利率": {
+    "translation": "実質金利",
+    "timestamp": "2026-08-14T18:15:49.7687169+08:00",
+    "type": "tag"
+  },
   "ja:家庭": {
     "translation": "家庭 (かてい)",
     "timestamp": "2025-06-02T05:51:34.336796+08:00",
@@ -5199,6 +5459,11 @@
     "timestamp": "2026-07-22T20:14:43.0782205+08:00",
     "type": "tag"
   },
+  "ja:广域网": {
+    "translation": "広域通信網",
+    "timestamp": "2026-08-14T18:21:45.6597544+08:00",
+    "type": "tag"
+  },
   "ja:废宅": {
     "translation": "引きこもり",
     "timestamp": "2026-07-22T20:14:42.0909032+08:00",
@@ -5232,6 +5497,11 @@
   "ja:微信小程序": {
     "translation": "WeChat Mini Programs",
     "timestamp": "2025-06-02T05:07:26.2047534+08:00",
+    "type": "tag"
+  },
+  "ja:德基广场": {
+    "translation": "德基広場",
+    "timestamp": "2026-08-14T18:24:38.3769409+08:00",
     "type": "tag"
   },
   "ja:心态": {
@@ -5444,9 +5714,19 @@
     "timestamp": "2026-03-16T20:22:46.5908557+08:00",
     "type": "tag"
   },
+  "ja:新街口": {
+    "translation": "新街口",
+    "timestamp": "2026-08-14T18:24:37.397225+08:00",
+    "type": "tag"
+  },
   "ja:无人机": {
     "translation": "ドローン",
     "timestamp": "2026-05-04T15:32:59.9641867+08:00",
+    "type": "tag"
+  },
+  "ja:日本经济": {
+    "translation": "日本経済",
+    "timestamp": "2026-08-14T18:15:50.7196393+08:00",
     "type": "tag"
   },
   "ja:时代观察": {
@@ -5607,6 +5887,11 @@
   "ja:消费": {
     "translation": "消費",
     "timestamp": "2026-05-12T03:17:20.3395609+08:00",
+    "type": "tag"
+  },
+  "ja:消费电子": {
+    "translation": "民生用電子機器",
+    "timestamp": "2026-08-14T18:27:09.5920143+08:00",
     "type": "tag"
   },
   "ja:深交所": {
@@ -5889,6 +6174,11 @@
     "timestamp": "2025-06-02T06:12:23.63489+08:00",
     "type": "tag"
   },
+  "ja:线程安全": {
+    "translation": "スレッドセーフ",
+    "timestamp": "2026-08-14T18:12:15.7926031+08:00",
+    "type": "tag"
+  },
   "ja:经济学": {
     "translation": "経済学",
     "timestamp": "2025-06-12T23:52:01.5716277+08:00",
@@ -5949,6 +6239,11 @@
     "timestamp": "2025-06-02T05:43:56.6374924+08:00",
     "type": "tag"
   },
+  "ja:美光": {
+    "translation": "Micron",
+    "timestamp": "2026-08-14T18:27:12.9103884+08:00",
+    "type": "tag"
+  },
   "ja:美团": {
     "translation": "美团 (Meituan)",
     "timestamp": "2025-09-18T19:32:10.9306208+08:00",
@@ -5972,6 +6267,11 @@
   "ja:翻译": {
     "translation": "翻訳 (Hon'yaku)",
     "timestamp": "2025-06-02T21:55:37.4715955+08:00",
+    "type": "tag"
+  },
+  "ja:耀才证券": {
+    "translation": "耀才証券",
+    "timestamp": "2026-08-14T18:31:20.9528596+08:00",
     "type": "tag"
   },
   "ja:老虎证券": {
@@ -6079,6 +6379,11 @@
     "timestamp": "2025-06-02T05:50:46.8867604+08:00",
     "type": "tag"
   },
+  "ja:蚂蚁集团": {
+    "translation": "Ant Group",
+    "timestamp": "2026-08-14T18:31:22.3391688+08:00",
+    "type": "tag"
+  },
   "ja:融资": {
     "translation": "資金調達",
     "timestamp": "2026-07-15T08:05:43.8191824+08:00",
@@ -6122,6 +6427,11 @@
   "ja:设计": {
     "translation": "設計 (Seizō)",
     "timestamp": "2025-06-02T06:18:31.8824128+08:00",
+    "type": "tag"
+  },
+  "ja:证券估值": {
+    "translation": "証券評価",
+    "timestamp": "2026-08-14T18:31:27.6833535+08:00",
     "type": "tag"
   },
   "ja:语法糖": {
@@ -6294,6 +6604,11 @@
     "timestamp": "2025-11-22T00:46:13.3756431+08:00",
     "type": "tag"
   },
+  "ja:量化交易": {
+    "translation": "クォンツトレーディング",
+    "timestamp": "2026-08-14T18:21:46.7617266+08:00",
+    "type": "tag"
+  },
   "ja:金融": {
     "translation": "金融",
     "timestamp": "2025-06-02T05:11:32.2713081+08:00",
@@ -6302,6 +6617,11 @@
   "ja:金融危机": {
     "translation": "金融危機",
     "timestamp": "2025-06-02T06:08:43.9784824+08:00",
+    "type": "tag"
+  },
+  "ja:金融抑制": {
+    "translation": "金融抑圧",
+    "timestamp": "2026-08-14T18:15:48.4152085+08:00",
     "type": "tag"
   },
   "ja:金融泡沫": {
@@ -6342,6 +6662,11 @@
   "ja:长桥": {
     "translation": "チャンチャオ",
     "timestamp": "2026-06-14T05:23:49.6253212+08:00",
+    "type": "tag"
+  },
+  "ja:长沙国金中心": {
+    "translation": "長沙国际金融中心",
+    "timestamp": "2026-08-14T18:24:39.3682011+08:00",
     "type": "tag"
   },
   "ja:问题排查": {
@@ -6399,9 +6724,19 @@
     "timestamp": "2025-11-03T05:05:59.4273646+08:00",
     "type": "tag"
   },
+  "ja:香港券商": {
+    "translation": "香港の証券会社",
+    "timestamp": "2026-08-14T18:31:17.1421405+08:00",
+    "type": "tag"
+  },
   "ja:高可用": {
     "translation": "高可用性 (Kōyūyō)",
     "timestamp": "2025-09-19T09:55:48.6168848+08:00",
+    "type": "tag"
+  },
+  "ja:高频交易": {
+    "translation": "高頻度取引",
+    "timestamp": "2026-08-14T18:21:48.2582116+08:00",
     "type": "tag"
   },
   "ja:黑天鹅": {

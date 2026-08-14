@@ -1,7 +1,27 @@
 {
+  "en:AI 投资": {
+    "translation": "AI Investment",
+    "timestamp": "2026-08-14T18:29:45.2415171+08:00",
+    "type": "category"
+  },
   "en:AI 灵感碰撞坊": {
     "translation": "AI Inspiration Hub",
     "timestamp": "2025-06-02T05:12:56.6564457+08:00",
+    "type": "category"
+  },
+  "en:AI 计算机": {
+    "translation": "AI Computer",
+    "timestamp": "2026-08-14T18:10:35.5072968+08:00",
+    "type": "category"
+  },
+  "en:AI 金融知识库": {
+    "translation": "AI Finance Knowledge Base",
+    "timestamp": "2026-08-14T18:14:25.2472462+08:00",
+    "type": "category"
+  },
+  "en:AI 随笔杂谈": {
+    "translation": "AI Essays and Miscellaneous Topics",
+    "timestamp": "2026-08-14T18:23:56.2852045+08:00",
     "type": "category"
   },
   "en:市场与投资": {
@@ -39,9 +59,29 @@
     "timestamp": "2025-06-02T05:11:13.0266263+08:00",
     "type": "category"
   },
+  "ja:AI 投资": {
+    "translation": "AI投資",
+    "timestamp": "2026-08-14T18:31:28.6778654+08:00",
+    "type": "category"
+  },
   "ja:AI 灵感碰撞坊": {
     "translation": "AI霊感衝突坊",
     "timestamp": "2025-06-02T05:13:21.7168809+08:00",
+    "type": "category"
+  },
+  "ja:AI 计算机": {
+    "translation": "AI コンピュータ",
+    "timestamp": "2026-08-14T18:12:17.3564465+08:00",
+    "type": "category"
+  },
+  "ja:AI 金融知识库": {
+    "translation": "AI 金融ナレッジベース",
+    "timestamp": "2026-08-14T18:15:51.7564382+08:00",
+    "type": "category"
+  },
+  "ja:AI 随笔杂谈": {
+    "translation": "AI エッセイ・雑談",
+    "timestamp": "2026-08-14T18:24:43.5432668+08:00",
     "type": "category"
   },
   "ja:市场与投资": {
