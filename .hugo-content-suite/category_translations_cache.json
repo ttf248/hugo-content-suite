@@ -24,6 +24,11 @@
     "timestamp": "2026-08-14T18:23:56.2852045+08:00",
     "type": "category"
   },
+  "en:AI 鱼的七秒钟见闻": {
+    "translation": "A Fish's Seven-Second Observations on AI",
+    "timestamp": "2026-09-18T01:29:22.2166979+08:00",
+    "type": "category"
+  },
   "en:市场与投资": {
     "translation": "Market and Investment",
     "timestamp": "2026-07-15T08:07:08.5337214+08:00",
@@ -82,6 +87,11 @@
   "ja:AI 随笔杂谈": {
     "translation": "AI エッセイ・雑談",
     "timestamp": "2026-08-14T18:24:43.5432668+08:00",
+    "type": "category"
+  },
+  "ja:AI 鱼的七秒钟见闻": {
+    "translation": "AI魚が見た7秒の世界",
+    "timestamp": "2026-09-18T01:30:33.7055378+08:00",
     "type": "category"
   },
   "ja:市场与投资": {

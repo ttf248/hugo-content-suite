@@ -1364,6 +1364,11 @@
     "timestamp": "2026-03-16T20:22:07.0862927+08:00",
     "type": "tag"
   },
+  "en:不锈钢": {
+    "translation": "Stainless Steel",
+    "timestamp": "2026-09-18T01:20:35.6418403+08:00",
+    "type": "tag"
+  },
   "en:专有名词": {
     "translation": "Proper Nouns",
     "timestamp": "2025-10-15T19:32:40.9406683+08:00",
@@ -1389,6 +1394,11 @@
     "timestamp": "2025-08-22T13:36:35.4127299+08:00",
     "type": "tag"
   },
+  "en:个人所得税": {
+    "translation": "Individual Income Tax",
+    "timestamp": "2026-09-18T01:14:12.5751822+08:00",
+    "type": "tag"
+  },
   "en:个人理财": {
     "translation": "Personal Finance",
     "timestamp": "2026-03-16T20:22:13.8524205+08:00",
@@ -1407,6 +1417,11 @@
   "en:中华通": {
     "translation": "china-tong",
     "timestamp": "2025-05-25T22:41:42.9580671+08:00",
+    "type": "tag"
+  },
+  "en:中国体育": {
+    "translation": "Chinese Sports",
+    "timestamp": "2026-09-18T01:25:04.6903012+08:00",
     "type": "tag"
   },
   "en:中国制造": {
@@ -1619,6 +1634,11 @@
     "timestamp": "2025-05-25T22:40:31.9809159+08:00",
     "type": "tag"
   },
+  "en:企业AI": {
+    "translation": "Enterprise AI",
+    "timestamp": "2026-09-18T01:32:00.3418892+08:00",
+    "type": "tag"
+  },
   "en:优化": {
     "translation": "Optimization",
     "timestamp": "2026-03-16T20:22:06.1482487+08:00",
@@ -1649,9 +1669,19 @@
     "timestamp": "2026-05-04T15:18:54.2265526+08:00",
     "type": "tag"
   },
+  "en:体教融合": {
+    "translation": "Integration of Sports and Education",
+    "timestamp": "2026-09-18T01:25:05.5718924+08:00",
+    "type": "tag"
+  },
   "en:体育": {
     "translation": "Sports",
     "timestamp": "2026-03-16T20:22:01.0444503+08:00",
+    "type": "tag"
+  },
+  "en:体育改革": {
+    "translation": "Sports Reform",
+    "timestamp": "2026-09-18T01:25:08.1510067+08:00",
     "type": "tag"
   },
   "en:佣金": {
@@ -2084,6 +2114,11 @@
     "timestamp": "2025-05-25T22:40:46.3685681+08:00",
     "type": "tag"
   },
+  "en:国家标准": {
+    "translation": "National Standard",
+    "timestamp": "2026-09-18T01:20:37.5645194+08:00",
+    "type": "tag"
+  },
   "en:国庆": {
     "translation": "national-day",
     "timestamp": "2025-05-25T22:41:27.9587288+08:00",
@@ -2239,6 +2274,11 @@
     "timestamp": "2025-05-25T22:40:48.7173571+08:00",
     "type": "tag"
   },
+  "en:大城市": {
+    "translation": "Big City",
+    "timestamp": "2026-09-18T01:35:00.1302848+08:00",
+    "type": "tag"
+  },
   "en:大学": {
     "translation": "University",
     "timestamp": "2025-06-11T22:36:09.4415711+08:00",
@@ -2364,6 +2404,11 @@
     "timestamp": "2026-03-16T20:22:21.4759615+08:00",
     "type": "tag"
   },
+  "en:家族资本": {
+    "translation": "Family Capital",
+    "timestamp": "2026-09-18T01:22:37.4139105+08:00",
+    "type": "tag"
+  },
   "en:容器化": {
     "translation": "Containerization",
     "timestamp": "2026-03-16T20:22:21.7726176+08:00",
@@ -2404,6 +2449,11 @@
     "timestamp": "2026-03-16T20:22:22.6543363+08:00",
     "type": "tag"
   },
+  "en:小游戏": {
+    "translation": "Mini Game",
+    "timestamp": "2026-09-18T01:17:15.5155923+08:00",
+    "type": "tag"
+  },
   "en:小程序": {
     "translation": "mini-program",
     "timestamp": "2025-05-25T22:41:41.6448294+08:00",
@@ -2429,6 +2479,11 @@
     "timestamp": "2025-05-25T22:40:12.0198459+08:00",
     "type": "tag"
   },
+  "en:就业结构": {
+    "translation": "Employment Structure",
+    "timestamp": "2026-09-18T01:22:39.1495626+08:00",
+    "type": "tag"
+  },
   "en:局域网": {
     "translation": "local-area-network",
     "timestamp": "2025-05-25T22:41:49.8196444+08:00",
@@ -2447,6 +2502,11 @@
   "en:嵌入式": {
     "translation": "embedded-systems",
     "timestamp": "2025-05-25T22:41:12.152149+08:00",
+    "type": "tag"
+  },
+  "en:工作与生活": {
+    "translation": "Work and Life",
+    "timestamp": "2026-09-18T01:35:01.0263569+08:00",
     "type": "tag"
   },
   "en:工作流": {
@@ -2669,6 +2729,11 @@
     "timestamp": "2026-03-16T20:22:08.0113468+08:00",
     "type": "tag"
   },
+  "en:房子": {
+    "translation": "House",
+    "timestamp": "2026-09-18T01:35:01.8107678+08:00",
+    "type": "tag"
+  },
   "en:手机": {
     "translation": "Mobile phone",
     "timestamp": "2025-09-26T20:37:52.1558973+08:00",
@@ -2712,6 +2777,11 @@
   "en:抖音": {
     "translation": "douyin",
     "timestamp": "2025-05-25T22:40:12.6942257+08:00",
+    "type": "tag"
+  },
+  "en:抖音直播": {
+    "translation": "TikTok Live",
+    "timestamp": "2026-09-18T01:29:24.9338563+08:00",
     "type": "tag"
   },
   "en:抖音荐股": {
@@ -2872,6 +2942,11 @@
   "en:数据中心GPU": {
     "translation": "Data Center GPU",
     "timestamp": "2026-05-21T10:51:19.8407572+08:00",
+    "type": "tag"
+  },
+  "en:数据安全": {
+    "translation": "Data Security",
+    "timestamp": "2026-09-18T01:31:59.4809063+08:00",
     "type": "tag"
   },
   "en:数据库": {
@@ -3094,6 +3169,11 @@
     "timestamp": "2026-03-16T20:22:01.9643045+08:00",
     "type": "tag"
   },
+  "en:樊振东": {
+    "translation": "Fan Zhendong",
+    "timestamp": "2026-09-18T01:25:06.5008917+08:00",
+    "type": "tag"
+  },
   "en:死循环": {
     "translation": "Dead Loop",
     "timestamp": "2026-03-16T20:22:22.3220597+08:00",
@@ -3194,6 +3274,11 @@
     "timestamp": "2025-06-02T21:03:56.6704171+08:00",
     "type": "tag"
   },
+  "en:海克斯大乱斗": {
+    "translation": "Hexed All-Random Battle (ARAM)",
+    "timestamp": "2026-09-18T01:29:23.1616888+08:00",
+    "type": "tag"
+  },
   "en:消费": {
     "translation": "Consumption",
     "timestamp": "2026-05-12T03:12:10.2012408+08:00",
@@ -3207,6 +3292,11 @@
   "en:消费电子": {
     "translation": "Consumer Electronics",
     "timestamp": "2026-08-14T18:10:13.0808293+08:00",
+    "type": "tag"
+  },
+  "en:消费维权": {
+    "translation": "Consumer Rights Protection",
+    "timestamp": "2026-09-18T01:20:38.3258228+08:00",
     "type": "tag"
   },
   "en:淀粉肠事件": {
@@ -3262,6 +3352,16 @@
   "en:游戏心理学": {
     "translation": "Game Psychology",
     "timestamp": "2026-03-16T20:21:56.7023006+08:00",
+    "type": "tag"
+  },
+  "en:游戏直播": {
+    "translation": "Game Live Streaming",
+    "timestamp": "2026-09-18T01:29:24.0233949+08:00",
+    "type": "tag"
+  },
+  "en:游戏行业": {
+    "translation": "Gaming Industry",
+    "timestamp": "2026-09-18T01:17:11.8806215+08:00",
     "type": "tag"
   },
   "en:游戏设计": {
@@ -3369,9 +3469,19 @@
     "timestamp": "2026-03-16T20:21:59.6529028+08:00",
     "type": "tag"
   },
+  "en:用户付费": {
+    "translation": "User Payment",
+    "timestamp": "2026-09-18T01:17:12.7008849+08:00",
+    "type": "tag"
+  },
   "en:电信": {
     "translation": "Telecommunications",
     "timestamp": "2025-10-15T18:59:13.3189043+08:00",
+    "type": "tag"
+  },
+  "en:电商平台": {
+    "translation": "E-commerce Platform",
+    "timestamp": "2026-09-18T01:20:39.1373793+08:00",
     "type": "tag"
   },
   "en:电商税": {
@@ -3569,9 +3679,19 @@
     "timestamp": "2025-05-25T22:41:18.1787033+08:00",
     "type": "tag"
   },
+  "en:离岸信托": {
+    "translation": "Offshore Trust",
+    "timestamp": "2026-09-18T01:14:14.3210826+08:00",
+    "type": "tag"
+  },
   "en:移动应用": {
     "translation": "Mobile App",
     "timestamp": "2026-03-16T20:22:07.7454407+08:00",
+    "type": "tag"
+  },
+  "en:移动游戏": {
+    "translation": "Mobile Games",
+    "timestamp": "2026-09-18T01:17:13.5789031+08:00",
     "type": "tag"
   },
   "en:程序员": {
@@ -3589,6 +3709,11 @@
     "timestamp": "2025-07-16T21:17:03.9144234+08:00",
     "type": "tag"
   },
+  "en:税收征管": {
+    "translation": "Tax Administration and Collection",
+    "timestamp": "2026-09-18T01:14:11.6724095+08:00",
+    "type": "tag"
+  },
   "en:稳定币": {
     "translation": "Stablecoin",
     "timestamp": "2025-06-12T23:51:40.5037822+08:00",
@@ -3602,6 +3727,11 @@
   "en:竞技游戏": {
     "translation": "competitive-gaming",
     "timestamp": "2025-05-25T22:40:49.9303736+08:00",
+    "type": "tag"
+  },
+  "en:端游": {
+    "translation": "PC Games",
+    "timestamp": "2026-09-18T01:17:14.638335+08:00",
     "type": "tag"
   },
   "en:策略交易": {
@@ -3844,6 +3974,11 @@
     "timestamp": "2026-06-14T04:32:52.0177538+08:00",
     "type": "tag"
   },
+  "en:老龄化": {
+    "translation": "Aging",
+    "timestamp": "2026-09-18T01:22:39.8931799+08:00",
+    "type": "tag"
+  },
   "en:老龄化社会": {
     "translation": "Aging Society",
     "timestamp": "2026-03-16T20:22:18.8489333+08:00",
@@ -3912,6 +4047,11 @@
   "en:股票代码": {
     "translation": "Stock Code",
     "timestamp": "2026-03-16T20:22:17.2413723+08:00",
+    "type": "tag"
+  },
+  "en:腾讯游戏": {
+    "translation": "Tencent Games",
+    "timestamp": "2026-09-18T01:17:10.9329624+08:00",
     "type": "tag"
   },
   "en:自动化": {
@@ -4184,9 +4324,19 @@
     "timestamp": "2025-05-25T22:42:16.4702326+08:00",
     "type": "tag"
   },
+  "en:财富继承": {
+    "translation": "Wealth Inheritance",
+    "timestamp": "2026-09-18T01:22:38.2274404+08:00",
+    "type": "tag"
+  },
   "en:财报": {
     "translation": "Financial Statements",
     "timestamp": "2025-11-18T22:04:16.9916264+08:00",
+    "type": "tag"
+  },
+  "en:财政收入": {
+    "translation": "Financial Revenue",
+    "timestamp": "2026-09-18T01:14:13.4798416+08:00",
     "type": "tag"
   },
   "en:财政政策": {
@@ -4494,9 +4644,19 @@
     "timestamp": "2026-06-14T04:32:51.7388862+08:00",
     "type": "tag"
   },
+  "en:长江存储": {
+    "translation": "YMTC (Yangtze Memory Technologies Co., Ltd.)",
+    "timestamp": "2026-09-18T01:10:04.9579952+08:00",
+    "type": "tag"
+  },
   "en:长沙国金中心": {
     "translation": "Changsha IFS (International Finance Square)",
     "timestamp": "2026-08-14T18:09:52.4736558+08:00",
+    "type": "tag"
+  },
+  "en:长鑫存储": {
+    "translation": "CXMT",
+    "timestamp": "2026-09-18T01:10:05.9221797+08:00",
     "type": "tag"
   },
   "en:问题排查": {
@@ -4559,9 +4719,19 @@
     "timestamp": "2026-04-09T15:00:03.246487+08:00",
     "type": "tag"
   },
+  "en:零数据保留": {
+    "translation": "Zero Data Retention",
+    "timestamp": "2026-09-18T01:32:01.1747777+08:00",
+    "type": "tag"
+  },
   "en:雷军": {
     "translation": "Lei Jun",
     "timestamp": "2025-10-13T18:51:19.208428+08:00",
+    "type": "tag"
+  },
+  "en:青少年体育": {
+    "translation": "Youth Sports",
+    "timestamp": "2026-09-18T01:25:07.3139759+08:00",
     "type": "tag"
   },
   "en:青春": {
@@ -4607,6 +4777,11 @@
   "en:食品安全": {
     "translation": "Food Safety",
     "timestamp": "2026-03-16T20:22:08.8391717+08:00",
+    "type": "tag"
+  },
+  "en:食品接触材料": {
+    "translation": "Food Contact Materials",
+    "timestamp": "2026-09-18T01:20:36.5713865+08:00",
     "type": "tag"
   },
   "en:首付比例": {
@@ -4739,6 +4914,11 @@
     "timestamp": "2026-04-09T15:21:22.1547927+08:00",
     "type": "tag"
   },
+  "ja:不锈钢": {
+    "translation": "ステンレス鋼",
+    "timestamp": "2026-09-18T01:21:30.4006687+08:00",
+    "type": "tag"
+  },
   "ja:专有名词": {
     "translation": "専門用語",
     "timestamp": "2025-10-15T19:33:12.8205652+08:00",
@@ -4759,9 +4939,19 @@
     "timestamp": "2025-08-22T13:36:47.469029+08:00",
     "type": "tag"
   },
+  "ja:个人所得税": {
+    "translation": "個人所得税",
+    "timestamp": "2026-09-18T01:15:31.4514437+08:00",
+    "type": "tag"
+  },
   "ja:中华通": {
     "translation": "中華通",
     "timestamp": "2025-06-02T17:23:25.8521395+08:00",
+    "type": "tag"
+  },
+  "ja:中国体育": {
+    "translation": "中国のスポーツ",
+    "timestamp": "2026-09-18T01:26:56.9859007+08:00",
     "type": "tag"
   },
   "ja:中国特供版": {
@@ -4899,6 +5089,11 @@
     "timestamp": "2025-06-02T05:14:21.1642787+08:00",
     "type": "tag"
   },
+  "ja:企业AI": {
+    "translation": "エンタープライズAI",
+    "timestamp": "2026-09-18T01:33:19.1642578+08:00",
+    "type": "tag"
+  },
   "ja:估值": {
     "translation": "評価 (hyōchi)",
     "timestamp": "2025-06-02T06:17:45.1039838+08:00",
@@ -4917,6 +5112,16 @@
   "ja:低空经济": {
     "translation": "低空経済",
     "timestamp": "2026-05-04T15:33:00.3457668+08:00",
+    "type": "tag"
+  },
+  "ja:体教融合": {
+    "translation": "体育と教育を融合させる",
+    "timestamp": "2026-09-18T01:26:58.5314842+08:00",
+    "type": "tag"
+  },
+  "ja:体育改革": {
+    "translation": "スポーツ改革",
+    "timestamp": "2026-09-18T01:27:01.0048482+08:00",
     "type": "tag"
   },
   "ja:佣金": {
@@ -5174,6 +5379,11 @@
     "timestamp": "2025-06-02T06:01:29.9066521+08:00",
     "type": "tag"
   },
+  "ja:国家标准": {
+    "translation": "国家标准",
+    "timestamp": "2026-09-18T01:21:31.7211115+08:00",
+    "type": "tag"
+  },
   "ja:国庆": {
     "translation": "国慶 (Guóqìng) – This refers to the National Day of China.  A more natural translation would be:\n\n国慶節 (Guóqìngjié) - National Day (holiday)",
     "timestamp": "2025-06-02T06:15:05.9347157+08:00",
@@ -5294,6 +5504,11 @@
     "timestamp": "2025-06-02T17:28:13.2886184+08:00",
     "type": "tag"
   },
+  "ja:大城市": {
+    "translation": "大都市",
+    "timestamp": "2026-09-18T01:35:32.3275175+08:00",
+    "type": "tag"
+  },
   "ja:大学": {
     "translation": "大学 (Daigaku)",
     "timestamp": "2025-06-11T22:36:32.4511764+08:00",
@@ -5359,6 +5574,11 @@
     "timestamp": "2025-06-02T05:51:34.336796+08:00",
     "type": "tag"
   },
+  "ja:家族资本": {
+    "translation": "家族資本",
+    "timestamp": "2026-09-18T01:23:42.7295754+08:00",
+    "type": "tag"
+  },
   "ja:宽带": {
     "translation": "ブロードバンド",
     "timestamp": "2026-04-16T02:02:41.9134862+08:00",
@@ -5384,6 +5604,11 @@
     "timestamp": "2025-06-11T22:36:32.5952277+08:00",
     "type": "tag"
   },
+  "ja:小游戏": {
+    "translation": "ミニゲーム",
+    "timestamp": "2026-09-18T01:18:47.4820821+08:00",
+    "type": "tag"
+  },
   "ja:小程序": {
     "translation": "ミニプログラム (minipurasu)",
     "timestamp": "2025-06-02T05:11:03.0632315+08:00",
@@ -5404,6 +5629,11 @@
     "timestamp": "2025-06-02T06:12:54.9250221+08:00",
     "type": "tag"
   },
+  "ja:就业结构": {
+    "translation": "雇用構造",
+    "timestamp": "2026-09-18T01:23:44.3140768+08:00",
+    "type": "tag"
+  },
   "ja:局域网": {
     "translation": "ローカルエリアネットワーク (LAN)",
     "timestamp": "2025-06-02T06:04:27.6392661+08:00",
@@ -5412,6 +5642,11 @@
   "ja:嵌入式": {
     "translation": "組み込み (ぐみこみ)",
     "timestamp": "2025-06-02T05:06:54.8967858+08:00",
+    "type": "tag"
+  },
+  "ja:工作与生活": {
+    "translation": "仕事と生活",
+    "timestamp": "2026-09-18T01:35:33.0254597+08:00",
     "type": "tag"
   },
   "ja:工作流": {
@@ -5559,6 +5794,11 @@
     "timestamp": "2025-06-02T05:45:13.6370795+08:00",
     "type": "tag"
   },
+  "ja:房子": {
+    "translation": "家",
+    "timestamp": "2026-09-18T01:35:33.8645703+08:00",
+    "type": "tag"
+  },
   "ja:手机": {
     "translation": "スマートフォン",
     "timestamp": "2025-09-26T20:38:04.1548958+08:00",
@@ -5587,6 +5827,11 @@
   "ja:抖音": {
     "translation": "抖音 (Douyin)",
     "timestamp": "2025-06-02T05:49:23.1076202+08:00",
+    "type": "tag"
+  },
+  "ja:抖音直播": {
+    "translation": "抖音ライブ",
+    "timestamp": "2026-09-18T01:30:32.7898034+08:00",
     "type": "tag"
   },
   "ja:抽奖": {
@@ -5682,6 +5927,11 @@
   "ja:数据中心GPU": {
     "translation": "データセンター向けGPU",
     "timestamp": "2026-05-21T11:35:58.0799076+08:00",
+    "type": "tag"
+  },
+  "ja:数据安全": {
+    "translation": "データセキュリティ",
+    "timestamp": "2026-09-18T01:33:18.5097657+08:00",
     "type": "tag"
   },
   "ja:文件系统": {
@@ -5824,6 +6074,11 @@
     "timestamp": "2025-06-02T17:28:20.4634787+08:00",
     "type": "tag"
   },
+  "ja:樊振东": {
+    "translation": "樊振東",
+    "timestamp": "2026-09-18T01:26:59.3519824+08:00",
+    "type": "tag"
+  },
   "ja:死锁": {
     "translation": "死鎖",
     "timestamp": "2025-11-18T22:33:19.6035316+08:00",
@@ -5884,6 +6139,11 @@
     "timestamp": "2025-06-02T21:04:30.8583185+08:00",
     "type": "tag"
   },
+  "ja:海克斯大乱斗": {
+    "translation": "ARAM",
+    "timestamp": "2026-09-18T01:30:30.5876271+08:00",
+    "type": "tag"
+  },
   "ja:消费": {
     "translation": "消費",
     "timestamp": "2026-05-12T03:17:20.3395609+08:00",
@@ -5892,6 +6152,11 @@
   "ja:消费电子": {
     "translation": "民生用電子機器",
     "timestamp": "2026-08-14T18:27:09.5920143+08:00",
+    "type": "tag"
+  },
+  "ja:消费维权": {
+    "translation": "消費者権益保護",
+    "timestamp": "2026-09-18T01:21:32.5010147+08:00",
     "type": "tag"
   },
   "ja:深交所": {
@@ -5927,6 +6192,21 @@
   "ja:游戏": {
     "translation": "ゲーム",
     "timestamp": "2025-06-02T05:13:21.7832901+08:00",
+    "type": "tag"
+  },
+  "ja:游戏直播": {
+    "translation": "ゲーム実況",
+    "timestamp": "2026-09-18T01:30:31.9380217+08:00",
+    "type": "tag"
+  },
+  "ja:游戏行业": {
+    "translation": "ゲーム業界",
+    "timestamp": "2026-09-18T01:18:43.6687252+08:00",
+    "type": "tag"
+  },
+  "ja:游戏设计": {
+    "translation": "ゲームデザイン",
+    "timestamp": "2026-09-18T01:30:31.2620187+08:00",
     "type": "tag"
   },
   "ja:演讲": {
@@ -5999,9 +6279,19 @@
     "timestamp": "2026-07-22T20:14:40.8492395+08:00",
     "type": "tag"
   },
+  "ja:用户付费": {
+    "translation": "ユーザー支払い",
+    "timestamp": "2026-09-18T01:18:44.4629591+08:00",
+    "type": "tag"
+  },
   "ja:电信": {
     "translation": "通信",
     "timestamp": "2025-10-15T18:59:25.9209581+08:00",
+    "type": "tag"
+  },
+  "ja:电商平台": {
+    "translation": "ECプラットフォーム",
+    "timestamp": "2026-09-18T01:21:33.1802711+08:00",
     "type": "tag"
   },
   "ja:电商税": {
@@ -6114,6 +6404,16 @@
     "timestamp": "2025-06-02T06:12:23.5472098+08:00",
     "type": "tag"
   },
+  "ja:离岸信托": {
+    "translation": "オフショア・トラスト",
+    "timestamp": "2026-09-18T01:15:33.5890932+08:00",
+    "type": "tag"
+  },
+  "ja:移动游戏": {
+    "translation": "モバイルゲーム",
+    "timestamp": "2026-09-18T01:18:45.1387515+08:00",
+    "type": "tag"
+  },
   "ja:程序员": {
     "translation": "プログラマー",
     "timestamp": "2026-04-28T01:20:07.9911486+08:00",
@@ -6124,6 +6424,11 @@
     "timestamp": "2025-07-16T21:18:05.0819524+08:00",
     "type": "tag"
   },
+  "ja:税收征管": {
+    "translation": "税務徴収管理",
+    "timestamp": "2026-09-18T01:15:30.1211126+08:00",
+    "type": "tag"
+  },
   "ja:稳定币": {
     "translation": "ステーブルコイン",
     "timestamp": "2025-06-12T23:52:00.9562532+08:00",
@@ -6132,6 +6437,11 @@
   "ja:竞技游戏": {
     "translation": "eスポーツ (エスポート)",
     "timestamp": "2025-06-02T05:13:22.0459998+08:00",
+    "type": "tag"
+  },
+  "ja:端游": {
+    "translation": "PCゲーム",
+    "timestamp": "2026-09-18T01:18:45.8724272+08:00",
     "type": "tag"
   },
   "ja:算力": {
@@ -6279,6 +6589,11 @@
     "timestamp": "2026-06-14T05:11:01.6930049+08:00",
     "type": "tag"
   },
+  "ja:老龄化": {
+    "translation": "高齢化",
+    "timestamp": "2026-09-18T01:23:45.0289826+08:00",
+    "type": "tag"
+  },
   "ja:职业思考": {
     "translation": "キャリア思考",
     "timestamp": "2026-04-28T01:20:08.1768257+08:00",
@@ -6312,6 +6627,11 @@
   "ja:股票交易": {
     "translation": "株式取引",
     "timestamp": "2025-07-28T00:21:53.9926257+08:00",
+    "type": "tag"
+  },
+  "ja:腾讯游戏": {
+    "translation": "テンセントゲームズ",
+    "timestamp": "2026-09-18T01:18:41.0904176+08:00",
     "type": "tag"
   },
   "ja:自动化测试": {
@@ -6459,9 +6779,19 @@
     "timestamp": "2025-06-02T06:14:18.2538235+08:00",
     "type": "tag"
   },
+  "ja:财富继承": {
+    "translation": "資産継承",
+    "timestamp": "2026-09-18T01:23:43.6432879+08:00",
+    "type": "tag"
+  },
   "ja:财报": {
     "translation": "財務諸表",
     "timestamp": "2025-11-18T22:05:00.1941933+08:00",
+    "type": "tag"
+  },
+  "ja:财政收入": {
+    "translation": "財政収入",
+    "timestamp": "2026-09-18T01:15:32.5459789+08:00",
     "type": "tag"
   },
   "ja:财政政策": {
@@ -6664,9 +6994,19 @@
     "timestamp": "2026-06-14T05:23:49.6253212+08:00",
     "type": "tag"
   },
+  "ja:长江存储": {
+    "translation": "長江メモリ",
+    "timestamp": "2026-09-18T01:12:22.7696304+08:00",
+    "type": "tag"
+  },
   "ja:长沙国金中心": {
     "translation": "長沙国际金融中心",
     "timestamp": "2026-08-14T18:24:39.3682011+08:00",
+    "type": "tag"
+  },
+  "ja:长鑫存储": {
+    "translation": "長鑫存儲",
+    "timestamp": "2026-09-18T01:12:23.60101+08:00",
     "type": "tag"
   },
   "ja:问题排查": {
@@ -6699,9 +7039,19 @@
     "timestamp": "2026-04-09T15:21:22.663592+08:00",
     "type": "tag"
   },
+  "ja:零数据保留": {
+    "translation": "ゼロデータ保持",
+    "timestamp": "2026-09-18T01:33:19.7816771+08:00",
+    "type": "tag"
+  },
   "ja:雷军": {
     "translation": "雷軍 (Léi Jūn)",
     "timestamp": "2025-10-13T18:51:45.4931027+08:00",
+    "type": "tag"
+  },
+  "ja:青少年体育": {
+    "translation": "青少年スポーツ",
+    "timestamp": "2026-09-18T01:27:00.2282598+08:00",
     "type": "tag"
   },
   "ja:青春": {
@@ -6722,6 +7072,11 @@
   "ja:韩援": {
     "translation": "韓国語 (韓国人)",
     "timestamp": "2025-11-03T05:05:59.4273646+08:00",
+    "type": "tag"
+  },
+  "ja:食品接触材料": {
+    "translation": "食品接触材料",
+    "timestamp": "2026-09-18T01:21:31.0928499+08:00",
     "type": "tag"
   },
   "ja:香港券商": {
